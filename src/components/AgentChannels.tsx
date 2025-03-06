@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Mic, MessageCircle, Smartphone, Mail } from "lucide-react";
+import { Mic, MessageSquare, Smartphone, Mail, MessageCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -16,7 +16,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({ channels = [] }) =
       case "voice":
         return <Mic className="h-3 w-3" />;
       case "chat":
-        return <MessageCircle className="h-3 w-3" />;
+        return <MessageSquare className="h-3 w-3" />;
       case "sms":
         return <Smartphone className="h-3 w-3" />;
       case "email":
