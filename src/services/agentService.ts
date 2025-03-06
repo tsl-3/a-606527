@@ -12,7 +12,8 @@ const mockAgents: AgentType[] = [
     createdAt: "2023-10-15",
     interactions: 1253,
     isPersonal: true,
-    model: "GPT-4"
+    model: "GPT-4",
+    channels: ["voice", "chat", "email"]
   },
   {
     id: "2",
@@ -23,7 +24,8 @@ const mockAgents: AgentType[] = [
     createdAt: "2023-11-22",
     interactions: 876,
     isPersonal: false,
-    model: "Claude-2"
+    model: "Claude-2",
+    channels: ["voice", "chat", "whatsapp", "sms"]
   },
   {
     id: "3",
@@ -34,7 +36,8 @@ const mockAgents: AgentType[] = [
     createdAt: "2024-01-05",
     interactions: 432,
     isPersonal: true,
-    model: "GPT-3.5 Turbo"
+    model: "GPT-3.5 Turbo",
+    channels: ["voice", "chat"]
   },
   {
     id: "4",
@@ -45,7 +48,8 @@ const mockAgents: AgentType[] = [
     createdAt: "2024-02-10",
     interactions: 198,
     isPersonal: false,
-    model: "LLama-2"
+    model: "LLama-2",
+    channels: ["voice", "email", "sms"]
   },
   {
     id: "5",
@@ -56,7 +60,8 @@ const mockAgents: AgentType[] = [
     createdAt: "2024-03-01",
     interactions: 52,
     isPersonal: true,
-    model: "GPT-4"
+    model: "GPT-4",
+    channels: ["voice"]
   }
 ];
 

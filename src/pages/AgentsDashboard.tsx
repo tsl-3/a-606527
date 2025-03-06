@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Bot, Search, CircleSlash, Loader2, UserCircle2 } from "lucide-react";
@@ -9,6 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { AgentType } from "@/types/agent";
 import { useAgents } from "@/hooks/useAgents";
 import { AgentToggle } from "@/components/AgentToggle";
+import { AgentChannels } from "@/components/AgentChannels";
 
 const AgentsDashboard = () => {
   const [searchParams] = useSearchParams();
@@ -151,10 +153,13 @@ const AgentsDashboard = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                    <span>Created {agent.createdAt}</span>
-                    <span>•</span>
-                    <span>{agent.interactions} interactions</span>
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+                      <span>Created {agent.createdAt}</span>
+                      <span>•</span>
+                      <span>{agent.interactions} interactions</span>
+                    </div>
+                    <AgentChannels channels={agent.channels} />
                   </div>
                 </CardContent>
                 <CardFooter className="border-t pt-4 flex justify-between items-center">
