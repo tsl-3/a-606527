@@ -41,8 +41,8 @@ export const AgentToggle: React.FC<AgentToggleProps> = ({
         className={cn(
           "text-xs font-semibold transition-opacity duration-300 w-full text-center",
           !isActive 
-            ? "ml-7 opacity-100" 
-            : "mr-7 opacity-0"
+            ? "opacity-100 ml-7" // Changed from "ml-7 opacity-100" to "opacity-100 ml-7" to ensure proper positioning
+            : "opacity-0 mr-7"
         )}
       >
         OFF
