@@ -3,7 +3,6 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Bot, Search, CircleSlash, Loader2, UserCircle2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/components/ui/use-toast";
@@ -129,11 +128,6 @@ const AgentsDashboard = () => {
                   </div>
                   
                   <div className="mt-3">
-                    {agent.isPersonal && (
-                      <Badge variant="outline" className="bg-agent-secondary text-agent-primary border-none mb-2">
-                        Personal
-                      </Badge>
-                    )}
                     <CardDescription className="line-clamp-2 text-muted-foreground dark:text-gray-300">
                       {agent.description}
                     </CardDescription>
