@@ -16,19 +16,21 @@ const AgentsDashboard = () => {
   const filter = searchParams.get("filter") || "all-agents";
   const { toast } = useToast();
   
-  const { agents, isLoading, error } = useAgents(filter);
+  const { agents: initialAgents, isLoading, error } = useAgents(filter);
+  const [agents, setAgents] = useState<AgentType[]>([]);
   const [filteredAgents, setFilteredAgents] = useState<AgentType[]>([]);
   
   useEffect(() => {
-    if (agents) {
+    if (initialAgents) {
+      setAgents(initialAgents);
       setFilteredAgents(
-        agents.filter(agent => 
+        initialAgents.filter(agent => 
           agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           agent.description.toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
     }
-  }, [agents, searchTerm]);
+  }, [initialAgents, searchTerm]);
 
   const getFilterTitle = () => {
     switch (filter) {
@@ -46,6 +48,21 @@ const AgentsDashboard = () => {
     e.stopPropagation(); // Prevent event bubbling
     
     const newStatus = currentStatus === "active" ? "inactive" : "active";
+    
+    // Update the local state to reflect the change immediately
+    setAgents(prevAgents => 
+      prevAgents.map(agent => 
+        agent.id === agentId ? { ...agent, status: newStatus } : agent
+      )
+    );
+    
+    // Also update the filtered agents
+    setFilteredAgents(prevAgents => 
+      prevAgents.map(agent => 
+        agent.id === agentId ? { ...agent, status: newStatus } : agent
+      )
+    );
+    
     toast({
       title: `Agent ${newStatus === "active" ? "Activated" : "Deactivated"}`,
       description: `The agent is now ${newStatus}.`,
