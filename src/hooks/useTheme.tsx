@@ -23,7 +23,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
+  defaultTheme = "dark", // Setting default theme to dark to match the screenshot
   storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
@@ -43,12 +43,11 @@ export function ThemeProvider({
         : "light";
       
       root.classList.add(systemTheme);
+      console.log("System theme applied:", systemTheme);
       return;
     }
     
     root.classList.add(theme);
-
-    // Debug console log to check if theme is being applied
     console.log("Theme applied:", theme);
   }, [theme]);
 
