@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Bot, Search, CircleSlash, Loader2, UserCircle2 } from "lucide-react";
@@ -11,6 +10,14 @@ import { AgentType } from "@/types/agent";
 import { useAgents } from "@/hooks/useAgents";
 import { AgentToggle } from "@/components/AgentToggle";
 import { AgentChannels } from "@/components/AgentChannels";
+
+const randomNames = ["Aria", "Mike", "Yuki", "Misty", "Nova", "Zephyr", "Echo", "Luna", "Orion", "Iris"];
+
+const getRandomName = (id: string) => {
+  const lastChar = id.charAt(id.length - 1);
+  const index = parseInt(lastChar, 36) % randomNames.length;
+  return randomNames[index];
+};
 
 const AgentsDashboard = () => {
   const [searchParams] = useSearchParams();
@@ -51,14 +58,12 @@ const AgentsDashboard = () => {
     
     const newStatus = currentStatus === "active" ? "inactive" : "active";
     
-    // Update the local state to reflect the change immediately
     setAgents(prevAgents => 
       prevAgents.map(agent => 
         agent.id === agentId ? { ...agent, status: newStatus } : agent
       )
     );
     
-    // Also update the filtered agents
     setFilteredAgents(prevAgents => 
       prevAgents.map(agent => 
         agent.id === agentId ? { ...agent, status: newStatus } : agent
@@ -70,7 +75,6 @@ const AgentsDashboard = () => {
       description: `The agent is now ${newStatus}.`,
     });
     
-    // Here you would typically call an API to update the agent's status
     console.log(`Toggling agent ${agentId} to ${newStatus}`);
   };
 
@@ -140,8 +144,8 @@ const AgentsDashboard = () => {
                         <AvatarFallback><UserCircle2 className="h-6 w-6" /></AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 className="font-medium text-foreground dark:text-white">{agent.name}</h3>
-                        <p className="text-xs text-muted-foreground dark:text-gray-400">{agent.type}</p>
+                        <h3 className="font-medium text-foreground dark:text-white">{getRandomName(agent.id)}</h3>
+                        <p className="text-xs text-muted-foreground dark:text-gray-400">{agent.name}</p>
                       </div>
                     </div>
                   </div>
