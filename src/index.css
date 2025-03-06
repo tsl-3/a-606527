@@ -112,7 +112,7 @@
   
   /* Dark mode background gradient */
   .dark body {
-    background: linear-gradient(163deg, rgba(4,22,65,1) 0%, rgba(37,5,42,1) 100%);
+    background: linear-gradient(163deg, rgba(0,3,19,1) 0%, rgba(17,2,20,1) 100%);
     background-attachment: fixed;
     background-size: cover;
   }
