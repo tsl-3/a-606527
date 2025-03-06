@@ -129,13 +129,25 @@ const AgentsDashboard = () => {
                     </div>
                     
                     <div 
-                      className="flex items-center cursor-pointer"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer"
                       onClick={(e) => handleToggleStatus(e, agent.id, agent.status)}
                     >
                       {agent.status === "active" ? (
-                        <ToggleRight className="h-6 w-6 text-agent-success" />
+                        <>
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-2.5 h-2.5 bg-agent-success rounded-full animate-pulse"></div>
+                            <span className="text-xs font-medium text-agent-success">Active</span>
+                          </div>
+                          <ToggleRight className="h-5 w-5 text-agent-success" />
+                        </>
                       ) : (
-                        <ToggleLeft className="h-6 w-6 text-gray-400" />
+                        <>
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-2.5 h-2.5 bg-gray-400 rounded-full"></div>
+                            <span className="text-xs font-medium text-gray-400">Inactive</span>
+                          </div>
+                          <ToggleLeft className="h-5 w-5 text-gray-400" />
+                        </>
                       )}
                     </div>
                   </div>
