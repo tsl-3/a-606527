@@ -47,6 +47,9 @@ export function ThemeProvider({
     }
     
     root.classList.add(theme);
+
+    // Debug console log to check if theme is being applied
+    console.log("Theme applied:", theme);
   }, [theme]);
 
   const value = {
