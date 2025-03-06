@@ -25,7 +25,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({ avmScore, interactionCou
           <Star className="h-3.5 w-3.5" />
         </div>
         <div className="p-3 text-center bg-white dark:bg-gray-900/60">
-          <span className="text-2xl font-semibold text-gray-900 dark:text-white">{avmScore}</span>
+          <span className="text-2xl font-semibold text-gray-900 dark:text-white">{avmScore.toFixed(2)}</span>
           <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">/10</span>
         </div>
       </div>

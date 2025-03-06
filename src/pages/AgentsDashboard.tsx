@@ -40,7 +40,9 @@ const getRandomName = (id: string) => {
 
 const getAgentAVMScore = (id: string): number => {
   const charSum = id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-  return 1 + (charSum % 10);
+  const baseScore = 1 + (charSum % 9);
+  const decimalPart = ((charSum * 13) % 100) / 100;
+  return parseFloat((baseScore + decimalPart).toFixed(2));
 };
 
 const AgentsDashboard = () => {
