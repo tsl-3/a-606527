@@ -15,6 +15,20 @@ export const AgentStats: React.FC<AgentStatsProps> = ({ avmScore, interactionCou
     return "bg-gradient-to-r from-orange-500 to-yellow-400";                // below 6: orange to yellow
   };
   
+  // Color gradient for interaction count based on bronze, silver, gold tiers
+  const getInteractionColor = (count: number): string => {
+    if (count >= 1000) return "bg-gradient-to-r from-yellow-500 to-amber-400"; // Gold: 1000+
+    if (count >= 100) return "bg-gradient-to-r from-gray-400 to-gray-300";     // Silver: 100-999
+    return "bg-gradient-to-r from-amber-700 to-yellow-600";                   // Bronze: 1-99
+  };
+  
+  // Label for interaction tier
+  const getInteractionTier = (count: number): string => {
+    if (count >= 1000) return "Gold";
+    if (count >= 100) return "Silver";
+    return "Bronze";
+  };
+  
   return (
     <div className="flex gap-3 w-full">
       {/* AVM Score Card */}
@@ -31,8 +45,8 @@ export const AgentStats: React.FC<AgentStatsProps> = ({ avmScore, interactionCou
 
       {/* Interactions Card */}
       <div className="flex-1 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm">
-        <div className="bg-gradient-to-r from-blue-500 to-cyan-500 px-3 py-1.5 text-white flex items-center justify-between">
-          <span className="text-xs font-medium">Interactions</span>
+        <div className={`${getInteractionColor(interactionCount)} px-3 py-1.5 text-white flex items-center justify-between`}>
+          <span className="text-xs font-medium">Interactions ({getInteractionTier(interactionCount)})</span>
           <MessageCircle className="h-3.5 w-3.5" />
         </div>
         <div className="p-3 text-center bg-white dark:bg-gray-900/60">
