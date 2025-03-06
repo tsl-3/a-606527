@@ -109,6 +109,13 @@
   *:focus-visible {
     @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-background;
   }
+  
+  /* Dark mode background gradient */
+  .dark body {
+    background: linear-gradient(163deg, rgba(4,22,65,1) 0%, rgba(37,5,42,1) 100%);
+    background-attachment: fixed;
+    background-size: cover;
+  }
 }
 
 @layer components {
