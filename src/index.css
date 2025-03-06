@@ -116,6 +116,11 @@
     background-attachment: fixed;
     background-size: cover;
   }
+  
+  /* Make sure the min-h-screen class doesn't override the gradient */
+  .dark .min-h-screen {
+    background: transparent;
+  }
 }
 
 @layer components {
