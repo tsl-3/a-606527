@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive } from "lucide-react";
+import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -14,6 +13,17 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 import { AgentType } from "@/types/agent";
 import { useAgents } from "@/hooks/useAgents";
 import { AgentToggle } from "@/components/AgentToggle";
@@ -33,6 +43,13 @@ const AgentsDashboard = () => {
   const filter = searchParams.get("filter") || "all-agents";
   const { toast } = useToast();
   const navigate = useNavigate();
+  
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [agentToDeactivate, setAgentToDeactivate] = useState<string | null>(null);
+  const [skipConfirmation, setSkipConfirmation] = useState(() => {
+    const saved = localStorage.getItem("skipAgentDeactivationConfirmation");
+    return saved === "true";
+  });
   
   const { agents: initialAgents, isLoading, error } = useAgents(filter);
   const [agents, setAgents] = useState<AgentType[]>([]);
@@ -61,10 +78,7 @@ const AgentsDashboard = () => {
     }
   };
 
-  const handleToggleStatus = (e: React.MouseEvent, agentId: string, currentStatus: "active" | "inactive") => {
-    e.preventDefault(); // Prevent navigating to agent details
-    e.stopPropagation(); // Prevent event bubbling
-    
+  const executeToggleStatus = (agentId: string, currentStatus: "active" | "inactive") => {
     const newStatus = currentStatus === "active" ? "inactive" : "active";
     
     setAgents(prevAgents => 
@@ -87,10 +101,39 @@ const AgentsDashboard = () => {
     console.log(`Toggling agent ${agentId} to ${newStatus}`);
   };
 
+  const handleToggleStatus = (e: React.MouseEvent, agentId: string, currentStatus: "active" | "inactive") => {
+    e.preventDefault(); // Prevent navigating to agent details
+    e.stopPropagation(); // Prevent event bubbling
+    
+    if (currentStatus === "inactive" || skipConfirmation) {
+      executeToggleStatus(agentId, currentStatus);
+      return;
+    }
+    
+    setAgentToDeactivate(agentId);
+    setConfirmDialogOpen(true);
+  };
+  
+  const handleSkipConfirmationChange = (checked: boolean) => {
+    setSkipConfirmation(checked);
+    localStorage.setItem("skipAgentDeactivationConfirmation", checked.toString());
+  };
+  
+  const handleConfirmDeactivation = () => {
+    if (agentToDeactivate) {
+      const agent = agents.find(a => a.id === agentToDeactivate);
+      if (agent) {
+        executeToggleStatus(agentToDeactivate, agent.status);
+      }
+    }
+    
+    setConfirmDialogOpen(false);
+    setAgentToDeactivate(null);
+  };
+
   const handleEditAgent = (e: React.MouseEvent, agentId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    // Navigate to edit page or open modal
     toast({
       title: "Edit Agent",
       description: "Edit functionality will be implemented soon.",
@@ -105,7 +148,6 @@ const AgentsDashboard = () => {
       description: "The agent has been archived.",
       variant: "destructive",
     });
-    // Remove the agent from the displayed list
     setAgents(prevAgents => prevAgents.filter(agent => agent.id !== agentId));
     setFilteredAgents(prevAgents => prevAgents.filter(agent => agent.id !== agentId));
   };
@@ -128,6 +170,39 @@ const AgentsDashboard = () => {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
+      <AlertDialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-amber-500" />
+              Deactivate Agent?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to deactivate this agent? It will no longer respond to user queries.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex items-center space-x-2 py-3">
+            <Checkbox
+              id="skipConfirmation"
+              checked={skipConfirmation}
+              onCheckedChange={handleSkipConfirmationChange}
+            />
+            <label
+              htmlFor="skipConfirmation"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Don't ask me again
+            </label>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDeactivation} className="bg-agent-primary">
+              Deactivate
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold text-foreground dark:text-white tracking-tight">{getFilterTitle()}</h1>
