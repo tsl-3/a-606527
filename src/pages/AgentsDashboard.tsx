@@ -43,8 +43,8 @@ const AgentsDashboard = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[80vh] space-y-4">
         <CircleSlash className="h-16 w-16 text-agent-error opacity-80" />
-        <h2 className="text-2xl font-semibold text-agent-dark">Error Loading Agents</h2>
-        <p className="text-gray-500">Please try again later.</p>
+        <h2 className="text-2xl font-semibold text-foreground dark:text-white">Error Loading Agents</h2>
+        <p className="text-muted-foreground dark:text-gray-300">Please try again later.</p>
       </div>
     );
   }
@@ -53,8 +53,8 @@ const AgentsDashboard = () => {
     <div className="space-y-8 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold text-agent-dark tracking-tight">{getFilterTitle()}</h1>
-          <p className="text-gray-500 mt-1">Manage and monitor your intelligent agents</p>
+          <h1 className="text-3xl font-semibold text-foreground dark:text-white tracking-tight">{getFilterTitle()}</h1>
+          <p className="text-muted-foreground dark:text-gray-300 mt-1">Manage and monitor your intelligent agents</p>
         </div>
         
         <div className="flex items-center space-x-4">
@@ -82,8 +82,8 @@ const AgentsDashboard = () => {
       ) : filteredAgents.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 space-y-4">
           <Bot className="h-16 w-16 text-gray-300" />
-          <h2 className="text-2xl font-semibold text-agent-dark">No Agents Found</h2>
-          <p className="text-gray-500">
+          <h2 className="text-2xl font-semibold text-foreground dark:text-white">No Agents Found</h2>
+          <p className="text-muted-foreground dark:text-gray-300">
             {searchTerm ? "Try a different search term" : "Create your first agent to get started"}
           </p>
           {!searchTerm && (
@@ -108,18 +108,18 @@ const AgentsDashboard = () => {
                       </Badge>
                     )}
                   </div>
-                  <CardTitle className="text-xl">{agent.name}</CardTitle>
-                  <CardDescription className="line-clamp-2">{agent.description}</CardDescription>
+                  <CardTitle className="text-xl text-foreground dark:text-white">{agent.name}</CardTitle>
+                  <CardDescription className="line-clamp-2 text-muted-foreground dark:text-gray-300">{agent.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center space-x-2 text-sm text-gray-500">
+                  <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
                     <span>Created {agent.createdAt}</span>
                     <span>•</span>
                     <span>{agent.type}</span>
                   </div>
                 </CardContent>
                 <CardFooter className="border-t pt-4 flex justify-between">
-                  <div className="flex items-center space-x-1 text-sm text-gray-500">
+                  <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
                     <span className="font-medium text-agent-primary">{agent.interactions}</span>
                     <span>interactions</span>
                   </div>
