@@ -131,6 +131,11 @@ const AgentsDashboard = () => {
     setAgentToDeactivate(null);
   };
 
+  const handleCancelDeactivation = () => {
+    setConfirmDialogOpen(false);
+    setAgentToDeactivate(null);
+  };
+
   const handleEditAgent = (e: React.MouseEvent, agentId: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -195,7 +200,7 @@ const AgentsDashboard = () => {
             </label>
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={handleCancelDeactivation}>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmDeactivation} className="bg-agent-primary">
               Deactivate
             </AlertDialogAction>
