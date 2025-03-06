@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle } from "lucide-react";
+import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -28,6 +28,7 @@ import { AgentType } from "@/types/agent";
 import { useAgents } from "@/hooks/useAgents";
 import { AgentToggle } from "@/components/AgentToggle";
 import { AgentChannels } from "@/components/AgentChannels";
+import { AgentStats } from "@/components/AgentStats";
 
 const randomNames = ["Aria", "Mike", "Yuki", "Misty", "Nova", "Zephyr", "Echo", "Luna", "Orion", "Iris"];
 
@@ -35,6 +36,11 @@ const getRandomName = (id: string) => {
   const lastChar = id.charAt(id.length - 1);
   const index = parseInt(lastChar, 36) % randomNames.length;
   return randomNames[index];
+};
+
+const getAgentAVMScore = (id: string): number => {
+  const charSum = id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return 1 + (charSum % 10);
 };
 
 const AgentsDashboard = () => {
@@ -102,8 +108,8 @@ const AgentsDashboard = () => {
   };
 
   const handleToggleStatus = (e: React.MouseEvent, agentId: string, currentStatus: "active" | "inactive") => {
-    e.preventDefault(); // Prevent navigating to agent details
-    e.stopPropagation(); // Prevent event bubbling
+    e.preventDefault();
+    e.stopPropagation();
     
     if (currentStatus === "inactive" || skipConfirmation) {
       executeToggleStatus(agentId, currentStatus);
@@ -299,16 +305,25 @@ const AgentsDashboard = () => {
                     </CardDescription>
                   </div>
                 </CardHeader>
+                
                 <CardContent>
-                  <div className="flex flex-col space-y-2">
-                    <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                      <span>Created {agent.createdAt}</span>
-                      <span>•</span>
-                      <span>{agent.interactions} interactions</span>
+                  <div className="flex flex-col space-y-4">
+                    <AgentStats 
+                      avmScore={getAgentAVMScore(agent.id)} 
+                      interactionCount={agent.interactions} 
+                    />
+                    
+                    <div>
+                      <AgentChannels channels={agent.channels} />
                     </div>
-                    <AgentChannels channels={agent.channels} />
+                    
+                    <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span>Created {agent.createdAt}</span>
+                    </div>
                   </div>
                 </CardContent>
+                
                 <CardFooter className="border-t pt-4 flex justify-between items-center">
                   <AgentToggle 
                     isActive={agent.status === "active"} 
