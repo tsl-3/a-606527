@@ -8,11 +8,11 @@ interface AgentStatsProps {
 }
 
 export const AgentStats: React.FC<AgentStatsProps> = ({ avmScore, interactionCount }) => {
-  // Color gradient for AVM score based on the value range
+  // Color indicator for AVM score based on the value range
   const getScoreColor = (score: number): string => {
-    if (score >= 9) return "bg-gradient-to-r from-[#2563EB] to-[#D946EF]"; // 9-10: blue to purple (Anyreach colors)
-    if (score >= 7) return "bg-gradient-to-r from-blue-500 to-cyan-500";   // 7-8: blue to cyan
-    return "bg-gradient-to-r from-orange-500 to-yellow-400";                // below 6: orange to yellow
+    if (score >= 8) return "bg-green-500"; // High score: green
+    if (score >= 6) return "bg-yellow-500"; // Medium score: yellow
+    return "bg-red-500"; // Low score: red
   };
   
   return (
