@@ -1,11 +1,14 @@
 
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Bot, Search, CircleSlash, Loader2 } from "lucide-react";
+import { Bot, Search, CircleSlash, Loader2, UserCircle2, ToggleLeft, ToggleRight } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useToast } from "@/components/ui/use-toast";
 import { AgentType } from "@/types/agent";
 import { useAgents } from "@/hooks/useAgents";
 
@@ -13,6 +16,7 @@ const AgentsDashboard = () => {
   const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const filter = searchParams.get("filter") || "all-agents";
+  const { toast } = useToast();
   
   const { agents, isLoading, error } = useAgents(filter);
   const [filteredAgents, setFilteredAgents] = useState<AgentType[]>([]);
@@ -37,6 +41,20 @@ const AgentsDashboard = () => {
       default:
         return "All Agents";
     }
+  };
+
+  const handleToggleStatus = (e: React.MouseEvent, agentId: string, currentStatus: "active" | "inactive") => {
+    e.preventDefault(); // Prevent navigating to agent details
+    e.stopPropagation(); // Prevent event bubbling
+    
+    const newStatus = currentStatus === "active" ? "inactive" : "active";
+    toast({
+      title: `Agent ${newStatus === "active" ? "Activated" : "Deactivated"}`,
+      description: `The agent is now ${newStatus}.`,
+    });
+    
+    // Here you would typically call an API to update the agent's status
+    console.log(`Toggling agent ${agentId} to ${newStatus}`);
   };
 
   if (error) {
@@ -99,30 +117,48 @@ const AgentsDashboard = () => {
               <Card className="h-full card-hover bg-white dark:bg-[#000313]/80">
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
-                    <Badge variant={agent.status === "active" ? "default" : "secondary"} className="mb-2">
-                      {agent.status === "active" ? "Active" : "Inactive"}
-                    </Badge>
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-12 w-12 border border-gray-200 dark:border-gray-800">
+                        <AvatarImage src={`https://api.dicebear.com/7.x/bottts/svg?seed=${agent.id}`} alt={agent.name} />
+                        <AvatarFallback><UserCircle2 className="h-6 w-6" /></AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h3 className="font-medium text-foreground dark:text-white">{agent.name}</h3>
+                        <p className="text-xs text-muted-foreground dark:text-gray-400">{agent.type}</p>
+                      </div>
+                    </div>
+                    
+                    <div 
+                      className="flex items-center cursor-pointer"
+                      onClick={(e) => handleToggleStatus(e, agent.id, agent.status)}
+                    >
+                      {agent.status === "active" ? (
+                        <ToggleRight className="h-6 w-6 text-agent-success" />
+                      ) : (
+                        <ToggleLeft className="h-6 w-6 text-gray-400" />
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="mt-3">
                     {agent.isPersonal && (
-                      <Badge variant="outline" className="bg-agent-secondary text-agent-primary border-none">
+                      <Badge variant="outline" className="bg-agent-secondary text-agent-primary border-none mb-2">
                         Personal
                       </Badge>
                     )}
+                    <CardDescription className="line-clamp-2 text-muted-foreground dark:text-gray-300">
+                      {agent.description}
+                    </CardDescription>
                   </div>
-                  <CardTitle className="text-xl text-foreground dark:text-white">{agent.name}</CardTitle>
-                  <CardDescription className="line-clamp-2 text-muted-foreground dark:text-gray-300">{agent.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
                     <span>Created {agent.createdAt}</span>
                     <span>•</span>
-                    <span>{agent.type}</span>
+                    <span>{agent.interactions} interactions</span>
                   </div>
                 </CardContent>
                 <CardFooter className="border-t pt-4 flex justify-between">
-                  <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
-                    <span className="font-medium text-agent-primary">{agent.interactions}</span>
-                    <span>interactions</span>
-                  </div>
                   <div className="text-sm text-agent-primary font-medium">View Details &rarr;</div>
                 </CardFooter>
               </Card>
