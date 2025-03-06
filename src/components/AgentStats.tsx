@@ -1,6 +1,5 @@
 
 import React from "react";
-import { Star, MessageCircle } from "lucide-react";
 
 interface AgentStatsProps {
   avmScore: number;  // 1-10 score

@@ -2,7 +2,7 @@
 import React from "react";
 import { 
   Mic, BookOpen, Workflow, FlaskConical, CheckCircle2, 
-  Upload, PlayCircle, Bot, File, CircleDashed
+  Upload, PlayCircle, Bot, File, CircleDashed, ArrowRight
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -18,6 +18,7 @@ interface StepProps {
   isCompleted: boolean;
   progress?: number;
   children?: React.ReactNode;
+  stepNumber: number;
 }
 
 const Step: React.FC<StepProps> = ({ 
@@ -27,17 +28,24 @@ const Step: React.FC<StepProps> = ({
   isActive, 
   isCompleted, 
   progress = 0,
-  children 
+  children,
+  stepNumber
 }) => {
   return (
     <Card className={`mb-6 border ${isActive ? 'border-agent-primary/50 shadow-md' : 'border-gray-100 dark:border-gray-800'}`}>
       <CardHeader className="flex flex-row items-start gap-4 pb-2">
-        <div className={`p-2 rounded-full ${isCompleted ? 'bg-green-100 dark:bg-green-900/20' : isActive ? 'bg-agent-primary/10' : 'bg-gray-100 dark:bg-gray-800'}`}>
+        <div className={`p-2 rounded-full flex items-center justify-center ${
+          isCompleted 
+            ? 'bg-green-100 dark:bg-green-900/20' 
+            : isActive 
+              ? 'bg-agent-primary/10' 
+              : 'bg-gray-100 dark:bg-gray-800'
+        }`}>
           {isCompleted ? (
             <CheckCircle2 className="h-5 w-5 text-green-500" />
           ) : (
             <div className="h-5 w-5 flex items-center justify-center">
-              {icon}
+              {stepNumber}
             </div>
           )}
         </div>
@@ -91,8 +99,24 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             <Progress value={overallProgress} className="w-24 h-2" />
           </div>
         </div>
+        
+        {/* Next Action Recommendation */}
+        <div className="bg-agent-primary/10 rounded-lg p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <div className="bg-agent-primary/20 p-2 rounded-full">
+              <ArrowRight className="h-5 w-5 text-agent-primary" />
+            </div>
+            <div>
+              <h3 className="font-medium text-base mb-1">Recommended Next Action</h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Complete your agent training by uploading call recordings or starting a role-play conversation.
+              </p>
+            </div>
+          </div>
+        </div>
+        
         <p className="text-gray-500 dark:text-gray-400">
-          Complete these steps to fully configure your agent for optimal performance
+          Complete these steps in order to fully configure your agent for optimal performance
         </p>
       </div>
       
@@ -112,6 +136,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           isActive={steps.training.active}
           isCompleted={steps.training.completed}
           progress={steps.training.progress}
+          stepNumber={1}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg text-center">
@@ -125,6 +150,18 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg text-center">
               <div className="text-xl font-bold">45s</div>
               <div className="text-xs text-gray-500">Average Talk Time</div>
+            </div>
+          </div>
+          
+          <div className="bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/20 rounded-lg p-4 mb-4">
+            <div className="flex items-start gap-3">
+              <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-full">
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+              </div>
+              <div>
+                <h4 className="font-medium mb-1">Progress: 3 of 10 voice samples uploaded</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Upload 7 more voice samples to complete this step.</p>
+              </div>
             </div>
           </div>
           
@@ -157,7 +194,20 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           isActive={steps.knowledge.active}
           isCompleted={steps.knowledge.completed}
           progress={steps.knowledge.progress}
+          stepNumber={2}
         >
+          <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 rounded-lg p-4 mb-4">
+            <div className="flex items-start gap-3">
+              <div className="bg-amber-100 dark:bg-amber-900/20 p-2 rounded-full">
+                <ArrowRight className="h-4 w-4 text-amber-500" />
+              </div>
+              <div>
+                <h4 className="font-medium mb-1">Status: Partially complete</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">You've added some knowledge, but we recommend adding more documents to improve your agent's accuracy.</p>
+              </div>
+            </div>
+          </div>
+        
           <div className="bg-agent-primary/5 rounded-lg p-4 mb-4">
             <h4 className="font-medium mb-2">Add Knowledge Sources</h4>
             <p className="text-sm text-gray-500 mb-4">Select a method to provide training data for your agent:</p>
@@ -187,7 +237,22 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           isActive={steps.workflow.active}
           isCompleted={steps.workflow.completed}
           progress={steps.workflow.progress}
-        />
+          stepNumber={3}
+        >
+          <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/20 rounded-lg p-4 mb-4">
+            <div className="flex items-start gap-3">
+              <div className="bg-gray-100 dark:bg-gray-700/20 p-2 rounded-full">
+                <ArrowRight className="h-4 w-4 text-gray-500" />
+              </div>
+              <div>
+                <h4 className="font-medium mb-1">Status: Not started</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  You'll need to complete the Knowledge Base step before designing your workflow.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Step>
         
         {/* Simulation Step */}
         <Step 
@@ -197,7 +262,22 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           isActive={steps.simulation.active}
           isCompleted={steps.simulation.completed}
           progress={steps.simulation.progress}
-        />
+          stepNumber={4}
+        >
+          <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/20 rounded-lg p-4 mb-4">
+            <div className="flex items-start gap-3">
+              <div className="bg-gray-100 dark:bg-gray-700/20 p-2 rounded-full">
+                <ArrowRight className="h-4 w-4 text-gray-500" />
+              </div>
+              <div>
+                <h4 className="font-medium mb-1">Status: Not started</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  You'll need to complete the Workflow step before running simulations.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Step>
       </div>
     </div>
   );
