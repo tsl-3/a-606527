@@ -56,7 +56,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({ channels = [] }) =
                 variant="default"
               >
                 {getChannelIcon(channel)}
-                {channel === "voice" && <span className="text-[0.65rem]">voice</span>}
+                <span className="text-[0.65rem] capitalize">{channel}</span>
               </Badge>
             </TooltipTrigger>
             <TooltipContent>
