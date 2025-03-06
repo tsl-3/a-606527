@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Bot, Upload, Plus, X, Check, AlertCircle } from "lucide-react";
@@ -11,7 +12,6 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { LoaderIcon } from "@/components/LoaderIcon";
 
 const AGENT_TYPES = [
   {
@@ -300,7 +300,7 @@ const AgentCreate = () => {
               <Button type="submit" disabled={isSubmitting} className="min-w-[120px]">
                 {isSubmitting ? (
                   <>
-                    <LoaderIcon className="mr-2 h-4 w-4" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Creating...
                   </>
                 ) : (

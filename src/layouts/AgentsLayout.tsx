@@ -2,14 +2,11 @@
 import { Outlet } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Bot } from "lucide-react";
-import { BackgroundGradient } from "@/components/BackgroundGradient";
-import { Link } from "react-router-dom";
 
 const AgentsLayout: React.FC = () => {
   return (
-    <div className="min-h-screen w-full bg-background relative">
-      <BackgroundGradient />
-      <header className="border-b border-border/10 p-4 flex justify-between items-center backdrop-blur-sm bg-background/30 sticky top-0 z-10">
+    <div className="min-h-screen w-full bg-background">
+      <header className="border-b border-border p-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Bot className="h-6 w-6 text-primary" />
           <h1 className="text-xl font-semibold text-foreground">Agent Hub</h1>

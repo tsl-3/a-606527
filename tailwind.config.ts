@@ -111,10 +111,6 @@ export default {
 				'pulse-light': {
 					'0%, 100%': { opacity: '1' },
 					'50%': { opacity: '0.5' }
-				},
-				'pulse-slow': {
-					'0%, 100%': { opacity: '0.2' },
-					'50%': { opacity: '0.3' }
 				}
 			},
 			animation: {
@@ -127,8 +123,7 @@ export default {
 				'scale-in': 'scale-in 0.3s ease-out',
 				'scale-out': 'scale-out 0.3s ease-out',
 				'blur-in': 'blur-in 0.3s ease-out',
-				'pulse-light': 'pulse-light 2s ease-in-out infinite',
-				'pulse-slow': 'pulse-slow 8s ease-in-out infinite'
+				'pulse-light': 'pulse-light 2s ease-in-out infinite'
 			}
 		}
 	},
