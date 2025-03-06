@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Bot, Search, CircleSlash, Loader2 } from "lucide-react";
@@ -61,7 +62,7 @@ const AgentsDashboard = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search agents..."
-              className="pl-10 w-full md:w-64 bg-[#000313]/70"
+              className="pl-10 w-full md:w-64 dark:bg-[#000313]/70"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -95,7 +96,7 @@ const AgentsDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAgents.map((agent) => (
             <Link to={`/agents/${agent.id}`} key={agent.id} className="block">
-              <Card className="h-full card-hover bg-[#000313]/80">
+              <Card className="h-full card-hover bg-white dark:bg-[#000313]/80">
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
                     <Badge variant={agent.status === "active" ? "default" : "secondary"} className="mb-2">
