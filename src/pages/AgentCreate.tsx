@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Bot, Upload, Plus, X, Check, AlertCircle, Loader2 } from "lucide-react";
@@ -133,7 +134,7 @@ const AgentCreate = () => {
       
       <form onSubmit={handleSubmit}>
         <div className="space-y-8">
-          <Card>
+          <Card className="bg-[#000313]/80">
             <CardHeader>
               <CardTitle>Basic Information</CardTitle>
               <CardDescription>Define your agent's identity and purpose</CardDescription>
@@ -148,7 +149,7 @@ const AgentCreate = () => {
                   placeholder="E.g., Support Assistant, Sales Bot"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className={errors.name ? "border-destructive" : ""}
+                  className={`bg-[#000313]/70 ${errors.name ? "border-destructive" : ""}`}
                 />
                 {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
               </div>
@@ -162,7 +163,7 @@ const AgentCreate = () => {
                   placeholder="Describe what your agent does and how it can help users"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className={`min-h-[100px] ${errors.description ? "border-destructive" : ""}`}
+                  className={`min-h-[100px] bg-[#000313]/70 ${errors.description ? "border-destructive" : ""}`}
                 />
                 {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
               </div>
@@ -173,7 +174,7 @@ const AgentCreate = () => {
                 </Label>
                 <RadioGroup value={agentType} onValueChange={setAgentType} className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                   {AGENT_TYPES.map((type) => (
-                    <div key={type.id} className={`flex items-start space-x-3 border rounded-md p-4 transition-all hover:border-agent-primary/50 ${agentType === type.id ? "border-agent-primary bg-agent-secondary/50" : "border-gray-200"}`}>
+                    <div key={type.id} className={`flex items-start space-x-3 border rounded-md p-4 transition-all hover:border-agent-primary/50 ${agentType === type.id ? "border-agent-primary bg-agent-secondary/50" : "border-gray-200 bg-[#000313]/50"}`}>
                       <RadioGroupItem value={type.id} id={type.id} className="mt-1" />
                       <Label htmlFor={type.id} className="flex-1 cursor-pointer">
                         <span className="font-medium text-agent-dark">{type.name}</span>
@@ -187,7 +188,7 @@ const AgentCreate = () => {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="bg-[#000313]/80">
             <CardHeader>
               <CardTitle>Agent Configuration</CardTitle>
               <CardDescription>Select capabilities and access settings</CardDescription>
@@ -198,10 +199,10 @@ const AgentCreate = () => {
                   AI Model<span className="text-destructive">*</span>
                 </Label>
                 <Select value={model} onValueChange={setModel}>
-                  <SelectTrigger className={errors.model ? "border-destructive" : ""}>
+                  <SelectTrigger className={`bg-[#000313]/70 ${errors.model ? "border-destructive" : ""}`}>
                     <SelectValue placeholder="Select a model" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-[#000313]">
                     {MODELS.map((m) => (
                       <SelectItem key={m.id} value={m.id}>
                         <div className="flex flex-col">
@@ -244,7 +245,7 @@ const AgentCreate = () => {
                 </Alert>
                 
                 <div className="mt-4">
-                  <div className="border-2 border-dashed rounded-md border-gray-300 p-6 text-center hover:border-agent-primary/50 transition-all">
+                  <div className="border-2 border-dashed rounded-md border-gray-300 p-6 text-center hover:border-agent-primary/50 transition-all bg-[#000313]/30">
                     <input
                       type="file"
                       id="file-upload"
@@ -264,7 +265,7 @@ const AgentCreate = () => {
                       <Label>Uploaded Files</Label>
                       <div className="space-y-2">
                         {files.map((file, index) => (
-                          <div key={index} className="flex items-center justify-between bg-gray-50 rounded p-2">
+                          <div key={index} className="flex items-center justify-between bg-[#000313]/50 rounded p-2">
                             <div className="flex items-center space-x-2 text-sm">
                               <div className="bg-agent-primary/10 p-1 rounded">
                                 <Bot className="h-4 w-4 text-agent-primary" />
