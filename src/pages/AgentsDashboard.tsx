@@ -1,11 +1,19 @@
+
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { Bot, Search, CircleSlash, Loader2, UserCircle2 } from "lucide-react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/components/ui/use-toast";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { AgentType } from "@/types/agent";
 import { useAgents } from "@/hooks/useAgents";
 import { AgentToggle } from "@/components/AgentToggle";
@@ -24,6 +32,7 @@ const AgentsDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const filter = searchParams.get("filter") || "all-agents";
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const { agents: initialAgents, isLoading, error } = useAgents(filter);
   const [agents, setAgents] = useState<AgentType[]>([]);
@@ -76,6 +85,35 @@ const AgentsDashboard = () => {
     });
     
     console.log(`Toggling agent ${agentId} to ${newStatus}`);
+  };
+
+  const handleEditAgent = (e: React.MouseEvent, agentId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Navigate to edit page or open modal
+    toast({
+      title: "Edit Agent",
+      description: "Edit functionality will be implemented soon.",
+    });
+  };
+
+  const handleArchiveAgent = (e: React.MouseEvent, agentId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toast({
+      title: "Archive Agent",
+      description: "The agent has been archived.",
+      variant: "destructive",
+    });
+    // Remove the agent from the displayed list
+    setAgents(prevAgents => prevAgents.filter(agent => agent.id !== agentId));
+    setFilteredAgents(prevAgents => prevAgents.filter(agent => agent.id !== agentId));
+  };
+
+  const handleViewDetails = (e: React.MouseEvent, agentId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`/agents/${agentId}`);
   };
 
   if (error) {
@@ -148,6 +186,31 @@ const AgentsDashboard = () => {
                         <p className="text-xs text-muted-foreground dark:text-gray-400">{agent.name}</p>
                       </div>
                     </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48 bg-white dark:bg-gray-900 z-50">
+                        <DropdownMenuItem onClick={(e) => handleToggleStatus(e, agent.id, agent.status)}>
+                          <Power className="mr-2 h-4 w-4" />
+                          {agent.status === "active" ? "Deactivate" : "Activate"}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => handleEditAgent(e, agent.id)}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit Agent
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => handleViewDetails(e, agent.id)}>
+                          <Eye className="mr-2 h-4 w-4" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => handleArchiveAgent(e, agent.id)}>
+                          <Archive className="mr-2 h-4 w-4" />
+                          Archive Agent
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                   
                   <div className="mt-3">
