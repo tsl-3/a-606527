@@ -15,6 +15,15 @@ export const AgentStats: React.FC<AgentStatsProps> = ({ avmScore, interactionCou
     return "bg-red-500"; // Low score: red
   };
   
+  // Get tier label and color for interaction count
+  const getInteractionTier = (count: number): { label: string; color: string } => {
+    if (count >= 1000) return { label: "Gold", color: "text-yellow-500" };
+    if (count >= 100) return { label: "Silver", color: "text-gray-400" };
+    return { label: "Bronze", color: "text-amber-600" };
+  };
+  
+  const interactionTier = getInteractionTier(interactionCount);
+  
   return (
     <div className="flex gap-3 w-full">
       {/* AVM Score Card */}
@@ -33,7 +42,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({ avmScore, interactionCou
       <div className="flex-1 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm bg-white dark:bg-gray-900/60">
         <div className="px-3 py-1.5 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
           <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Interactions</span>
-          <MessageCircle className="h-3.5 w-3.5 text-gray-400" />
+          <span className={`text-xs font-medium ${interactionTier.color}`}>{interactionTier.label}</span>
         </div>
         <div className="p-3 text-center">
           <span className="text-2xl font-semibold text-gray-900 dark:text-white">

@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Bot, Settings, Play, Pause, Trash2, ExternalLink, History, BarChart2, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/use-toast";
 import { AgentType } from "@/types/agent";
 import { useAgentDetails } from "@/hooks/useAgentDetails";
+import { AgentSetupStepper } from "@/components/AgentSetupStepper";
 
 const AgentDetails = () => {
   const { agentId } = useParams<{ agentId: string }>();
@@ -76,6 +76,12 @@ const AgentDetails = () => {
       </div>
     );
   }
+
+  // Add AVM score to agent data for the stepper
+  const agentWithAvmScore = {
+    ...agent,
+    avmScore: 7.8 // Example score, in a real app this would come from the API
+  };
   
   return (
     <div className="max-w-6xl mx-auto animate-fade-in">
@@ -125,13 +131,17 @@ const AgentDetails = () => {
       
       <Separator className="my-6" />
       
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs defaultValue="setup" className="space-y-6">
         <TabsList className="grid grid-cols-4 md:w-[400px]">
+          <TabsTrigger value="setup">Setup</TabsTrigger>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="setup" className="animate-fade-in">
+          <AgentSetupStepper agent={agentWithAvmScore} />
+        </TabsContent>
         
         <TabsContent value="overview" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -205,7 +215,7 @@ const AgentDetails = () => {
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-4">
                 <Button variant="outline" className="flex items-center space-x-2 justify-start h-auto py-3">
-                  <Play className="h-4 w-4 text-agent-success" />
+                  <ExternalLink className="h-4 w-4 text-agent-primary" />
                   <div className="text-left">
                     <div className="font-medium">Test Agent</div>
                     <div className="text-xs text-gray-500">Try agent in sandbox</div>
@@ -253,25 +263,6 @@ const AgentDetails = () => {
                 <p className="text-gray-500 max-w-md">
                   Detailed performance metrics will be displayed here, including response times,
                   success rates, and usage patterns.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="history" className="animate-fade-in">
-          <Card>
-            <CardHeader>
-              <CardTitle>Interaction History</CardTitle>
-              <CardDescription>Recent agent interactions and conversations</CardDescription>
-            </CardHeader>
-            <CardContent className="h-80 flex items-center justify-center">
-              <div className="text-center">
-                <History className="h-16 w-16 text-agent-primary/20 mx-auto mb-4" />
-                <h3 className="text-lg font-medium">Conversation History</h3>
-                <p className="text-gray-500 max-w-md">
-                  Agent conversation history will be displayed here, including timestamps,
-                  user queries, and agent responses.
                 </p>
               </div>
             </CardContent>
