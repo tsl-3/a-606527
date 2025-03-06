@@ -22,7 +22,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({ channels = [] }) =
       case "email":
         return <Mail className="h-3 w-3" />;
       case "whatsapp":
-        return <MessageCircle className="h-3 w-3 text-green-500" />;
+        return <MessageCircle className="h-3 w-3" />;
       default:
         return null;
     }
