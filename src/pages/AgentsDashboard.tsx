@@ -1,16 +1,15 @@
-
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Bot, Search, CircleSlash, Loader2, UserCircle2, ToggleLeft, ToggleRight } from "lucide-react";
+import { Bot, Search, CircleSlash, Loader2, UserCircle2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/components/ui/use-toast";
 import { AgentType } from "@/types/agent";
 import { useAgents } from "@/hooks/useAgents";
+import { AgentToggle } from "@/components/AgentToggle";
 
 const AgentsDashboard = () => {
   const [searchParams] = useSearchParams();
@@ -127,29 +126,6 @@ const AgentsDashboard = () => {
                         <p className="text-xs text-muted-foreground dark:text-gray-400">{agent.type}</p>
                       </div>
                     </div>
-                    
-                    <div 
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer"
-                      onClick={(e) => handleToggleStatus(e, agent.id, agent.status)}
-                    >
-                      {agent.status === "active" ? (
-                        <>
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-2.5 h-2.5 bg-agent-success rounded-full animate-pulse"></div>
-                            <span className="text-xs font-medium text-agent-success">Active</span>
-                          </div>
-                          <ToggleRight className="h-5 w-5 text-agent-success" />
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-2.5 h-2.5 bg-gray-400 rounded-full"></div>
-                            <span className="text-xs font-medium text-gray-400">Inactive</span>
-                          </div>
-                          <ToggleLeft className="h-5 w-5 text-gray-400" />
-                        </>
-                      )}
-                    </div>
                   </div>
                   
                   <div className="mt-3">
@@ -170,7 +146,11 @@ const AgentsDashboard = () => {
                     <span>{agent.interactions} interactions</span>
                   </div>
                 </CardContent>
-                <CardFooter className="border-t pt-4 flex justify-between">
+                <CardFooter className="border-t pt-4 flex justify-between items-center">
+                  <AgentToggle 
+                    isActive={agent.status === "active"} 
+                    onToggle={(e) => handleToggleStatus(e, agent.id, agent.status)} 
+                  />
                   <div className="text-sm text-agent-primary font-medium">View Details &rarr;</div>
                 </CardFooter>
               </Card>

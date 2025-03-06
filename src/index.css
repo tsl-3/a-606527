@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -153,6 +154,27 @@
   
   .neo-blur {
     @apply backdrop-blur-2xl bg-white/10 dark:bg-black/40 border border-white/10 dark:border-white/5;
+  }
+  
+  /* Custom toggle switch styling */
+  .agent-toggle-switch {
+    @apply relative inline-flex items-center h-8 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-agent-primary/50 focus:ring-offset-2;
+  }
+  
+  .agent-toggle-switch.active {
+    @apply bg-agent-primary;
+  }
+  
+  .agent-toggle-switch.inactive {
+    @apply bg-gray-200 dark:bg-gray-700;
+  }
+  
+  .agent-toggle-handle {
+    @apply absolute w-6 h-6 bg-white rounded-full transform transition-transform duration-300 shadow-md;
+  }
+  
+  .agent-toggle-label {
+    @apply text-xs font-semibold w-full text-center transition-opacity duration-300;
   }
 }
 
