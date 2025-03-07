@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -83,7 +82,9 @@ const AgentDetails = () => {
 
   const agentWithAvmScore = {
     ...agent,
-    avmScore: 7.8 // Example score, in a real app this would come from the API
+    avmScore: 7.8,
+    voiceProvider: agent.voiceProvider || "Eleven Labs",
+    voice: agent.voice || "Emma"
   };
   
   const lastUpdated = new Date().toLocaleString();
@@ -97,12 +98,10 @@ const AgentDetails = () => {
         </Link>
       </div>
       
-      {/* Integrated Agent Header with Essential Info */}
       <div className="rounded-xl bg-gradient-to-br from-agent-dark-bg/90 to-agent-dark-bg/70 backdrop-blur-sm border border-white/10 p-6 mb-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-tr from-agent-primary/5 to-transparent"></div>
         
         <div className="relative z-10">
-          {/* Top row: Agent name, description, status toggle, and actions */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <div className="flex items-start space-x-4">
               <div className="bg-agent-primary/20 p-3.5 rounded-full">
@@ -149,9 +148,7 @@ const AgentDetails = () => {
             </div>
           </div>
           
-          {/* Bottom section: Key stats and info cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* AVM Score */}
             <div className="bg-black/30 rounded-lg border border-white/10 p-3">
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs font-medium text-gray-400">AVM Score</span>
@@ -163,7 +160,6 @@ const AgentDetails = () => {
               </div>
             </div>
             
-            {/* Interactions */}
             <div className="bg-black/30 rounded-lg border border-white/10 p-3">
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs font-medium text-gray-400">Interactions</span>
@@ -176,7 +172,6 @@ const AgentDetails = () => {
               </div>
             </div>
             
-            {/* Performance */}
             <div className="bg-black/30 rounded-lg border border-white/10 p-3">
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs font-medium text-gray-400">Performance</span>
@@ -185,7 +180,6 @@ const AgentDetails = () => {
               <div className="text-2xl font-bold text-white">94%</div>
             </div>
             
-            {/* Last Updated */}
             <div className="bg-black/30 rounded-lg border border-white/10 p-3">
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs font-medium text-gray-400">Last Updated</span>
@@ -197,9 +191,7 @@ const AgentDetails = () => {
         </div>
       </div>
       
-      {/* Combined Agent Information and Quick Actions Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        {/* Agent Information */}
         <Card className="bg-agent-dark-bg border-gray-800 lg:col-span-1">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg text-white">Agent Information</CardTitle>
@@ -231,18 +223,24 @@ const AgentDetails = () => {
               </div>
               
               <div className="space-y-1">
-                <div className="text-xs uppercase text-gray-500 font-medium">Access</div>
+                <div className="text-xs uppercase text-gray-500 font-medium">Voice Provider</div>
                 <div className="text-sm font-medium text-white">
                   <Badge variant="outline" className="border-agent-primary/30 text-agent-primary bg-agent-primary/10">
-                    {agent.isPersonal ? "Personal" : "Team"}
+                    {agentWithAvmScore.voiceProvider}
                   </Badge>
+                </div>
+              </div>
+              
+              <div className="space-y-1 col-span-2">
+                <div className="text-xs uppercase text-gray-500 font-medium">Voice</div>
+                <div className="text-sm font-medium text-white">
+                  {agentWithAvmScore.voice}
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
         
-        {/* Quick Actions */}
         <Card className="bg-agent-dark-bg border-gray-800 lg:col-span-2">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg text-white">Quick Actions</CardTitle>
