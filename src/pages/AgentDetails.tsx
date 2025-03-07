@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, 
   ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause,
-  Phone, Copy, TestTube
+  Phone, Copy, TestTube, Mail
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -433,6 +433,10 @@ const AgentDetails = () => {
   
   const voicePhoneNumber = agent.channelConfigs?.voice?.details || null;
   
+  const activeChannels = Object.entries(agent.channelConfigs || {})
+    .filter(([_, config]) => config.enabled)
+    .map(([channel]) => channel);
+  
   return (
     <div className="max-w-6xl mx-auto animate-fade-in">
       <div className="mb-6">
@@ -475,46 +479,57 @@ const AgentDetails = () => {
                 </div>
                 <p className="text-gray-300 mt-1.5 max-w-2xl">{agent.description}</p>
                 
-                <div className="mt-3 flex flex-col gap-2.5">
-                  <AgentChannels 
-                    channels={agent.channelConfigs || {}} 
-                    readonly={true}
-                    compact={true}
-                    showDetails={true}
-                  />
-                  
-                  {voicePhoneNumber && (
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="flex bg-black/30 rounded-lg border border-gray-700/50 p-1.5">
-                        <div className="flex items-center gap-1.5">
-                          <Phone className="h-3.5 w-3.5 text-agent-primary" />
-                          <span className="text-xs text-white font-medium">{voicePhoneNumber}</span>
-                        </div>
-                        
-                        <div className="flex ml-3 gap-1">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-6 w-6 rounded-full hover:bg-gray-700/50"
-                            onClick={handleCopyPhoneNumber}
-                            title="Copy phone number"
-                          >
-                            <Copy className="h-3 w-3 text-gray-400" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-6 w-6 rounded-full hover:bg-green-700/50"
-                            onClick={handleTestCall}
-                            title="Test agent call"
-                          >
-                            <TestTube className="h-3 w-3 text-green-400" />
-                          </Button>
-                        </div>
+                {activeChannels.length > 0 && (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {activeChannels.includes('voice') && (
+                      <Badge className="bg-blue-500 text-white px-2 py-0.5 flex items-center gap-1">
+                        <Mic className="h-3 w-3" />
+                        <span className="text-xs">Voice</span>
+                      </Badge>
+                    )}
+                    {activeChannels.includes('chat') && (
+                      <Badge className="bg-purple-500 text-white px-2 py-0.5 flex items-center gap-1">
+                        <MessageSquare className="h-3 w-3" />
+                        <span className="text-xs">Chat</span>
+                      </Badge>
+                    )}
+                    {activeChannels.includes('email') && (
+                      <Badge className="bg-red-500 text-white px-2 py-0.5 flex items-center gap-1">
+                        <Mail className="h-3 w-3" />
+                        <span className="text-xs">Email</span>
+                      </Badge>
+                    )}
+                  </div>
+                )}
+                
+                {voicePhoneNumber && (
+                  <div className="mt-2 flex items-center">
+                    <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
+                      <Phone className="h-3.5 w-3.5 text-agent-primary" />
+                      <span className="text-xs text-white">{voicePhoneNumber}</span>
+                      <div className="flex gap-1 ml-2">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 rounded-full hover:bg-gray-700/50"
+                          onClick={handleCopyPhoneNumber}
+                          title="Copy phone number"
+                        >
+                          <Copy className="h-3 w-3 text-gray-400" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 rounded-full hover:bg-green-700/50"
+                          onClick={handleTestCall}
+                          title="Test agent call"
+                        >
+                          <TestTube className="h-3 w-3 text-green-400" />
+                        </Button>
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
             
@@ -966,4 +981,3 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
-
