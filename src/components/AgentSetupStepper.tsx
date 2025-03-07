@@ -1,4 +1,3 @@
-
 import React from "react";
 import { 
   Mic, BookOpen, Workflow, FlaskConical, CheckCircle2, 
@@ -8,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { AgentStats } from "./AgentStats";
 import { AgentChannels } from "./AgentChannels";
 
 interface StepProps {
@@ -121,13 +119,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
         </p>
       </div>
       
-      <div className="space-y-1">
-        <AgentStats 
-          avmScore={agent.avmScore || 6.5} 
-          interactionCount={agent.interactions || 0} 
-        />
-      </div>
-
       <div className="space-y-4 mt-8">
         {/* Training Step */}
         <Step 
