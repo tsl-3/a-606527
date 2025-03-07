@@ -1,13 +1,26 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { 
   Mic, BookOpen, Workflow, FlaskConical, CheckCircle2, 
-  Upload, PlayCircle, Bot, File, CircleDashed, ArrowRight
+  Upload, PlayCircle, Bot, File, CircleDashed, ArrowRight,
+  Clock, BarChart, ChevronUp, Download, Trash2, User
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { AgentChannels } from "./AgentChannels";
+
+// Define training record interface
+interface TrainingRecord {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  duration: string;
+  type: 'call' | 'roleplay';
+}
 
 interface StepProps {
   title: string;
@@ -70,6 +83,196 @@ const Step: React.FC<StepProps> = ({
   );
 };
 
+// New Training Card Component
+const AgentTrainingCard: React.FC<{ 
+  status: 'empty' | 'in-progress' | 'completed';
+  voiceSamples?: number;
+  totalSamples?: number;
+  voiceConfidence?: number;
+  talkTime?: string;
+  trainingRecords?: TrainingRecord[];
+}> = ({ 
+  status, 
+  voiceSamples = 0, 
+  totalSamples = 10, 
+  voiceConfidence = 0,
+  talkTime = '0s',
+  trainingRecords = []
+}) => {
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  return (
+    <div className="bg-[#1A1F2C] rounded-lg overflow-hidden mb-6">
+      <div className="p-6 pb-0">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-1 h-10 bg-agent-primary rounded-full"></div>
+            <h3 className="text-xl font-semibold text-white">Agent Training</h3>
+            {status !== 'empty' && (
+              <Badge variant="outline" className="bg-amber-500/20 text-amber-400 border-amber-500/30 ml-2">
+                In Progress
+              </Badge>
+            )}
+          </div>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-gray-400 hover:text-white"
+          >
+            <ChevronUp className={`h-5 w-5 ${!isExpanded ? 'transform rotate-180' : ''}`} />
+          </Button>
+        </div>
+        
+        {isExpanded && (
+          <>
+            <p className="text-gray-300 mb-8 max-w-4xl">
+              Start training your voice agent by uploading call recordings or role-play a conversation to clone your voice, patterns, behaviors, and personality.
+            </p>
+
+            {status === 'empty' && (
+              <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-8 mb-8 text-center">
+                <Mic className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                <h4 className="text-lg font-medium text-gray-200 mb-2">No voice samples yet</h4>
+                <p className="text-gray-400 mb-6 max-w-md mx-auto">
+                  Upload call recordings or start a role-playing session to begin training your agent.
+                </p>
+                <div className="flex justify-center gap-4">
+                  <Button variant="outline" className="bg-gray-800/50 border-gray-700 text-white gap-2">
+                    <Upload className="h-4 w-4" />
+                    Upload Recordings
+                  </Button>
+                  <Button className="gap-2">
+                    <PlayCircle className="h-4 w-4" />
+                    Start Role-Play
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {status !== 'empty' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div className="bg-black/30 p-6 rounded-lg border border-gray-800/50 flex flex-col">
+                  <div className="flex items-center gap-2 mb-1 text-gray-400">
+                    <Clock className="h-4 w-4" />
+                    <span className="text-xs font-medium">Voice Samples</span>
+                  </div>
+                  <div className="flex items-end justify-between mt-auto">
+                    <div className="text-3xl font-bold text-white">{voiceSamples}/{totalSamples}</div>
+                    <div className="text-xs text-gray-500">Recommended samples for optimal training</div>
+                  </div>
+                </div>
+                <div className="bg-black/30 p-6 rounded-lg border border-gray-800/50 flex flex-col">
+                  <div className="flex items-center gap-2 mb-1 text-gray-400">
+                    <BarChart className="h-4 w-4" />
+                    <span className="text-xs font-medium">Voice Cloning Confidence</span>
+                  </div>
+                  <div className="flex items-end justify-between mt-auto">
+                    <div className="text-3xl font-bold text-white">{voiceConfidence}%</div>
+                    <div className="text-xs text-gray-500">Current confidence level: {
+                      voiceConfidence < 40 ? 'low' : voiceConfidence < 70 ? 'medium' : 'high'
+                    }</div>
+                  </div>
+                </div>
+                <div className="bg-black/30 p-6 rounded-lg border border-gray-800/50 flex flex-col">
+                  <div className="flex items-center gap-2 mb-1 text-gray-400">
+                    <Clock className="h-4 w-4" />
+                    <span className="text-xs font-medium">Average Talk Time</span>
+                  </div>
+                  <div className="flex items-end justify-between mt-auto">
+                    <div className="text-3xl font-bold text-white">{talkTime}</div>
+                    <div className="text-xs text-gray-500">Average duration of voice samples</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {status !== 'empty' && (
+              <>
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-white font-medium flex items-center gap-2">
+                      <span>Voice Sample Collection</span>
+                      <Badge variant="outline" className="bg-amber-500/20 text-amber-400 border-amber-500/30 ml-1">
+                        In Progress
+                      </Badge>
+                    </h4>
+                    <span className="text-gray-400 text-sm">{voiceConfidence}%</span>
+                  </div>
+                  <div className="relative mb-2">
+                    <Progress value={voiceConfidence} className="h-2" />
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>Optimal (5)</span>
+                    <span>Ideal (10)</span>
+                    <span>Best (20+)</span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-900/70 border border-gray-800 rounded-lg p-6 mb-6">
+                  <h4 className="font-medium text-white mb-3">Get Started with Training</h4>
+                  <p className="text-sm text-gray-400 mb-4">Choose one of the following options to begin training your AI agent:</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
+                      <Upload className="h-4 w-4" />
+                      <span>Upload Call Recordings</span>
+                    </Button>
+                    <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
+                      <PlayCircle className="h-4 w-4" />
+                      <span>Start Role-Playing</span>
+                    </Button>
+                    <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
+                      <Bot className="h-4 w-4" />
+                      <span>Hire Voice Actor</span>
+                    </Button>
+                  </div>
+                </div>
+
+                {trainingRecords.length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="font-medium text-white mb-4">Training Recordings</h4>
+                    <div className="space-y-2">
+                      {trainingRecords.map((record) => (
+                        <div key={record.id} className="bg-black/30 border border-gray-800 rounded-lg p-4 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-gray-800 p-2 rounded-full">
+                              {record.type === 'call' ? (
+                                <Mic className="h-5 w-5 text-gray-400" />
+                              ) : (
+                                <User className="h-5 w-5 text-gray-400" />
+                              )}
+                            </div>
+                            <div>
+                              <h5 className="font-medium text-white">{record.title}</h5>
+                              <p className="text-xs text-gray-500">{record.date}, {record.time} • {record.duration}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+                              <PlayCircle className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+                              <Download className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
 interface AgentSetupStepperProps {
   agent: any;
 }
@@ -87,6 +290,26 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
   const totalSteps = Object.keys(steps).length;
   const completedSteps = Object.values(steps).filter(step => step.completed).length;
   const overallProgress = Math.round((completedSteps / totalSteps) * 100);
+
+  // Sample training records - would come from backend in real app
+  const sampleTrainingRecords: TrainingRecord[] = [
+    {
+      id: '1',
+      title: 'Customer Support Call #1',
+      date: 'Feb 20, 2024',
+      time: '8:30 AM',
+      duration: '5:30',
+      type: 'call'
+    },
+    {
+      id: '2',
+      title: 'Role-Play Session #1',
+      date: 'Feb 21, 2024',
+      time: '3:15 AM',
+      duration: '3:45',
+      type: 'roleplay'
+    }
+  ];
   
   return (
     <div className="space-y-6 animate-fade-in">
@@ -120,7 +343,19 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       </div>
       
       <div className="space-y-4 mt-8">
-        {/* Training Step */}
+        {/* Empty State Training Example */}
+        <AgentTrainingCard status="empty" />
+        
+        {/* In Progress Training Example - uncomment this to see the in-progress state */}
+        <AgentTrainingCard 
+          status="in-progress" 
+          voiceSamples={3} 
+          voiceConfidence={65} 
+          talkTime="45s" 
+          trainingRecords={sampleTrainingRecords}
+        />
+        
+        {/* Training Step - Original (can be removed once the new design is approved) */}
         <Step 
           title="Agent Training" 
           description="Train your voice agent by uploading call recordings or role-play a conversation"
