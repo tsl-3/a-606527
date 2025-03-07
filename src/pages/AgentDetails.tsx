@@ -529,79 +529,81 @@ const AgentDetails = () => {
                     )}
                   </div>
                 )}
-                
-                <div className="mt-3 flex items-center gap-2 flex-wrap">
-                  {voicePhoneNumber && (
-                    <div className="flex items-center">
-                      <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
-                        <Phone className="h-3.5 w-3.5 text-blue-500" />
-                        <span className="text-xs text-white">{voicePhoneNumber}</span>
-                        <div className="flex gap-1 ml-2">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-6 w-6 rounded-full hover:bg-gray-700/50"
-                            onClick={handleCopyPhoneNumber}
-                            title="Copy phone number"
-                          >
-                            <Copy className="h-3 w-3 text-gray-400" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-6 w-6 rounded-full hover:bg-green-700/50"
-                            onClick={handleTestCall}
-                            title="Test agent call"
-                          >
-                            <PhoneOutgoing className="h-3 w-3 text-green-400" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {emailAddress && (
-                    <div className="flex items-center">
-                      <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
-                        <Mail className="h-3.5 w-3.5 text-red-500" />
-                        <span className="text-xs text-white">{emailAddress}</span>
-                        <div className="flex gap-1 ml-2">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-6 w-6 rounded-full hover:bg-gray-700/50"
-                            onClick={handleCopyEmail}
-                            title="Copy email address"
-                          >
-                            <Copy className="h-3 w-3 text-gray-400" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-6 w-6 rounded-full hover:bg-green-700/50"
-                            onClick={handleTestEmail}
-                            title="Test agent email"
-                          >
-                            <Send className="h-3 w-3 text-green-400" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
             
-            <div className="flex items-center space-x-3 mt-2 md:mt-0">
-              <AgentToggle isActive={isActive} onToggle={handleStatusToggle} />
-              <Button variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white">
-                <Settings className="h-4 w-4 mr-2" />
-                <span>Settings</span>
-              </Button>
-              <Button variant="destructive" size="icon" onClick={handleDelete} 
-                className="bg-red-500/20 hover:bg-red-500/30 text-red-400">
-                <Trash2 className="h-4 w-4" />
-              </Button>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center space-x-3 mt-2 md:mt-0">
+                <AgentToggle isActive={isActive} onToggle={handleStatusToggle} />
+                <Button variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white">
+                  <Settings className="h-4 w-4 mr-2" />
+                  <span>Settings</span>
+                </Button>
+                <Button variant="destructive" size="icon" onClick={handleDelete} 
+                  className="bg-red-500/20 hover:bg-red-500/30 text-red-400">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+              
+              <div className="flex items-center gap-2 flex-wrap">
+                {voicePhoneNumber && (
+                  <div className="flex items-center">
+                    <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
+                      <Phone className="h-3.5 w-3.5 text-blue-500" />
+                      <span className="text-xs text-white">{voicePhoneNumber}</span>
+                      <div className="flex gap-1 ml-2">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 rounded-full hover:bg-gray-700/50"
+                          onClick={handleCopyPhoneNumber}
+                          title="Copy phone number"
+                        >
+                          <Copy className="h-3 w-3 text-gray-400" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 rounded-full hover:bg-green-700/50"
+                          onClick={handleTestCall}
+                          title="Test agent call"
+                        >
+                          <PhoneOutgoing className="h-3 w-3 text-green-400" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {emailAddress && (
+                  <div className="flex items-center">
+                    <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
+                      <Mail className="h-3.5 w-3.5 text-red-500" />
+                      <span className="text-xs text-white">{emailAddress}</span>
+                      <div className="flex gap-1 ml-2">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 rounded-full hover:bg-gray-700/50"
+                          onClick={handleCopyEmail}
+                          title="Copy email address"
+                        >
+                          <Copy className="h-3 w-3 text-gray-400" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 rounded-full hover:bg-green-700/50"
+                          onClick={handleTestEmail}
+                          title="Test agent email"
+                        >
+                          <Send className="h-3 w-3 text-green-400" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </CardHeader>
