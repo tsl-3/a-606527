@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2 } from "lucide-react";
@@ -98,12 +99,12 @@ const AgentDetails = () => {
           </div>
           <div>
             <div className="flex items-center space-x-3">
-              <h1 className="text-3xl font-semibold text-agent-dark">{agent.name}</h1>
+              <h1 className="text-3xl font-semibold text-agent-dark dark:text-white">{agent.name}</h1>
               <Badge variant={isActive ? "default" : "secondary"}>
                 {isActive ? "Active" : "Inactive"}
               </Badge>
             </div>
-            <p className="text-gray-500 mt-1">{agent.description}</p>
+            <p className="text-gray-500 dark:text-gray-300 mt-1">{agent.description}</p>
           </div>
         </div>
         
