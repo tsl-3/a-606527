@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2 } from "lucide-react";
@@ -130,6 +129,46 @@ const AgentDetails = () => {
         </div>
       </div>
       
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Status</CardTitle>
+            <CardDescription>Agent current state</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center space-x-2">
+              <div className={`h-3 w-3 rounded-full ${isActive ? 'bg-agent-success animate-pulse' : 'bg-gray-300'}`} />
+              <span className="font-medium">{isActive ? "Online" : "Offline"}</span>
+            </div>
+            <div className="mt-4 text-sm text-gray-500">
+              Last updated: {new Date().toLocaleString()}
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Interactions</CardTitle>
+            <CardDescription>Total agent interactions</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-agent-dark">{agent.interactions}</div>
+            <div className="text-sm text-agent-success mt-1">+24% from last month</div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Performance</CardTitle>
+            <CardDescription>Response effectiveness</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-agent-dark">94%</div>
+            <div className="text-sm text-agent-success mt-1">+2% from last week</div>
+          </CardContent>
+        </Card>
+      </div>
+      
       <Separator className="my-6" />
       
       <Tabs defaultValue="setup" className="space-y-6">
@@ -145,46 +184,6 @@ const AgentDetails = () => {
         </TabsContent>
         
         <TabsContent value="overview" className="space-y-6 animate-fade-in">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Status</CardTitle>
-                <CardDescription>Agent current state</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center space-x-2">
-                  <div className={`h-3 w-3 rounded-full ${isActive ? 'bg-agent-success animate-pulse' : 'bg-gray-300'}`} />
-                  <span className="font-medium">{isActive ? "Online" : "Offline"}</span>
-                </div>
-                <div className="mt-4 text-sm text-gray-500">
-                  Last updated: {new Date().toLocaleString()}
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Interactions</CardTitle>
-                <CardDescription>Total agent interactions</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-agent-dark">{agent.interactions}</div>
-                <div className="text-sm text-agent-success mt-1">+24% from last month</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Performance</CardTitle>
-                <CardDescription>Response effectiveness</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-agent-dark">94%</div>
-                <div className="text-sm text-agent-success mt-1">+2% from last week</div>
-              </CardContent>
-            </Card>
-          </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
