@@ -24,7 +24,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import { AgentType } from "@/types/agent";
+import { AgentType, AgentStatus, AgentChannelConfig } from "@/types/agent";
 import { useAgents } from "@/hooks/useAgents";
 import { AgentToggle } from "@/components/AgentToggle";
 import { AgentChannels } from "@/components/AgentChannels";
@@ -86,8 +86,8 @@ const AgentsDashboard = () => {
     }
   };
 
-  const executeToggleStatus = (agentId: string, currentStatus: "active" | "inactive") => {
-    const newStatus = currentStatus === "active" ? "inactive" : "active";
+  const executeToggleStatus = (agentId: string, currentStatus: AgentStatus) => {
+    const newStatus: AgentStatus = currentStatus === "active" ? "inactive" : "active";
     
     setAgents(prevAgents => 
       prevAgents.map(agent => 
@@ -109,7 +109,7 @@ const AgentsDashboard = () => {
     console.log(`Toggling agent ${agentId} to ${newStatus}`);
   };
 
-  const handleToggleStatus = (e: React.MouseEvent, agentId: string, currentStatus: "active" | "inactive") => {
+  const handleToggleStatus = (e: React.MouseEvent, agentId: string, currentStatus: AgentStatus) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -316,7 +316,17 @@ const AgentsDashboard = () => {
                     />
                     
                     <div>
-                      <AgentChannels channels={agent.channels} />
+                      {agent.channelConfigs ? (
+                        <AgentChannels channels={agent.channelConfigs} readonly={true} />
+                      ) : agent.channels ? (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {agent.channels.map((channel) => (
+                            <div key={channel} className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 text-xs px-2 py-1 rounded-full">
+                              {channel}
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                     
                     <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">

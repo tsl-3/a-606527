@@ -1,5 +1,5 @@
 
-import { AgentType } from '@/types/agent';
+import { AgentType, AgentTypeCategory } from '@/types/agent';
 
 // Mock data for development
 const mockAgents: AgentType[] = [
@@ -7,7 +7,7 @@ const mockAgents: AgentType[] = [
     id: "1",
     name: "Customer Support Bot",
     description: "Handles customer inquiries and support tickets automatically.",
-    type: "Customer Service",
+    type: "customer-support",
     status: "active",
     createdAt: "2023-10-15",
     interactions: 1253,
@@ -19,7 +19,7 @@ const mockAgents: AgentType[] = [
     id: "2",
     name: "Sales Assistant",
     description: "Guides customers through the sales process and answers product questions.",
-    type: "Sales",
+    type: "sales",
     status: "active",
     createdAt: "2023-11-22",
     interactions: 876,
@@ -31,7 +31,7 @@ const mockAgents: AgentType[] = [
     id: "3",
     name: "Knowledge Base Agent",
     description: "Provides information from company documentation and knowledge base.",
-    type: "Knowledge Base",
+    type: "technical-support",
     status: "inactive",
     createdAt: "2024-01-05",
     interactions: 432,
@@ -43,7 +43,7 @@ const mockAgents: AgentType[] = [
     id: "4",
     name: "Meeting Scheduler",
     description: "Helps schedule and manage meetings with clients and team members.",
-    type: "Custom",
+    type: "custom",
     status: "active",
     createdAt: "2024-02-10",
     interactions: 198,
@@ -55,7 +55,7 @@ const mockAgents: AgentType[] = [
     id: "5",
     name: "Document Analyzer",
     description: "Analyzes documents and extracts key information automatically.",
-    type: "Custom",
+    type: "custom",
     status: "inactive",
     createdAt: "2024-03-01",
     interactions: 52,
