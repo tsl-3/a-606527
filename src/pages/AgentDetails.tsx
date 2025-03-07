@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Bot, Settings, Play, Pause, Trash2, ExternalLink, History, BarChart2, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,50 +11,52 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/use-toast";
 import { AgentType } from "@/types/agent";
 import { useAgentDetails } from "@/hooks/useAgentDetails";
+import { AgentSetupStepper } from "@/components/AgentSetupStepper";
+
 const AgentDetails = () => {
-  const {
-    agentId
-  } = useParams<{
-    agentId: string;
-  }>();
+  const { agentId } = useParams<{ agentId: string }>();
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
-  const {
-    agent,
-    isLoading,
-    error
-  } = useAgentDetails(agentId);
+  const { toast } = useToast();
+  const { agent, isLoading, error } = useAgentDetails(agentId);
   const [isActive, setIsActive] = useState(false);
+  
   useEffect(() => {
     if (agent) {
       setIsActive(agent.status === "active");
     }
   }, [agent]);
+  
   const handleStatusToggle = () => {
     setIsActive(!isActive);
     toast({
       title: !isActive ? "Agent Activated" : "Agent Deactivated",
-      description: !isActive ? "Your agent is now active and will process requests." : "Your agent has been deactivated and won't process new requests.",
-      variant: !isActive ? "default" : "destructive"
+      description: !isActive 
+        ? "Your agent is now active and will process requests."
+        : "Your agent has been deactivated and won't process new requests.",
+      variant: !isActive ? "default" : "destructive",
     });
   };
+  
   const handleDelete = () => {
     toast({
       title: "Agent deleted",
       description: "The agent has been successfully deleted.",
-      variant: "destructive"
+      variant: "destructive",
     });
     navigate("/agents");
   };
+  
   if (isLoading) {
-    return <div className="flex justify-center items-center h-[80vh]">
+    return (
+      <div className="flex justify-center items-center h-[80vh]">
         <Loader2 className="h-8 w-8 text-agent-primary animate-spin" />
-      </div>;
+      </div>
+    );
   }
+  
   if (error || !agent) {
-    return <div className="max-w-4xl mx-auto">
+    return (
+      <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Link to="/agents" className="flex items-center text-gray-500 hover:text-agent-primary">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -71,9 +73,17 @@ const AgentDetails = () => {
         </Alert>
         
         <Button onClick={() => navigate("/agents")}>Return to Dashboard</Button>
-      </div>;
+      </div>
+    );
   }
-  return <div className="max-w-6xl mx-auto animate-fade-in">
+
+  const agentWithAvmScore = {
+    ...agent,
+    avmScore: 7.8 // Example score, in a real app this would come from the API
+  };
+  
+  return (
+    <div className="max-w-6xl mx-auto animate-fade-in">
       <div className="mb-8">
         <Link to="/agents" className="flex items-center text-gray-500 hover:text-agent-primary">
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -93,13 +103,17 @@ const AgentDetails = () => {
                 {isActive ? "Active" : "Inactive"}
               </Badge>
             </div>
-            <p className="mt-1 text-white">{agent.description}</p>
+            <p className="text-gray-500 mt-1">{agent.description}</p>
           </div>
         </div>
         
         <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2 text-gray-300">
-            <Switch checked={isActive} onCheckedChange={handleStatusToggle} className="data-[state=checked]:bg-agent-success" />
+          <div className="flex items-center space-x-2">
+            <Switch 
+              checked={isActive} 
+              onCheckedChange={handleStatusToggle} 
+              className="data-[state=checked]:bg-agent-success"
+            />
             <span className="text-sm font-medium">
               {isActive ? "Active" : "Inactive"}
             </span>
@@ -116,13 +130,17 @@ const AgentDetails = () => {
       
       <Separator className="my-6" />
       
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs defaultValue="setup" className="space-y-6">
         <TabsList className="grid grid-cols-4 md:w-[400px]">
+          <TabsTrigger value="setup">Setup</TabsTrigger>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="setup" className="animate-fade-in">
+          <AgentSetupStepper agent={agentWithAvmScore} />
+        </TabsContent>
         
         <TabsContent value="overview" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -196,7 +214,7 @@ const AgentDetails = () => {
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-4">
                 <Button variant="outline" className="flex items-center space-x-2 justify-start h-auto py-3">
-                  <Play className="h-4 w-4 text-agent-success" />
+                  <ExternalLink className="h-4 w-4 text-agent-primary" />
                   <div className="text-left">
                     <div className="font-medium">Test Agent</div>
                     <div className="text-xs text-gray-500">Try agent in sandbox</div>
@@ -250,25 +268,6 @@ const AgentDetails = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="history" className="animate-fade-in">
-          <Card>
-            <CardHeader>
-              <CardTitle>Interaction History</CardTitle>
-              <CardDescription>Recent agent interactions and conversations</CardDescription>
-            </CardHeader>
-            <CardContent className="h-80 flex items-center justify-center">
-              <div className="text-center">
-                <History className="h-16 w-16 text-agent-primary/20 mx-auto mb-4" />
-                <h3 className="text-lg font-medium">Conversation History</h3>
-                <p className="text-gray-500 max-w-md">
-                  Agent conversation history will be displayed here, including timestamps,
-                  user queries, and agent responses.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
         <TabsContent value="settings" className="animate-fade-in">
           <Card>
             <CardHeader>
@@ -288,6 +287,8 @@ const AgentDetails = () => {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>;
+    </div>
+  );
 };
+
 export default AgentDetails;
