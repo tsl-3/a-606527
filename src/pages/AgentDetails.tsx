@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
-  ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, 
+  ArrowLeft, Bot, Trash2, AlertCircle, Loader2, 
   ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause,
-  Phone, Copy, PhoneOutgoing, Mail, Send
+  Phone, Copy, PhoneOutgoing, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare
 } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +27,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { updateAgent } from "@/services/agentService";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
 
@@ -415,6 +416,31 @@ const AgentDetails = () => {
     }
   };
 
+  const handleDeactivateAgent = () => {
+    setIsActive(false);
+    toast({
+      title: "Agent Deactivated",
+      description: "Your agent has been deactivated and won't process new requests.",
+      variant: "destructive",
+    });
+  };
+
+  const handleArchiveAgent = () => {
+    toast({
+      title: "Agent Archived",
+      description: "The agent has been archived and can be restored later.",
+    });
+    navigate("/agents");
+  };
+
+  const handleEditAgent = () => {
+    toast({
+      title: "Edit Mode",
+      description: "You can now edit your agent's details.",
+    });
+    // In a real app, you might navigate to an edit page or enable edit mode
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -535,17 +561,35 @@ const AgentDetails = () => {
             <div className="flex flex-col gap-3">
               <div className="flex items-center space-x-3 mt-2 md:mt-0">
                 <AgentToggle isActive={isActive} onToggle={handleStatusToggle} />
-                <Button variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white">
-                  <Settings className="h-4 w-4 mr-2" />
-                  <span>Settings</span>
-                </Button>
-                <Button variant="destructive" size="icon" onClick={handleDelete} 
-                  className="bg-red-500/20 hover:bg-red-500/30 text-red-400">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-black border-gray-700 text-white">
+                    <DropdownMenuItem onClick={handleEditAgent} className="cursor-pointer flex items-center gap-2 hover:bg-white/10">
+                      <PenSquare className="h-4 w-4 text-agent-primary" />
+                      <span>Edit Agent</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleDeactivateAgent} className="cursor-pointer flex items-center gap-2 hover:bg-white/10">
+                      <UserMinus className="h-4 w-4 text-yellow-500" />
+                      <span>Deactivate Agent</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleArchiveAgent} className="cursor-pointer flex items-center gap-2 hover:bg-white/10">
+                      <Archive className="h-4 w-4 text-blue-500" />
+                      <span>Archive Agent</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleDelete} className="cursor-pointer flex items-center gap-2 hover:bg-white/10 text-red-400">
+                      <Trash2 className="h-4 w-4" />
+                      <span>Delete Agent</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
               
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="mt-3 flex items-center gap-2 flex-wrap">
                 {voicePhoneNumber && (
                   <div className="flex items-center">
                     <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
