@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -442,6 +441,16 @@ const AgentDetails = () => {
     // In a real app, you might navigate to an edit page or enable edit mode
   };
 
+  const getAvatarImageForVoice = () => {
+    if (voice && voiceProvider && !isCustomVoice) {
+      const voiceDef = voiceSamples[voiceProvider]?.[voice];
+      return voiceDef?.avatar || null;
+    }
+    return null;
+  };
+  
+  const avatarImage = getAvatarImageForVoice();
+  
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -505,8 +514,16 @@ const AgentDetails = () => {
         <CardHeader className="pb-3">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex items-center gap-4">
-              <div className="bg-agent-primary/20 p-3 rounded-full">
-                <Bot className="h-6 w-6 text-agent-primary" />
+              <div className="relative">
+                <Avatar className="h-16 w-16 border-2 border-agent-primary/30">
+                  {avatarImage ? (
+                    <AvatarImage src={avatarImage} alt={agent.name} />
+                  ) : (
+                    <AvatarFallback className="bg-agent-primary/20 text-agent-primary">
+                      <Bot className="h-8 w-8" />
+                    </AvatarFallback>
+                  )}
+                </Avatar>
               </div>
               <div>
                 <div className="flex items-center gap-2">
