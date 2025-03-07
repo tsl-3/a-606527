@@ -861,9 +861,9 @@ const AgentDetails = () => {
                 <div className="grid grid-cols-1 gap-4">
                   <AgentStats 
                     avmScore={agentWithAvmScore.avmScore} 
-                    interactionCount={agent.interactions}
-                    csat={agent.csat}
-                    performance={agent.performance}
+                    interactionCount={agent.interactions || 1300}
+                    csat={agent.csat || 85}
+                    performance={agent.performance || 92}
                   />
                 </div>
               </div>
@@ -966,4 +966,3 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
-

@@ -19,7 +19,17 @@ export const useAgentDetails = (agentId: string | undefined) => {
       setIsLoading(true);
       try {
         const data = await fetchAgentById(agentId);
-        setAgent(data);
+        
+        // Add default stats if not provided from the API
+        const enhancedData: AgentType = {
+          ...data,
+          avmScore: data.avmScore || 7.8,
+          interactions: data.interactions || 1300,
+          csat: data.csat || 85,
+          performance: data.performance || 92
+        };
+        
+        setAgent(enhancedData);
         setError(null);
       } catch (err) {
         setError("Failed to load agent details");
