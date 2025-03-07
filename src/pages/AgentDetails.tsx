@@ -528,7 +528,7 @@ const AgentDetails = () => {
                           <span className="sr-only">Edit voice</span>
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-xl bg-black text-white border-gray-700 max-h-[85vh] overflow-hidden flex flex-col">
+                      <DialogContent className="sm:max-w-4xl bg-black text-white border-gray-700 max-h-[85vh] overflow-hidden flex flex-col">
                         <DialogHeader>
                           <DialogTitle>Configure Voice</DialogTitle>
                           <DialogDescription className="text-gray-400">
