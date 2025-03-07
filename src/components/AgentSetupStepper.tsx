@@ -260,7 +260,7 @@ const AgentTrainingCard: React.FC<{
                 <h4 className="font-medium text-white mb-3">Get Started with Training</h4>
                 <p className="text-sm text-gray-400 mb-4">Choose one of the following options to begin training your AI agent:</p>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
                     <Upload className="h-4 w-4" />
                     <span>Upload Call Recordings</span>
@@ -268,10 +268,6 @@ const AgentTrainingCard: React.FC<{
                   <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
                     <PlayCircle className="h-4 w-4" />
                     <span>Start Role-Playing</span>
-                  </Button>
-                  <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
-                    <Bot className="h-4 w-4" />
-                    <span>Hire Voice Actor</span>
                   </Button>
                 </div>
               </div>
@@ -516,7 +512,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             <h4 className="font-medium mb-2 text-gray-900 dark:text-white">Get Started with Training</h4>
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Choose one of the following options to begin training your AI agent:</p>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
                 <Upload className="h-4 w-4" />
                 <span>Upload Call Recordings</span>
@@ -524,10 +520,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
               <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
                 <PlayCircle className="h-4 w-4" />
                 <span>Start Role-Playing</span>
-              </Button>
-              <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
-                <Bot className="h-4 w-4" />
-                <span>Hire Voice Actor</span>
               </Button>
             </div>
           </div>
@@ -560,15 +552,15 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Select a method to provide training data for your agent:</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <Button variant="outline" className="flex items-center justify-center gap-2 dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white dark:hover:bg-gray-800">
+              <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
                 <File className="h-4 w-4" />
                 <span>Add Web Page</span>
               </Button>
-              <Button variant="outline" className="flex items-center justify-center gap-2 dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white dark:hover:bg-gray-800">
+              <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
                 <Upload className="h-4 w-4" />
                 <span>Upload Documents</span>
               </Button>
-              <Button variant="outline" className="flex items-center justify-center gap-2 dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white dark:hover:bg-gray-800">
+              <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
                 <CircleDashed className="h-4 w-4" />
                 <span>Add Text</span>
               </Button>
