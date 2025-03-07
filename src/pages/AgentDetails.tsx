@@ -559,7 +559,7 @@ const AgentDetails = () => {
                                       <div key={voiceName} className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50">
                                         <RadioGroupItem value={voiceName} id={`eleven-${voiceName.toLowerCase()}`} className="mt-0" />
                                         
-                                        <div className="flex flex-1 items-center space-x-4">
+                                        <div className="flex flex-1 items-center space-x-6">
                                           <div className="flex items-center gap-4 min-w-[180px]">
                                             <Button
                                               variant="play" 
@@ -585,7 +585,7 @@ const AgentDetails = () => {
                                             </Label>
                                           </div>
                                           
-                                          <div className="flex items-center gap-2 flex-wrap">
+                                          <div className="flex-1 flex items-center gap-2 flex-wrap">
                                             {voiceDef.traits.map((trait, index) => (
                                               <Badge 
                                                 key={index} 
@@ -596,7 +596,7 @@ const AgentDetails = () => {
                                             ))}
                                           </div>
                                           
-                                          <div className="text-xs text-gray-400 font-mono ml-auto">
+                                          <div className="text-xs text-gray-400 font-mono">
                                             {voiceDef.id}
                                           </div>
                                         </div>
@@ -649,7 +649,7 @@ const AgentDetails = () => {
                                       <div key={voiceName} className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50">
                                         <RadioGroupItem value={voiceName} id={`polly-${voiceName.toLowerCase()}`} className="mt-0" />
                                         
-                                        <div className="flex flex-1 items-center space-x-4">
+                                        <div className="flex flex-1 items-center space-x-6">
                                           <div className="flex items-center gap-4 min-w-[180px]">
                                             <Button
                                               variant="play" 
@@ -675,7 +675,7 @@ const AgentDetails = () => {
                                             </Label>
                                           </div>
                                           
-                                          <div className="flex items-center gap-2 flex-wrap">
+                                          <div className="flex-1 flex items-center gap-2 flex-wrap">
                                             {voiceDef.traits.map((trait, index) => (
                                               <Badge 
                                                 key={index} 
@@ -686,7 +686,7 @@ const AgentDetails = () => {
                                             ))}
                                           </div>
                                           
-                                          <div className="text-xs text-gray-400 font-mono ml-auto">
+                                          <div className="text-xs text-gray-400 font-mono">
                                             {voiceDef.id}
                                           </div>
                                         </div>
@@ -704,7 +704,7 @@ const AgentDetails = () => {
                                       <div key={voiceName} className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50">
                                         <RadioGroupItem value={voiceName} id={`google-${voiceName.toLowerCase().replace(' ', '-')}`} className="mt-0" />
                                         
-                                        <div className="flex flex-1 items-center space-x-4">
+                                        <div className="flex flex-1 items-center space-x-6">
                                           <div className="flex items-center gap-4 min-w-[180px]">
                                             <Button
                                               variant="play" 
@@ -730,7 +730,7 @@ const AgentDetails = () => {
                                             </Label>
                                           </div>
                                           
-                                          <div className="flex items-center gap-2 flex-wrap">
+                                          <div className="flex-1 flex items-center gap-2 flex-wrap">
                                             {voiceDef.traits.map((trait, index) => (
                                               <Badge 
                                                 key={index} 
@@ -741,7 +741,7 @@ const AgentDetails = () => {
                                             ))}
                                           </div>
                                           
-                                          <div className="text-xs text-gray-400 font-mono ml-auto">
+                                          <div className="text-xs text-gray-400 font-mono">
                                             {voiceDef.id}
                                           </div>
                                         </div>
