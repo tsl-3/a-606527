@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -103,8 +104,8 @@ const AgentDetails = () => {
         <div className="absolute inset-0 bg-gradient-to-tr from-agent-primary/5 to-transparent"></div>
         
         <div className="relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-            <div className="flex items-start space-x-4">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <div className="flex items-center space-x-4">
               <div className="bg-agent-primary/20 p-3.5 rounded-full">
                 <Bot className="h-7 w-7 text-agent-primary" />
               </div>
@@ -132,53 +133,7 @@ const AgentDetails = () => {
                     </span>
                   </Badge>
                 </div>
-                <p className="text-gray-300 mt-1 max-w-2xl">{agent.description}</p>
-                
-                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-                  <div className="flex items-center gap-2">
-                    <Bot className="h-3.5 w-3.5 text-agent-primary" />
-                    <span className="text-sm text-gray-300">
-                      <span className="font-medium text-white capitalize">{agent.type}</span> agent
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-3.5 w-3.5 text-agent-primary" />
-                    <span className="text-sm text-gray-300">
-                      Created on <span className="font-medium text-white">{agent.createdAt}</span>
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Mic className="h-3.5 w-3.5 text-agent-primary" />
-                    <span className="text-sm text-gray-300">
-                      Voice: <span className="font-medium text-white">{agentWithAvmScore.voice}</span>
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Volume2 className="h-3.5 w-3.5 text-agent-primary" />
-                    <span className="text-sm text-gray-300">
-                      Provider: <span className="font-medium text-white">{agentWithAvmScore.voiceProvider}</span>
-                    </span>
-                  </div>
-                  
-                  {agent.model && (
-                    <div className="flex items-center gap-2">
-                      <Cpu className="h-3.5 w-3.5 text-agent-primary" />
-                      <span className="text-sm text-gray-300">
-                        Model: <span className="font-medium text-white">{agent.model}</span>
-                      </span>
-                    </div>
-                  )}
-                </div>
-                
-                {agent.channels && agent.channels.length > 0 && (
-                  <div className="mt-3">
-                    <p className="text-sm text-gray-400 mb-1">Available on:</p>
-                    <AgentChannels channels={agent.channels} />
-                  </div>
-                )}
+                <p className="text-gray-300 mt-1.5 max-w-2xl">{agent.description}</p>
               </div>
             </div>
             
@@ -195,44 +150,101 @@ const AgentDetails = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-black/30 rounded-lg border border-white/10 p-3">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-xs font-medium text-gray-400">AVM Score</span>
-                <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="space-y-5">
+              <div className="grid grid-cols-2 gap-x-12 gap-y-3">
+                <div>
+                  <div className="flex items-center mb-1">
+                    <Bot className="h-3.5 w-3.5 text-agent-primary mr-1.5" />
+                    <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">Agent Type</span>
+                  </div>
+                  <p className="text-sm font-medium text-white capitalize">{agent.type}</p>
+                </div>
+                
+                <div>
+                  <div className="flex items-center mb-1">
+                    <Calendar className="h-3.5 w-3.5 text-agent-primary mr-1.5" />
+                    <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">Created On</span>
+                  </div>
+                  <p className="text-sm font-medium text-white">{agent.createdAt}</p>
+                </div>
+                
+                <div>
+                  <div className="flex items-center mb-1">
+                    <Mic className="h-3.5 w-3.5 text-agent-primary mr-1.5" />
+                    <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">Voice</span>
+                  </div>
+                  <p className="text-sm font-medium text-white">{agentWithAvmScore.voice}</p>
+                </div>
+                
+                <div>
+                  <div className="flex items-center mb-1">
+                    <Volume2 className="h-3.5 w-3.5 text-agent-primary mr-1.5" />
+                    <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">Provider</span>
+                  </div>
+                  <p className="text-sm font-medium text-white">{agentWithAvmScore.voiceProvider}</p>
+                </div>
+                
+                {agent.model && (
+                  <div>
+                    <div className="flex items-center mb-1">
+                      <Cpu className="h-3.5 w-3.5 text-agent-primary mr-1.5" />
+                      <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">Model</span>
+                    </div>
+                    <p className="text-sm font-medium text-white">{agent.model}</p>
+                  </div>
+                )}
               </div>
-              <div className="flex items-baseline">
-                <span className="text-2xl font-bold text-white">{agentWithAvmScore.avmScore.toFixed(1)}</span>
-                <span className="text-xs text-gray-400 ml-1">/10</span>
-              </div>
+              
+              {agent.channels && agent.channels.length > 0 && (
+                <div>
+                  <div className="flex items-center mb-2">
+                    <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">Available Channels</span>
+                  </div>
+                  <AgentChannels channels={agent.channels} />
+                </div>
+              )}
             </div>
             
-            <div className="bg-black/30 rounded-lg border border-white/10 p-3">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-xs font-medium text-gray-400">Interactions</span>
-                <span className="text-xs font-medium text-yellow-500">Gold</span>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 self-end">
+              <div className="bg-black/30 rounded-lg border border-white/10 p-3 col-span-1">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs font-medium text-gray-400">AVM Score</span>
+                  <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                </div>
+                <div className="flex items-baseline">
+                  <span className="text-2xl font-bold text-white">{agentWithAvmScore.avmScore.toFixed(1)}</span>
+                  <span className="text-xs text-gray-400 ml-1">/10</span>
+                </div>
               </div>
-              <div className="text-2xl font-bold text-white">
-                {agent.interactions >= 1000 
-                  ? `${(agent.interactions / 1000).toFixed(1)}k` 
-                  : agent.interactions}
+              
+              <div className="bg-black/30 rounded-lg border border-white/10 p-3 col-span-1">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs font-medium text-gray-400">Interactions</span>
+                  <span className="text-xs font-medium text-yellow-500">Gold</span>
+                </div>
+                <div className="text-2xl font-bold text-white">
+                  {agent.interactions >= 1000 
+                    ? `${(agent.interactions / 1000).toFixed(1)}k` 
+                    : agent.interactions}
+                </div>
               </div>
-            </div>
-            
-            <div className="bg-black/30 rounded-lg border border-white/10 p-3">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-xs font-medium text-gray-400">Performance</span>
-                <span className="text-xs text-agent-success">+2%</span>
+              
+              <div className="bg-black/30 rounded-lg border border-white/10 p-3 col-span-1">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs font-medium text-gray-400">Performance</span>
+                  <span className="text-xs text-agent-success">+2%</span>
+                </div>
+                <div className="text-2xl font-bold text-white">94%</div>
               </div>
-              <div className="text-2xl font-bold text-white">94%</div>
-            </div>
-            
-            <div className="bg-black/30 rounded-lg border border-white/10 p-3">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-xs font-medium text-gray-400">Last Updated</span>
-                <Calendar className="h-3 w-3 text-gray-500" />
+              
+              <div className="bg-black/30 rounded-lg border border-white/10 p-3 col-span-1">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs font-medium text-gray-400">Last Updated</span>
+                  <Calendar className="h-3 w-3 text-gray-500" />
+                </div>
+                <div className="text-sm font-medium text-white truncate">{lastUpdated}</div>
               </div>
-              <div className="text-sm font-medium text-white truncate">{lastUpdated}</div>
             </div>
           </div>
         </div>
