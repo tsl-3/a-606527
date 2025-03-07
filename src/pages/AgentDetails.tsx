@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, 
-  ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus
+  ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,33 +14,113 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
-import { AgentType } from "@/types/agent";
+import { VoiceTrait, AgentType } from "@/types/agent";
 import { useAgentDetails } from "@/hooks/useAgentDetails";
 import { AgentSetupStepper } from "@/components/AgentSetupStepper";
 import { AgentToggle } from "@/components/AgentToggle";
 import { AgentChannels } from "@/components/AgentChannels";
 import { AgentStats } from "@/components/AgentStats";
 import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { updateAgent } from "@/services/agentService";
 
 const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
 
-const voiceSamples = {
+interface VoiceDefinition {
+  id: string;
+  name: string;
+  traits: VoiceTrait[];
+  avatar?: string;
+  audioSample: string;
+}
+
+const voiceSamples: Record<string, Record<string, VoiceDefinition>> = {
   "Eleven Labs": {
-    "Emma": "/voices/eleven-emma.mp3", 
-    "Josh": "/voices/eleven-josh.mp3",
-    "Aria": "/voices/eleven-aria.mp3",
-    "Charlie": "/voices/eleven-charlie.mp3",
-    "Custom": "" // No sample for custom voice
+    "Emma": {
+      id: "9BWtsMINqrJLrRacOk9x",
+      name: "Emma",
+      traits: [
+        { name: "British", color: "bg-blue-100 text-blue-800" },
+        { name: "Professional", color: "bg-purple-100 text-purple-800" }
+      ],
+      avatar: "/voices/avatars/emma.jpg",
+      audioSample: "/voices/eleven-emma.mp3"
+    },
+    "Josh": {
+      id: "CwhRBWXzGAHq8TQ4Fs17",
+      name: "Josh",
+      traits: [
+        { name: "American", color: "bg-red-100 text-red-800" },
+        { name: "Casual", color: "bg-green-100 text-green-800" }
+      ],
+      avatar: "/voices/avatars/josh.jpg",
+      audioSample: "/voices/eleven-josh.mp3"
+    },
+    "Aria": {
+      id: "EXAVITQu4vr4xnSDxMaL",
+      name: "Aria",
+      traits: [
+        { name: "Young", color: "bg-yellow-100 text-yellow-800" },
+        { name: "Friendly", color: "bg-pink-100 text-pink-800" }
+      ],
+      avatar: "/voices/avatars/aria.jpg",
+      audioSample: "/voices/eleven-aria.mp3"
+    },
+    "Charlie": {
+      id: "IKne3meq5aSn9XLyUdCD",
+      name: "Charlie",
+      traits: [
+        { name: "Australian", color: "bg-green-100 text-green-800" },
+        { name: "Energetic", color: "bg-orange-100 text-orange-800" }
+      ],
+      avatar: "/voices/avatars/charlie.jpg",
+      audioSample: "/voices/eleven-charlie.mp3"
+    }
   },
   "Amazon Polly": {
-    "Joanna": "/voices/polly-joanna.mp3",
-    "Matthew": "/voices/polly-matthew.mp3"
+    "Joanna": {
+      id: "Joanna",
+      name: "Joanna",
+      traits: [
+        { name: "American", color: "bg-red-100 text-red-800" },
+        { name: "Professional", color: "bg-purple-100 text-purple-800" }
+      ],
+      avatar: "/voices/avatars/joanna.jpg",
+      audioSample: "/voices/polly-joanna.mp3"
+    },
+    "Matthew": {
+      id: "Matthew",
+      name: "Matthew",
+      traits: [
+        { name: "American", color: "bg-red-100 text-red-800" },
+        { name: "Deep", color: "bg-blue-100 text-blue-800" }
+      ],
+      avatar: "/voices/avatars/matthew.jpg",
+      audioSample: "/voices/polly-matthew.mp3"
+    }
   },
   "Google TTS": {
-    "Wavenet A": "/voices/google-wavenet-a.mp3",
-    "Wavenet B": "/voices/google-wavenet-b.mp3"
+    "Wavenet A": {
+      id: "en-US-Wavenet-A",
+      name: "Wavenet A",
+      traits: [
+        { name: "American", color: "bg-red-100 text-red-800" },
+        { name: "Neutral", color: "bg-gray-100 text-gray-800" }
+      ],
+      avatar: "/voices/avatars/wavenet-a.jpg",
+      audioSample: "/voices/google-wavenet-a.mp3"
+    },
+    "Wavenet B": {
+      id: "en-US-Wavenet-B",
+      name: "Wavenet B",
+      traits: [
+        { name: "British", color: "bg-blue-100 text-blue-800" },
+        { name: "Formal", color: "bg-indigo-100 text-indigo-800" }
+      ],
+      avatar: "/voices/avatars/wavenet-b.jpg",
+      audioSample: "/voices/google-wavenet-b.mp3"
+    }
   }
 };
 
@@ -57,6 +137,8 @@ const AgentDetails = () => {
   const [customVoiceId, setCustomVoiceId] = useState<string>("");
   const [isCustomVoice, setIsCustomVoice] = useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
+  const [selectedVoiceTraits, setSelectedVoiceTraits] = useState<VoiceTrait[]>([]);
+  const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
   useEffect(() => {
@@ -67,6 +149,14 @@ const AgentDetails = () => {
       setVoiceProvider(agent.voiceProvider || "Eleven Labs");
       setCustomVoiceId(agent.customVoiceId || "");
       setIsCustomVoice(agent.voice === "Custom");
+      
+      if (agent.voice && agent.voiceProvider && !isCustomVoice) {
+        const voiceDef = voiceSamples[agent.voiceProvider]?.[agent.voice];
+        if (voiceDef) {
+          setSelectedVoiceTraits(voiceDef.traits || []);
+          setSelectedVoiceId(voiceDef.id || "");
+        }
+      }
     }
   }, [agent]);
   
@@ -109,11 +199,23 @@ const AgentDetails = () => {
     }
   };
 
-  const handleVoiceChange = async (value: string) => {
-    setVoice(value);
-    setIsCustomVoice(value === "Custom");
-    if (value !== "Custom" && currentlyPlaying !== value) {
-      handlePlaySample(value);
+  const handleVoiceChange = async (voiceName: string) => {
+    setVoice(voiceName);
+    setIsCustomVoice(voiceName === "Custom");
+    
+    if (voiceName !== "Custom") {
+      const voiceDef = voiceSamples[voiceProvider]?.[voiceName];
+      if (voiceDef) {
+        setSelectedVoiceTraits(voiceDef.traits || []);
+        setSelectedVoiceId(voiceDef.id || "");
+      }
+      
+      if (currentlyPlaying !== voiceName) {
+        handlePlaySample(voiceName);
+      }
+    } else {
+      setSelectedVoiceTraits([]);
+      setSelectedVoiceId(customVoiceId);
     }
   };
 
@@ -122,6 +224,11 @@ const AgentDetails = () => {
     const voices = Object.keys(voiceSamples[value as keyof typeof voiceSamples] || {});
     if (voices.length > 0) {
       setVoice(voices[0]);
+      const voiceDef = voiceSamples[value]?.[voices[0]];
+      if (voiceDef) {
+        setSelectedVoiceTraits(voiceDef.traits || []);
+        setSelectedVoiceId(voiceDef.id || "");
+      }
       setIsCustomVoice(voices[0] === "Custom");
     }
     
@@ -133,6 +240,7 @@ const AgentDetails = () => {
 
   const handleCustomVoiceIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomVoiceId(e.target.value);
+    setSelectedVoiceId(e.target.value);
   };
 
   const handlePlaySample = (voiceName: string) => {
@@ -144,7 +252,7 @@ const AgentDetails = () => {
       return;
     }
     
-    const voicePath = voiceSamples[voiceProvider as keyof typeof voiceSamples]?.[voiceName as any];
+    const voicePath = voiceSamples[voiceProvider as keyof typeof voiceSamples]?.[voiceName]?.audioSample;
     
     if (!voicePath) return;
     
@@ -185,7 +293,8 @@ const AgentDetails = () => {
           ...agent, 
           voice: isCustomVoice ? "Custom" : voice,
           voiceProvider: voiceProvider,
-          customVoiceId: isCustomVoice ? customVoiceId : undefined
+          customVoiceId: isCustomVoice ? customVoiceId : undefined,
+          voiceTraits: isCustomVoice ? [] : selectedVoiceTraits
         };
         
         await updateAgent(agentId, updatedAgent);
@@ -418,7 +527,7 @@ const AgentDetails = () => {
                           <span className="sr-only">Edit voice</span>
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-md bg-black text-white border-gray-700">
+                      <DialogContent className="sm:max-w-xl bg-black text-white border-gray-700">
                         <DialogHeader>
                           <DialogTitle>Configure Voice</DialogTitle>
                           <DialogDescription className="text-gray-400">
@@ -440,92 +549,204 @@ const AgentDetails = () => {
                           
                           <TabsContent value="Eleven Labs" className="border-none p-0 mt-4">
                             <div className="space-y-4">
-                              <RadioGroup value={voice} onValueChange={handleVoiceChange} className="grid grid-cols-2 gap-4">
-                                {Object.keys(voiceSamples["Eleven Labs"]).map((voiceName) => (
-                                  voiceName !== "Custom" ? (
+                              <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
+                                {Object.keys(voiceSamples["Eleven Labs"]).map((voiceName) => {
+                                  const voiceDef = voiceSamples["Eleven Labs"][voiceName];
+                                  return (
                                     <div key={voiceName} className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                      <RadioGroupItem value={voiceName} id={`eleven-${voiceName.toLowerCase()}`} />
-                                      <Label htmlFor={`eleven-${voiceName.toLowerCase()}`} className="font-medium cursor-pointer flex-1">{voiceName}</Label>
-                                      <Button 
-                                        variant="outline" 
-                                        size="sm" 
-                                        className={`h-6 ${currentlyPlaying === voiceName ? 'bg-agent-primary border-agent-primary text-white' : 'bg-black/20 border-gray-700'} text-xs`}
-                                        onClick={() => handlePlaySample(voiceName)}
-                                      >
-                                        {currentlyPlaying === voiceName ? 'Stop' : 'Preview'}
-                                      </Button>
+                                      <RadioGroupItem value={voiceName} id={`eleven-${voiceName.toLowerCase()}`} className="mt-0" />
+                                      
+                                      <div className="flex items-center justify-between w-full">
+                                        <div className="flex items-center gap-3">
+                                          <Button
+                                            variant="play" 
+                                            size="play"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              handlePlaySample(voiceName);
+                                            }}
+                                            className="flex-shrink-0"
+                                          >
+                                            {currentlyPlaying === voiceName ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                          </Button>
+                                          
+                                          <Avatar className="h-10 w-10 border border-gray-600">
+                                            <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                            <AvatarFallback className="bg-agent-primary/20 text-agent-primary">
+                                              {voiceName.charAt(0)}
+                                            </AvatarFallback>
+                                          </Avatar>
+                                          
+                                          <Label htmlFor={`eleven-${voiceName.toLowerCase()}`} className="font-medium cursor-pointer">
+                                            {voiceName}
+                                          </Label>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-2 ml-4">
+                                          {voiceDef.traits.map((trait, index) => (
+                                            <Badge 
+                                              key={index} 
+                                              className={`${trait.color || 'bg-gray-100 text-gray-800'} border-none`}
+                                            >
+                                              {trait.name}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                        
+                                        <div className="ml-auto text-xs text-gray-400 font-mono">
+                                          {voiceDef.id}
+                                        </div>
+                                      </div>
                                     </div>
-                                  ) : null
-                                ))}
+                                  );
+                                })}
                                 
-                                <div className="col-span-2 flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                  <RadioGroupItem value="Custom" id="eleven-custom" />
-                                  <Label htmlFor="eleven-custom" className="font-medium cursor-pointer flex-1">Custom Voice ID</Label>
-                                  <Plus className="w-4 h-4 text-agent-primary" />
-                                </div>
-                                
-                                {isCustomVoice && (
-                                  <div className="col-span-2 p-3 rounded-md border border-gray-700 bg-black/20">
-                                    <Label htmlFor="custom-voice-id" className="text-xs mb-2 block text-gray-400">
-                                      Enter Eleven Labs Voice ID
-                                    </Label>
-                                    <Input
-                                      id="custom-voice-id"
-                                      value={customVoiceId}
-                                      onChange={handleCustomVoiceIdChange}
-                                      placeholder="e.g. 21m00Tcm4TlvDq8ikWAM"
-                                      className="bg-black/30 border-gray-700 text-white"
-                                    />
-                                    <p className="text-xs text-gray-500 mt-2">
-                                      You can find your voice IDs in the Eleven Labs dashboard. 
-                                      <a href="https://elevenlabs.io/app" target="_blank" rel="noopener noreferrer" className="text-agent-primary ml-1 hover:underline">
-                                        Visit Eleven Labs
-                                      </a>
-                                    </p>
+                                <div className="rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="Custom" id="eleven-custom" />
+                                    <div className="flex items-center gap-3">
+                                      <Plus className="w-4 h-4 text-agent-primary" />
+                                      <Label htmlFor="eleven-custom" className="font-medium cursor-pointer">
+                                        Custom Voice ID
+                                      </Label>
+                                    </div>
                                   </div>
-                                )}
+                                  
+                                  {isCustomVoice && (
+                                    <div className="mt-3 p-3 rounded-md border border-gray-700 bg-black/20">
+                                      <Label htmlFor="custom-voice-id" className="text-xs mb-2 block text-gray-400">
+                                        Enter Eleven Labs Voice ID
+                                      </Label>
+                                      <Input
+                                        id="custom-voice-id"
+                                        value={customVoiceId}
+                                        onChange={handleCustomVoiceIdChange}
+                                        placeholder="e.g. 21m00Tcm4TlvDq8ikWAM"
+                                        className="bg-black/30 border-gray-700 text-white"
+                                      />
+                                      <p className="text-xs text-gray-500 mt-2">
+                                        You can find your voice IDs in the Eleven Labs dashboard. 
+                                        <a href="https://elevenlabs.io/app" target="_blank" rel="noopener noreferrer" className="text-agent-primary ml-1 hover:underline">
+                                          Visit Eleven Labs
+                                        </a>
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
                               </RadioGroup>
                             </div>
                           </TabsContent>
                           
                           <TabsContent value="Amazon Polly" className="border-none p-0 mt-4">
                             <div className="space-y-4">
-                              <RadioGroup value={voice} onValueChange={handleVoiceChange} className="grid grid-cols-2 gap-4">
-                                {Object.keys(voiceSamples["Amazon Polly"]).map((voiceName) => (
-                                  <div key={voiceName} className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                    <RadioGroupItem value={voiceName} id={`polly-${voiceName.toLowerCase()}`} />
-                                    <Label htmlFor={`polly-${voiceName.toLowerCase()}`} className="font-medium cursor-pointer flex-1">{voiceName}</Label>
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm" 
-                                      className={`h-6 ${currentlyPlaying === voiceName ? 'bg-agent-primary border-agent-primary text-white' : 'bg-black/20 border-gray-700'} text-xs`}
-                                      onClick={() => handlePlaySample(voiceName)}
-                                    >
-                                      {currentlyPlaying === voiceName ? 'Stop' : 'Preview'}
-                                    </Button>
-                                  </div>
-                                ))}
+                              <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
+                                {Object.keys(voiceSamples["Amazon Polly"]).map((voiceName) => {
+                                  const voiceDef = voiceSamples["Amazon Polly"][voiceName];
+                                  return (
+                                    <div key={voiceName} className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                      <RadioGroupItem value={voiceName} id={`polly-${voiceName.toLowerCase()}`} className="mt-0" />
+                                      
+                                      <div className="flex items-center justify-between w-full">
+                                        <div className="flex items-center gap-3">
+                                          <Button
+                                            variant="play" 
+                                            size="play"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              handlePlaySample(voiceName);
+                                            }}
+                                            className="flex-shrink-0"
+                                          >
+                                            {currentlyPlaying === voiceName ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                          </Button>
+                                          
+                                          <Avatar className="h-10 w-10 border border-gray-600">
+                                            <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                            <AvatarFallback className="bg-agent-primary/20 text-agent-primary">
+                                              {voiceName.charAt(0)}
+                                            </AvatarFallback>
+                                          </Avatar>
+                                          
+                                          <Label htmlFor={`polly-${voiceName.toLowerCase()}`} className="font-medium cursor-pointer">
+                                            {voiceName}
+                                          </Label>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-2 ml-4">
+                                          {voiceDef.traits.map((trait, index) => (
+                                            <Badge 
+                                              key={index} 
+                                              className={`${trait.color || 'bg-gray-100 text-gray-800'} border-none`}
+                                            >
+                                              {trait.name}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                        
+                                        <div className="ml-auto text-xs text-gray-400 font-mono">
+                                          {voiceDef.id}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
                               </RadioGroup>
                             </div>
                           </TabsContent>
                           
                           <TabsContent value="Google TTS" className="border-none p-0 mt-4">
                             <div className="space-y-4">
-                              <RadioGroup value={voice} onValueChange={handleVoiceChange} className="grid grid-cols-2 gap-4">
-                                {Object.keys(voiceSamples["Google TTS"]).map((voiceName) => (
-                                  <div key={voiceName} className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                    <RadioGroupItem value={voiceName} id={`google-${voiceName.toLowerCase().replace(' ', '-')}`} />
-                                    <Label htmlFor={`google-${voiceName.toLowerCase().replace(' ', '-')}`} className="font-medium cursor-pointer flex-1">{voiceName}</Label>
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm" 
-                                      className={`h-6 ${currentlyPlaying === voiceName ? 'bg-agent-primary border-agent-primary text-white' : 'bg-black/20 border-gray-700'} text-xs`}
-                                      onClick={() => handlePlaySample(voiceName)}
-                                    >
-                                      {currentlyPlaying === voiceName ? 'Stop' : 'Preview'}
-                                    </Button>
-                                  </div>
-                                ))}
+                              <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
+                                {Object.keys(voiceSamples["Google TTS"]).map((voiceName) => {
+                                  const voiceDef = voiceSamples["Google TTS"][voiceName];
+                                  return (
+                                    <div key={voiceName} className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                      <RadioGroupItem value={voiceName} id={`google-${voiceName.toLowerCase().replace(' ', '-')}`} className="mt-0" />
+                                      
+                                      <div className="flex items-center justify-between w-full">
+                                        <div className="flex items-center gap-3">
+                                          <Button
+                                            variant="play" 
+                                            size="play"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              handlePlaySample(voiceName);
+                                            }}
+                                            className="flex-shrink-0"
+                                          >
+                                            {currentlyPlaying === voiceName ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                          </Button>
+                                          
+                                          <Avatar className="h-10 w-10 border border-gray-600">
+                                            <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                            <AvatarFallback className="bg-agent-primary/20 text-agent-primary">
+                                              {voiceName.charAt(0)}
+                                            </AvatarFallback>
+                                          </Avatar>
+                                          
+                                          <Label htmlFor={`google-${voiceName.toLowerCase().replace(' ', '-')}`} className="font-medium cursor-pointer">
+                                            {voiceName}
+                                          </Label>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-2 ml-4">
+                                          {voiceDef.traits.map((trait, index) => (
+                                            <Badge 
+                                              key={index} 
+                                              className={`${trait.color || 'bg-gray-100 text-gray-800'} border-none`}
+                                            >
+                                              {trait.name}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                        
+                                        <div className="ml-auto text-xs text-gray-400 font-mono">
+                                          {voiceDef.id}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
                               </RadioGroup>
                             </div>
                           </TabsContent>

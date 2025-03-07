@@ -8,6 +8,11 @@ export interface AgentChannelConfig {
   config?: Record<string, any>;
 }
 
+export interface VoiceTrait {
+  name: string;
+  color?: string;
+}
+
 export interface AgentType {
   id: string;
   name: string;
@@ -20,6 +25,7 @@ export interface AgentType {
   voice?: string;
   voiceProvider?: string;
   customVoiceId?: string;
+  voiceTraits?: VoiceTrait[];
   avmScore?: number;
   interactions?: number;
   csat?: number;
