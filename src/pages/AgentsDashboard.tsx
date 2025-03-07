@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar } from "lucide-react";
+import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy, PhoneCall } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -171,6 +171,22 @@ const AgentsDashboard = () => {
     navigate(`/agents/${agentId}`);
   };
 
+  const handleCopyToClipboard = (text: string, type: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: `${type} Copied`,
+      description: `The ${type.toLowerCase()} has been copied to clipboard.`,
+    });
+  };
+
+  const handlePhoneCall = (phone: string) => {
+    window.location.href = `tel:${phone.replace(/[^\d+]/g, '')}`;
+    toast({
+      title: "Calling Agent",
+      description: `Initiating call to ${phone}`,
+    });
+  };
+
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-[80vh] space-y-4">
@@ -328,6 +344,64 @@ const AgentsDashboard = () => {
                           readonly={true} 
                         />
                       ) : null}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      {agent.phone && (
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                            <Phone className="h-3.5 w-3.5" />
+                            <span className="mr-2">{agent.phone}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-7 w-7 rounded-full" 
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleCopyToClipboard(agent.phone || '', 'Phone');
+                              }}
+                            >
+                              <Copy className="h-3.5 w-3.5 text-gray-500" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-7 w-7 rounded-full text-green-500" 
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handlePhoneCall(agent.phone || '');
+                              }}
+                            >
+                              <PhoneCall className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {agent.email && (
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                            <Mail className="h-3.5 w-3.5" />
+                            <span className="mr-2 truncate max-w-[150px]">{agent.email}</span>
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-7 w-7 rounded-full" 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleCopyToClipboard(agent.email || '', 'Email');
+                            }}
+                          >
+                            <Copy className="h-3.5 w-3.5 text-gray-500" />
+                          </Button>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">

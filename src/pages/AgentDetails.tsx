@@ -442,11 +442,12 @@ const AgentDetails = () => {
   };
 
   const handleCopyAvatar = () => {
-    if (agent.avatar) {
-      navigator.clipboard.writeText(agent.avatar);
+    const avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${agent?.id}`;
+    if (avatarUrl) {
+      navigator.clipboard.writeText(avatarUrl);
       toast({
         title: "Avatar copied",
-        description: "Avatar has been copied to clipboard.",
+        description: "Avatar URL has been copied to clipboard.",
       });
     }
   };

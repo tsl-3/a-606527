@@ -33,4 +33,6 @@ export interface AgentType {
   channels?: string[];
   channelConfigs?: Record<string, AgentChannelConfig>;
   isPersonal?: boolean;
+  phone?: string;
+  email?: string;
 }
