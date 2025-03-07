@@ -2,7 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, 
-  ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause
+  ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause,
+  Phone, Copy, TestTube
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -361,6 +362,32 @@ const AgentDetails = () => {
     }
   };
 
+  const handleCopyPhoneNumber = () => {
+    if (voicePhoneNumber) {
+      navigator.clipboard.writeText(voicePhoneNumber);
+      toast({
+        title: "Phone number copied",
+        description: "Phone number has been copied to clipboard.",
+      });
+    }
+  };
+
+  const handleTestCall = () => {
+    if (voicePhoneNumber) {
+      window.location.href = `tel:${voicePhoneNumber}`;
+      toast({
+        title: "Calling agent",
+        description: `Initiating call to ${voicePhoneNumber}`,
+      });
+    } else {
+      toast({
+        title: "No phone number available",
+        description: "Please configure a phone number for voice channel first.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -447,12 +474,47 @@ const AgentDetails = () => {
                   </Badge>
                 </div>
                 <p className="text-gray-300 mt-1.5 max-w-2xl">{agent.description}</p>
-                <AgentChannels 
-                  channels={agent.channelConfigs || {}} 
-                  readonly={true}
-                  compact={true}
-                  showDetails={true}
-                />
+                
+                <div className="mt-3 flex flex-col gap-2.5">
+                  <AgentChannels 
+                    channels={agent.channelConfigs || {}} 
+                    readonly={true}
+                    compact={true}
+                    showDetails={true}
+                  />
+                  
+                  {voicePhoneNumber && (
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="flex bg-black/30 rounded-lg border border-gray-700/50 p-1.5">
+                        <div className="flex items-center gap-1.5">
+                          <Phone className="h-3.5 w-3.5 text-agent-primary" />
+                          <span className="text-xs text-white font-medium">{voicePhoneNumber}</span>
+                        </div>
+                        
+                        <div className="flex ml-3 gap-1">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-gray-700/50"
+                            onClick={handleCopyPhoneNumber}
+                            title="Copy phone number"
+                          >
+                            <Copy className="h-3 w-3 text-gray-400" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-green-700/50"
+                            onClick={handleTestCall}
+                            title="Test agent call"
+                          >
+                            <TestTube className="h-3 w-3 text-green-400" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             
@@ -904,3 +966,4 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
+
