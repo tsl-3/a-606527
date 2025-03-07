@@ -3,8 +3,9 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, 
   ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause,
-  Phone, Copy, TestTube, Mail, Send
+  Phone, Copy, PhoneOutgoing, Mail, Send
 } from "lucide-react";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -552,7 +553,7 @@ const AgentDetails = () => {
                             onClick={handleTestCall}
                             title="Test agent call"
                           >
-                            <TestTube className="h-3 w-3 text-green-400" />
+                            <PhoneOutgoing className="h-3 w-3 text-green-400" />
                           </Button>
                         </div>
                       </div>
@@ -1039,4 +1040,3 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
-
