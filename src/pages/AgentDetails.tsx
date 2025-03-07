@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2 } from "lucide-react";
@@ -12,6 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { AgentType } from "@/types/agent";
 import { useAgentDetails } from "@/hooks/useAgentDetails";
 import { AgentSetupStepper } from "@/components/AgentSetupStepper";
+import { AgentStats } from "@/components/AgentStats";
 
 const AgentDetails = () => {
   const { agentId } = useParams<{ agentId: string }>();
@@ -92,7 +94,7 @@ const AgentDetails = () => {
       </div>
       
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-start space-x-3">
           <div className="bg-agent-primary/10 p-3 rounded-full">
             <Bot className="h-8 w-8 text-agent-primary" />
           </div>
@@ -101,6 +103,9 @@ const AgentDetails = () => {
               <h1 className="text-3xl font-semibold text-agent-dark dark:text-white">{agent.name}</h1>
             </div>
             <p className="text-gray-500 dark:text-gray-300 mt-1">{agent.description}</p>
+            <div className="mt-3">
+              <AgentStats avmScore={agentWithAvmScore.avmScore} interactionCount={agent.interactions} />
+            </div>
           </div>
         </div>
         
