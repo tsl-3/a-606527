@@ -21,6 +21,8 @@ export interface AgentType {
   voiceProvider?: string;
   avmScore?: number;
   interactions?: number;
+  csat?: number;
+  performance?: number;
   channels?: string[];
   channelConfigs?: Record<string, AgentChannelConfig>;
   isPersonal?: boolean;
