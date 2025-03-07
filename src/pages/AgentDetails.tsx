@@ -404,6 +404,8 @@ const AgentDetails = () => {
   
   const lastUpdated = new Date().toLocaleString();
   
+  const voicePhoneNumber = agent.channelConfigs?.voice?.details || null;
+  
   return (
     <div className="max-w-6xl mx-auto animate-fade-in">
       <div className="mb-6">
@@ -449,6 +451,7 @@ const AgentDetails = () => {
                   channels={agent.channelConfigs || {}} 
                   readonly={true}
                   compact={true}
+                  showDetails={true}
                 />
               </div>
             </div>
@@ -525,9 +528,13 @@ const AgentDetails = () => {
                           <span className="truncate">
                             {isCustomVoice ? `Custom (${customVoiceId.substring(0, 6)}...)` : `${voice} (${voiceProvider})`}
                           </span>
+                          {voicePhoneNumber && (
+                            <span className="text-xs text-gray-400 truncate ml-1">{voicePhoneNumber}</span>
+                          )}
                           <span className="sr-only">Edit voice</span>
                         </Button>
                       </DialogTrigger>
+                      
                       <DialogContent className="sm:max-w-4xl bg-black text-white border-gray-700 max-h-[85vh] overflow-hidden flex flex-col">
                         <DialogHeader>
                           <DialogTitle>Configure Voice</DialogTitle>

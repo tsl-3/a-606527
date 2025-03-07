@@ -19,6 +19,7 @@ interface AgentChannelsProps {
   onUpdateChannel?: (channel: string, config: AgentChannelConfig) => void;
   readonly?: boolean;
   compact?: boolean; // New prop for compact display
+  showDetails?: boolean; // New prop to display details
 }
 
 interface ChannelInfo {
@@ -75,7 +76,8 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
   channels = {}, 
   onUpdateChannel,
   readonly = false,
-  compact = false
+  compact = false,
+  showDetails = false
 }) => {
   const [activeDialogChannel, setActiveDialogChannel] = useState<string | null>(null);
   const [channelDetails, setChannelDetails] = useState<string>("");
@@ -99,6 +101,8 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
       <div className={`flex flex-wrap gap-2 ${compact ? "mt-0" : "mt-2"}`}>
         {enabledChannels.map((channel) => {
           const info = CHANNEL_INFO[channel];
+          const details = normalizedChannels[channel]?.details;
+          
           return (
             <Badge 
               key={channel}
@@ -107,6 +111,9 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
             >
               {info.icon}
               <span className="text-[0.6rem] capitalize">{channel}</span>
+              {showDetails && details && (
+                <span className="text-[0.6rem] ml-1 opacity-80">{details}</span>
+              )}
             </Badge>
           );
         })}
