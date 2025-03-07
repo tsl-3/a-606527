@@ -281,10 +281,10 @@ const AgentDetails = () => {
         </CardHeader>
         
         <CardContent>
-          <div className="grid grid-cols-1 gap-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="md:col-span-3 space-y-4">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                   <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
                     <div className="flex items-center gap-2 mb-1">
                       <Bot className="h-3.5 w-3.5 text-agent-primary" />
@@ -448,23 +448,23 @@ const AgentDetails = () => {
                       </DialogContent>
                     </Dialog>
                   </div>
-                  
-                  <div className="md:col-span-1">
-                    <AgentStats 
-                      avmScore={agentWithAvmScore.avmScore} 
-                      interactionCount={agent.interactions} 
-                    />
-                  </div>
                 </div>
                 
-                <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-sm text-white font-medium">Channel Configuration</span>
-                  </div>
-                  <AgentChannels 
-                    channels={agent.channelConfigs || {}} 
-                    onUpdateChannel={handleUpdateChannel} 
+                <div className="grid grid-cols-1 gap-4">
+                  <AgentStats 
+                    avmScore={agentWithAvmScore.avmScore} 
+                    interactionCount={agent.interactions} 
                   />
+                  
+                  <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-sm text-white font-medium">Channel Configuration</span>
+                    </div>
+                    <AgentChannels 
+                      channels={agent.channelConfigs || {}} 
+                      onUpdateChannel={handleUpdateChannel} 
+                    />
+                  </div>
                 </div>
               </div>
             </div>
