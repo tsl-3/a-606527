@@ -32,7 +32,7 @@ const Step: React.FC<StepProps> = ({
   stepNumber
 }) => {
   return (
-    <Card className={`mb-6 ${isActive ? 'border-primary/50 shadow-md' : 'border-gray-100 dark:border-gray-800'}`}>
+    <Card className={`mb-6 ${isActive ? 'border-primary/50 shadow-md' : 'border-gray-100 dark:border-gray-800'} dark:bg-agent-dark-bg dark:text-white`}>
       <CardHeader className="flex flex-row items-start gap-4 pb-2">
         <div className={`p-2 rounded-full flex items-center justify-center ${
           isCompleted 
@@ -101,9 +101,9 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
         </div>
         
         {/* Next Action Recommendation */}
-        <div className="bg-primary/10 rounded-lg p-4 mb-6">
+        <div className="bg-primary/10 rounded-lg p-4 mb-6 dark:bg-primary/5">
           <div className="flex items-start gap-3">
-            <div className="bg-primary/20 p-2 rounded-full">
+            <div className="bg-primary/20 p-2 rounded-full dark:bg-primary/10">
               <ArrowRight className="h-5 w-5 text-primary" />
             </div>
             <div>
@@ -165,20 +165,20 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             </div>
           </div>
           
-          <div className="bg-primary/5 rounded-lg p-4 mb-4">
+          <div className="bg-primary/5 rounded-lg p-4 mb-4 dark:bg-primary/5">
             <h4 className="font-medium mb-2 text-gray-900 dark:text-white">Get Started with Training</h4>
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Choose one of the following options to begin training your AI agent:</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <Button variant="outline" className="flex items-center justify-center gap-2">
+              <Button variant="outline" className="flex items-center justify-center gap-2 dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white dark:hover:bg-gray-800">
                 <Upload className="h-4 w-4" />
                 <span>Upload Call Recordings</span>
               </Button>
-              <Button variant="outline" className="flex items-center justify-center gap-2">
+              <Button variant="outline" className="flex items-center justify-center gap-2 dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white dark:hover:bg-gray-800">
                 <PlayCircle className="h-4 w-4" />
                 <span>Start Role-Playing</span>
               </Button>
-              <Button variant="outline" className="flex items-center justify-center gap-2">
+              <Button variant="outline" className="flex items-center justify-center gap-2 dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white dark:hover:bg-gray-800">
                 <Bot className="h-4 w-4" />
                 <span>Hire Voice Actor</span>
               </Button>
@@ -208,20 +208,20 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             </div>
           </div>
         
-          <div className="bg-primary/5 rounded-lg p-4 mb-4">
+          <div className="bg-primary/5 rounded-lg p-4 mb-4 dark:bg-primary/5">
             <h4 className="font-medium mb-2 text-gray-900 dark:text-white">Add Knowledge Sources</h4>
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Select a method to provide training data for your agent:</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <Button variant="outline" className="flex items-center justify-center gap-2">
+              <Button variant="outline" className="flex items-center justify-center gap-2 dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white dark:hover:bg-gray-800">
                 <File className="h-4 w-4" />
                 <span>Add Web Page</span>
               </Button>
-              <Button variant="outline" className="flex items-center justify-center gap-2">
+              <Button variant="outline" className="flex items-center justify-center gap-2 dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white dark:hover:bg-gray-800">
                 <Upload className="h-4 w-4" />
                 <span>Upload Documents</span>
               </Button>
-              <Button variant="outline" className="flex items-center justify-center gap-2">
+              <Button variant="outline" className="flex items-center justify-center gap-2 dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white dark:hover:bg-gray-800">
                 <CircleDashed className="h-4 w-4" />
                 <span>Add Text</span>
               </Button>
