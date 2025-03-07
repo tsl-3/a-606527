@@ -1,9 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, 
-  ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2 
+  ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare 
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -144,6 +143,34 @@ const AgentDetails = () => {
     navigate("/agents");
   };
   
+  const handleToggleChannel = async (channel: string) => {
+    if (!agent || !agentId) return;
+    
+    let updatedChannels: string[];
+    
+    if (agent.channels?.includes(channel)) {
+      updatedChannels = agent.channels.filter(c => c !== channel);
+    } else {
+      updatedChannels = [...(agent.channels || []), channel];
+    }
+    
+    try {
+      await updateAgent(agentId, { ...agent, channels: updatedChannels });
+      setAgent(prev => prev ? { ...prev, channels: updatedChannels } : null);
+      
+      toast({
+        title: agent.channels?.includes(channel) ? "Channel disabled" : "Channel enabled",
+        description: `The ${channel} channel has been ${agent.channels?.includes(channel) ? "disabled" : "enabled"}.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to update channels",
+        description: "There was an error updating the agent channels.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -194,7 +221,6 @@ const AgentDetails = () => {
         </Link>
       </div>
       
-      {/* Agent Header Card */}
       <Card className="bg-agent-dark-bg border-gray-800 mb-6 overflow-hidden">
         <CardHeader className="pb-3">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -416,14 +442,15 @@ const AgentDetails = () => {
                 </div>
               </div>
               
-              {agent.channels && agent.channels.length > 0 && (
-                <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-sm text-white font-medium">Available Channels</span>
-                  </div>
-                  <AgentChannels channels={agent.channels} />
+              <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-sm text-white font-medium">Available Channels</span>
                 </div>
-              )}
+                <AgentChannels 
+                  channels={agent.channels || []} 
+                  onToggleChannel={handleToggleChannel} 
+                />
+              </div>
             </div>
             
             <div className="space-y-4">
@@ -446,7 +473,6 @@ const AgentDetails = () => {
         </CardContent>
       </Card>
       
-      {/* Tabs Section */}
       <Tabs defaultValue="setup" className="space-y-6">
         <TabsList className="bg-agent-dark-bg/50 border border-gray-800">
           <TabsTrigger value="setup" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
