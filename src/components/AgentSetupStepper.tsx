@@ -1,6 +1,7 @@
+
 import React, { useState } from "react";
 import { 
-  Mic, BookOpen, Workflow, FlaskConical, CheckCircle2, 
+  BookOpen, Workflow, FlaskConical, CheckCircle2, 
   Upload, PlayCircle, Bot, File, CircleDashed, ArrowRight,
   Clock, BarChart, ChevronUp, Download, Trash2, User
 } from "lucide-react";
@@ -43,7 +44,7 @@ const Step: React.FC<StepProps> = ({
   stepNumber
 }) => {
   return (
-    <Card className={`mb-6 ${isActive ? 'border-primary/50 shadow-md' : 'border-gray-100 dark:border-gray-800'} dark:bg-agent-dark-bg dark:text-white`}>
+    <Card className={`mb-6 ${isActive ? 'border-primary/50 shadow-md' : 'border-gray-100 dark:border-gray-800'} dark:bg-[#000313] dark:text-white`}>
       <CardHeader className="flex flex-row items-start gap-4 pb-2">
         <div className={`p-2 rounded-full flex items-center justify-center ${
           isCompleted 
@@ -362,9 +363,6 @@ const AgentTrainingCard: React.FC<{
                           <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
                             <Download className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
                         </div>
                       </div>
                     ))}
@@ -471,59 +469,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           trainingRecords={sampleTrainingRecords}
         />
         
-        {/* Original Step Component - can be removed once the new design is approved */}
-        <Step 
-          title="Agent Training" 
-          description="Train your voice agent by uploading call recordings or role-play a conversation"
-          icon={<Mic className="h-5 w-5 text-primary" />}
-          isActive={steps.training.active}
-          isCompleted={steps.training.completed}
-          progress={steps.training.progress}
-          stepNumber={1}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg text-center">
-              <div className="text-xl font-bold text-gray-900 dark:text-white">3/10</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">Voice Samples</div>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg text-center">
-              <div className="text-xl font-bold text-gray-900 dark:text-white">65%</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">Voice Cloning Confidence</div>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg text-center">
-              <div className="text-xl font-bold text-gray-900 dark:text-white">45s</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">Average Talk Time</div>
-            </div>
-          </div>
-          
-          <div className="bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/20 rounded-lg p-4 mb-4">
-            <div className="flex items-start gap-3">
-              <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-full">
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
-              </div>
-              <div>
-                <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Progress: 3 of 10 voice samples uploaded</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Upload 7 more voice samples to complete this step.</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-primary/5 rounded-lg p-4 mb-4 dark:bg-primary/5">
-            <h4 className="font-medium mb-2 text-gray-900 dark:text-white">Get Started with Training</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Choose one of the following options to begin training your AI agent:</p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
-                <Upload className="h-4 w-4" />
-                <span>Upload Call Recordings</span>
-              </Button>
-              <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
-                <PlayCircle className="h-4 w-4" />
-                <span>Start Role-Playing</span>
-              </Button>
-            </div>
-          </div>
-        </Step>
+        {/* The Agent Training Step has been removed as requested */}
         
         {/* Knowledge Base Step */}
         <Step 
