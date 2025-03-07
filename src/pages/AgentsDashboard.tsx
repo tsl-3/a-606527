@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy, PhoneCall } from "lucide-react";
+import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -353,32 +353,18 @@ const AgentsDashboard = () => {
                             <Phone className="h-3.5 w-3.5" />
                             <span className="mr-2">{agent.phone}</span>
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-7 w-7 rounded-full" 
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleCopyToClipboard(agent.phone || '', 'Phone');
-                              }}
-                            >
-                              <Copy className="h-3.5 w-3.5 text-gray-500" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-7 w-7 rounded-full text-green-500" 
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handlePhoneCall(agent.phone || '');
-                              }}
-                            >
-                              <PhoneCall className="h-3.5 w-3.5" />
-                            </Button>
-                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-7 w-7 rounded-full" 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleCopyToClipboard(agent.phone || '', 'Phone');
+                            }}
+                          >
+                            <Copy className="h-3.5 w-3.5 text-gray-500" />
+                          </Button>
                         </div>
                       )}
                       
