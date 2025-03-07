@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -36,7 +37,7 @@
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 228 93% 3%;
     --foreground: 0 0% 98%;
 
     --card: 240 10% 3.9%;
@@ -111,7 +112,7 @@
   
   /* Dark mode background gradient */
   .dark body {
-    background: linear-gradient(163deg, rgba(0,3,19,1) 0%, rgba(37,5,42,1) 100%);
+    background: linear-gradient(163deg, #000313 0%, #15131b 100%);
     background-attachment: fixed;
     background-size: cover;
   }
