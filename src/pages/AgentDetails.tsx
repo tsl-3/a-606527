@@ -556,7 +556,11 @@ const AgentDetails = () => {
                                   {Object.keys(voiceSamples["Eleven Labs"]).map((voiceName) => {
                                     const voiceDef = voiceSamples["Eleven Labs"][voiceName];
                                     return (
-                                      <div key={voiceName} className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50">
+                                      <div 
+                                        key={voiceName} 
+                                        className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50"
+                                        onClick={() => handleVoiceChange(voiceName)}
+                                      >
                                         <RadioGroupItem value={voiceName} id={`eleven-${voiceName.toLowerCase()}`} className="mt-0" />
                                         
                                         <div className="flex flex-1 items-center space-x-6">
@@ -565,7 +569,7 @@ const AgentDetails = () => {
                                               variant="play" 
                                               size="play"
                                               onClick={(e) => {
-                                                e.preventDefault();
+                                                e.stopPropagation();
                                                 handlePlaySample(voiceName);
                                               }}
                                               className="flex-shrink-0"
@@ -604,7 +608,10 @@ const AgentDetails = () => {
                                     );
                                   })}
                                   
-                                  <div className="rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50 mt-3">
+                                  <div 
+                                    className="rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50 mt-3"
+                                    onClick={() => handleVoiceChange("Custom")}
+                                  >
                                     <div className="flex items-center space-x-3">
                                       <RadioGroupItem value="Custom" id="eleven-custom" />
                                       <div className="flex items-center gap-3">
@@ -626,11 +633,18 @@ const AgentDetails = () => {
                                           onChange={handleCustomVoiceIdChange}
                                           placeholder="e.g. 21m00Tcm4TlvDq8ikWAM"
                                           className="bg-black/50 border-gray-600 text-white"
+                                          onClick={(e) => e.stopPropagation()}
                                         />
                                         <p className="text-xs text-gray-400 mt-3 flex items-center gap-1.5">
                                           <AlertCircle className="h-3.5 w-3.5 text-gray-400" />
                                           Find your voice IDs in the 
-                                          <a href="https://elevenlabs.io/app" target="_blank" rel="noopener noreferrer" className="text-agent-primary hover:underline inline-flex items-center gap-1 ml-1">
+                                          <a 
+                                            href="https://elevenlabs.io/app" 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="text-agent-primary hover:underline inline-flex items-center gap-1 ml-1"
+                                            onClick={(e) => e.stopPropagation()}
+                                          >
                                             Eleven Labs dashboard
                                             <ExternalLink className="h-3 w-3" />
                                           </a>
@@ -646,7 +660,11 @@ const AgentDetails = () => {
                                   {Object.keys(voiceSamples["Amazon Polly"]).map((voiceName) => {
                                     const voiceDef = voiceSamples["Amazon Polly"][voiceName];
                                     return (
-                                      <div key={voiceName} className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50">
+                                      <div 
+                                        key={voiceName} 
+                                        className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50"
+                                        onClick={() => handleVoiceChange(voiceName)}
+                                      >
                                         <RadioGroupItem value={voiceName} id={`polly-${voiceName.toLowerCase()}`} className="mt-0" />
                                         
                                         <div className="flex flex-1 items-center space-x-6">
@@ -655,7 +673,7 @@ const AgentDetails = () => {
                                               variant="play" 
                                               size="play"
                                               onClick={(e) => {
-                                                e.preventDefault();
+                                                e.stopPropagation();
                                                 handlePlaySample(voiceName);
                                               }}
                                               className="flex-shrink-0"
@@ -701,7 +719,11 @@ const AgentDetails = () => {
                                   {Object.keys(voiceSamples["Google TTS"]).map((voiceName) => {
                                     const voiceDef = voiceSamples["Google TTS"][voiceName];
                                     return (
-                                      <div key={voiceName} className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50">
+                                      <div 
+                                        key={voiceName} 
+                                        className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50"
+                                        onClick={() => handleVoiceChange(voiceName)}
+                                      >
                                         <RadioGroupItem value={voiceName} id={`google-${voiceName.toLowerCase().replace(' ', '-')}`} className="mt-0" />
                                         
                                         <div className="flex flex-1 items-center space-x-6">
@@ -710,7 +732,7 @@ const AgentDetails = () => {
                                               variant="play" 
                                               size="play"
                                               onClick={(e) => {
-                                                e.preventDefault();
+                                                e.stopPropagation();
                                                 handlePlaySample(voiceName);
                                               }}
                                               className="flex-shrink-0"
