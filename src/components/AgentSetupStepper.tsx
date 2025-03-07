@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Mic, BookOpen, Workflow, FlaskConical, CheckCircle2, 
@@ -106,7 +105,7 @@ const AgentTrainingCard: React.FC<{
       <div className="p-6 pb-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-full bg-black/40 w-8 h-8 text-white">
+            <div className="flex items-center justify-center rounded-full bg-[#0C1221]/80 w-8 h-8 text-white">
               1
             </div>
             <h3 className="text-xl font-semibold text-white">Agent Training</h3>
@@ -366,6 +365,9 @@ const AgentTrainingCard: React.FC<{
                           </Button>
                           <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
                             <Download className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </div>
