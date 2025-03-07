@@ -25,6 +25,7 @@ interface ChannelInfo {
   icon: React.ReactNode;
   color: string;
   placeholder: string;
+  bgColor: string;
 }
 
 // All available channels with their info
@@ -33,30 +34,35 @@ const CHANNEL_INFO: Record<string, ChannelInfo> = {
     name: "Voice",
     icon: <Mic className="h-5 w-5" />,
     color: "text-blue-500",
+    bgColor: "bg-blue-500",
     placeholder: "+1 (800) 123-4567"
   },
   "chat": {
     name: "Chat",
     icon: <MessageSquare className="h-5 w-5" />,
     color: "text-purple-500",
+    bgColor: "bg-purple-500",
     placeholder: "https://yourwebsite.com/chat"
   },
   "sms": {
     name: "Sms",
     icon: <Smartphone className="h-5 w-5" />,
     color: "text-orange-500",
+    bgColor: "bg-orange-500",
     placeholder: "+1 (800) 123-4567"
   },
   "email": {
     name: "Email",
     icon: <Mail className="h-5 w-5" />,
     color: "text-red-500",
+    bgColor: "bg-red-500",
     placeholder: "support@yourcompany.com"
   },
   "whatsapp": {
     name: "Whatsapp",
     icon: <MessageCircle className="h-5 w-5" />,
     color: "text-green-500",
+    bgColor: "bg-green-500",
     placeholder: "+1 (555) 987-6543"
   }
 };
@@ -116,10 +122,10 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
           return (
             <Badge 
               key={channel}
-              className="px-2 py-1 flex items-center gap-1"
-              variant="outline"
+              className={`${info.bgColor} text-white px-2 py-1 flex items-center gap-1`}
+              variant="default"
             >
-              <span className={info.color}>{info.icon}</span>
+              {info.icon}
               <span className="text-[0.65rem] capitalize">{channel}</span>
             </Badge>
           );
