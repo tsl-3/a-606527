@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { 
   BookOpen, Workflow, FlaskConical, CheckCircle2, 
   Upload, PlayCircle, Bot, File, CircleDashed, ArrowRight,
-  Clock, BarChart, ChevronUp, Download, Trash2, User
+  Clock, BarChart, ChevronUp, Download, Trash2, User, Mic
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
