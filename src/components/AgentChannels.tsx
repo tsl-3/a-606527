@@ -111,16 +111,19 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
     
     return (
       <div className="flex flex-wrap gap-2 mt-2">
-        {enabledChannels.map((channel) => (
-          <Badge 
-            key={channel}
-            className={`bg-${channel === 'voice' ? 'blue' : channel === 'chat' ? 'purple' : channel === 'sms' ? 'orange' : channel === 'email' ? 'red' : 'green'}-500 text-white text-xs px-2 py-1 flex items-center gap-1`}
-            variant="default"
-          >
-            {CHANNEL_INFO[channel].icon}
-            <span className="text-[0.65rem] capitalize">{channel}</span>
-          </Badge>
-        ))}
+        {enabledChannels.map((channel) => {
+          const info = CHANNEL_INFO[channel];
+          return (
+            <Badge 
+              key={channel}
+              className="px-2 py-1 flex items-center gap-1"
+              variant="outline"
+            >
+              <span className={info.color}>{info.icon}</span>
+              <span className="text-[0.65rem] capitalize">{channel}</span>
+            </Badge>
+          );
+        })}
       </div>
     );
   }
