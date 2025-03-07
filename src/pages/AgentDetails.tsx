@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, 
-  ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare 
+  ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Input } from "@/components/ui/input";
 import { AgentType } from "@/types/agent";
 import { useAgentDetails } from "@/hooks/useAgentDetails";
 import { AgentSetupStepper } from "@/components/AgentSetupStepper";
@@ -22,6 +23,26 @@ import { AgentStats } from "@/components/AgentStats";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { updateAgent } from "@/services/agentService";
+
+const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
+
+const voiceSamples = {
+  "Eleven Labs": {
+    "Emma": "/voices/eleven-emma.mp3", 
+    "Josh": "/voices/eleven-josh.mp3",
+    "Aria": "/voices/eleven-aria.mp3",
+    "Charlie": "/voices/eleven-charlie.mp3",
+    "Custom": "" // No sample for custom voice
+  },
+  "Amazon Polly": {
+    "Joanna": "/voices/polly-joanna.mp3",
+    "Matthew": "/voices/polly-matthew.mp3"
+  },
+  "Google TTS": {
+    "Wavenet A": "/voices/google-wavenet-a.mp3",
+    "Wavenet B": "/voices/google-wavenet-b.mp3"
+  }
+};
 
 const AgentDetails = () => {
   const { agentId } = useParams<{ agentId: string }>();
@@ -33,6 +54,10 @@ const AgentDetails = () => {
   const [voice, setVoice] = useState<string>("Emma");
   const [voiceProvider, setVoiceProvider] = useState<string>("Eleven Labs");
   const [isVoiceDialogOpen, setIsVoiceDialogOpen] = useState(false);
+  const [customVoiceId, setCustomVoiceId] = useState<string>("");
+  const [isCustomVoice, setIsCustomVoice] = useState(false);
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   
   useEffect(() => {
     if (agent) {
@@ -40,8 +65,19 @@ const AgentDetails = () => {
       setModel(agent.model || "GPT-4");
       setVoice(agent.voice || "Emma");
       setVoiceProvider(agent.voiceProvider || "Eleven Labs");
+      setCustomVoiceId(agent.customVoiceId || "");
+      setIsCustomVoice(agent.voice === "Custom");
     }
   }, [agent]);
+  
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+      }
+    };
+  }, []);
   
   const handleStatusToggle = () => {
     setIsActive(!isActive);
@@ -75,50 +111,84 @@ const AgentDetails = () => {
 
   const handleVoiceChange = async (value: string) => {
     setVoice(value);
-    if (agent && agentId) {
-      try {
-        await updateAgent(agentId, { ...agent, voice: value });
-        toast({
-          title: "Voice updated",
-          description: `The agent voice has been updated to ${value}.`,
-        });
-      } catch (error) {
-        toast({
-          title: "Failed to update voice",
-          description: "There was an error updating the agent voice.",
-          variant: "destructive",
-        });
-      }
+    setIsCustomVoice(value === "Custom");
+    if (value !== "Custom" && currentlyPlaying !== value) {
+      handlePlaySample(value);
     }
   };
 
   const handleProviderChange = async (value: string) => {
     setVoiceProvider(value);
-    if (agent && agentId) {
-      try {
-        await updateAgent(agentId, { ...agent, voiceProvider: value });
-        toast({
-          title: "Voice provider updated",
-          description: `The voice provider has been updated to ${value}.`,
-        });
-      } catch (error) {
-        toast({
-          title: "Failed to update provider",
-          description: "There was an error updating the voice provider.",
-          variant: "destructive",
-        });
-      }
+    const voices = Object.keys(voiceSamples[value as keyof typeof voiceSamples] || {});
+    if (voices.length > 0) {
+      setVoice(voices[0]);
+      setIsCustomVoice(voices[0] === "Custom");
     }
+    
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setCurrentlyPlaying(null);
+    }
+  };
+
+  const handleCustomVoiceIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomVoiceId(e.target.value);
+  };
+
+  const handlePlaySample = (voiceName: string) => {
+    if (currentlyPlaying === voiceName) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        setCurrentlyPlaying(null);
+      }
+      return;
+    }
+    
+    const voicePath = voiceSamples[voiceProvider as keyof typeof voiceSamples]?.[voiceName as any];
+    
+    if (!voicePath) return;
+    
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    
+    const audio = new Audio(voicePath);
+    audioRef.current = audio;
+    
+    audio.onended = () => {
+      setCurrentlyPlaying(null);
+    };
+    
+    audio.onplay = () => {
+      setCurrentlyPlaying(voiceName);
+    };
+    
+    audio.onerror = () => {
+      toast({
+        title: "Audio Error",
+        description: `Could not play sample for ${voiceName}.`,
+        variant: "destructive",
+      });
+      setCurrentlyPlaying(null);
+    };
+    
+    audio.play().catch(err => {
+      console.error("Error playing audio:", err);
+      setCurrentlyPlaying(null);
+    });
   };
 
   const handleVoiceSelectionSave = async () => {
     if (agent && agentId) {
       try {
-        await updateAgent(agentId, { 
+        const updatedAgent = { 
           ...agent, 
-          voice: voice,
-          voiceProvider: voiceProvider 
-        });
+          voice: isCustomVoice ? "Custom" : voice,
+          voiceProvider: voiceProvider,
+          customVoiceId: isCustomVoice ? customVoiceId : undefined
+        };
+        
+        await updateAgent(agentId, updatedAgent);
         toast({
           title: "Voice settings updated",
           description: `The voice settings have been updated.`,
@@ -342,7 +412,9 @@ const AgentDetails = () => {
                     <Dialog open={isVoiceDialogOpen} onOpenChange={setIsVoiceDialogOpen}>
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm" className="h-7 w-full bg-black/20 border-gray-700/50 text-white justify-between">
-                          <span className="truncate">{voice} ({voiceProvider})</span>
+                          <span className="truncate">
+                            {isCustomVoice ? `Custom (${customVoiceId.substring(0, 6)}...)` : `${voice} (${voiceProvider})`}
+                          </span>
                           <span className="sr-only">Edit voice</span>
                         </Button>
                       </DialogTrigger>
@@ -350,7 +422,7 @@ const AgentDetails = () => {
                         <DialogHeader>
                           <DialogTitle>Configure Voice</DialogTitle>
                           <DialogDescription className="text-gray-400">
-                            Select a voice provider and voice for your agent
+                            Select a voice provider and voice for your agent, or enter a custom voice ID
                           </DialogDescription>
                         </DialogHeader>
                         <Tabs defaultValue={voiceProvider} className="w-full" onValueChange={handleProviderChange}>
@@ -369,34 +441,49 @@ const AgentDetails = () => {
                           <TabsContent value="Eleven Labs" className="border-none p-0 mt-4">
                             <div className="space-y-4">
                               <RadioGroup value={voice} onValueChange={handleVoiceChange} className="grid grid-cols-2 gap-4">
-                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                  <RadioGroupItem value="Emma" id="emma" />
-                                  <Label htmlFor="emma" className="font-medium cursor-pointer flex-1">Emma</Label>
-                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                    Preview
-                                  </Button>
+                                {Object.keys(voiceSamples["Eleven Labs"]).map((voiceName) => (
+                                  voiceName !== "Custom" ? (
+                                    <div key={voiceName} className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                      <RadioGroupItem value={voiceName} id={`eleven-${voiceName.toLowerCase()}`} />
+                                      <Label htmlFor={`eleven-${voiceName.toLowerCase()}`} className="font-medium cursor-pointer flex-1">{voiceName}</Label>
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className={`h-6 ${currentlyPlaying === voiceName ? 'bg-agent-primary border-agent-primary text-white' : 'bg-black/20 border-gray-700'} text-xs`}
+                                        onClick={() => handlePlaySample(voiceName)}
+                                      >
+                                        {currentlyPlaying === voiceName ? 'Stop' : 'Preview'}
+                                      </Button>
+                                    </div>
+                                  ) : null
+                                ))}
+                                
+                                <div className="col-span-2 flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                  <RadioGroupItem value="Custom" id="eleven-custom" />
+                                  <Label htmlFor="eleven-custom" className="font-medium cursor-pointer flex-1">Custom Voice ID</Label>
+                                  <Plus className="w-4 h-4 text-agent-primary" />
                                 </div>
-                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                  <RadioGroupItem value="Josh" id="josh" />
-                                  <Label htmlFor="josh" className="font-medium cursor-pointer flex-1">Josh</Label>
-                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                    Preview
-                                  </Button>
-                                </div>
-                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                  <RadioGroupItem value="Aria" id="aria" />
-                                  <Label htmlFor="aria" className="font-medium cursor-pointer flex-1">Aria</Label>
-                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                    Preview
-                                  </Button>
-                                </div>
-                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                  <RadioGroupItem value="Charlie" id="charlie" />
-                                  <Label htmlFor="charlie" className="font-medium cursor-pointer flex-1">Charlie</Label>
-                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                    Preview
-                                  </Button>
-                                </div>
+                                
+                                {isCustomVoice && (
+                                  <div className="col-span-2 p-3 rounded-md border border-gray-700 bg-black/20">
+                                    <Label htmlFor="custom-voice-id" className="text-xs mb-2 block text-gray-400">
+                                      Enter Eleven Labs Voice ID
+                                    </Label>
+                                    <Input
+                                      id="custom-voice-id"
+                                      value={customVoiceId}
+                                      onChange={handleCustomVoiceIdChange}
+                                      placeholder="e.g. 21m00Tcm4TlvDq8ikWAM"
+                                      className="bg-black/30 border-gray-700 text-white"
+                                    />
+                                    <p className="text-xs text-gray-500 mt-2">
+                                      You can find your voice IDs in the Eleven Labs dashboard. 
+                                      <a href="https://elevenlabs.io/app" target="_blank" rel="noopener noreferrer" className="text-agent-primary ml-1 hover:underline">
+                                        Visit Eleven Labs
+                                      </a>
+                                    </p>
+                                  </div>
+                                )}
                               </RadioGroup>
                             </div>
                           </TabsContent>
@@ -404,20 +491,20 @@ const AgentDetails = () => {
                           <TabsContent value="Amazon Polly" className="border-none p-0 mt-4">
                             <div className="space-y-4">
                               <RadioGroup value={voice} onValueChange={handleVoiceChange} className="grid grid-cols-2 gap-4">
-                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                  <RadioGroupItem value="Joanna" id="joanna" />
-                                  <Label htmlFor="joanna" className="font-medium cursor-pointer flex-1">Joanna</Label>
-                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                    Preview
-                                  </Button>
-                                </div>
-                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                  <RadioGroupItem value="Matthew" id="matthew" />
-                                  <Label htmlFor="matthew" className="font-medium cursor-pointer flex-1">Matthew</Label>
-                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                    Preview
-                                  </Button>
-                                </div>
+                                {Object.keys(voiceSamples["Amazon Polly"]).map((voiceName) => (
+                                  <div key={voiceName} className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                    <RadioGroupItem value={voiceName} id={`polly-${voiceName.toLowerCase()}`} />
+                                    <Label htmlFor={`polly-${voiceName.toLowerCase()}`} className="font-medium cursor-pointer flex-1">{voiceName}</Label>
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm" 
+                                      className={`h-6 ${currentlyPlaying === voiceName ? 'bg-agent-primary border-agent-primary text-white' : 'bg-black/20 border-gray-700'} text-xs`}
+                                      onClick={() => handlePlaySample(voiceName)}
+                                    >
+                                      {currentlyPlaying === voiceName ? 'Stop' : 'Preview'}
+                                    </Button>
+                                  </div>
+                                ))}
                               </RadioGroup>
                             </div>
                           </TabsContent>
@@ -425,20 +512,20 @@ const AgentDetails = () => {
                           <TabsContent value="Google TTS" className="border-none p-0 mt-4">
                             <div className="space-y-4">
                               <RadioGroup value={voice} onValueChange={handleVoiceChange} className="grid grid-cols-2 gap-4">
-                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                  <RadioGroupItem value="Wavenet A" id="wavenet-a" />
-                                  <Label htmlFor="wavenet-a" className="font-medium cursor-pointer flex-1">Wavenet A</Label>
-                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                    Preview
-                                  </Button>
-                                </div>
-                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                  <RadioGroupItem value="Wavenet B" id="wavenet-b" />
-                                  <Label htmlFor="wavenet-b" className="font-medium cursor-pointer flex-1">Wavenet B</Label>
-                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                    Preview
-                                  </Button>
-                                </div>
+                                {Object.keys(voiceSamples["Google TTS"]).map((voiceName) => (
+                                  <div key={voiceName} className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                    <RadioGroupItem value={voiceName} id={`google-${voiceName.toLowerCase().replace(' ', '-')}`} />
+                                    <Label htmlFor={`google-${voiceName.toLowerCase().replace(' ', '-')}`} className="font-medium cursor-pointer flex-1">{voiceName}</Label>
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm" 
+                                      className={`h-6 ${currentlyPlaying === voiceName ? 'bg-agent-primary border-agent-primary text-white' : 'bg-black/20 border-gray-700'} text-xs`}
+                                      onClick={() => handlePlaySample(voiceName)}
+                                    >
+                                      {currentlyPlaying === voiceName ? 'Stop' : 'Preview'}
+                                    </Button>
+                                  </div>
+                                ))}
                               </RadioGroup>
                             </div>
                           </TabsContent>
@@ -460,7 +547,9 @@ const AgentDetails = () => {
                 <div className="grid grid-cols-1 gap-4">
                   <AgentStats 
                     avmScore={agentWithAvmScore.avmScore} 
-                    interactionCount={agent.interactions} 
+                    interactionCount={agent.interactions}
+                    csat={agent.csat}
+                    performance={agent.performance}
                   />
                 </div>
               </div>

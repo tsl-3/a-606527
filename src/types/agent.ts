@@ -19,6 +19,7 @@ export interface AgentType {
   model?: string;
   voice?: string;
   voiceProvider?: string;
+  customVoiceId?: string;
   avmScore?: number;
   interactions?: number;
   csat?: number;
