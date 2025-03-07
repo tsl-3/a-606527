@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Mic, MessageSquare, Smartphone, Mail, MessageCircle, ExternalLink } from "lucide-react";
+import { Mic, MessageSquare, Smartphone, Mail, MessageCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -18,14 +18,15 @@ interface AgentChannelsProps {
   channels?: Record<string, AgentChannelConfig>;
   onUpdateChannel?: (channel: string, config: AgentChannelConfig) => void;
   readonly?: boolean;
+  compact?: boolean; // New prop for compact display
 }
 
 interface ChannelInfo {
   name: string;
   icon: React.ReactNode;
   color: string;
-  placeholder: string;
   bgColor: string;
+  placeholder: string;
 }
 
 // All available channels with their info
@@ -73,7 +74,8 @@ const ALL_CHANNELS = Object.keys(CHANNEL_INFO);
 export const AgentChannels: React.FC<AgentChannelsProps> = ({ 
   channels = {}, 
   onUpdateChannel,
-  readonly = false
+  readonly = false,
+  compact = false
 }) => {
   const [activeDialogChannel, setActiveDialogChannel] = useState<string | null>(null);
   const [channelDetails, setChannelDetails] = useState<string>("");
@@ -84,6 +86,35 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
     return acc;
   }, {} as Record<string, AgentChannelConfig>);
   
+  // Get enabled channels
+  const enabledChannels = Object.entries(normalizedChannels)
+    .filter(([_, config]) => config.enabled)
+    .map(([channel]) => channel);
+  
+  // Display-only mode for channels that are enabled
+  if (readonly || compact) {
+    if (!enabledChannels.length) return null;
+    
+    return (
+      <div className={`flex flex-wrap gap-2 ${compact ? "mt-0" : "mt-2"}`}>
+        {enabledChannels.map((channel) => {
+          const info = CHANNEL_INFO[channel];
+          return (
+            <Badge 
+              key={channel}
+              className={`${info.bgColor} text-white px-2 py-0.5 flex items-center gap-1`}
+              variant="default"
+            >
+              {info.icon}
+              <span className="text-[0.6rem] capitalize">{channel}</span>
+            </Badge>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Interactive channel configuration mode
   const handleToggleChannel = (channel: string, enabled: boolean) => {
     if (onUpdateChannel) {
       const currentConfig = normalizedChannels[channel] || { enabled: false };
@@ -107,34 +138,6 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
     }
   };
 
-  if (readonly) {
-    // Display-only mode for channels that are enabled
-    const enabledChannels = Object.entries(normalizedChannels)
-      .filter(([_, config]) => config.enabled)
-      .map(([channel]) => channel);
-    
-    if (!enabledChannels.length) return null;
-    
-    return (
-      <div className="flex flex-wrap gap-2 mt-2">
-        {enabledChannels.map((channel) => {
-          const info = CHANNEL_INFO[channel];
-          return (
-            <Badge 
-              key={channel}
-              className={`${info.bgColor} text-white px-2 py-0.5 flex items-center gap-1`}
-              variant="default"
-            >
-              {info.icon}
-              <span className="text-[0.6rem] capitalize">{channel}</span>
-            </Badge>
-          );
-        })}
-      </div>
-    );
-  }
-
-  // Interactive channel configuration mode
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
       {ALL_CHANNELS.map((channel) => {

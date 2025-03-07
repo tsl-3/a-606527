@@ -265,6 +265,11 @@ const AgentDetails = () => {
                   </Badge>
                 </div>
                 <p className="text-gray-300 mt-1.5 max-w-2xl">{agent.description}</p>
+                <AgentChannels 
+                  channels={agent.channelConfigs || {}} 
+                  readonly={true}
+                  compact={true}
+                />
               </div>
             </div>
             
@@ -457,16 +462,6 @@ const AgentDetails = () => {
                     avmScore={agentWithAvmScore.avmScore} 
                     interactionCount={agent.interactions} 
                   />
-                  
-                  <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-sm text-white font-medium">Channel Configuration</span>
-                    </div>
-                    <AgentChannels 
-                      channels={agent.channelConfigs || {}} 
-                      onUpdateChannel={handleUpdateChannel} 
-                    />
-                  </div>
                 </div>
               </div>
             </div>
