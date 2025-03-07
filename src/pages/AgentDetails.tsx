@@ -18,6 +18,9 @@ import { AgentSetupStepper } from "@/components/AgentSetupStepper";
 import { AgentToggle } from "@/components/AgentToggle";
 import { AgentChannels } from "@/components/AgentChannels";
 import { AgentStats } from "@/components/AgentStats";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { updateAgent } from "@/services/agentService";
 
 const AgentDetails = () => {
   const { agentId } = useParams<{ agentId: string }>();
@@ -25,10 +28,16 @@ const AgentDetails = () => {
   const { toast } = useToast();
   const { agent, isLoading, error } = useAgentDetails(agentId);
   const [isActive, setIsActive] = useState(false);
+  const [model, setModel] = useState<string>("GPT-4");
+  const [voice, setVoice] = useState<string>("Emma");
+  const [voiceProvider, setVoiceProvider] = useState<string>("Eleven Labs");
   
   useEffect(() => {
     if (agent) {
       setIsActive(agent.status === "active");
+      setModel(agent.model || "GPT-4");
+      setVoice(agent.voice || "Emma");
+      setVoiceProvider(agent.voiceProvider || "Eleven Labs");
     }
   }, [agent]);
   
@@ -41,6 +50,63 @@ const AgentDetails = () => {
         : "Your agent has been deactivated and won't process new requests.",
       variant: !isActive ? "default" : "destructive",
     });
+  };
+  
+  const handleModelChange = async (value: string) => {
+    setModel(value);
+    if (agent && agentId) {
+      try {
+        await updateAgent(agentId, { ...agent, model: value });
+        toast({
+          title: "Model updated",
+          description: `The agent model has been updated to ${value}.`,
+        });
+      } catch (error) {
+        toast({
+          title: "Failed to update model",
+          description: "There was an error updating the agent model.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleVoiceChange = async (value: string) => {
+    setVoice(value);
+    if (agent && agentId) {
+      try {
+        await updateAgent(agentId, { ...agent, voice: value });
+        toast({
+          title: "Voice updated",
+          description: `The agent voice has been updated to ${value}.`,
+        });
+      } catch (error) {
+        toast({
+          title: "Failed to update voice",
+          description: "There was an error updating the agent voice.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleProviderChange = async (value: string) => {
+    setVoiceProvider(value);
+    if (agent && agentId) {
+      try {
+        await updateAgent(agentId, { ...agent, voiceProvider: value });
+        toast({
+          title: "Voice provider updated",
+          description: `The voice provider has been updated to ${value}.`,
+        });
+      } catch (error) {
+        toast({
+          title: "Failed to update provider",
+          description: "There was an error updating the voice provider.",
+          variant: "destructive",
+        });
+      }
+    }
   };
   
   const handleDelete = () => {
@@ -86,8 +152,9 @@ const AgentDetails = () => {
   const agentWithAvmScore = {
     ...agent,
     avmScore: 7.8,
-    voiceProvider: agent.voiceProvider || "Eleven Labs",
-    voice: agent.voice || "Emma"
+    voiceProvider: voiceProvider,
+    voice: voice,
+    model: model
   };
   
   const lastUpdated = new Date().toLocaleString();
@@ -173,10 +240,28 @@ const AgentDetails = () => {
                 
                 <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
                   <div className="flex items-center gap-2 mb-1">
+                    <History className="h-3.5 w-3.5 text-agent-primary" />
+                    <span className="text-xs text-gray-400">Updated</span>
+                  </div>
+                  <p className="text-sm font-medium text-white">{lastUpdated.split(',')[0]}</p>
+                </div>
+
+                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center gap-2 mb-1">
                     <Cpu className="h-3.5 w-3.5 text-agent-primary" />
                     <span className="text-xs text-gray-400">Model</span>
                   </div>
-                  <p className="text-sm font-medium text-white">{agent.model || "GPT-4"}</p>
+                  <Select value={model} onValueChange={handleModelChange}>
+                    <SelectTrigger className="h-7 w-full bg-black/20 border-gray-700/50 text-white">
+                      <SelectValue placeholder="Select model" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-black text-white border-gray-700">
+                      <SelectItem value="GPT-4">GPT-4</SelectItem>
+                      <SelectItem value="GPT-3.5 Turbo">GPT-3.5 Turbo</SelectItem>
+                      <SelectItem value="Claude-2">Claude-2</SelectItem>
+                      <SelectItem value="LLama-2">LLama-2</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 
                 <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
@@ -184,7 +269,17 @@ const AgentDetails = () => {
                     <Mic className="h-3.5 w-3.5 text-agent-primary" />
                     <span className="text-xs text-gray-400">Voice</span>
                   </div>
-                  <p className="text-sm font-medium text-white">{agentWithAvmScore.voice}</p>
+                  <Select value={voice} onValueChange={handleVoiceChange}>
+                    <SelectTrigger className="h-7 w-full bg-black/20 border-gray-700/50 text-white">
+                      <SelectValue placeholder="Select voice" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-black text-white border-gray-700">
+                      <SelectItem value="Emma">Emma</SelectItem>
+                      <SelectItem value="Josh">Josh</SelectItem>
+                      <SelectItem value="Aria">Aria</SelectItem>
+                      <SelectItem value="Charlie">Charlie</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 
                 <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
@@ -192,17 +287,17 @@ const AgentDetails = () => {
                     <Volume2 className="h-3.5 w-3.5 text-agent-primary" />
                     <span className="text-xs text-gray-400">Provider</span>
                   </div>
-                  <p className="text-sm font-medium text-white">{agentWithAvmScore.voiceProvider}</p>
-                </div>
-                
-                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      <History className="h-3.5 w-3.5 text-agent-primary" />
-                      <span className="text-xs text-gray-400">Updated</span>
-                    </div>
-                  </div>
-                  <p className="text-sm font-medium text-white">{lastUpdated.split(',')[0]}</p>
+                  <Select value={voiceProvider} onValueChange={handleProviderChange}>
+                    <SelectTrigger className="h-7 w-full bg-black/20 border-gray-700/50 text-white">
+                      <SelectValue placeholder="Select provider" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-black text-white border-gray-700">
+                      <SelectItem value="Eleven Labs">Eleven Labs</SelectItem>
+                      <SelectItem value="Amazon Polly">Amazon Polly</SelectItem>
+                      <SelectItem value="Google TTS">Google TTS</SelectItem>
+                      <SelectItem value="Microsoft Azure">Microsoft Azure</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               
