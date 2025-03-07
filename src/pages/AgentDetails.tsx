@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -134,39 +133,49 @@ const AgentDetails = () => {
                   </Badge>
                 </div>
                 <p className="text-gray-300 mt-1 max-w-2xl">{agent.description}</p>
-                <div className="mt-3 flex flex-wrap items-center gap-3">
+                
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
                   <div className="flex items-center gap-2">
                     <Bot className="h-3.5 w-3.5 text-agent-primary" />
                     <span className="text-sm text-gray-300">
                       <span className="font-medium text-white capitalize">{agent.type}</span> agent
                     </span>
                   </div>
+                  
                   <div className="flex items-center gap-2">
                     <Calendar className="h-3.5 w-3.5 text-agent-primary" />
                     <span className="text-sm text-gray-300">
                       Created on <span className="font-medium text-white">{agent.createdAt}</span>
                     </span>
                   </div>
+                  
                   <div className="flex items-center gap-2">
                     <Mic className="h-3.5 w-3.5 text-agent-primary" />
                     <span className="text-sm text-gray-300">
-                      <span className="font-medium text-white">{agentWithAvmScore.voice}</span> via 
-                      <Badge variant="outline" className="ml-1.5 border-agent-primary/30 text-agent-primary bg-agent-primary/10">
-                        {agentWithAvmScore.voiceProvider}
-                      </Badge>
+                      Voice: <span className="font-medium text-white">{agentWithAvmScore.voice}</span>
                     </span>
                   </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="h-3.5 w-3.5 text-agent-primary" />
+                    <span className="text-sm text-gray-300">
+                      Provider: <span className="font-medium text-white">{agentWithAvmScore.voiceProvider}</span>
+                    </span>
+                  </div>
+                  
                   {agent.model && (
                     <div className="flex items-center gap-2">
                       <Cpu className="h-3.5 w-3.5 text-agent-primary" />
                       <span className="text-sm text-gray-300">
-                        <span className="font-medium text-white">{agent.model}</span>
+                        Model: <span className="font-medium text-white">{agent.model}</span>
                       </span>
                     </div>
                   )}
                 </div>
+                
                 {agent.channels && agent.channels.length > 0 && (
-                  <div className="mt-2">
+                  <div className="mt-3">
+                    <p className="text-sm text-gray-400 mb-1">Available on:</p>
                     <AgentChannels channels={agent.channels} />
                   </div>
                 )}
