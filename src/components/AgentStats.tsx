@@ -8,13 +8,15 @@ interface AgentStatsProps {
   interactionCount: number;
   csat?: number;  // 0-100 percentage
   performance?: number; // 0-100 percentage
+  compact?: boolean; // If true, only show first 3 stats
 }
 
 export const AgentStats: React.FC<AgentStatsProps> = ({ 
   avmScore, 
   interactionCount, 
   csat = 85, 
-  performance = 92 
+  performance = 92,
+  compact = false
 }) => {
   // Color indicator for AVM score based on the value range
   const getScoreColor = (score: number): string => {
@@ -88,16 +90,18 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
         </CardContent>
       </Card>
       
-      {/* Performance Card */}
-      <Card className="flex-1 overflow-hidden shadow-sm dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white">
-        <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
-          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Performance</span>
-          <Zap className={`w-3.5 h-3.5 ${performanceColor}`} />
-        </div>
-        <CardContent className="p-2 text-center">
-          <span className={`text-xl font-semibold ${performanceColor}`}>{performance}%</span>
-        </CardContent>
-      </Card>
+      {/* Performance Card - Only shown when not in compact mode */}
+      {!compact && (
+        <Card className="flex-1 overflow-hidden shadow-sm dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white">
+          <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
+            <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Performance</span>
+            <Zap className={`w-3.5 h-3.5 ${performanceColor}`} />
+          </div>
+          <CardContent className="p-2 text-center">
+            <span className={`text-xl font-semibold ${performanceColor}`}>{performance}%</span>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

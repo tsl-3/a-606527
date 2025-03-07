@@ -312,7 +312,8 @@ const AgentsDashboard = () => {
                   <div className="flex flex-col space-y-4">
                     <AgentStats 
                       avmScore={getAgentAVMScore(agent.id)} 
-                      interactionCount={agent.interactions} 
+                      interactionCount={agent.interactions}
+                      compact={true}
                     />
                     
                     <div>
