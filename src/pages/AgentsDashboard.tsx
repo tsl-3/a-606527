@@ -318,14 +318,14 @@ const AgentsDashboard = () => {
                     <div>
                       {agent.channelConfigs ? (
                         <AgentChannels channels={agent.channelConfigs} readonly={true} />
-                      ) : agent.channels ? (
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {agent.channels.map((channel) => (
-                            <div key={channel} className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 text-xs px-2 py-1 rounded-full">
-                              {channel}
-                            </div>
-                          ))}
-                        </div>
+                      ) : agent.channels && agent.channels.length > 0 ? (
+                        <AgentChannels 
+                          channels={agent.channels.reduce((obj, channel) => {
+                            obj[channel] = { enabled: true };
+                            return obj;
+                          }, {} as Record<string, AgentChannelConfig>)} 
+                          readonly={true} 
+                        />
                       ) : null}
                     </div>
                     
