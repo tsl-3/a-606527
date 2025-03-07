@@ -175,6 +175,18 @@
   .agent-toggle-label {
     @apply text-xs font-semibold w-full text-center transition-opacity duration-300;
   }
+  
+  /* Dark mode specific card and input styles with the new color */
+  .dark .card,
+  .dark [class*="Card"] {
+    @apply bg-agent-dark-bg border-gray-800;
+  }
+  
+  .dark input,
+  .dark textarea,
+  .dark select {
+    @apply bg-agent-dark-bg border-gray-800;
+  }
 }
 
 @layer utilities {
