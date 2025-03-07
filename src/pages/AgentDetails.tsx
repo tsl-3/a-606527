@@ -433,7 +433,7 @@ const AgentDetails = () => {
     navigate("/agents");
   };
 
-  const handleEditAgent = () => {
+  const handleEditClick = () => {
     toast({
       title: "Edit Mode",
       description: "You can now edit your agent's details.",
@@ -441,16 +441,16 @@ const AgentDetails = () => {
     // In a real app, you might navigate to an edit page or enable edit mode
   };
 
-  const getAvatarImageForVoice = () => {
-    if (voice && voiceProvider && !isCustomVoice) {
-      const voiceDef = voiceSamples[voiceProvider]?.[voice];
-      return voiceDef?.avatar || null;
+  const handleCopyAvatar = () => {
+    if (agent.avatar) {
+      navigator.clipboard.writeText(agent.avatar);
+      toast({
+        title: "Avatar copied",
+        description: "Avatar has been copied to clipboard.",
+      });
     }
-    return null;
   };
-  
-  const avatarImage = getAvatarImageForVoice();
-  
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -516,13 +516,13 @@ const AgentDetails = () => {
             <div className="flex items-center gap-4">
               <div className="relative">
                 <Avatar className="h-16 w-16 border-2 border-agent-primary/30">
-                  {avatarImage ? (
-                    <AvatarImage src={avatarImage} alt={agent.name} />
-                  ) : (
-                    <AvatarFallback className="bg-agent-primary/20 text-agent-primary">
-                      <Bot className="h-8 w-8" />
-                    </AvatarFallback>
-                  )}
+                  <AvatarImage 
+                    src={`https://api.dicebear.com/7.x/bottts/svg?seed=${agent.id}`} 
+                    alt={agent.name} 
+                  />
+                  <AvatarFallback className="bg-agent-primary/20 text-agent-primary">
+                    <Bot className="h-8 w-8" />
+                  </AvatarFallback>
                 </Avatar>
               </div>
               <div>
@@ -587,7 +587,7 @@ const AgentDetails = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-black border-gray-700 text-white">
-                    <DropdownMenuItem onClick={handleEditAgent} className="cursor-pointer flex items-center gap-2 hover:bg-white/10">
+                    <DropdownMenuItem onClick={handleEditClick} className="cursor-pointer flex items-center gap-2 hover:bg-white/10">
                       <PenSquare className="h-4 w-4 text-agent-primary" />
                       <span>Edit Agent</span>
                     </DropdownMenuItem>
