@@ -929,8 +929,19 @@ const AgentDetails = () => {
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <AgentStats agent={agentWithAvmScore} />
-              <AgentChannels agent={agentWithAvmScore} onUpdate={handleUpdateChannel} />
+              {/* Fix: Spread the agent's individual props instead of passing the agent object */}
+              <AgentStats 
+                avmScore={agent.avmScore || 7.8} 
+                interactionCount={agent.interactions || 0}
+                csat={agent.csat || 85}
+                performance={agent.performance || 92}
+              />
+              
+              {/* Fix: Pass channels object and onUpdateChannel callback instead of agent object */}
+              <AgentChannels 
+                channels={agent.channelConfigs}
+                onUpdateChannel={handleUpdateChannel}
+              />
             </div>
           </div>
         </CardContent>
