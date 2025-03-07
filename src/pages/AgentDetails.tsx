@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -135,6 +136,18 @@ const AgentDetails = () => {
                 <p className="text-gray-300 mt-1 max-w-2xl">{agent.description}</p>
                 <div className="mt-3 flex flex-wrap items-center gap-3">
                   <div className="flex items-center gap-2">
+                    <Bot className="h-3.5 w-3.5 text-agent-primary" />
+                    <span className="text-sm text-gray-300">
+                      <span className="font-medium text-white capitalize">{agent.type}</span> agent
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-3.5 w-3.5 text-agent-primary" />
+                    <span className="text-sm text-gray-300">
+                      Created on <span className="font-medium text-white">{agent.createdAt}</span>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
                     <Mic className="h-3.5 w-3.5 text-agent-primary" />
                     <span className="text-sm text-gray-300">
                       <span className="font-medium text-white">{agentWithAvmScore.voice}</span> via 
@@ -151,10 +164,12 @@ const AgentDetails = () => {
                       </span>
                     </div>
                   )}
-                  {agent.channels && agent.channels.length > 0 && (
-                    <AgentChannels channels={agent.channels} />
-                  )}
                 </div>
+                {agent.channels && agent.channels.length > 0 && (
+                  <div className="mt-2">
+                    <AgentChannels channels={agent.channels} />
+                  </div>
+                )}
               </div>
             </div>
             
@@ -217,35 +232,31 @@ const AgentDetails = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         <Card className="bg-agent-dark-bg border-gray-800 lg:col-span-1">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg text-white">Agent Information</CardTitle>
+            <CardTitle className="text-lg text-white">Integration Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-y-3 gap-x-4">
-              <div className="space-y-1">
-                <div className="text-xs uppercase text-gray-500 font-medium">Type</div>
-                <div className="text-sm font-medium text-white flex items-center">
-                  <Bot className="h-3.5 w-3.5 mr-1.5 text-agent-primary" />
-                  {agent.type}
+          <CardContent>
+            <div className="space-y-4">
+              <div className="p-3 bg-black/20 rounded-lg border border-gray-800">
+                <h4 className="text-xs uppercase text-gray-400 font-medium mb-2">API Connection</h4>
+                <div className="flex items-center justify-between">
+                  <code className="text-xs bg-black/30 p-1.5 rounded text-gray-300 font-mono">
+                    api.agent.ai/v1/{agent.id}
+                  </code>
+                  <Button size="sm" variant="outline" className="h-7 text-xs bg-black/30 border-gray-700">
+                    Copy
+                  </Button>
                 </div>
               </div>
               
-              <div className="space-y-1">
-                <div className="text-xs uppercase text-gray-500 font-medium">Created On</div>
-                <div className="text-sm font-medium text-white flex items-center">
-                  <Calendar className="h-3.5 w-3.5 mr-1.5 text-agent-primary" />
-                  {agent.createdAt}
+              <div className="flex items-center justify-between p-3 bg-black/20 rounded-lg border border-gray-800">
+                <div>
+                  <h4 className="text-xs uppercase text-gray-400 font-medium">Documentation</h4>
+                  <p className="text-sm text-white">View API reference</p>
                 </div>
-              </div>
-              
-              <div className="space-y-1 col-span-2">
-                <div className="text-xs uppercase text-gray-500 font-medium">Available Channels</div>
-                <div className="text-sm font-medium text-white">
-                  {agent.channels && agent.channels.length > 0 ? (
-                    <AgentChannels channels={agent.channels} />
-                  ) : (
-                    <span className="text-gray-400 text-sm">No channels configured</span>
-                  )}
-                </div>
+                <Button size="sm" variant="outline" className="h-8 bg-black/30 border-gray-700">
+                  <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                  <span className="text-xs">Open</span>
+                </Button>
               </div>
             </div>
           </CardContent>
