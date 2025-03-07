@@ -217,7 +217,9 @@ const AgentDetails = () => {
     avmScore: 7.8,
     voiceProvider: voiceProvider,
     voice: voice,
-    model: model
+    model: model,
+    channelConfigs: agent.channelConfigs || {},
+    onUpdateChannel: handleUpdateChannel
   };
   
   const lastUpdated = new Date().toLocaleString();

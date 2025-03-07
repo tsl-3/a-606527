@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { AgentStats } from "./AgentStats";
+import { AgentChannels } from "./AgentChannels";
 
 interface StepProps {
   title: string;
@@ -251,6 +252,19 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
                 </p>
               </div>
             </div>
+          </div>
+          
+          {/* Adding Channel Configuration Section */}
+          <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50 mb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-sm text-white font-medium">Channel Configuration</span>
+            </div>
+            {agent.onUpdateChannel && (
+              <AgentChannels 
+                channels={agent.channelConfigs} 
+                onUpdateChannel={agent.onUpdateChannel} 
+              />
+            )}
           </div>
         </Step>
         
