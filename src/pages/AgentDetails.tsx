@@ -1,4 +1,4 @@
-<lov-code>
+
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -768,4 +768,175 @@ const AgentDetails = () => {
                                     </div>
                                     
                                     {isCustomVoice && (
-                                      <div className="mt
+                                      <div className="mt-3 pl-8">
+                                        <Label htmlFor="custom-voice-id" className="text-sm text-gray-400 mb-1 block">
+                                          Enter a custom voice ID from your provider
+                                        </Label>
+                                        <Input 
+                                          id="custom-voice-id"
+                                          value={customVoiceId}
+                                          onChange={handleCustomVoiceIdChange}
+                                          placeholder="Enter voice ID"
+                                          className="bg-black/30 border-gray-700 text-white"
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+                                </RadioGroup>
+                              </TabsContent>
+                              
+                              <TabsContent value="Amazon Polly" className="border-none p-0">
+                                <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
+                                  {Object.keys(voiceSamples["Amazon Polly"]).map((voiceName) => {
+                                    const voiceDef = voiceSamples["Amazon Polly"][voiceName];
+                                    return (
+                                      <div 
+                                        key={voiceName} 
+                                        className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50"
+                                        onClick={() => handleVoiceChange(voiceName)}
+                                      >
+                                        <RadioGroupItem value={voiceName} id={`polly-${voiceName.toLowerCase()}`} className="mt-0" />
+                                        
+                                        <div className="flex flex-1 items-center space-x-6">
+                                          <div className="flex items-center gap-4 min-w-[180px]">
+                                            <Button
+                                              variant="play" 
+                                              size="play"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handlePlaySample(voiceName);
+                                              }}
+                                              className="flex-shrink-0"
+                                            >
+                                              {currentlyPlaying === voiceName ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                            </Button>
+                                            
+                                            <Avatar className="h-10 w-10 border border-gray-600">
+                                              <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                              <AvatarFallback className="bg-agent-primary/20 text-agent-primary">
+                                                {voiceName.charAt(0)}
+                                              </AvatarFallback>
+                                            </Avatar>
+                                            
+                                            <Label htmlFor={`polly-${voiceName.toLowerCase()}`} className="font-medium cursor-pointer">
+                                              {voiceName}
+                                            </Label>
+                                          </div>
+                                          
+                                          <div className="flex-1 flex items-center gap-2 flex-wrap">
+                                            {voiceDef.traits.map((trait, index) => (
+                                              <Badge 
+                                                key={index} 
+                                                className={`${trait.color || 'bg-gray-100 text-gray-800'} border-none mb-1`}
+                                              >
+                                                {trait.name}
+                                              </Badge>
+                                            ))}
+                                          </div>
+                                          
+                                          <div className="text-xs text-gray-400 font-mono">
+                                            {voiceDef.id}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </RadioGroup>
+                              </TabsContent>
+                              
+                              <TabsContent value="Google TTS" className="border-none p-0">
+                                <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
+                                  {Object.keys(voiceSamples["Google TTS"]).map((voiceName) => {
+                                    const voiceDef = voiceSamples["Google TTS"][voiceName];
+                                    return (
+                                      <div 
+                                        key={voiceName} 
+                                        className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50"
+                                        onClick={() => handleVoiceChange(voiceName)}
+                                      >
+                                        <RadioGroupItem value={voiceName} id={`google-${voiceName.toLowerCase().replace(' ', '-')}`} className="mt-0" />
+                                        
+                                        <div className="flex flex-1 items-center space-x-6">
+                                          <div className="flex items-center gap-4 min-w-[180px]">
+                                            <Button
+                                              variant="play" 
+                                              size="play"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handlePlaySample(voiceName);
+                                              }}
+                                              className="flex-shrink-0"
+                                            >
+                                              {currentlyPlaying === voiceName ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                            </Button>
+                                            
+                                            <Avatar className="h-10 w-10 border border-gray-600">
+                                              <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                              <AvatarFallback className="bg-agent-primary/20 text-agent-primary">
+                                                {voiceName.charAt(0)}
+                                              </AvatarFallback>
+                                            </Avatar>
+                                            
+                                            <Label htmlFor={`google-${voiceName.toLowerCase().replace(' ', '-')}`} className="font-medium cursor-pointer">
+                                              {voiceName}
+                                            </Label>
+                                          </div>
+                                          
+                                          <div className="flex-1 flex items-center gap-2 flex-wrap">
+                                            {voiceDef.traits.map((trait, index) => (
+                                              <Badge 
+                                                key={index} 
+                                                className={`${trait.color || 'bg-gray-100 text-gray-800'} border-none mb-1`}
+                                              >
+                                                {trait.name}
+                                              </Badge>
+                                            ))}
+                                          </div>
+                                          
+                                          <div className="text-xs text-gray-400 font-mono">
+                                            {voiceDef.id}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </RadioGroup>
+                              </TabsContent>
+                            </ScrollArea>
+                          </div>
+                        </Tabs>
+                        
+                        <div className="mt-6 flex justify-end gap-2">
+                          <Button 
+                            variant="outline" 
+                            className="bg-black/20 border-gray-700 text-white hover:bg-black/40" 
+                            onClick={() => setIsVoiceDialogOpen(false)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button 
+                            className="bg-agent-primary hover:bg-agent-primary/90" 
+                            onClick={handleVoiceSelectionSave}
+                          >
+                            Save Changes
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <AgentStats agent={agentWithAvmScore} />
+              <AgentChannels agent={agentWithAvmScore} onUpdate={handleUpdateChannel} />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default AgentDetails;
