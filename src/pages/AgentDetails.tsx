@@ -143,34 +143,6 @@ const AgentDetails = () => {
     navigate("/agents");
   };
   
-  const handleToggleChannel = async (channel: string) => {
-    if (!agent || !agentId) return;
-    
-    let updatedChannels: string[];
-    
-    if (agent.channels?.includes(channel)) {
-      updatedChannels = agent.channels.filter(c => c !== channel);
-    } else {
-      updatedChannels = [...(agent.channels || []), channel];
-    }
-    
-    try {
-      await updateAgent(agentId, { ...agent, channels: updatedChannels });
-      setAgent(prev => prev ? { ...prev, channels: updatedChannels } : null);
-      
-      toast({
-        title: agent.channels?.includes(channel) ? "Channel disabled" : "Channel enabled",
-        description: `The ${channel} channel has been ${agent.channels?.includes(channel) ? "disabled" : "enabled"}.`,
-      });
-    } catch (error) {
-      toast({
-        title: "Failed to update channels",
-        description: "There was an error updating the agent channels.",
-        variant: "destructive",
-      });
-    }
-  };
-
   const handleUpdateChannel = async (channel: string, config: { enabled: boolean; details?: string; config?: Record<string, any> }) => {
     if (!agent || !agentId) return;
     
@@ -476,7 +448,8 @@ const AgentDetails = () => {
                   </Dialog>
                 </div>
                 
-                <div className="col-span-1 bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50 hidden md:block">
+                <div className="col-span-1 bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  {/* Empty box for visual balance - can be used for future metrics */}
                 </div>
               </div>
               
@@ -496,16 +469,6 @@ const AgentDetails = () => {
                 avmScore={agentWithAvmScore.avmScore} 
                 interactionCount={agent.interactions} 
               />
-              
-              <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-sm text-white font-medium">Quick Test</span>
-                </div>
-                <Button variant="default" size="sm" className="w-full bg-agent-primary hover:bg-agent-primary/90">
-                  <ExternalLink className="h-3.5 w-3.5 mr-2" />
-                  Test Agent
-                </Button>
-              </div>
             </div>
           </div>
         </CardContent>
