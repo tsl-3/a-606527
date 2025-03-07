@@ -1,15 +1,26 @@
 
-export type AgentType = {
+export type AgentStatus = "active" | "inactive" | "draft";
+export type AgentType = "customer-support" | "sales" | "technical-support" | "personal-assistant" | "custom";
+
+export interface AgentChannelConfig {
+  enabled: boolean;
+  details?: string;
+  config?: Record<string, any>;
+}
+
+export interface AgentType {
   id: string;
   name: string;
   description: string;
-  type: string;
-  status: "active" | "inactive";
+  type: AgentType;
+  status: AgentStatus;
   createdAt: string;
-  interactions: number;
-  isPersonal: boolean;
+  updatedAt?: string;
   model?: string;
-  channels?: string[]; // Array of available channels: "voice", "chat", "sms", "email", "whatsapp"
-  voiceProvider?: string; // Voice service provider
-  voice?: string; // Specific voice used
-};
+  voice?: string;
+  voiceProvider?: string;
+  avmScore?: number;
+  interactions?: number;
+  channels?: string[];
+  channelConfigs?: Record<string, AgentChannelConfig>;
+}

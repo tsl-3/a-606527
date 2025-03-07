@@ -171,6 +171,44 @@ const AgentDetails = () => {
     }
   };
 
+  const handleUpdateChannel = async (channel: string, config: { enabled: boolean; details?: string; config?: Record<string, any> }) => {
+    if (!agent || !agentId) return;
+    
+    let updatedChannels: string[] = [...(agent.channels || [])];
+    
+    if (config.enabled && !updatedChannels.includes(channel)) {
+      updatedChannels.push(channel);
+    } else if (!config.enabled && updatedChannels.includes(channel)) {
+      updatedChannels = updatedChannels.filter(c => c !== channel);
+    }
+    
+    try {
+      const updatedAgent = { 
+        ...agent,
+        channels: updatedChannels,
+        channelConfigs: {
+          ...(agent.channelConfigs || {}),
+          [channel]: config
+        }
+      };
+      
+      await updateAgent(agentId, updatedAgent);
+      
+      setIsActive(updatedAgent.status === "active");
+      
+      toast({
+        title: config.enabled ? "Channel enabled" : "Channel disabled",
+        description: `The ${channel} channel has been updated.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to update channel",
+        description: "There was an error updating the channel configuration.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -444,11 +482,11 @@ const AgentDetails = () => {
               
               <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-sm text-white font-medium">Available Channels</span>
+                  <span className="text-sm text-white font-medium">Channel Configuration</span>
                 </div>
                 <AgentChannels 
-                  channels={agent.channels || []} 
-                  onToggleChannel={handleToggleChannel} 
+                  channels={agent.channelConfigs || {}} 
+                  onUpdateChannel={handleUpdateChannel} 
                 />
               </div>
             </div>

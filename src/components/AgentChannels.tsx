@@ -1,114 +1,219 @@
 
-import React from "react";
-import { Mic, MessageSquare, Smartphone, Mail, MessageCircle, Check } from "lucide-react";
+import React, { useState } from "react";
+import { Mic, MessageSquare, Smartphone, Mail, MessageCircle, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+interface AgentChannelConfig {
+  enabled: boolean;
+  details?: string;
+  config?: Record<string, any>;
+}
 
 interface AgentChannelsProps {
-  channels?: string[];
-  onToggleChannel?: (channel: string) => void;
+  channels?: Record<string, AgentChannelConfig>;
+  onUpdateChannel?: (channel: string, config: AgentChannelConfig) => void;
   readonly?: boolean;
 }
 
+interface ChannelInfo {
+  name: string;
+  icon: React.ReactNode;
+  color: string;
+  placeholder: string;
+}
+
+// All available channels with their info
+const CHANNEL_INFO: Record<string, ChannelInfo> = {
+  "voice": {
+    name: "Voice",
+    icon: <Mic className="h-5 w-5" />,
+    color: "text-blue-500",
+    placeholder: "+1 (800) 123-4567"
+  },
+  "chat": {
+    name: "Chat",
+    icon: <MessageSquare className="h-5 w-5" />,
+    color: "text-purple-500",
+    placeholder: "https://yourwebsite.com/chat"
+  },
+  "sms": {
+    name: "Sms",
+    icon: <Smartphone className="h-5 w-5" />,
+    color: "text-orange-500",
+    placeholder: "+1 (800) 123-4567"
+  },
+  "email": {
+    name: "Email",
+    icon: <Mail className="h-5 w-5" />,
+    color: "text-red-500",
+    placeholder: "support@yourcompany.com"
+  },
+  "whatsapp": {
+    name: "Whatsapp",
+    icon: <MessageCircle className="h-5 w-5" />,
+    color: "text-green-500",
+    placeholder: "+1 (555) 987-6543"
+  }
+};
+
 // All available channels
-const ALL_CHANNELS = ["voice", "chat", "sms", "email", "whatsapp"];
+const ALL_CHANNELS = Object.keys(CHANNEL_INFO);
 
 export const AgentChannels: React.FC<AgentChannelsProps> = ({ 
-  channels = [], 
-  onToggleChannel,
+  channels = {}, 
+  onUpdateChannel,
   readonly = false
 }) => {
-  const getChannelIcon = (channel: string) => {
-    switch (channel) {
-      case "voice":
-        return <Mic className="h-3 w-3" />;
-      case "chat":
-        return <MessageSquare className="h-3 w-3" />;
-      case "sms":
-        return <Smartphone className="h-3 w-3" />;
-      case "email":
-        return <Mail className="h-3 w-3" />;
-      case "whatsapp":
-        return <MessageCircle className="h-3 w-3" />;
-      default:
-        return null;
+  const [activeDialogChannel, setActiveDialogChannel] = useState<string | null>(null);
+  const [channelDetails, setChannelDetails] = useState<string>("");
+
+  // Ensure channels object has entries for all available channels
+  const normalizedChannels = ALL_CHANNELS.reduce((acc, channel) => {
+    acc[channel] = channels[channel] || { enabled: false };
+    return acc;
+  }, {} as Record<string, AgentChannelConfig>);
+  
+  const handleToggleChannel = (channel: string, enabled: boolean) => {
+    if (onUpdateChannel) {
+      const currentConfig = normalizedChannels[channel] || { enabled: false };
+      onUpdateChannel(channel, { ...currentConfig, enabled });
     }
   };
 
-  const getChannelColor = (channel: string, active: boolean) => {
-    if (!active) return "bg-gray-800 hover:bg-gray-700 text-gray-400";
-    
-    switch (channel) {
-      case "voice":
-        return "bg-blue-500 hover:bg-blue-600";
-      case "chat":
-        return "bg-purple-500 hover:bg-purple-600";
-      case "sms":
-        return "bg-orange-500 hover:bg-orange-600";
-      case "email":
-        return "bg-red-500 hover:bg-red-600";
-      case "whatsapp":
-        return "bg-green-500 hover:bg-green-600";
-      default:
-        return "bg-gray-500 hover:bg-gray-600";
+  const handleOpenConfigDialog = (channel: string) => {
+    setActiveDialogChannel(channel);
+    setChannelDetails(normalizedChannels[channel]?.details || "");
+  };
+
+  const handleSaveConfig = () => {
+    if (activeDialogChannel && onUpdateChannel) {
+      const currentConfig = normalizedChannels[activeDialogChannel] || { enabled: false };
+      onUpdateChannel(activeDialogChannel, {
+        ...currentConfig,
+        details: channelDetails
+      });
+      setActiveDialogChannel(null);
     }
   };
 
   if (readonly) {
-    // Original display-only mode
-    if (!channels.length) return null;
+    // Display-only mode for channels that are enabled
+    const enabledChannels = Object.entries(normalizedChannels)
+      .filter(([_, config]) => config.enabled)
+      .map(([channel]) => channel);
+    
+    if (!enabledChannels.length) return null;
     
     return (
-      <div className="flex flex-wrap gap-1.5 mt-2">
-        <TooltipProvider>
-          {channels.map((channel) => (
-            <Tooltip key={channel}>
-              <TooltipTrigger asChild>
-                <Badge 
-                  className={`${getChannelColor(channel, true)} text-white text-xs px-2 py-0.5 flex items-center gap-1`}
-                  variant="default"
-                >
-                  {getChannelIcon(channel)}
-                  <span className="text-[0.65rem] capitalize">{channel}</span>
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="capitalize">{channel} channel</p>
-              </TooltipContent>
-            </Tooltip>
-          ))}
-        </TooltipProvider>
+      <div className="flex flex-wrap gap-2 mt-2">
+        {enabledChannels.map((channel) => (
+          <Badge 
+            key={channel}
+            className={`bg-${channel === 'voice' ? 'blue' : channel === 'chat' ? 'purple' : channel === 'sms' ? 'orange' : channel === 'email' ? 'red' : 'green'}-500 text-white text-xs px-2 py-1 flex items-center gap-1`}
+            variant="default"
+          >
+            {CHANNEL_INFO[channel].icon}
+            <span className="text-[0.65rem] capitalize">{channel}</span>
+          </Badge>
+        ))}
       </div>
     );
   }
 
-  // Interactive selection mode
+  // Interactive channel configuration mode
   return (
-    <div className="flex flex-wrap gap-1.5 mt-2">
-      <TooltipProvider>
-        {ALL_CHANNELS.map((channel) => {
-          const isActive = channels.includes(channel);
-          
-          return (
-            <Tooltip key={channel}>
-              <TooltipTrigger asChild>
-                <Badge 
-                  className={`${getChannelColor(channel, isActive)} text-xs px-2 py-0.5 flex items-center gap-1 cursor-pointer transition-colors duration-200`}
-                  variant="default"
-                  onClick={() => onToggleChannel && onToggleChannel(channel)}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+      {ALL_CHANNELS.map((channel) => {
+        const channelConfig = normalizedChannels[channel];
+        const info = CHANNEL_INFO[channel];
+        
+        return (
+          <div 
+            key={channel}
+            className="bg-black/40 rounded-lg border border-gray-800 p-4 flex flex-col"
+          >
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-2">
+                <span className={info.color}>{info.icon}</span>
+                <span className="font-medium text-white">{info.name}</span>
+              </div>
+              <Switch
+                checked={channelConfig.enabled}
+                onCheckedChange={(checked) => handleToggleChannel(channel, checked)}
+              />
+            </div>
+            
+            {channelConfig.details ? (
+              <p className="text-sm text-gray-400 mb-4 truncate">{channelConfig.details}</p>
+            ) : (
+              <p className="text-sm text-gray-500 mb-4 italic">No configuration</p>
+            )}
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className="mt-auto bg-transparent border-gray-700 hover:bg-gray-800 text-white"
+                  onClick={() => handleOpenConfigDialog(channel)}
                 >
-                  {getChannelIcon(channel)}
-                  <span className="text-[0.65rem] capitalize">{channel}</span>
-                  {isActive && <Check className="h-2 w-2 ml-0.5" />}
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="capitalize">{isActive ? "Disable" : "Enable"} {channel} channel</p>
-              </TooltipContent>
-            </Tooltip>
-          );
-        })}
-      </TooltipProvider>
+                  Configure
+                </Button>
+              </DialogTrigger>
+              
+              {activeDialogChannel === channel && (
+                <DialogContent className="sm:max-w-md bg-black text-white border-gray-700">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <span className={info.color}>{info.icon}</span>
+                      Configure {info.name}
+                    </DialogTitle>
+                  </DialogHeader>
+                  
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor={`${channel}-details`}>
+                        {channel === 'voice' || channel === 'sms' || channel === 'whatsapp' 
+                          ? 'Phone Number' 
+                          : channel === 'chat' 
+                            ? 'URL' 
+                            : 'Email Address'}
+                      </Label>
+                      <Input
+                        id={`${channel}-details`}
+                        placeholder={info.placeholder}
+                        value={channelDetails}
+                        onChange={(e) => setChannelDetails(e.target.value)}
+                        className="bg-black/30 border-gray-700 text-white"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setActiveDialogChannel(null)}
+                      className="bg-transparent border-gray-700 hover:bg-gray-800 text-white"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleSaveConfig}
+                      className="bg-agent-primary hover:bg-agent-primary/90"
+                    >
+                      Save Changes
+                    </Button>
+                  </div>
+                </DialogContent>
+              )}
+            </Dialog>
+          </div>
+        );
+      })}
     </div>
   );
 };
