@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, 
-  ExternalLink, History, BarChart2, Cpu, Calendar, Check, X 
+  ExternalLink, History, BarChart2, Cpu, Calendar, Check, X, Mic, Volume2 
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import { AgentType } from "@/types/agent";
 import { useAgentDetails } from "@/hooks/useAgentDetails";
 import { AgentSetupStepper } from "@/components/AgentSetupStepper";
 import { AgentToggle } from "@/components/AgentToggle";
+import { AgentChannels } from "@/components/AgentChannels";
 
 const AgentDetails = () => {
   const { agentId } = useParams<{ agentId: string }>();
@@ -132,6 +133,28 @@ const AgentDetails = () => {
                   </Badge>
                 </div>
                 <p className="text-gray-300 mt-1 max-w-2xl">{agent.description}</p>
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <Mic className="h-3.5 w-3.5 text-agent-primary" />
+                    <span className="text-sm text-gray-300">
+                      <span className="font-medium text-white">{agentWithAvmScore.voice}</span> via 
+                      <Badge variant="outline" className="ml-1.5 border-agent-primary/30 text-agent-primary bg-agent-primary/10">
+                        {agentWithAvmScore.voiceProvider}
+                      </Badge>
+                    </span>
+                  </div>
+                  {agent.model && (
+                    <div className="flex items-center gap-2">
+                      <Cpu className="h-3.5 w-3.5 text-agent-primary" />
+                      <span className="text-sm text-gray-300">
+                        <span className="font-medium text-white">{agent.model}</span>
+                      </span>
+                    </div>
+                  )}
+                  {agent.channels && agent.channels.length > 0 && (
+                    <AgentChannels channels={agent.channels} />
+                  )}
+                </div>
               </div>
             </div>
             
@@ -214,27 +237,14 @@ const AgentDetails = () => {
                 </div>
               </div>
               
-              <div className="space-y-1">
-                <div className="text-xs uppercase text-gray-500 font-medium">Model</div>
-                <div className="text-sm font-medium text-white flex items-center">
-                  <Cpu className="h-3.5 w-3.5 mr-1.5 text-agent-primary" />
-                  {agent.model || "GPT-4"}
-                </div>
-              </div>
-              
-              <div className="space-y-1">
-                <div className="text-xs uppercase text-gray-500 font-medium">Voice Provider</div>
-                <div className="text-sm font-medium text-white">
-                  <Badge variant="outline" className="border-agent-primary/30 text-agent-primary bg-agent-primary/10">
-                    {agentWithAvmScore.voiceProvider}
-                  </Badge>
-                </div>
-              </div>
-              
               <div className="space-y-1 col-span-2">
-                <div className="text-xs uppercase text-gray-500 font-medium">Voice</div>
+                <div className="text-xs uppercase text-gray-500 font-medium">Available Channels</div>
                 <div className="text-sm font-medium text-white">
-                  {agentWithAvmScore.voice}
+                  {agent.channels && agent.channels.length > 0 ? (
+                    <AgentChannels channels={agent.channels} />
+                  ) : (
+                    <span className="text-gray-400 text-sm">No channels configured</span>
+                  )}
                 </div>
               </div>
             </div>
