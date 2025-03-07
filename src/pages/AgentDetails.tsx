@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -530,81 +529,80 @@ const AgentDetails = () => {
                     )}
                   </div>
                 )}
+                
+                <div className="mt-3 flex items-center gap-2 flex-wrap">
+                  {voicePhoneNumber && (
+                    <div className="flex items-center">
+                      <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
+                        <Phone className="h-3.5 w-3.5 text-blue-500" />
+                        <span className="text-xs text-white">{voicePhoneNumber}</span>
+                        <div className="flex gap-1 ml-2">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-gray-700/50"
+                            onClick={handleCopyPhoneNumber}
+                            title="Copy phone number"
+                          >
+                            <Copy className="h-3 w-3 text-gray-400" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-green-700/50"
+                            onClick={handleTestCall}
+                            title="Test agent call"
+                          >
+                            <PhoneOutgoing className="h-3 w-3 text-green-400" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {emailAddress && (
+                    <div className="flex items-center">
+                      <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
+                        <Mail className="h-3.5 w-3.5 text-red-500" />
+                        <span className="text-xs text-white">{emailAddress}</span>
+                        <div className="flex gap-1 ml-2">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-gray-700/50"
+                            onClick={handleCopyEmail}
+                            title="Copy email address"
+                          >
+                            <Copy className="h-3 w-3 text-gray-400" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-green-700/50"
+                            onClick={handleTestEmail}
+                            title="Test agent email"
+                          >
+                            <Send className="h-3 w-3 text-green-400" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             
             <div className="flex items-center space-x-3 mt-2 md:mt-0">
-              <Button variant="destructive" size="icon" onClick={handleDelete} 
-                className="bg-red-500/20 hover:bg-red-500/30 text-red-400">
-                <Trash2 className="h-4 w-4" />
-              </Button>
               <AgentToggle isActive={isActive} onToggle={handleStatusToggle} />
               <Button variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white">
                 <Settings className="h-4 w-4 mr-2" />
                 <span>Settings</span>
               </Button>
+              <Button variant="destructive" size="icon" onClick={handleDelete} 
+                className="bg-red-500/20 hover:bg-red-500/30 text-red-400">
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
-          </div>
-          
-          {/* Moved phone and email display here - below the top controls */}
-          <div className="mt-3 flex items-center gap-2 flex-wrap">
-            {voicePhoneNumber && (
-              <div className="flex items-center">
-                <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
-                  <Phone className="h-3.5 w-3.5 text-blue-500" />
-                  <span className="text-xs text-white">{voicePhoneNumber}</span>
-                  <div className="flex gap-1 ml-2">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6 rounded-full hover:bg-gray-700/50"
-                      onClick={handleCopyPhoneNumber}
-                      title="Copy phone number"
-                    >
-                      <Copy className="h-3 w-3 text-gray-400" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6 rounded-full hover:bg-green-700/50"
-                      onClick={handleTestCall}
-                      title="Test agent call"
-                    >
-                      <PhoneOutgoing className="h-3 w-3 text-green-400" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {emailAddress && (
-              <div className="flex items-center">
-                <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
-                  <Mail className="h-3.5 w-3.5 text-red-500" />
-                  <span className="text-xs text-white">{emailAddress}</span>
-                  <div className="flex gap-1 ml-2">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6 rounded-full hover:bg-gray-700/50"
-                      onClick={handleCopyEmail}
-                      title="Copy email address"
-                    >
-                      <Copy className="h-3 w-3 text-gray-400" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6 rounded-full hover:bg-green-700/50"
-                      onClick={handleTestEmail}
-                      title="Test agent email"
-                    >
-                      <Send className="h-3 w-3 text-green-400" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </CardHeader>
         
@@ -768,17 +766,32 @@ const AgentDetails = () => {
                                     </div>
                                     
                                     {isCustomVoice && (
-                                      <div className="mt-3 pl-8">
-                                        <Label htmlFor="custom-voice-id" className="text-sm text-gray-400 mb-1 block">
-                                          Enter a custom voice ID from your provider
+                                      <div className="mt-4 p-4 rounded-md border border-gray-700 bg-black/30 ml-7">
+                                        <Label htmlFor="custom-voice-id" className="text-sm mb-2 block text-gray-300">
+                                          Enter Eleven Labs Voice ID
                                         </Label>
-                                        <Input 
+                                        <Input
                                           id="custom-voice-id"
                                           value={customVoiceId}
                                           onChange={handleCustomVoiceIdChange}
-                                          placeholder="Enter voice ID"
-                                          className="bg-black/30 border-gray-700 text-white"
+                                          placeholder="e.g. 21m00Tcm4TlvDq8ikWAM"
+                                          className="bg-black/50 border-gray-600 text-white"
+                                          onClick={(e) => e.stopPropagation()}
                                         />
+                                        <p className="text-xs text-gray-400 mt-3 flex items-center gap-1.5">
+                                          <AlertCircle className="h-3.5 w-3.5 text-gray-400" />
+                                          Find your voice IDs in the 
+                                          <a 
+                                            href="https://elevenlabs.io/app" 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="text-agent-primary hover:underline inline-flex items-center gap-1 ml-1"
+                                            onClick={(e) => e.stopPropagation()}
+                                          >
+                                            Eleven Labs dashboard
+                                            <ExternalLink className="h-3 w-3" />
+                                          </a>
+                                        </p>
                                       </div>
                                     )}
                                   </div>
@@ -906,18 +919,11 @@ const AgentDetails = () => {
                           </div>
                         </Tabs>
                         
-                        <div className="mt-6 flex justify-end gap-2">
-                          <Button 
-                            variant="outline" 
-                            className="bg-black/20 border-gray-700 text-white hover:bg-black/40" 
-                            onClick={() => setIsVoiceDialogOpen(false)}
-                          >
+                        <div className="flex justify-end gap-2 mt-4 pt-2 border-t border-gray-700">
+                          <Button variant="outline" onClick={() => setIsVoiceDialogOpen(false)} className="bg-black/20 border-gray-700 hover:bg-gray-800">
                             Cancel
                           </Button>
-                          <Button 
-                            className="bg-agent-primary hover:bg-agent-primary/90" 
-                            onClick={handleVoiceSelectionSave}
-                          >
+                          <Button onClick={handleVoiceSelectionSave} className="bg-agent-primary hover:bg-agent-primary/90">
                             Save Changes
                           </Button>
                         </div>
@@ -925,27 +931,110 @@ const AgentDetails = () => {
                     </Dialog>
                   </div>
                 </div>
+                
+                <div className="grid grid-cols-1 gap-4">
+                  <AgentStats 
+                    avmScore={agent.avmScore || 7.8} 
+                    interactionCount={agent.interactions || 0}
+                    csat={agent.csat || 85}
+                    performance={agent.performance || 92}
+                  />
+                </div>
               </div>
-            </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Fix: Spread the agent's individual props instead of passing the agent object */}
-              <AgentStats 
-                avmScore={agent.avmScore || 7.8} 
-                interactionCount={agent.interactions || 0}
-                csat={agent.csat || 85}
-                performance={agent.performance || 92}
-              />
-              
-              {/* Fix: Pass channels object and onUpdateChannel callback instead of agent object */}
-              <AgentChannels 
-                channels={agent.channelConfigs}
-                onUpdateChannel={handleUpdateChannel}
-              />
             </div>
           </div>
         </CardContent>
       </Card>
+      
+      <Tabs defaultValue="setup" className="space-y-6">
+        <TabsList className="bg-agent-dark-bg/50 border border-gray-800">
+          <TabsTrigger value="setup" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
+            Setup
+          </TabsTrigger>
+          <TabsTrigger value="integration" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
+            Integration
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
+            Analytics
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
+            Settings
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="setup" className="animate-fade-in">
+          <AgentSetupStepper agent={agentWithAvmScore} />
+        </TabsContent>
+        
+        <TabsContent value="integration" className="animate-fade-in">
+          <Card className="bg-agent-dark-bg border-gray-800">
+            <CardHeader>
+              <CardTitle className="text-white">Integration Details</CardTitle>
+              <CardDescription className="text-gray-400">Connect your agent with other systems</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-black/30 rounded-lg border border-gray-700/50">
+                <h4 className="text-sm text-white font-medium mb-2">API Connection</h4>
+                <div className="flex items-center justify-between">
+                  <code className="text-xs bg-black/50 p-2 rounded text-gray-300 font-mono">
+                    api.agent.ai/v1/{agent.id}
+                  </code>
+                  <Button size="sm" variant="outline" className="h-7 text-xs bg-black/50 border-gray-700">
+                    Copy
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-4 bg-black/30 rounded-lg border border-gray-700/50">
+                <div>
+                  <h4 className="text-sm text-white font-medium">Documentation</h4>
+                  <p className="text-xs text-gray-400">View detailed API reference</p>
+                </div>
+                <Button size="sm" variant="outline" className="h-8 bg-black/50 border-gray-700">
+                  <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                  <span className="text-xs">Open Docs</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="analytics" className="animate-fade-in">
+          <Card className="bg-agent-dark-bg border-gray-800">
+            <CardHeader>
+              <CardTitle className="text-white">Performance Analytics</CardTitle>
+              <CardDescription className="text-gray-400">Monitor your agent's performance</CardDescription>
+            </CardHeader>
+            <CardContent className="h-[300px] flex items-center justify-center">
+              <div className="text-center">
+                <BarChart2 className="h-12 w-12 text-agent-primary/30 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-white">Analytics Dashboard</h3>
+                <p className="text-gray-400 max-w-md">
+                  Detailed performance metrics will appear here once your agent has more interactions.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="settings" className="animate-fade-in">
+          <Card className="bg-agent-dark-bg border-gray-800">
+            <CardHeader>
+              <CardTitle className="text-white">Agent Settings</CardTitle>
+              <CardDescription className="text-gray-400">Configure your agent's behavior</CardDescription>
+            </CardHeader>
+            <CardContent className="h-[300px] flex items-center justify-center">
+              <div className="text-center">
+                <Settings className="h-12 w-12 text-agent-primary/30 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-white">Settings Panel</h3>
+                <p className="text-gray-400 max-w-md">
+                  Configure how your agent works including behavior, voice, and response parameters.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
