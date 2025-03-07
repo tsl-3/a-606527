@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { 
   BookOpen, Workflow, FlaskConical, CheckCircle2, 
   Upload, PlayCircle, Bot, File, CircleDashed, ArrowRight,
@@ -100,6 +99,27 @@ const AgentTrainingCard: React.FC<{
   trainingRecords = []
 }) => {
   const [isExpanded, setIsExpanded] = useState(status !== 'completed');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleUploadClick = () => {
+    // Trigger the hidden file input click
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      // Here you would typically handle the file upload logic
+      console.log('Files selected:', files);
+      
+      // In a real app, you would upload these files to your server
+      // For now, just log the file names
+      const fileNames = Array.from(files).map(file => file.name);
+      console.log('File names:', fileNames);
+    }
+  };
 
   return (
     <div className="bg-[#000313] rounded-lg overflow-hidden mb-6 border border-gray-800">
@@ -161,10 +181,22 @@ const AgentTrainingCard: React.FC<{
                   Upload call recordings or start a role-playing session to begin training your agent.
                 </p>
                 <div className="flex justify-center gap-4">
-                  <Button variant="outline" className="bg-black/50 border-gray-700 text-white gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="bg-black/50 border-gray-700 text-white gap-2"
+                    onClick={handleUploadClick}
+                  >
                     <Upload className="h-4 w-4" />
                     Upload Recordings
                   </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    onChange={handleFileChange}
+                    multiple
+                    accept="audio/*"
+                  />
                   <Button className="gap-2 bg-gradient-to-r from-purple-500 to-indigo-500">
                     <PlayCircle className="h-4 w-4" />
                     Start Role-Play
@@ -262,10 +294,22 @@ const AgentTrainingCard: React.FC<{
                 <p className="text-sm text-gray-400 mb-4">Choose one of the following options to begin training your AI agent:</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800"
+                    onClick={handleUploadClick}
+                  >
                     <Upload className="h-4 w-4" />
                     <span>Upload Call Recordings</span>
                   </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    onChange={handleFileChange}
+                    multiple
+                    accept="audio/*"
+                  />
                   <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
                     <PlayCircle className="h-4 w-4" />
                     <span>Start Role-Playing</span>
