@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -478,9 +479,30 @@ const AgentDetails = () => {
                   </Badge>
                 </div>
                 <p className="text-gray-300 mt-1.5 max-w-2xl">{agent.description}</p>
-                
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3 mt-2 md:mt-0">
+              <AgentToggle isActive={isActive} onToggle={handleStatusToggle} />
+              <Button variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white">
+                <Settings className="h-4 w-4 mr-2" />
+                <span>Settings</span>
+              </Button>
+              <Button variant="destructive" size="icon" onClick={handleDelete} 
+                className="bg-red-500/20 hover:bg-red-500/30 text-red-400">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        
+        <CardContent>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 gap-6">
+              {/* Active channels badges and phone number */}
+              <div className="flex flex-col gap-3">
                 {activeChannels.length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {activeChannels.includes('voice') && (
                       <Badge className="bg-blue-500 text-white px-2 py-0.5 flex items-center gap-1">
                         <Mic className="h-3 w-3" />
@@ -503,7 +525,7 @@ const AgentDetails = () => {
                 )}
                 
                 {voicePhoneNumber && (
-                  <div className="mt-2 flex items-center">
+                  <div className="flex items-center">
                     <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
                       <Phone className="h-3.5 w-3.5 text-agent-primary" />
                       <span className="text-xs text-white">{voicePhoneNumber}</span>
@@ -531,25 +553,7 @@ const AgentDetails = () => {
                   </div>
                 )}
               </div>
-            </div>
-            
-            <div className="flex items-center space-x-3 mt-2 md:mt-0">
-              <AgentToggle isActive={isActive} onToggle={handleStatusToggle} />
-              <Button variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white">
-                <Settings className="h-4 w-4 mr-2" />
-                <span>Settings</span>
-              </Button>
-              <Button variant="destructive" size="icon" onClick={handleDelete} 
-                className="bg-red-500/20 hover:bg-red-500/30 text-red-400">
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        
-        <CardContent>
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 gap-6">
+
               <div className="grid grid-cols-1 gap-4">
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                   <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
@@ -875,10 +879,10 @@ const AgentDetails = () => {
                 
                 <div className="grid grid-cols-1 gap-4">
                   <AgentStats 
-                    avmScore={agentWithAvmScore.avmScore} 
-                    interactionCount={agent.interactions}
-                    csat={agent.csat}
-                    performance={agent.performance}
+                    avmScore={agent.avmScore || 7.8} 
+                    interactionCount={agent.interactions || 0}
+                    csat={agent.csat || 85}
+                    performance={agent.performance || 92}
                   />
                 </div>
               </div>

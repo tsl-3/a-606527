@@ -20,12 +20,15 @@ export const useAgentDetails = (agentId: string | undefined) => {
       try {
         const data = await fetchAgentById(agentId);
         
-        // Add default stats if needed
+        // Add default stats if missing
         const enhancedData = {
           ...data,
           interactions: data.interactions || 0,
           csat: data.csat || 85,
           performance: data.performance || 92,
+          avmScore: data.avmScore || 7.8,
+          channels: data.channels || [],
+          channelConfigs: data.channelConfigs || {},
         };
         
         setAgent(enhancedData);
