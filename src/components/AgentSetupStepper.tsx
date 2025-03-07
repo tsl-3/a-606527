@@ -32,31 +32,31 @@ const Step: React.FC<StepProps> = ({
   stepNumber
 }) => {
   return (
-    <Card className={`mb-6 border ${isActive ? 'border-agent-primary/50 shadow-md' : 'border-gray-100 dark:border-gray-800'}`}>
+    <Card className={`mb-6 ${isActive ? 'border-primary/50 shadow-md' : 'border-gray-100 dark:border-gray-800'}`}>
       <CardHeader className="flex flex-row items-start gap-4 pb-2">
         <div className={`p-2 rounded-full flex items-center justify-center ${
           isCompleted 
             ? 'bg-green-100 dark:bg-green-900/20' 
             : isActive 
-              ? 'bg-agent-primary/10' 
+              ? 'bg-primary/10' 
               : 'bg-gray-100 dark:bg-gray-800'
         }`}>
           {isCompleted ? (
             <CheckCircle2 className="h-5 w-5 text-green-500" />
           ) : (
-            <div className="h-5 w-5 flex items-center justify-center">
+            <div className="h-5 w-5 flex items-center justify-center text-gray-900 dark:text-white">
               {stepNumber}
             </div>
           )}
         </div>
         <div className="flex-1">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold">{title}</CardTitle>
+            <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">{title}</CardTitle>
             {progress > 0 && progress < 100 && (
-              <span className="text-sm text-gray-500">{progress}%</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">{progress}%</span>
             )}
           </div>
-          <CardDescription>{description}</CardDescription>
+          <CardDescription className="text-gray-600 dark:text-gray-300">{description}</CardDescription>
           {progress > 0 && (
             <Progress value={progress} className="h-1.5 mt-2" />
           )}
@@ -95,19 +95,19 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Agent Setup</h2>
           <div className="flex items-center">
-            <span className="text-sm font-medium mr-2">{overallProgress}% Complete</span>
+            <span className="text-sm font-medium mr-2 text-gray-700 dark:text-gray-300">{overallProgress}% Complete</span>
             <Progress value={overallProgress} className="w-24 h-2" />
           </div>
         </div>
         
         {/* Next Action Recommendation */}
-        <div className="bg-agent-primary/10 rounded-lg p-4 mb-6">
+        <div className="bg-primary/10 rounded-lg p-4 mb-6">
           <div className="flex items-start gap-3">
-            <div className="bg-agent-primary/20 p-2 rounded-full">
-              <ArrowRight className="h-5 w-5 text-agent-primary" />
+            <div className="bg-primary/20 p-2 rounded-full">
+              <ArrowRight className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h3 className="font-medium text-base mb-1">Recommended Next Action</h3>
+              <h3 className="font-medium text-base mb-1 text-gray-900 dark:text-white">Recommended Next Action</h3>
               <p className="text-gray-600 dark:text-gray-300">
                 Complete your agent training by uploading call recordings or starting a role-play conversation.
               </p>
@@ -115,7 +115,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           </div>
         </div>
         
-        <p className="text-gray-500 dark:text-gray-400">
+        <p className="text-gray-600 dark:text-gray-300">
           Complete these steps in order to fully configure your agent for optimal performance
         </p>
       </div>
@@ -132,7 +132,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
         <Step 
           title="Agent Training" 
           description="Train your voice agent by uploading call recordings or role-play a conversation"
-          icon={<Mic className="h-5 w-5 text-agent-primary" />}
+          icon={<Mic className="h-5 w-5 text-primary" />}
           isActive={steps.training.active}
           isCompleted={steps.training.completed}
           progress={steps.training.progress}
@@ -140,16 +140,16 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg text-center">
-              <div className="text-xl font-bold">3/10</div>
-              <div className="text-xs text-gray-500">Voice Samples</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-white">3/10</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">Voice Samples</div>
             </div>
             <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg text-center">
-              <div className="text-xl font-bold">65%</div>
-              <div className="text-xs text-gray-500">Voice Cloning Confidence</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-white">65%</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">Voice Cloning Confidence</div>
             </div>
             <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg text-center">
-              <div className="text-xl font-bold">45s</div>
-              <div className="text-xs text-gray-500">Average Talk Time</div>
+              <div className="text-xl font-bold text-gray-900 dark:text-white">45s</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">Average Talk Time</div>
             </div>
           </div>
           
@@ -159,15 +159,15 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
                 <CheckCircle2 className="h-4 w-4 text-green-500" />
               </div>
               <div>
-                <h4 className="font-medium mb-1">Progress: 3 of 10 voice samples uploaded</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Upload 7 more voice samples to complete this step.</p>
+                <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Progress: 3 of 10 voice samples uploaded</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Upload 7 more voice samples to complete this step.</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-agent-primary/5 rounded-lg p-4 mb-4">
-            <h4 className="font-medium mb-2">Get Started with Training</h4>
-            <p className="text-sm text-gray-500 mb-4">Choose one of the following options to begin training your AI agent:</p>
+          <div className="bg-primary/5 rounded-lg p-4 mb-4">
+            <h4 className="font-medium mb-2 text-gray-900 dark:text-white">Get Started with Training</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Choose one of the following options to begin training your AI agent:</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <Button variant="outline" className="flex items-center justify-center gap-2">
@@ -190,7 +190,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
         <Step 
           title="Knowledge Base" 
           description="Upload documents to give your agent its specific knowledge"
-          icon={<BookOpen className="h-5 w-5 text-agent-primary" />}
+          icon={<BookOpen className="h-5 w-5 text-primary" />}
           isActive={steps.knowledge.active}
           isCompleted={steps.knowledge.completed}
           progress={steps.knowledge.progress}
@@ -202,15 +202,15 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
                 <ArrowRight className="h-4 w-4 text-amber-500" />
               </div>
               <div>
-                <h4 className="font-medium mb-1">Status: Partially complete</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">You've added some knowledge, but we recommend adding more documents to improve your agent's accuracy.</p>
+                <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Status: Partially complete</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">You've added some knowledge, but we recommend adding more documents to improve your agent's accuracy.</p>
               </div>
             </div>
           </div>
         
-          <div className="bg-agent-primary/5 rounded-lg p-4 mb-4">
-            <h4 className="font-medium mb-2">Add Knowledge Sources</h4>
-            <p className="text-sm text-gray-500 mb-4">Select a method to provide training data for your agent:</p>
+          <div className="bg-primary/5 rounded-lg p-4 mb-4">
+            <h4 className="font-medium mb-2 text-gray-900 dark:text-white">Add Knowledge Sources</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Select a method to provide training data for your agent:</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <Button variant="outline" className="flex items-center justify-center gap-2">
@@ -233,7 +233,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
         <Step 
           title="Workflow" 
           description="Design and automate your agent's conversation flow"
-          icon={<Workflow className="h-5 w-5 text-agent-primary" />}
+          icon={<Workflow className="h-5 w-5 text-primary" />}
           isActive={steps.workflow.active}
           isCompleted={steps.workflow.completed}
           progress={steps.workflow.progress}
@@ -245,8 +245,8 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
                 <ArrowRight className="h-4 w-4 text-gray-500" />
               </div>
               <div>
-                <h4 className="font-medium mb-1">Status: Not started</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Status: Not started</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                   You'll need to complete the Knowledge Base step before designing your workflow.
                 </p>
               </div>
@@ -258,7 +258,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
         <Step 
           title="Simulations" 
           description="Test your agent's performance through different scenarios"
-          icon={<FlaskConical className="h-5 w-5 text-agent-primary" />}
+          icon={<FlaskConical className="h-5 w-5 text-primary" />}
           isActive={steps.simulation.active}
           isCompleted={steps.simulation.completed}
           progress={steps.simulation.progress}
@@ -270,8 +270,8 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
                 <ArrowRight className="h-4 w-4 text-gray-500" />
               </div>
               <div>
-                <h4 className="font-medium mb-1">Status: Not started</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Status: Not started</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                   You'll need to complete the Workflow step before running simulations.
                 </p>
               </div>
