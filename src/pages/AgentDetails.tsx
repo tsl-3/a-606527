@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, 
   ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause,
-  Phone, Copy, TestTube, Mail
+  Phone, Copy, TestTube, Mail, Send
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -388,6 +388,32 @@ const AgentDetails = () => {
     }
   };
 
+  const handleCopyEmail = () => {
+    if (emailAddress) {
+      navigator.clipboard.writeText(emailAddress);
+      toast({
+        title: "Email address copied",
+        description: "Email address has been copied to clipboard.",
+      });
+    }
+  };
+
+  const handleTestEmail = () => {
+    if (emailAddress) {
+      window.location.href = `mailto:${emailAddress}?subject=Test Email for ${agent?.name || 'Agent'}&body=This is a test email for your AI agent.`;
+      toast({
+        title: "Composing email",
+        description: `Opening email client to send test email to ${emailAddress}`,
+      });
+    } else {
+      toast({
+        title: "No email address available",
+        description: "Please configure an email address for email channel first.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -432,6 +458,7 @@ const AgentDetails = () => {
   const lastUpdated = new Date().toLocaleString();
   
   const voicePhoneNumber = agent.channelConfigs?.voice?.details || null;
+  const emailAddress = agent.channelConfigs?.email?.details || null;
   
   const activeChannels = Object.entries(agent.channelConfigs || {})
     .filter(([_, config]) => config.enabled)
@@ -502,34 +529,65 @@ const AgentDetails = () => {
                   </div>
                 )}
                 
-                {voicePhoneNumber && (
-                  <div className="mt-2 flex items-center">
-                    <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
-                      <Phone className="h-3.5 w-3.5 text-agent-primary" />
-                      <span className="text-xs text-white">{voicePhoneNumber}</span>
-                      <div className="flex gap-1 ml-2">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-6 w-6 rounded-full hover:bg-gray-700/50"
-                          onClick={handleCopyPhoneNumber}
-                          title="Copy phone number"
-                        >
-                          <Copy className="h-3 w-3 text-gray-400" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-6 w-6 rounded-full hover:bg-green-700/50"
-                          onClick={handleTestCall}
-                          title="Test agent call"
-                        >
-                          <TestTube className="h-3 w-3 text-green-400" />
-                        </Button>
+                <div className="mt-3 flex items-center gap-2 flex-wrap">
+                  {voicePhoneNumber && (
+                    <div className="flex items-center">
+                      <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
+                        <Phone className="h-3.5 w-3.5 text-blue-500" />
+                        <span className="text-xs text-white">{voicePhoneNumber}</span>
+                        <div className="flex gap-1 ml-2">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-gray-700/50"
+                            onClick={handleCopyPhoneNumber}
+                            title="Copy phone number"
+                          >
+                            <Copy className="h-3 w-3 text-gray-400" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-green-700/50"
+                            onClick={handleTestCall}
+                            title="Test agent call"
+                          >
+                            <TestTube className="h-3 w-3 text-green-400" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                  
+                  {emailAddress && (
+                    <div className="flex items-center">
+                      <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
+                        <Mail className="h-3.5 w-3.5 text-red-500" />
+                        <span className="text-xs text-white">{emailAddress}</span>
+                        <div className="flex gap-1 ml-2">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-gray-700/50"
+                            onClick={handleCopyEmail}
+                            title="Copy email address"
+                          >
+                            <Copy className="h-3 w-3 text-gray-400" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full hover:bg-green-700/50"
+                            onClick={handleTestEmail}
+                            title="Test agent email"
+                          >
+                            <Send className="h-3 w-3 text-green-400" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             
@@ -981,3 +1039,4 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
+
