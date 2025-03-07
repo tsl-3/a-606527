@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2 } from "lucide-react";
@@ -169,6 +170,71 @@ const AgentDetails = () => {
         </Card>
       </div>
       
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Agent Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div className="text-gray-500">Type</div>
+              <div className="col-span-2 font-medium">{agent.type}</div>
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div className="text-gray-500">Created On</div>
+              <div className="col-span-2 font-medium">{agent.createdAt}</div>
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div className="text-gray-500">Model</div>
+              <div className="col-span-2 font-medium">{agent.model || "GPT-4"}</div>
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div className="text-gray-500">Access</div>
+              <div className="col-span-2 font-medium">{agent.isPersonal ? "Personal" : "Team"}</div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 gap-4">
+            <Button variant="outline" className="flex items-center space-x-2 justify-start h-auto py-3">
+              <ExternalLink className="h-4 w-4 text-agent-primary" />
+              <div className="text-left">
+                <div className="font-medium">Test Agent</div>
+                <div className="text-xs text-gray-500">Try agent in sandbox</div>
+              </div>
+            </Button>
+            
+            <Button variant="outline" className="flex items-center space-x-2 justify-start h-auto py-3">
+              <History className="h-4 w-4 text-agent-primary" />
+              <div className="text-left">
+                <div className="font-medium">View Logs</div>
+                <div className="text-xs text-gray-500">See recent interactions</div>
+              </div>
+            </Button>
+            
+            <Button variant="outline" className="flex items-center space-x-2 justify-start h-auto py-3">
+              <ExternalLink className="h-4 w-4 text-agent-primary" />
+              <div className="text-left">
+                <div className="font-medium">Integration</div>
+                <div className="text-xs text-gray-500">Add to your apps</div>
+              </div>
+            </Button>
+            
+            <Button variant="outline" className="flex items-center space-x-2 justify-start h-auto py-3">
+              <Settings className="h-4 w-4 text-gray-500" />
+              <div className="text-left">
+                <div className="font-medium">Configure</div>
+                <div className="text-xs text-gray-500">Modify settings</div>
+              </div>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+      
       <Separator className="my-6" />
       
       <Tabs defaultValue="setup" className="space-y-6">
@@ -184,70 +250,7 @@ const AgentDetails = () => {
         </TabsContent>
         
         <TabsContent value="overview" className="space-y-6 animate-fade-in">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Agent Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div className="text-gray-500">Type</div>
-                  <div className="col-span-2 font-medium">{agent.type}</div>
-                </div>
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div className="text-gray-500">Created On</div>
-                  <div className="col-span-2 font-medium">{agent.createdAt}</div>
-                </div>
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div className="text-gray-500">Model</div>
-                  <div className="col-span-2 font-medium">{agent.model || "GPT-4"}</div>
-                </div>
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div className="text-gray-500">Access</div>
-                  <div className="col-span-2 font-medium">{agent.isPersonal ? "Personal" : "Team"}</div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-2 gap-4">
-                <Button variant="outline" className="flex items-center space-x-2 justify-start h-auto py-3">
-                  <ExternalLink className="h-4 w-4 text-agent-primary" />
-                  <div className="text-left">
-                    <div className="font-medium">Test Agent</div>
-                    <div className="text-xs text-gray-500">Try agent in sandbox</div>
-                  </div>
-                </Button>
-                
-                <Button variant="outline" className="flex items-center space-x-2 justify-start h-auto py-3">
-                  <History className="h-4 w-4 text-agent-primary" />
-                  <div className="text-left">
-                    <div className="font-medium">View Logs</div>
-                    <div className="text-xs text-gray-500">See recent interactions</div>
-                  </div>
-                </Button>
-                
-                <Button variant="outline" className="flex items-center space-x-2 justify-start h-auto py-3">
-                  <ExternalLink className="h-4 w-4 text-agent-primary" />
-                  <div className="text-left">
-                    <div className="font-medium">Integration</div>
-                    <div className="text-xs text-gray-500">Add to your apps</div>
-                  </div>
-                </Button>
-                
-                <Button variant="outline" className="flex items-center space-x-2 justify-start h-auto py-3">
-                  <Settings className="h-4 w-4 text-gray-500" />
-                  <div className="text-left">
-                    <div className="font-medium">Configure</div>
-                    <div className="text-xs text-gray-500">Modify settings</div>
-                  </div>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+          {/* The Agent Information and Quick Actions cards have been moved to the top section */}
         </TabsContent>
         
         <TabsContent value="analytics" className="animate-fade-in">
