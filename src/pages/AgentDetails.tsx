@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AgentType } from "@/types/agent";
 import { useAgentDetails } from "@/hooks/useAgentDetails";
 import { AgentSetupStepper } from "@/components/AgentSetupStepper";
