@@ -53,7 +53,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
   return (
     <div className="flex gap-2 w-full">
       {/* AVM Score Card */}
-      <Card className="flex-1 overflow-hidden shadow-sm dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white">
+      <Card className="flex-1 overflow-hidden shadow-sm">
         <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
           <span className="text-xs font-medium text-gray-700 dark:text-gray-300">AVM</span>
           <div className={`w-2 h-2 rounded-full ${getScoreColor(avmScore)}`}></div>
@@ -65,7 +65,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       </Card>
 
       {/* Interactions Card */}
-      <Card className="flex-1 overflow-hidden shadow-sm dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white">
+      <Card className="flex-1 overflow-hidden shadow-sm">
         <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
           <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Interactions</span>
           <span className={`text-xs font-medium ${interactionTier.color}`}>{interactionTier.label}</span>
@@ -81,7 +81,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       
       {/* CSAT Card - Only shown when not in compact mode or part of the first 2 stats */}
       {!compact && (
-        <Card className="flex-1 overflow-hidden shadow-sm dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white">
+        <Card className="flex-1 overflow-hidden shadow-sm">
           <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
             <span className="text-xs font-medium text-gray-700 dark:text-gray-300">CSAT</span>
             <Smile className={`w-3.5 h-3.5 ${csatColor}`} />
@@ -94,7 +94,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       
       {/* Performance Card - Only shown when not in compact mode */}
       {!compact && (
-        <Card className="flex-1 overflow-hidden shadow-sm dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white">
+        <Card className="flex-1 overflow-hidden shadow-sm">
           <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
             <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Performance</span>
             <Zap className={`w-3.5 h-3.5 ${performanceColor}`} />
