@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2 } from "lucide-react";
@@ -108,11 +109,16 @@ const AgentDetails = () => {
         </div>
         
         <div className="flex items-center space-x-3">
-          <Switch 
-            checked={isActive} 
-            onCheckedChange={handleStatusToggle} 
-            className="data-[state=checked]:bg-agent-success"
-          />
+          <div className="flex items-center space-x-2">
+            <Switch 
+              checked={isActive} 
+              onCheckedChange={handleStatusToggle} 
+              className="data-[state=checked]:bg-agent-success"
+            />
+            <span className="text-sm font-medium">
+              {isActive ? "Active" : "Inactive"}
+            </span>
+          </div>
           <Button variant="outline" className="space-x-2">
             <Settings className="h-4 w-4" />
             <span>Settings</span>
