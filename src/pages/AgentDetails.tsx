@@ -77,7 +77,6 @@ const AgentDetails = () => {
     );
   }
 
-  // Add AVM score to agent data for the stepper
   const agentWithAvmScore = {
     ...agent,
     avmScore: 7.8 // Example score, in a real app this would come from the API
@@ -132,7 +131,7 @@ const AgentDetails = () => {
       <Separator className="my-6" />
       
       <Tabs defaultValue="setup" className="space-y-6">
-        <TabsList className="grid grid-cols-4 w-full max-w-md">
+        <TabsList className="grid grid-cols-4 md:w-[400px]">
           <TabsTrigger value="setup">Setup</TabsTrigger>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
