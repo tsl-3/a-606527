@@ -101,7 +101,7 @@ const AgentTrainingCard: React.FC<{
   const [isExpanded, setIsExpanded] = useState(status !== 'completed');
 
   return (
-    <div className="bg-[#1A1F2C] rounded-lg overflow-hidden mb-6 border border-gray-800">
+    <div className="bg-[#000313] rounded-lg overflow-hidden mb-6 border border-gray-800">
       <div className="p-6 pb-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -517,15 +517,15 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Choose one of the following options to begin training your AI agent:</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <Button variant="outline" className="flex items-center justify-center gap-2 dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white dark:hover:bg-gray-800">
+              <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
                 <Upload className="h-4 w-4" />
                 <span>Upload Call Recordings</span>
               </Button>
-              <Button variant="outline" className="flex items-center justify-center gap-2 dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white dark:hover:bg-gray-800">
+              <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
                 <PlayCircle className="h-4 w-4" />
                 <span>Start Role-Playing</span>
               </Button>
-              <Button variant="outline" className="flex items-center justify-center gap-2 dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white dark:hover:bg-gray-800">
+              <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
                 <Bot className="h-4 w-4" />
                 <span>Hire Voice Actor</span>
               </Button>
