@@ -1016,9 +1016,6 @@ const AgentDetails = () => {
           <TabsTrigger value="setup" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
             Setup
           </TabsTrigger>
-          <TabsTrigger value="integration" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
-            Integration
-          </TabsTrigger>
           <TabsTrigger value="analytics" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
             Analytics
           </TabsTrigger>
@@ -1029,39 +1026,6 @@ const AgentDetails = () => {
         
         <TabsContent value="setup" className="animate-fade-in">
           <AgentSetupStepper agent={agentWithAvmScore} />
-        </TabsContent>
-        
-        <TabsContent value="integration" className="animate-fade-in">
-          <Card className="bg-agent-dark-bg border-gray-800">
-            <CardHeader>
-              <CardTitle className="text-white">Integration Details</CardTitle>
-              <CardDescription className="text-gray-400">Connect your agent with other systems</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="p-4 bg-black/30 rounded-lg border border-gray-700/50">
-                <h4 className="text-sm text-white font-medium mb-2">API Connection</h4>
-                <div className="flex items-center justify-between">
-                  <code className="text-xs bg-black/50 p-2 rounded text-gray-300 font-mono">
-                    api.agent.ai/v1/{agent.id}
-                  </code>
-                  <Button size="sm" variant="outline" className="h-7 text-xs bg-black/50 border-gray-700">
-                    Copy
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-4 bg-black/30 rounded-lg border border-gray-700/50">
-                <div>
-                  <h4 className="text-sm text-white font-medium">Documentation</h4>
-                  <p className="text-xs text-gray-400">View detailed API reference</p>
-                </div>
-                <Button size="sm" variant="outline" className="h-8 bg-black/50 border-gray-700">
-                  <ExternalLink className="h-3.5 w-3.5 mr-1" />
-                  <span className="text-xs">Open Docs</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
         
         <TabsContent value="analytics" className="animate-fade-in">
