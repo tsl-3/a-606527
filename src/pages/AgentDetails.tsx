@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Bot, Settings, Trash2, AlertCircle, Loader2, 
-  ExternalLink, History, BarChart2, Cpu, Calendar, Check, X, Mic, Volume2 
+  ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2 
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import { useAgentDetails } from "@/hooks/useAgentDetails";
 import { AgentSetupStepper } from "@/components/AgentSetupStepper";
 import { AgentToggle } from "@/components/AgentToggle";
 import { AgentChannels } from "@/components/AgentChannels";
+import { AgentStats } from "@/components/AgentStats";
 
 const AgentDetails = () => {
   const { agentId } = useParams<{ agentId: string }>();
@@ -100,14 +101,13 @@ const AgentDetails = () => {
         </Link>
       </div>
       
-      <div className="rounded-xl bg-gradient-to-br from-agent-dark-bg/90 to-agent-dark-bg/70 backdrop-blur-sm border border-white/10 p-6 mb-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-tr from-agent-primary/5 to-transparent"></div>
-        
-        <div className="relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-            <div className="flex items-center space-x-4">
-              <div className="bg-agent-primary/20 p-3.5 rounded-full">
-                <Bot className="h-7 w-7 text-agent-primary" />
+      {/* Agent Header Card */}
+      <Card className="bg-agent-dark-bg border-gray-800 mb-6 overflow-hidden">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex items-center gap-4">
+              <div className="bg-agent-primary/20 p-3 rounded-full">
+                <Bot className="h-6 w-6 text-agent-primary" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -118,16 +118,16 @@ const AgentDetails = () => {
                       ? "border-green-500/30 text-green-500 bg-green-500/10" 
                       : "border-gray-500/30 text-gray-400 bg-gray-500/10"}`}
                   >
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1.5">
                       {isActive ? (
                         <>
                           <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                          Online
+                          Active
                         </>
                       ) : (
                         <>
                           <span className="h-1.5 w-1.5 rounded-full bg-gray-500"></span>
-                          Offline
+                          Inactive
                         </>
                       )}
                     </span>
@@ -139,8 +139,8 @@ const AgentDetails = () => {
             
             <div className="flex items-center space-x-3 mt-2 md:mt-0">
               <AgentToggle isActive={isActive} onToggle={handleStatusToggle} />
-              <Button variant="outline" className="space-x-2 bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white">
-                <Settings className="h-4 w-4" />
+              <Button variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white">
+                <Settings className="h-4 w-4 mr-2" />
                 <span>Settings</span>
               </Button>
               <Button variant="destructive" size="icon" onClick={handleDelete} 
@@ -149,193 +149,101 @@ const AgentDetails = () => {
               </Button>
             </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="space-y-5">
-              <div className="grid grid-cols-2 gap-x-12 gap-y-3">
-                <div>
-                  <div className="flex items-center mb-1">
-                    <Bot className="h-3.5 w-3.5 text-agent-primary mr-1.5" />
-                    <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">Agent Type</span>
+        </CardHeader>
+        
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-4 md:col-span-2">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Bot className="h-3.5 w-3.5 text-agent-primary" />
+                    <span className="text-xs text-gray-400">Type</span>
                   </div>
                   <p className="text-sm font-medium text-white capitalize">{agent.type}</p>
                 </div>
                 
-                <div>
-                  <div className="flex items-center mb-1">
-                    <Calendar className="h-3.5 w-3.5 text-agent-primary mr-1.5" />
-                    <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">Created On</span>
+                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Calendar className="h-3.5 w-3.5 text-agent-primary" />
+                    <span className="text-xs text-gray-400">Created On</span>
                   </div>
                   <p className="text-sm font-medium text-white">{agent.createdAt}</p>
                 </div>
                 
-                <div>
-                  <div className="flex items-center mb-1">
-                    <Mic className="h-3.5 w-3.5 text-agent-primary mr-1.5" />
-                    <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">Voice</span>
+                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Cpu className="h-3.5 w-3.5 text-agent-primary" />
+                    <span className="text-xs text-gray-400">Model</span>
+                  </div>
+                  <p className="text-sm font-medium text-white">{agent.model || "GPT-4"}</p>
+                </div>
+                
+                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Mic className="h-3.5 w-3.5 text-agent-primary" />
+                    <span className="text-xs text-gray-400">Voice</span>
                   </div>
                   <p className="text-sm font-medium text-white">{agentWithAvmScore.voice}</p>
                 </div>
                 
-                <div>
-                  <div className="flex items-center mb-1">
-                    <Volume2 className="h-3.5 w-3.5 text-agent-primary mr-1.5" />
-                    <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">Provider</span>
+                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Volume2 className="h-3.5 w-3.5 text-agent-primary" />
+                    <span className="text-xs text-gray-400">Provider</span>
                   </div>
                   <p className="text-sm font-medium text-white">{agentWithAvmScore.voiceProvider}</p>
                 </div>
                 
-                {agent.model && (
-                  <div>
-                    <div className="flex items-center mb-1">
-                      <Cpu className="h-3.5 w-3.5 text-agent-primary mr-1.5" />
-                      <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">Model</span>
+                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <History className="h-3.5 w-3.5 text-agent-primary" />
+                      <span className="text-xs text-gray-400">Updated</span>
                     </div>
-                    <p className="text-sm font-medium text-white">{agent.model}</p>
                   </div>
-                )}
+                  <p className="text-sm font-medium text-white">{lastUpdated.split(',')[0]}</p>
+                </div>
               </div>
               
               {agent.channels && agent.channels.length > 0 && (
-                <div>
-                  <div className="flex items-center mb-2">
-                    <span className="text-xs uppercase tracking-wider text-gray-400 font-medium">Available Channels</span>
+                <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-sm text-white font-medium">Available Channels</span>
                   </div>
                   <AgentChannels channels={agent.channels} />
                 </div>
               )}
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 self-end">
-              <div className="bg-black/30 rounded-lg border border-white/10 p-3 col-span-1">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs font-medium text-gray-400">AVM Score</span>
-                  <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
-                </div>
-                <div className="flex items-baseline">
-                  <span className="text-2xl font-bold text-white">{agentWithAvmScore.avmScore.toFixed(1)}</span>
-                  <span className="text-xs text-gray-400 ml-1">/10</span>
-                </div>
-              </div>
-              
-              <div className="bg-black/30 rounded-lg border border-white/10 p-3 col-span-1">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs font-medium text-gray-400">Interactions</span>
-                  <span className="text-xs font-medium text-yellow-500">Gold</span>
-                </div>
-                <div className="text-2xl font-bold text-white">
-                  {agent.interactions >= 1000 
-                    ? `${(agent.interactions / 1000).toFixed(1)}k` 
-                    : agent.interactions}
-                </div>
-              </div>
-              
-              <div className="bg-black/30 rounded-lg border border-white/10 p-3 col-span-1">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs font-medium text-gray-400">Performance</span>
-                  <span className="text-xs text-agent-success">+2%</span>
-                </div>
-                <div className="text-2xl font-bold text-white">94%</div>
-              </div>
-              
-              <div className="bg-black/30 rounded-lg border border-white/10 p-3 col-span-1">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs font-medium text-gray-400">Last Updated</span>
-                  <Calendar className="h-3 w-3 text-gray-500" />
-                </div>
-                <div className="text-sm font-medium text-white truncate">{lastUpdated}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        <Card className="bg-agent-dark-bg border-gray-800 lg:col-span-1">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg text-white">Integration Details</CardTitle>
-          </CardHeader>
-          <CardContent>
             <div className="space-y-4">
-              <div className="p-3 bg-black/20 rounded-lg border border-gray-800">
-                <h4 className="text-xs uppercase text-gray-400 font-medium mb-2">API Connection</h4>
-                <div className="flex items-center justify-between">
-                  <code className="text-xs bg-black/30 p-1.5 rounded text-gray-300 font-mono">
-                    api.agent.ai/v1/{agent.id}
-                  </code>
-                  <Button size="sm" variant="outline" className="h-7 text-xs bg-black/30 border-gray-700">
-                    Copy
-                  </Button>
-                </div>
-              </div>
+              <AgentStats 
+                avmScore={agentWithAvmScore.avmScore} 
+                interactionCount={agent.interactions} 
+              />
               
-              <div className="flex items-center justify-between p-3 bg-black/20 rounded-lg border border-gray-800">
-                <div>
-                  <h4 className="text-xs uppercase text-gray-400 font-medium">Documentation</h4>
-                  <p className="text-sm text-white">View API reference</p>
+              <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-sm text-white font-medium">Quick Test</span>
                 </div>
-                <Button size="sm" variant="outline" className="h-8 bg-black/30 border-gray-700">
-                  <ExternalLink className="h-3.5 w-3.5 mr-1" />
-                  <span className="text-xs">Open</span>
+                <Button variant="default" size="sm" className="w-full bg-agent-primary hover:bg-agent-primary/90">
+                  <ExternalLink className="h-3.5 w-3.5 mr-2" />
+                  Test Agent
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-agent-dark-bg border-gray-800 lg:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg text-white">Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <Button variant="outline" className="flex flex-col items-center justify-center h-auto py-3 px-2 bg-black/50 border-gray-700 hover:bg-black/70 hover:border-agent-primary/50 group">
-              <div className="w-8 h-8 mb-2 flex items-center justify-center rounded-full bg-agent-primary/10 group-hover:bg-agent-primary/20 transition-colors">
-                <ExternalLink className="h-4 w-4 text-agent-primary" />
-              </div>
-              <div className="text-center">
-                <div className="font-medium text-white text-sm">Test Agent</div>
-              </div>
-            </Button>
-            
-            <Button variant="outline" className="flex flex-col items-center justify-center h-auto py-3 px-2 bg-black/50 border-gray-700 hover:bg-black/70 hover:border-agent-primary/50 group">
-              <div className="w-8 h-8 mb-2 flex items-center justify-center rounded-full bg-agent-primary/10 group-hover:bg-agent-primary/20 transition-colors">
-                <History className="h-4 w-4 text-agent-primary" />
-              </div>
-              <div className="text-center">
-                <div className="font-medium text-white text-sm">View Logs</div>
-              </div>
-            </Button>
-            
-            <Button variant="outline" className="flex flex-col items-center justify-center h-auto py-3 px-2 bg-black/50 border-gray-700 hover:bg-black/70 hover:border-agent-primary/50 group">
-              <div className="w-8 h-8 mb-2 flex items-center justify-center rounded-full bg-agent-primary/10 group-hover:bg-agent-primary/20 transition-colors">
-                <ExternalLink className="h-4 w-4 text-agent-primary" />
-              </div>
-              <div className="text-center">
-                <div className="font-medium text-white text-sm">Integration</div>
-              </div>
-            </Button>
-            
-            <Button variant="outline" className="flex flex-col items-center justify-center h-auto py-3 px-2 bg-black/50 border-gray-700 hover:bg-black/70 hover:border-agent-primary/50 group">
-              <div className="w-8 h-8 mb-2 flex items-center justify-center rounded-full bg-agent-primary/10 group-hover:bg-agent-primary/20 transition-colors">
-                <Settings className="h-4 w-4 text-agent-primary" />
-              </div>
-              <div className="text-center">
-                <div className="font-medium text-white text-sm">Configure</div>
-              </div>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
       
-      <Separator className="my-6 bg-gray-800" />
-      
+      {/* Tabs Section */}
       <Tabs defaultValue="setup" className="space-y-6">
-        <TabsList className="grid grid-cols-4 md:w-[400px] bg-agent-dark-bg/50 border border-gray-800">
+        <TabsList className="bg-agent-dark-bg/50 border border-gray-800">
           <TabsTrigger value="setup" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
             Setup
           </TabsTrigger>
-          <TabsTrigger value="overview" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
-            Overview
+          <TabsTrigger value="integration" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
+            Integration
           </TabsTrigger>
           <TabsTrigger value="analytics" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
             Analytics
@@ -349,30 +257,51 @@ const AgentDetails = () => {
           <AgentSetupStepper agent={agentWithAvmScore} />
         </TabsContent>
         
-        <TabsContent value="overview" className="animate-fade-in">
-          <div className="text-center text-gray-400 py-10">
-            <BarChart2 className="h-16 w-16 mx-auto mb-4 text-gray-500" />
-            <p className="max-w-lg mx-auto">
-              All essential agent information has been moved to the main view for easy access.
-              <br />
-              Select the Analytics tab to view detailed performance metrics.
-            </p>
-          </div>
+        <TabsContent value="integration" className="animate-fade-in">
+          <Card className="bg-agent-dark-bg border-gray-800">
+            <CardHeader>
+              <CardTitle className="text-white">Integration Details</CardTitle>
+              <CardDescription className="text-gray-400">Connect your agent with other systems</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-black/30 rounded-lg border border-gray-700/50">
+                <h4 className="text-sm text-white font-medium mb-2">API Connection</h4>
+                <div className="flex items-center justify-between">
+                  <code className="text-xs bg-black/50 p-2 rounded text-gray-300 font-mono">
+                    api.agent.ai/v1/{agent.id}
+                  </code>
+                  <Button size="sm" variant="outline" className="h-7 text-xs bg-black/50 border-gray-700">
+                    Copy
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-4 bg-black/30 rounded-lg border border-gray-700/50">
+                <div>
+                  <h4 className="text-sm text-white font-medium">Documentation</h4>
+                  <p className="text-xs text-gray-400">View detailed API reference</p>
+                </div>
+                <Button size="sm" variant="outline" className="h-8 bg-black/50 border-gray-700">
+                  <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                  <span className="text-xs">Open Docs</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
         
         <TabsContent value="analytics" className="animate-fade-in">
           <Card className="bg-agent-dark-bg border-gray-800">
             <CardHeader>
               <CardTitle className="text-white">Performance Analytics</CardTitle>
-              <CardDescription className="text-gray-400">View detailed agent performance metrics</CardDescription>
+              <CardDescription className="text-gray-400">Monitor your agent's performance</CardDescription>
             </CardHeader>
-            <CardContent className="h-80 flex items-center justify-center">
+            <CardContent className="h-[300px] flex items-center justify-center">
               <div className="text-center">
-                <BarChart2 className="h-16 w-16 text-agent-primary/20 mx-auto mb-4" />
+                <BarChart2 className="h-12 w-12 text-agent-primary/30 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-white">Analytics Dashboard</h3>
                 <p className="text-gray-400 max-w-md">
-                  Detailed performance metrics will be displayed here, including response times,
-                  success rates, and usage patterns.
+                  Detailed performance metrics will appear here once your agent has more interactions.
                 </p>
               </div>
             </CardContent>
@@ -383,15 +312,14 @@ const AgentDetails = () => {
           <Card className="bg-agent-dark-bg border-gray-800">
             <CardHeader>
               <CardTitle className="text-white">Agent Settings</CardTitle>
-              <CardDescription className="text-gray-400">Configure your agent's behavior and capabilities</CardDescription>
+              <CardDescription className="text-gray-400">Configure your agent's behavior</CardDescription>
             </CardHeader>
-            <CardContent className="h-80 flex items-center justify-center">
+            <CardContent className="h-[300px] flex items-center justify-center">
               <div className="text-center">
-                <Settings className="h-16 w-16 text-agent-primary/20 mx-auto mb-4" />
+                <Settings className="h-12 w-12 text-agent-primary/30 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-white">Settings Panel</h3>
                 <p className="text-gray-400 max-w-md">
-                  Agent configuration options will be displayed here, including model settings,
-                  knowledge base connections, and response parameters.
+                  Configure how your agent works including behavior, voice, and response parameters.
                 </p>
               </div>
             </CardContent>
