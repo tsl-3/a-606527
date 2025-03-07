@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -558,8 +559,8 @@ const AgentDetails = () => {
               </div>
             </div>
             
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center space-x-3 mt-2 md:mt-0">
+            <div className="flex flex-col gap-3 w-full md:w-auto">
+              <div className="flex items-center justify-end space-x-3 mt-2 md:mt-0">
                 <AgentToggle isActive={isActive} onToggle={handleStatusToggle} />
                 
                 <DropdownMenu>
