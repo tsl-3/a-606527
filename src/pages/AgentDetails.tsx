@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Bot, Trash2, AlertCircle, Loader2, 
   ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause,
-  Phone, Copy, PhoneOutgoing, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare
+  Phone, Copy, PhoneOutgoing, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog
 } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -1071,7 +1071,7 @@ const AgentDetails = () => {
             </CardHeader>
             <CardContent className="h-[300px] flex items-center justify-center">
               <div className="text-center">
-                <Settings className="h-12 w-12 text-agent-primary/30 mx-auto mb-4" />
+                <Cog className="h-12 w-12 text-agent-primary/30 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-white">Settings Panel</h3>
                 <p className="text-gray-400 max-w-md">
                   Configure how your agent works including behavior, voice, and response parameters.
