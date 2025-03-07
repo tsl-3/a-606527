@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface AgentStatsProps {
   avmScore: number;  // 1-10 score
@@ -25,27 +25,27 @@ export const AgentStats: React.FC<AgentStatsProps> = ({ avmScore, interactionCou
   const interactionTier = getInteractionTier(interactionCount);
   
   return (
-    <div className="flex gap-3 w-full">
+    <div className="flex gap-2 w-full">
       {/* AVM Score Card */}
       <Card className="flex-1 overflow-hidden shadow-sm dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white">
-        <div className="px-3 py-1.5 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
-          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">AVM Score</span>
-          <div className={`w-3 h-3 rounded-full ${getScoreColor(avmScore)}`}></div>
+        <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">AVM</span>
+          <div className={`w-2 h-2 rounded-full ${getScoreColor(avmScore)}`}></div>
         </div>
-        <CardContent className="p-3 text-center">
-          <span className="text-2xl font-semibold text-gray-900 dark:text-white">{avmScore.toFixed(2)}</span>
+        <CardContent className="p-2 text-center">
+          <span className="text-xl font-semibold text-gray-900 dark:text-white">{avmScore.toFixed(1)}</span>
           <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">/10</span>
         </CardContent>
       </Card>
 
       {/* Interactions Card */}
       <Card className="flex-1 overflow-hidden shadow-sm dark:bg-agent-dark-bg dark:border-gray-800 dark:text-white">
-        <div className="px-3 py-1.5 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
+        <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
           <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Interactions</span>
           <span className={`text-xs font-medium ${interactionTier.color}`}>{interactionTier.label}</span>
         </div>
-        <CardContent className="p-3 text-center">
-          <span className="text-2xl font-semibold text-gray-900 dark:text-white">
+        <CardContent className="p-2 text-center">
+          <span className="text-xl font-semibold text-gray-900 dark:text-white">
             {interactionCount >= 1000 
               ? `${(interactionCount / 1000).toFixed(1)}k` 
               : interactionCount}

@@ -281,194 +281,192 @@ const AgentDetails = () => {
         </CardHeader>
         
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-4 md:col-span-2">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Bot className="h-3.5 w-3.5 text-agent-primary" />
-                    <span className="text-xs text-gray-400">Type</span>
+          <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="md:col-span-3 space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Bot className="h-3.5 w-3.5 text-agent-primary" />
+                      <span className="text-xs text-gray-400">Type</span>
+                    </div>
+                    <p className="text-sm font-medium text-white capitalize">{agent.type}</p>
                   </div>
-                  <p className="text-sm font-medium text-white capitalize">{agent.type}</p>
-                </div>
                 
-                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Calendar className="h-3.5 w-3.5 text-agent-primary" />
-                    <span className="text-xs text-gray-400">Created On</span>
+                  <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Calendar className="h-3.5 w-3.5 text-agent-primary" />
+                      <span className="text-xs text-gray-400">Created On</span>
+                    </div>
+                    <p className="text-sm font-medium text-white">{agent.createdAt}</p>
                   </div>
-                  <p className="text-sm font-medium text-white">{agent.createdAt}</p>
-                </div>
-                
-                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
-                  <div className="flex items-center gap-2 mb-1">
-                    <History className="h-3.5 w-3.5 text-agent-primary" />
-                    <span className="text-xs text-gray-400">Updated</span>
+                  
+                  <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                    <div className="flex items-center gap-2 mb-1">
+                      <History className="h-3.5 w-3.5 text-agent-primary" />
+                      <span className="text-xs text-gray-400">Updated</span>
+                    </div>
+                    <p className="text-sm font-medium text-white">{lastUpdated.split(',')[0]}</p>
                   </div>
-                  <p className="text-sm font-medium text-white">{lastUpdated.split(',')[0]}</p>
-                </div>
 
-                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Cpu className="h-3.5 w-3.5 text-agent-primary" />
-                    <span className="text-xs text-gray-400">Model</span>
+                  <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Cpu className="h-3.5 w-3.5 text-agent-primary" />
+                      <span className="text-xs text-gray-400">Model</span>
+                    </div>
+                    <Select value={model} onValueChange={handleModelChange}>
+                      <SelectTrigger className="h-7 w-full bg-black/20 border-gray-700/50 text-white">
+                        <SelectValue placeholder="Select model" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-black text-white border-gray-700">
+                        <SelectItem value="GPT-4">GPT-4</SelectItem>
+                        <SelectItem value="GPT-3.5 Turbo">GPT-3.5 Turbo</SelectItem>
+                        <SelectItem value="Claude-2">Claude-2</SelectItem>
+                        <SelectItem value="LLama-2">LLama-2</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <Select value={model} onValueChange={handleModelChange}>
-                    <SelectTrigger className="h-7 w-full bg-black/20 border-gray-700/50 text-white">
-                      <SelectValue placeholder="Select model" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-black text-white border-gray-700">
-                      <SelectItem value="GPT-4">GPT-4</SelectItem>
-                      <SelectItem value="GPT-3.5 Turbo">GPT-3.5 Turbo</SelectItem>
-                      <SelectItem value="Claude-2">Claude-2</SelectItem>
-                      <SelectItem value="LLama-2">LLama-2</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  
+                  <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Volume2 className="h-3.5 w-3.5 text-agent-primary" />
+                      <span className="text-xs text-gray-400">Voice</span>
+                    </div>
+                    <Dialog open={isVoiceDialogOpen} onOpenChange={setIsVoiceDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="h-7 w-full bg-black/20 border-gray-700/50 text-white justify-between">
+                          <span className="truncate">{voice} ({voiceProvider})</span>
+                          <span className="sr-only">Edit voice</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md bg-black text-white border-gray-700">
+                        <DialogHeader>
+                          <DialogTitle>Configure Voice</DialogTitle>
+                          <DialogDescription className="text-gray-400">
+                            Select a voice provider and voice for your agent
+                          </DialogDescription>
+                        </DialogHeader>
+                        <Tabs defaultValue={voiceProvider} className="w-full" onValueChange={handleProviderChange}>
+                          <TabsList className="w-full grid grid-cols-3 bg-black/30 border border-gray-800">
+                            <TabsTrigger value="Eleven Labs" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
+                              Eleven Labs
+                            </TabsTrigger>
+                            <TabsTrigger value="Amazon Polly" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
+                              Amazon Polly
+                            </TabsTrigger>
+                            <TabsTrigger value="Google TTS" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
+                              Google TTS
+                            </TabsTrigger>
+                          </TabsList>
+                          
+                          <TabsContent value="Eleven Labs" className="border-none p-0 mt-4">
+                            <div className="space-y-4">
+                              <RadioGroup value={voice} onValueChange={handleVoiceChange} className="grid grid-cols-2 gap-4">
+                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                  <RadioGroupItem value="Emma" id="emma" />
+                                  <Label htmlFor="emma" className="font-medium cursor-pointer flex-1">Emma</Label>
+                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
+                                    Preview
+                                  </Button>
+                                </div>
+                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                  <RadioGroupItem value="Josh" id="josh" />
+                                  <Label htmlFor="josh" className="font-medium cursor-pointer flex-1">Josh</Label>
+                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
+                                    Preview
+                                  </Button>
+                                </div>
+                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                  <RadioGroupItem value="Aria" id="aria" />
+                                  <Label htmlFor="aria" className="font-medium cursor-pointer flex-1">Aria</Label>
+                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
+                                    Preview
+                                  </Button>
+                                </div>
+                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                  <RadioGroupItem value="Charlie" id="charlie" />
+                                  <Label htmlFor="charlie" className="font-medium cursor-pointer flex-1">Charlie</Label>
+                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
+                                    Preview
+                                  </Button>
+                                </div>
+                              </RadioGroup>
+                            </div>
+                          </TabsContent>
+                          
+                          <TabsContent value="Amazon Polly" className="border-none p-0 mt-4">
+                            <div className="space-y-4">
+                              <RadioGroup value={voice} onValueChange={handleVoiceChange} className="grid grid-cols-2 gap-4">
+                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                  <RadioGroupItem value="Joanna" id="joanna" />
+                                  <Label htmlFor="joanna" className="font-medium cursor-pointer flex-1">Joanna</Label>
+                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
+                                    Preview
+                                  </Button>
+                                </div>
+                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                  <RadioGroupItem value="Matthew" id="matthew" />
+                                  <Label htmlFor="matthew" className="font-medium cursor-pointer flex-1">Matthew</Label>
+                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
+                                    Preview
+                                  </Button>
+                                </div>
+                              </RadioGroup>
+                            </div>
+                          </TabsContent>
+                          
+                          <TabsContent value="Google TTS" className="border-none p-0 mt-4">
+                            <div className="space-y-4">
+                              <RadioGroup value={voice} onValueChange={handleVoiceChange} className="grid grid-cols-2 gap-4">
+                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                  <RadioGroupItem value="Wavenet A" id="wavenet-a" />
+                                  <Label htmlFor="wavenet-a" className="font-medium cursor-pointer flex-1">Wavenet A</Label>
+                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
+                                    Preview
+                                  </Button>
+                                </div>
+                                <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
+                                  <RadioGroupItem value="Wavenet B" id="wavenet-b" />
+                                  <Label htmlFor="wavenet-b" className="font-medium cursor-pointer flex-1">Wavenet B</Label>
+                                  <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
+                                    Preview
+                                  </Button>
+                                </div>
+                              </RadioGroup>
+                            </div>
+                          </TabsContent>
+                        </Tabs>
+                        
+                        <div className="flex justify-end gap-2 mt-4">
+                          <Button variant="outline" onClick={() => setIsVoiceDialogOpen(false)} className="bg-black/20 border-gray-700 hover:bg-gray-800">
+                            Cancel
+                          </Button>
+                          <Button onClick={handleVoiceSelectionSave} className="bg-agent-primary hover:bg-agent-primary/90">
+                            Save Changes
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                  
+                  <div className="md:col-span-1">
+                    <AgentStats 
+                      avmScore={agentWithAvmScore.avmScore} 
+                      interactionCount={agent.interactions} 
+                    />
+                  </div>
                 </div>
                 
-                <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Volume2 className="h-3.5 w-3.5 text-agent-primary" />
-                    <span className="text-xs text-gray-400">Voice</span>
+                <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-sm text-white font-medium">Channel Configuration</span>
                   </div>
-                  <Dialog open={isVoiceDialogOpen} onOpenChange={setIsVoiceDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-7 w-full bg-black/20 border-gray-700/50 text-white justify-between">
-                        <span className="truncate">{voice} ({voiceProvider})</span>
-                        <span className="sr-only">Edit voice</span>
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md bg-black text-white border-gray-700">
-                      <DialogHeader>
-                        <DialogTitle>Configure Voice</DialogTitle>
-                        <DialogDescription className="text-gray-400">
-                          Select a voice provider and voice for your agent
-                        </DialogDescription>
-                      </DialogHeader>
-                      <Tabs defaultValue={voiceProvider} className="w-full" onValueChange={handleProviderChange}>
-                        <TabsList className="w-full grid grid-cols-3 bg-black/30 border border-gray-800">
-                          <TabsTrigger value="Eleven Labs" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
-                            Eleven Labs
-                          </TabsTrigger>
-                          <TabsTrigger value="Amazon Polly" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
-                            Amazon Polly
-                          </TabsTrigger>
-                          <TabsTrigger value="Google TTS" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
-                            Google TTS
-                          </TabsTrigger>
-                        </TabsList>
-                        
-                        <TabsContent value="Eleven Labs" className="border-none p-0 mt-4">
-                          <div className="space-y-4">
-                            <RadioGroup value={voice} onValueChange={handleVoiceChange} className="grid grid-cols-2 gap-4">
-                              <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                <RadioGroupItem value="Emma" id="emma" />
-                                <Label htmlFor="emma" className="font-medium cursor-pointer flex-1">Emma</Label>
-                                <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                  Preview
-                                </Button>
-                              </div>
-                              <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                <RadioGroupItem value="Josh" id="josh" />
-                                <Label htmlFor="josh" className="font-medium cursor-pointer flex-1">Josh</Label>
-                                <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                  Preview
-                                </Button>
-                              </div>
-                              <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                <RadioGroupItem value="Aria" id="aria" />
-                                <Label htmlFor="aria" className="font-medium cursor-pointer flex-1">Aria</Label>
-                                <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                  Preview
-                                </Button>
-                              </div>
-                              <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                <RadioGroupItem value="Charlie" id="charlie" />
-                                <Label htmlFor="charlie" className="font-medium cursor-pointer flex-1">Charlie</Label>
-                                <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                  Preview
-                                </Button>
-                              </div>
-                            </RadioGroup>
-                          </div>
-                        </TabsContent>
-                        
-                        <TabsContent value="Amazon Polly" className="border-none p-0 mt-4">
-                          <div className="space-y-4">
-                            <RadioGroup value={voice} onValueChange={handleVoiceChange} className="grid grid-cols-2 gap-4">
-                              <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                <RadioGroupItem value="Joanna" id="joanna" />
-                                <Label htmlFor="joanna" className="font-medium cursor-pointer flex-1">Joanna</Label>
-                                <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                  Preview
-                                </Button>
-                              </div>
-                              <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                <RadioGroupItem value="Matthew" id="matthew" />
-                                <Label htmlFor="matthew" className="font-medium cursor-pointer flex-1">Matthew</Label>
-                                <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                  Preview
-                                </Button>
-                              </div>
-                            </RadioGroup>
-                          </div>
-                        </TabsContent>
-                        
-                        <TabsContent value="Google TTS" className="border-none p-0 mt-4">
-                          <div className="space-y-4">
-                            <RadioGroup value={voice} onValueChange={handleVoiceChange} className="grid grid-cols-2 gap-4">
-                              <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                <RadioGroupItem value="Wavenet A" id="wavenet-a" />
-                                <Label htmlFor="wavenet-a" className="font-medium cursor-pointer flex-1">Wavenet A</Label>
-                                <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                  Preview
-                                </Button>
-                              </div>
-                              <div className="flex items-center space-x-2 rounded-md border border-gray-700 p-3 cursor-pointer hover:bg-gray-800/50">
-                                <RadioGroupItem value="Wavenet B" id="wavenet-b" />
-                                <Label htmlFor="wavenet-b" className="font-medium cursor-pointer flex-1">Wavenet B</Label>
-                                <Button variant="outline" size="sm" className="h-6 bg-black/20 border-gray-700 text-xs">
-                                  Preview
-                                </Button>
-                              </div>
-                            </RadioGroup>
-                          </div>
-                        </TabsContent>
-                      </Tabs>
-                      
-                      <div className="flex justify-end gap-2 mt-4">
-                        <Button variant="outline" onClick={() => setIsVoiceDialogOpen(false)} className="bg-black/20 border-gray-700 hover:bg-gray-800">
-                          Cancel
-                        </Button>
-                        <Button onClick={handleVoiceSelectionSave} className="bg-agent-primary hover:bg-agent-primary/90">
-                          Save Changes
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-                
-                <div className="col-span-1 bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
-                  {/* Empty box for visual balance - can be used for future metrics */}
+                  <AgentChannels 
+                    channels={agent.channelConfigs || {}} 
+                    onUpdateChannel={handleUpdateChannel} 
+                  />
                 </div>
               </div>
-              
-              <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-sm text-white font-medium">Channel Configuration</span>
-                </div>
-                <AgentChannels 
-                  channels={agent.channelConfigs || {}} 
-                  onUpdateChannel={handleUpdateChannel} 
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <AgentStats 
-                avmScore={agentWithAvmScore.avmScore} 
-                interactionCount={agent.interactions} 
-              />
             </div>
           </div>
         </CardContent>
