@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -24,18 +25,18 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
-				'agent-dark-bg': '#000313',
+				'agent-dark-bg': 'hsl(var(--agent-dark-bg))',
 				agent: {
-					primary: '#0A84FF',
-					secondary: '#F0F7FF',
-					accent: '#E4F0FF',
-					dark: '#2C3E50',
-					light: '#F8FAFC',
-					success: '#34C759',
-					warning: '#FF9500',
-					error: '#FF3B30',
-					surface: '#FFFFFF',
-					text: '#1C1C1E'
+					primary: 'hsl(var(--agent-primary))',
+					secondary: 'hsl(var(--agent-secondary))',
+					accent: 'hsl(var(--agent-accent))',
+					dark: 'hsl(var(--agent-dark))',
+					light: 'hsl(var(--agent-light))',
+					success: 'hsl(var(--agent-success))',
+					warning: 'hsl(var(--agent-warning))',
+					error: 'hsl(var(--agent-error))',
+					surface: 'hsl(var(--agent-surface))',
+					text: 'hsl(var(--agent-text))'
 				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',

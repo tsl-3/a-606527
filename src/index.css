@@ -34,36 +34,61 @@
     --ring: 262.1 83.3% 57.8%;
 
     --radius: 0.5rem;
+
+    /* Agent colors */
+    --agent-primary: 211 100% 50%;
+    --agent-secondary: 210 100% 97%;
+    --agent-accent: 210 100% 95%;
+    --agent-dark: 210 29% 24%;
+    --agent-light: 210 60% 98%;
+    --agent-success: 142 76% 36%;
+    --agent-warning: 37 100% 50%;
+    --agent-error: 0 84% 60%;
+    --agent-surface: 0 0% 100%;
+    --agent-text: 220 14% 12%;
   }
 
   .dark {
-    --background: 228 93% 3%;
-    --foreground: 0 0% 98%;
+    --background: 222 47% 10%;
+    --foreground: 210 40% 98%;
 
-    --card: 228 93% 6%;
-    --card-foreground: 0 0% 98%;
+    --card: 222 47% 12%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 222 47% 10%;
+    --popover-foreground: 210 40% 98%;
 
     --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 0 0% 98%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 222 47% 15%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 222 47% 15%;
+    --muted-foreground: 215 20% 70%;
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 222 47% 15%;
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 222 47% 18%;
+    --input: 222 47% 18%;
+    --ring: 212.7 26.8% 83.9%;
+
+    /* Agent dark mode colors */
+    --agent-dark-bg: 222 100% 5%;
+    --agent-primary: 211 100% 50%;
+    --agent-secondary: 222 47% 15%;
+    --agent-accent: 222 47% 18%;
+    --agent-dark: 222 47% 12%;
+    --agent-light: 210 40% 98%;
+    --agent-success: 142 76% 36%;
+    --agent-warning: 37 90% 50%;
+    --agent-error: 0 74% 50%;
+    --agent-surface: 222 47% 12%;
+    --agent-text: 210 40% 98%;
   }
 }
 
@@ -112,7 +137,7 @@
   
   /* Dark mode background gradient */
   .dark body {
-    background: linear-gradient(163deg, #000313 0%, #15131b 100%);
+    background: hsl(var(--agent-dark-bg));
     background-attachment: fixed;
     background-size: cover;
   }
@@ -153,7 +178,7 @@
   }
   
   .neo-blur {
-    @apply backdrop-blur-2xl bg-white/10 dark:bg-black/40 border border-white/10 dark:border-white/5;
+    @apply backdrop-blur-2xl bg-white/10 dark:bg-card border border-white/10 dark:border-white/5;
   }
   
   /* Custom toggle switch styling */
@@ -166,7 +191,7 @@
   }
   
   .agent-toggle-switch.inactive {
-    @apply bg-gray-200 dark:bg-gray-700;
+    @apply bg-gray-200 dark:bg-muted;
   }
   
   .agent-toggle-handle {
@@ -180,13 +205,13 @@
   /* Dark mode specific card and input styles with the new color */
   .dark .card,
   .dark [class*="Card"] {
-    @apply bg-agent-dark-bg border-gray-800;
+    @apply bg-card border-border;
   }
   
   .dark input,
   .dark textarea,
   .dark select {
-    @apply bg-agent-dark-bg border-gray-800;
+    @apply bg-input border-border;
   }
 }
 
