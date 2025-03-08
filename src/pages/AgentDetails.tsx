@@ -17,6 +17,7 @@ import { AgentSetupStepper } from "@/components/AgentSetupStepper";
 import { AgentToggle } from "@/components/AgentToggle";
 import { AgentChannels } from "@/components/AgentChannels";
 import { AgentStats } from "@/components/AgentStats";
+import { AnalyticsTab } from "@/components/AnalyticsTab";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -906,19 +907,7 @@ const AgentDetails = () => {
           </TabsContent>
           
           <TabsContent value="analytics" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Analytics</CardTitle>
-                <CardDescription>
-                  View your agent's performance metrics and usage statistics.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-muted-foreground">
-                  Analytics dashboard coming soon...
-                </div>
-              </CardContent>
-            </Card>
+            {agent && <AnalyticsTab agent={agent} />}
           </TabsContent>
           
           <TabsContent value="settings" className="space-y-6">
@@ -940,7 +929,3 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
-
-
-
-
