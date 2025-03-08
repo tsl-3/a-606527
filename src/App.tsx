@@ -1,6 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/hooks/useTheme"; // Updated import path to match actual file location
 import { Toaster } from "@/components/ui/sonner";
 import AgentsLayout from "@/layouts/AgentsLayout";
 import Index from "@/pages/Index";
