@@ -88,6 +88,8 @@ const AgentAnalytics = () => {
   const [channelFilter, setChannelFilter] = useState("all");
   const [currentTab, setCurrentTab] = useState("performance");
 
+  console.log("AgentAnalytics - Current agentId:", agentId);
+
   if (isLoading) {
     return <div className="flex justify-center items-center h-[80vh]">
       <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>

@@ -60,8 +60,8 @@ export const useAgentDetails = (agentId: string | undefined) => {
         setAgent(enhancedData);
         setError(null);
       } catch (err) {
-        setError("Failed to load agent details");
         console.error("Error loading agent details:", err);
+        setError("Failed to load agent details");
       } finally {
         setIsLoading(false);
       }
