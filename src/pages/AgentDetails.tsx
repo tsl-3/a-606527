@@ -1,12 +1,6 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { 
-  ArrowLeft, Bot, Trash2, AlertCircle, Loader2, 
-  ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause,
-  Phone, Copy, PhoneOutgoing, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog
-} from "lucide-react";
-
+import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause, Phone, Copy, PhoneOutgoing, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,9 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { updateAgent } from "@/services/agentService";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
 const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
-
 interface VoiceDefinition {
   id: string;
   name: string;
@@ -39,46 +31,57 @@ interface VoiceDefinition {
   avatar?: string;
   audioSample: string;
 }
-
 const voiceSamples: Record<string, Record<string, VoiceDefinition>> = {
   "Eleven Labs": {
     "Emma": {
       id: "9BWtsMINqrJLrRacOk9x",
       name: "Emma",
-      traits: [
-        { name: "British", color: "bg-blue-100 text-blue-800" },
-        { name: "Professional", color: "bg-purple-100 text-purple-800" }
-      ],
+      traits: [{
+        name: "British",
+        color: "bg-blue-100 text-blue-800"
+      }, {
+        name: "Professional",
+        color: "bg-purple-100 text-purple-800"
+      }],
       avatar: "/voices/avatars/emma.jpg",
       audioSample: "/voices/eleven-emma.mp3"
     },
     "Josh": {
       id: "CwhRBWXzGAHq8TQ4Fs17",
       name: "Josh",
-      traits: [
-        { name: "American", color: "bg-red-100 text-red-800" },
-        { name: "Casual", color: "bg-green-100 text-green-800" }
-      ],
+      traits: [{
+        name: "American",
+        color: "bg-red-100 text-red-800"
+      }, {
+        name: "Casual",
+        color: "bg-green-100 text-green-800"
+      }],
       avatar: "/voices/avatars/josh.jpg",
       audioSample: "/voices/eleven-josh.mp3"
     },
     "Aria": {
       id: "EXAVITQu4vr4xnSDxMaL",
       name: "Aria",
-      traits: [
-        { name: "Young", color: "bg-yellow-100 text-yellow-800" },
-        { name: "Friendly", color: "bg-pink-100 text-pink-800" }
-      ],
+      traits: [{
+        name: "Young",
+        color: "bg-yellow-100 text-yellow-800"
+      }, {
+        name: "Friendly",
+        color: "bg-pink-100 text-pink-800"
+      }],
       avatar: "/voices/avatars/aria.jpg",
       audioSample: "/voices/eleven-aria.mp3"
     },
     "Charlie": {
       id: "IKne3meq5aSn9XLyUdCD",
       name: "Charlie",
-      traits: [
-        { name: "Australian", color: "bg-green-100 text-green-800" },
-        { name: "Energetic", color: "bg-orange-100 text-orange-800" }
-      ],
+      traits: [{
+        name: "Australian",
+        color: "bg-green-100 text-green-800"
+      }, {
+        name: "Energetic",
+        color: "bg-orange-100 text-orange-800"
+      }],
       avatar: "/voices/avatars/charlie.jpg",
       audioSample: "/voices/eleven-charlie.mp3"
     }
@@ -87,20 +90,26 @@ const voiceSamples: Record<string, Record<string, VoiceDefinition>> = {
     "Joanna": {
       id: "Joanna",
       name: "Joanna",
-      traits: [
-        { name: "American", color: "bg-red-100 text-red-800" },
-        { name: "Professional", color: "bg-purple-100 text-purple-800" }
-      ],
+      traits: [{
+        name: "American",
+        color: "bg-red-100 text-red-800"
+      }, {
+        name: "Professional",
+        color: "bg-purple-100 text-purple-800"
+      }],
       avatar: "/voices/avatars/joanna.jpg",
       audioSample: "/voices/polly-joanna.mp3"
     },
     "Matthew": {
       id: "Matthew",
       name: "Matthew",
-      traits: [
-        { name: "American", color: "bg-red-100 text-red-800" },
-        { name: "Deep", color: "bg-blue-100 text-blue-800" }
-      ],
+      traits: [{
+        name: "American",
+        color: "bg-red-100 text-red-800"
+      }, {
+        name: "Deep",
+        color: "bg-blue-100 text-blue-800"
+      }],
       avatar: "/voices/avatars/matthew.jpg",
       audioSample: "/voices/polly-matthew.mp3"
     }
@@ -109,31 +118,46 @@ const voiceSamples: Record<string, Record<string, VoiceDefinition>> = {
     "Wavenet A": {
       id: "en-US-Wavenet-A",
       name: "Wavenet A",
-      traits: [
-        { name: "American", color: "bg-red-100 text-red-800" },
-        { name: "Neutral", color: "bg-gray-100 text-gray-800" }
-      ],
+      traits: [{
+        name: "American",
+        color: "bg-red-100 text-red-800"
+      }, {
+        name: "Neutral",
+        color: "bg-gray-100 text-gray-800"
+      }],
       avatar: "/voices/avatars/wavenet-a.jpg",
       audioSample: "/voices/google-wavenet-a.mp3"
     },
     "Wavenet B": {
       id: "en-US-Wavenet-B",
       name: "Wavenet B",
-      traits: [
-        { name: "British", color: "bg-blue-100 text-blue-800" },
-        { name: "Formal", color: "bg-indigo-100 text-indigo-800" }
-      ],
+      traits: [{
+        name: "British",
+        color: "bg-blue-100 text-blue-800"
+      }, {
+        name: "Formal",
+        color: "bg-indigo-100 text-indigo-800"
+      }],
       avatar: "/voices/avatars/wavenet-b.jpg",
       audioSample: "/voices/google-wavenet-b.mp3"
     }
   }
 };
-
 const AgentDetails = () => {
-  const { agentId } = useParams<{ agentId: string }>();
+  const {
+    agentId
+  } = useParams<{
+    agentId: string;
+  }>();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { agent, isLoading, error } = useAgentDetails(agentId);
+  const {
+    toast
+  } = useToast();
+  const {
+    agent,
+    isLoading,
+    error
+  } = useAgentDetails(agentId);
   const [isActive, setIsActive] = useState(false);
   const [model, setModel] = useState<string>("GPT-4");
   const [voice, setVoice] = useState<string>("Emma");
@@ -146,7 +170,6 @@ const AgentDetails = () => {
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
   const [activeTab, setActiveTab] = useState("setup");
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  
   useEffect(() => {
     if (agent) {
       setIsActive(agent.status === "active");
@@ -155,7 +178,6 @@ const AgentDetails = () => {
       setVoiceProvider(agent.voiceProvider || "Eleven Labs");
       setCustomVoiceId(agent.customVoiceId || "");
       setIsCustomVoice(agent.voice === "Custom");
-      
       if (agent.voice && agent.voiceProvider && !isCustomVoice) {
         const voiceDef = voiceSamples[agent.voiceProvider]?.[agent.voice];
         if (voiceDef) {
@@ -165,7 +187,6 @@ const AgentDetails = () => {
       }
     }
   }, [agent]);
-  
   useEffect(() => {
     return () => {
       if (audioRef.current) {
@@ -174,48 +195,44 @@ const AgentDetails = () => {
       }
     };
   }, []);
-  
   const handleStatusToggle = () => {
     setIsActive(!isActive);
     toast({
       title: !isActive ? "Agent Activated" : "Agent Deactivated",
-      description: !isActive 
-        ? "Your agent is now active and will process requests."
-        : "Your agent has been deactivated and won't process new requests.",
-      variant: !isActive ? "default" : "destructive",
+      description: !isActive ? "Your agent is now active and will process requests." : "Your agent has been deactivated and won't process new requests.",
+      variant: !isActive ? "default" : "destructive"
     });
   };
-  
   const handleModelChange = async (value: string) => {
     setModel(value);
     if (agent && agentId) {
       try {
-        await updateAgent(agentId, { ...agent, model: value });
+        await updateAgent(agentId, {
+          ...agent,
+          model: value
+        });
         toast({
           title: "Model updated",
-          description: `The agent model has been updated to ${value}.`,
+          description: `The agent model has been updated to ${value}.`
         });
       } catch (error) {
         toast({
           title: "Failed to update model",
           description: "There was an error updating the agent model.",
-          variant: "destructive",
+          variant: "destructive"
         });
       }
     }
   };
-
   const handleVoiceChange = async (voiceName: string) => {
     setVoice(voiceName);
     setIsCustomVoice(voiceName === "Custom");
-    
     if (voiceName !== "Custom") {
       const voiceDef = voiceSamples[voiceProvider]?.[voiceName];
       if (voiceDef) {
         setSelectedVoiceTraits(voiceDef.traits || []);
         setSelectedVoiceId(voiceDef.id || "");
       }
-      
       if (currentlyPlaying !== voiceName) {
         handlePlaySample(voiceName);
       }
@@ -224,7 +241,6 @@ const AgentDetails = () => {
       setSelectedVoiceId(customVoiceId);
     }
   };
-
   const handleProviderChange = async (value: string) => {
     setVoiceProvider(value);
     const voices = Object.keys(voiceSamples[value as keyof typeof voiceSamples] || {});
@@ -237,18 +253,15 @@ const AgentDetails = () => {
       }
       setIsCustomVoice(voices[0] === "Custom");
     }
-    
     if (audioRef.current) {
       audioRef.current.pause();
       setCurrentlyPlaying(null);
     }
   };
-
   const handleCustomVoiceIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomVoiceId(e.target.value);
     setSelectedVoiceId(e.target.value);
   };
-
   const handlePlaySample = (voiceName: string) => {
     if (currentlyPlaying === voiceName) {
       if (audioRef.current) {
@@ -257,90 +270,79 @@ const AgentDetails = () => {
       }
       return;
     }
-    
     const voicePath = voiceSamples[voiceProvider as keyof typeof voiceSamples]?.[voiceName]?.audioSample;
-    
     if (!voicePath) return;
-    
     if (audioRef.current) {
       audioRef.current.pause();
     }
-    
     const audio = new Audio(voicePath);
     audioRef.current = audio;
-    
     audio.onended = () => {
       setCurrentlyPlaying(null);
     };
-    
     audio.onplay = () => {
       setCurrentlyPlaying(voiceName);
     };
-    
     audio.onerror = () => {
       toast({
         title: "Audio Error",
         description: `Could not play sample for ${voiceName}.`,
-        variant: "destructive",
+        variant: "destructive"
       });
       setCurrentlyPlaying(null);
     };
-    
     audio.play().catch(err => {
       console.error("Error playing audio:", err);
       setCurrentlyPlaying(null);
     });
   };
-
   const handleVoiceSelectionSave = async () => {
     if (agent && agentId) {
       try {
-        const updatedAgent = { 
-          ...agent, 
+        const updatedAgent = {
+          ...agent,
           voice: isCustomVoice ? "Custom" : voice,
           voiceProvider: voiceProvider,
           customVoiceId: isCustomVoice ? customVoiceId : undefined,
           voiceTraits: isCustomVoice ? [] : selectedVoiceTraits
         };
-        
         await updateAgent(agentId, updatedAgent);
         toast({
           title: "Voice settings updated",
-          description: `The voice settings have been updated.`,
+          description: `The voice settings have been updated.`
         });
         setIsVoiceDialogOpen(false);
       } catch (error) {
         toast({
           title: "Failed to update voice settings",
           description: "There was an error updating the voice settings.",
-          variant: "destructive",
+          variant: "destructive"
         });
       }
     }
   };
-  
   const handleDelete = () => {
     toast({
       title: "Agent deleted",
       description: "The agent has been successfully deleted.",
-      variant: "destructive",
+      variant: "destructive"
     });
     navigate("/agents");
   };
-  
-  const handleUpdateChannel = async (channel: string, config: { enabled: boolean; details?: string; config?: Record<string, any> }) => {
+  const handleUpdateChannel = async (channel: string, config: {
+    enabled: boolean;
+    details?: string;
+    config?: Record<string, any>;
+  }) => {
     if (!agent || !agentId) return;
-    
     let updatedChannels: string[] = [...(agent.channels || [])];
-    
     if (config.enabled && !updatedChannels.includes(channel)) {
       updatedChannels.push(channel);
     } else if (!config.enabled && updatedChannels.includes(channel)) {
       updatedChannels = updatedChannels.filter(c => c !== channel);
     }
-    
     try {
-      const updatedAgent = { 
+      const updatedAgent = {
         ...agent,
         channels: updatedChannels,
         channelConfigs: {
@@ -348,123 +350,107 @@ const AgentDetails = () => {
           [channel]: config
         }
       };
-      
       await updateAgent(agentId, updatedAgent);
-      
       setIsActive(updatedAgent.status === "active");
-      
       toast({
         title: config.enabled ? "Channel enabled" : "Channel disabled",
-        description: `The ${channel} channel has been updated.`,
+        description: `The ${channel} channel has been updated.`
       });
     } catch (error) {
       toast({
         title: "Failed to update channel",
         description: "There was an error updating the channel configuration.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleCopyPhoneNumber = () => {
     if (voicePhoneNumber) {
       navigator.clipboard.writeText(voicePhoneNumber);
       toast({
         title: "Phone number copied",
-        description: "Phone number has been copied to clipboard.",
+        description: "Phone number has been copied to clipboard."
       });
     }
   };
-
   const handleTestCall = () => {
     if (voicePhoneNumber) {
       window.location.href = `tel:${voicePhoneNumber}`;
       toast({
         title: "Calling agent",
-        description: `Initiating call to ${voicePhoneNumber}`,
+        description: `Initiating call to ${voicePhoneNumber}`
       });
     } else {
       toast({
         title: "No phone number available",
         description: "Please configure a phone number for voice channel first.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleCopyEmail = () => {
     if (emailAddress) {
       navigator.clipboard.writeText(emailAddress);
       toast({
         title: "Email address copied",
-        description: "Email address has been copied to clipboard.",
+        description: "Email address has been copied to clipboard."
       });
     }
   };
-
   const handleTestEmail = () => {
     if (emailAddress) {
       window.location.href = `mailto:${emailAddress}?subject=Test Email for ${agent?.name || 'Agent'}&body=This is a test email for your AI agent.`;
       toast({
         title: "Composing email",
-        description: `Opening email client to send test email to ${emailAddress}`,
+        description: `Opening email client to send test email to ${emailAddress}`
       });
     } else {
       toast({
         title: "No email address available",
         description: "Please configure an email address for email channel first.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleDeactivateAgent = () => {
     setIsActive(false);
     toast({
       title: "Agent Deactivated",
       description: "Your agent has been deactivated and won't process new requests.",
-      variant: "destructive",
+      variant: "destructive"
     });
   };
-
   const handleArchiveAgent = () => {
     toast({
       title: "Agent Archived",
-      description: "The agent has been archived and can be restored later.",
+      description: "The agent has been archived and can be restored later."
     });
     navigate("/agents");
   };
-
   const handleEditClick = () => {
     toast({
       title: "Edit Mode",
-      description: "You can now edit your agent's details.",
+      description: "You can now edit your agent's details."
     });
     // In a real app, you might navigate to an edit page or enable edit mode
   };
-
   const handleCopyAvatar = () => {
     const avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${agent?.id}`;
     if (avatarUrl) {
       navigator.clipboard.writeText(avatarUrl);
       toast({
         title: "Avatar copied",
-        description: "Avatar URL has been copied to clipboard.",
+        description: "Avatar URL has been copied to clipboard."
       });
     }
   };
-
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-[80vh]">
+    return <div className="flex justify-center items-center h-[80vh]">
         <Loader2 className="h-8 w-8 text-agent-primary animate-spin" />
-      </div>
-    );
+      </div>;
   }
-  
   if (error || !agent) {
-    return (
-      <div className="max-w-4xl mx-auto">
+    return <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Link to="/agents" className="flex items-center text-gray-500 hover:text-agent-primary">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -481,21 +467,13 @@ const AgentDetails = () => {
         </Alert>
         
         <Button onClick={() => navigate("/agents")}>Return to Dashboard</Button>
-      </div>
-    );
+      </div>;
   }
-
   const lastUpdated = new Date().toLocaleString();
-  
   const voicePhoneNumber = agent.channelConfigs?.voice?.details || null;
   const emailAddress = agent.channelConfigs?.email?.details || null;
-  
-  const activeChannels = Object.entries(agent.channelConfigs || {})
-    .filter(([_, config]) => config.enabled)
-    .map(([channel]) => channel);
-  
-  return (
-    <div className="max-w-6xl mx-auto animate-fade-in">
+  const activeChannels = Object.entries(agent.channelConfigs || {}).filter(([_, config]) => config.enabled).map(([channel]) => channel);
+  return <div className="max-w-6xl mx-auto animate-fade-in">
       <div className="mb-6">
         <Link to="/agents" className="flex items-center text-gray-500 hover:text-agent-primary transition-colors duration-200">
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -503,16 +481,13 @@ const AgentDetails = () => {
         </Link>
       </div>
       
-      <Card className="mb-6 overflow-hidden">
+      <Card className="mb-6 overflow-hidden bg-gray-950">
         <CardHeader className="pb-3">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex items-center gap-4">
               <div className="relative">
                 <Avatar className="h-16 w-16 border-2 border-agent-primary/30">
-                  <AvatarImage 
-                    src={`https://api.dicebear.com/7.x/bottts/svg?seed=${agent.id}`} 
-                    alt={agent.name} 
-                  />
+                  <AvatarImage src={`https://api.dicebear.com/7.x/bottts/svg?seed=${agent.id}`} alt={agent.name} />
                   <AvatarFallback className="bg-agent-primary/20 text-agent-primary">
                     <Bot className="h-8 w-8" />
                   </AvatarFallback>
@@ -523,51 +498,34 @@ const AgentDetails = () => {
                   <h1 className="text-2xl font-bold">
                     {agent.name}
                   </h1>
-                  <Badge 
-                    variant="outline" 
-                    className={`${isActive 
-                      ? "border-green-500/30 text-green-500 bg-green-500/10" 
-                      : "border-gray-500/30 text-gray-400 bg-gray-500/10"}`}
-                  >
+                  <Badge variant="outline" className={`${isActive ? "border-green-500/30 text-green-500 bg-green-500/10" : "border-gray-500/30 text-gray-400 bg-gray-500/10"}`}>
                     <span className="flex items-center gap-1.5">
-                      {isActive ? (
-                        <>
+                      {isActive ? <>
                           <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
                           Active
-                        </>
-                      ) : (
-                        <>
+                        </> : <>
                           <span className="h-1.5 w-1.5 rounded-full bg-gray-500"></span>
                           Inactive
-                        </>
-                      )}
+                        </>}
                     </span>
                   </Badge>
                 </div>
                 <p className="text-muted-foreground mt-1.5 max-w-2xl">{agent.description}</p>
                 
-                {activeChannels.length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {activeChannels.includes('voice') && (
-                      <Badge className="bg-blue-500 text-white px-2 py-0.5 flex items-center gap-1">
+                {activeChannels.length > 0 && <div className="mt-4 flex flex-wrap gap-2">
+                    {activeChannels.includes('voice') && <Badge className="bg-blue-500 text-white px-2 py-0.5 flex items-center gap-1">
                         <Mic className="h-3 w-3" />
                         <span className="text-xs">Voice</span>
-                      </Badge>
-                    )}
-                    {activeChannels.includes('chat') && (
-                      <Badge className="bg-purple-500 text-white px-2 py-0.5 flex items-center gap-1">
+                      </Badge>}
+                    {activeChannels.includes('chat') && <Badge className="bg-purple-500 text-white px-2 py-0.5 flex items-center gap-1">
                         <MessageSquare className="h-3 w-3" />
                         <span className="text-xs">Chat</span>
-                      </Badge>
-                    )}
-                    {activeChannels.includes('email') && (
-                      <Badge className="bg-red-500 text-white px-2 py-0.5 flex items-center gap-1">
+                      </Badge>}
+                    {activeChannels.includes('email') && <Badge className="bg-red-500 text-white px-2 py-0.5 flex items-center gap-1">
                         <Mail className="h-3 w-3" />
                         <span className="text-xs">Email</span>
-                      </Badge>
-                    )}
-                  </div>
-                )}
+                      </Badge>}
+                  </div>}
               </div>
             </div>
             
@@ -603,67 +561,39 @@ const AgentDetails = () => {
               </div>
               
               <div className="mt-3 flex items-center gap-2 flex-wrap">
-                {voicePhoneNumber && (
-                  <div className="flex items-center">
+                {voicePhoneNumber && <div className="flex items-center">
                     <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
                       <Phone className="h-3.5 w-3.5 text-blue-500" />
                       <span className="text-xs">
                         {voicePhoneNumber}
                       </span>
                       <div className="flex gap-1 ml-2">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-6 w-6 rounded-full hover:bg-secondary"
-                          onClick={handleCopyPhoneNumber}
-                          title="Copy phone number"
-                        >
+                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-secondary" onClick={handleCopyPhoneNumber} title="Copy phone number">
                           <Copy className="h-3 w-3 text-muted-foreground" />
                         </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-6 w-6 rounded-full hover:bg-green-700/50"
-                          onClick={handleTestCall}
-                          title="Test agent call"
-                        >
+                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestCall} title="Test agent call">
                           <PhoneOutgoing className="h-3 w-3 text-green-400" />
                         </Button>
                       </div>
                     </div>
-                  </div>
-                )}
+                  </div>}
                 
-                {emailAddress && (
-                  <div className="flex items-center">
+                {emailAddress && <div className="flex items-center">
                     <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
                       <Mail className="h-3.5 w-3.5 text-red-500" />
                       <span className="text-xs">
                         {emailAddress}
                       </span>
                       <div className="flex gap-1 ml-2">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-6 w-6 rounded-full hover:bg-secondary"
-                          onClick={handleCopyEmail}
-                          title="Copy email address"
-                        >
+                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-secondary" onClick={handleCopyEmail} title="Copy email address">
                           <Copy className="h-3 w-3 text-muted-foreground" />
                         </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-6 w-6 rounded-full hover:bg-green-700/50"
-                          onClick={handleTestEmail}
-                          title="Test agent email"
-                        >
+                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestEmail} title="Test agent email">
                           <Send className="h-3 w-3 text-green-400" />
                         </Button>
                       </div>
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
             </div>
           </div>
@@ -733,9 +663,7 @@ const AgentDetails = () => {
                           <span className="truncate">
                             {isCustomVoice ? `Custom (${customVoiceId.substring(0, 6)}...)` : `${voice} (${voiceProvider})`}
                           </span>
-                          {voicePhoneNumber && (
-                            <span className="text-xs text-muted-foreground truncate ml-1">{voicePhoneNumber}</span>
-                          )}
+                          {voicePhoneNumber && <span className="text-xs text-muted-foreground truncate ml-1">{voicePhoneNumber}</span>}
                           <span className="sr-only">Edit voice</span>
                         </Button>
                       </DialogTrigger>
@@ -765,82 +693,49 @@ const AgentDetails = () => {
                             <ScrollArea className="h-[50vh] pr-4">
                               <TabsContent value="Eleven Labs" className="border-none p-0">
                                 <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
-                                  {Object.keys(voiceSamples["Eleven Labs"]).map((voiceName) => {
-                                    const voiceDef = voiceSamples["Eleven Labs"][voiceName];
-                                    return (
-                                      <div 
-                                        key={voiceName} 
-                                        className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}
-                                      >
+                                  {Object.keys(voiceSamples["Eleven Labs"]).map(voiceName => {
+                                  const voiceDef = voiceSamples["Eleven Labs"][voiceName];
+                                  return <div key={voiceName} className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
                                         <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} />
                                         <div className="flex w-full justify-between items-center">
                                           <div className="flex gap-3">
-                                            {voiceDef.avatar && (
-                                              <Avatar className="h-10 w-10 rounded-full">
+                                            {voiceDef.avatar && <Avatar className="h-10 w-10 rounded-full">
                                                 <AvatarImage src={voiceDef.avatar} alt={voiceName} />
                                                 <AvatarFallback>
                                                   {voiceName.substring(0, 2)}
                                                 </AvatarFallback>
-                                              </Avatar>
-                                            )}
+                                              </Avatar>}
                                             <div>
-                                              <Label 
-                                                htmlFor={`voice-${voiceName}`}
-                                                className="text-base font-medium cursor-pointer"
-                                              >
+                                              <Label htmlFor={`voice-${voiceName}`} className="text-base font-medium cursor-pointer">
                                                 {voiceName}
                                               </Label>
                                               <div className="flex items-center gap-1.5 mt-1.5">
-                                                {voiceDef.traits.map((trait, i) => (
-                                                  <span 
-                                                    key={i} 
-                                                    className={`text-xs px-2 py-0.5 rounded-full ${trait.color}`}
-                                                  >
+                                                {voiceDef.traits.map((trait, i) => <span key={i} className={`text-xs px-2 py-0.5 rounded-full ${trait.color}`}>
                                                     {trait.name}
-                                                  </span>
-                                                ))}
+                                                  </span>)}
                                               </div>
                                             </div>
                                           </div>
-                                          <Button 
-                                            size="sm" 
-                                            variant={currentlyPlaying === voiceName ? "destructive" : "secondary"}
-                                            onClick={() => handlePlaySample(voiceName)}
-                                            className="min-w-20"
-                                          >
-                                            {currentlyPlaying === voiceName ? (
-                                              <>
+                                          <Button size="sm" variant={currentlyPlaying === voiceName ? "destructive" : "secondary"} onClick={() => handlePlaySample(voiceName)} className="min-w-20">
+                                            {currentlyPlaying === voiceName ? <>
                                                 <Pause className="h-3.5 w-3.5 mr-1" />
                                                 Stop
-                                              </>
-                                            ) : (
-                                              <>
+                                              </> : <>
                                                 <Play className="h-3.5 w-3.5 mr-1" />
                                                 Play
-                                              </>
-                                            )}
+                                              </>}
                                           </Button>
                                         </div>
-                                      </div>
-                                    );
-                                  })}
+                                      </div>;
+                                })}
                                   <div className="mt-4 pt-4 border-t">
                                     <div className="flex items-start space-x-3 rounded-lg border p-3">
                                       <RadioGroupItem value="Custom" id="voice-custom" />
                                       <div className="flex-1">
-                                        <Label 
-                                          htmlFor="voice-custom"
-                                          className="text-base font-medium cursor-pointer block mb-2"
-                                        >
+                                        <Label htmlFor="voice-custom" className="text-base font-medium cursor-pointer block mb-2">
                                           Custom Voice ID
                                         </Label>
-                                        <Input
-                                          placeholder="Enter custom voice ID"
-                                          value={customVoiceId}
-                                          onChange={handleCustomVoiceIdChange}
-                                          disabled={!isCustomVoice}
-                                          className="max-w-md"
-                                        />
+                                        <Input placeholder="Enter custom voice ID" value={customVoiceId} onChange={handleCustomVoiceIdChange} disabled={!isCustomVoice} className="max-w-md" />
                                         <p className="text-xs text-muted-foreground mt-2">
                                           Enter your custom voice ID from your provider.
                                         </p>
@@ -852,129 +747,81 @@ const AgentDetails = () => {
                               
                               <TabsContent value="Amazon Polly" className="border-none p-0">
                                 <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
-                                  {Object.keys(voiceSamples["Amazon Polly"]).map((voiceName) => {
-                                    const voiceDef = voiceSamples["Amazon Polly"][voiceName];
-                                    return (
-                                      <div 
-                                        key={voiceName} 
-                                        className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}
-                                      >
+                                  {Object.keys(voiceSamples["Amazon Polly"]).map(voiceName => {
+                                  const voiceDef = voiceSamples["Amazon Polly"][voiceName];
+                                  return <div key={voiceName} className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
                                         <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} />
                                         <div className="flex w-full justify-between items-center">
                                           <div className="flex gap-3">
-                                            {voiceDef.avatar && (
-                                              <Avatar className="h-10 w-10 rounded-full">
+                                            {voiceDef.avatar && <Avatar className="h-10 w-10 rounded-full">
                                                 <AvatarImage src={voiceDef.avatar} alt={voiceName} />
                                                 <AvatarFallback>
                                                   {voiceName.substring(0, 2)}
                                                 </AvatarFallback>
-                                              </Avatar>
-                                            )}
+                                              </Avatar>}
                                             <div>
-                                              <Label 
-                                                htmlFor={`voice-${voiceName}`}
-                                                className="text-base font-medium cursor-pointer"
-                                              >
+                                              <Label htmlFor={`voice-${voiceName}`} className="text-base font-medium cursor-pointer">
                                                 {voiceName}
                                               </Label>
                                               <div className="flex items-center gap-1.5 mt-1.5">
-                                                {voiceDef.traits.map((trait, i) => (
-                                                  <span 
-                                                    key={i} 
-                                                    className={`text-xs px-2 py-0.5 rounded-full ${trait.color}`}
-                                                  >
+                                                {voiceDef.traits.map((trait, i) => <span key={i} className={`text-xs px-2 py-0.5 rounded-full ${trait.color}`}>
                                                     {trait.name}
-                                                  </span>
-                                                ))}
+                                                  </span>)}
                                               </div>
                                             </div>
                                           </div>
-                                          <Button 
-                                            size="sm" 
-                                            variant={currentlyPlaying === voiceName ? "destructive" : "secondary"}
-                                            onClick={() => handlePlaySample(voiceName)}
-                                            className="min-w-20"
-                                          >
-                                            {currentlyPlaying === voiceName ? (
-                                              <>
+                                          <Button size="sm" variant={currentlyPlaying === voiceName ? "destructive" : "secondary"} onClick={() => handlePlaySample(voiceName)} className="min-w-20">
+                                            {currentlyPlaying === voiceName ? <>
                                                 <Pause className="h-3.5 w-3.5 mr-1" />
                                                 Stop
-                                              </>
-                                            ) : (
-                                              <>
+                                              </> : <>
                                                 <Play className="h-3.5 w-3.5 mr-1" />
                                                 Play
-                                              </>
-                                            )}
+                                              </>}
                                           </Button>
                                         </div>
-                                      </div>
-                                    );
-                                  })}
+                                      </div>;
+                                })}
                                 </RadioGroup>
                               </TabsContent>
                               
                               <TabsContent value="Google TTS" className="border-none p-0">
                                 <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
-                                  {Object.keys(voiceSamples["Google TTS"]).map((voiceName) => {
-                                    const voiceDef = voiceSamples["Google TTS"][voiceName];
-                                    return (
-                                      <div 
-                                        key={voiceName} 
-                                        className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}
-                                      >
+                                  {Object.keys(voiceSamples["Google TTS"]).map(voiceName => {
+                                  const voiceDef = voiceSamples["Google TTS"][voiceName];
+                                  return <div key={voiceName} className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
                                         <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} />
                                         <div className="flex w-full justify-between items-center">
                                           <div className="flex gap-3">
-                                            {voiceDef.avatar && (
-                                              <Avatar className="h-10 w-10 rounded-full">
+                                            {voiceDef.avatar && <Avatar className="h-10 w-10 rounded-full">
                                                 <AvatarImage src={voiceDef.avatar} alt={voiceName} />
                                                 <AvatarFallback>
                                                   {voiceName.substring(0, 2)}
                                                 </AvatarFallback>
-                                              </Avatar>
-                                            )}
+                                              </Avatar>}
                                             <div>
-                                              <Label 
-                                                htmlFor={`voice-${voiceName}`}
-                                                className="text-base font-medium cursor-pointer"
-                                              >
+                                              <Label htmlFor={`voice-${voiceName}`} className="text-base font-medium cursor-pointer">
                                                 {voiceName}
                                               </Label>
                                               <div className="flex items-center gap-1.5 mt-1.5">
-                                                {voiceDef.traits.map((trait, i) => (
-                                                  <span 
-                                                    key={i} 
-                                                    className={`text-xs px-2 py-0.5 rounded-full ${trait.color}`}
-                                                  >
+                                                {voiceDef.traits.map((trait, i) => <span key={i} className={`text-xs px-2 py-0.5 rounded-full ${trait.color}`}>
                                                     {trait.name}
-                                                  </span>
-                                                ))}
+                                                  </span>)}
                                               </div>
                                             </div>
                                           </div>
-                                          <Button 
-                                            size="sm" 
-                                            variant={currentlyPlaying === voiceName ? "destructive" : "secondary"}
-                                            onClick={() => handlePlaySample(voiceName)}
-                                            className="min-w-20"
-                                          >
-                                            {currentlyPlaying === voiceName ? (
-                                              <>
+                                          <Button size="sm" variant={currentlyPlaying === voiceName ? "destructive" : "secondary"} onClick={() => handlePlaySample(voiceName)} className="min-w-20">
+                                            {currentlyPlaying === voiceName ? <>
                                                 <Pause className="h-3.5 w-3.5 mr-1" />
                                                 Stop
-                                              </>
-                                            ) : (
-                                              <>
+                                              </> : <>
                                                 <Play className="h-3.5 w-3.5 mr-1" />
                                                 Play
-                                              </>
-                                            )}
+                                              </>}
                                           </Button>
                                         </div>
-                                      </div>
-                                    );
-                                  })}
+                                      </div>;
+                                })}
                                 </RadioGroup>
                               </TabsContent>
                             </ScrollArea>
@@ -999,12 +846,7 @@ const AgentDetails = () => {
           
           <div className="mt-8">
             <h3 className="text-lg font-medium text-foreground mb-4">Performance Stats</h3>
-            <AgentStats 
-              avmScore={agent.avmScore || 7.8}
-              interactionCount={agent.interactions || 0}
-              csat={agent.csat || 92}
-              performance={agent.performance || 88}
-            />
+            <AgentStats avmScore={agent.avmScore || 7.8} interactionCount={agent.interactions || 0} csat={agent.csat || 92} performance={agent.performance || 88} />
           </div>
         </CardContent>
       </Card>
@@ -1061,17 +903,12 @@ const AgentDetails = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <AgentChannels
-                  channels={agent.channelConfigs || {}}
-                  onUpdateChannel={handleUpdateChannel}
-                />
+                <AgentChannels channels={agent.channelConfigs || {}} onUpdateChannel={handleUpdateChannel} />
               </CardContent>
             </Card>
           </TabsContent>
         </div>
       </Tabs>
-    </div>
-  );
+    </div>;
 };
-
 export default AgentDetails;
