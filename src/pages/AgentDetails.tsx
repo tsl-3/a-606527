@@ -1009,7 +1009,7 @@ const AgentDetails = () => {
               <div className="space-y-8">
                 <div className="bg-secondary/10 p-6 rounded-lg">
                   <h3 className="text-xl font-medium mb-4">Agent Setup Steps</h3>
-                  <AgentSetupStepper agent={agent} />
+                  <AgentSetupStepper agent={agentWithAvmScore} />
                 </div>
                 
                 <Card>
@@ -1160,3 +1160,4 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
+

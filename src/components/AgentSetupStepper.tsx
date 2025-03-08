@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { 
   BookOpen, Workflow, FlaskConical, CheckCircle2, 
@@ -512,8 +513,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           talkTime="120s" 
           trainingRecords={sampleTrainingRecords}
         />
-        
-        {/* The Agent Training Step has been removed as requested */}
         
         {/* Knowledge Base Step */}
         <Step 
