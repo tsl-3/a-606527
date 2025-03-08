@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { AgentChannels } from "./AgentChannels";
+import { KnowledgeBaseCard } from "./KnowledgeBaseCard";
 
 // Define training record interface
 interface TrainingRecord {
@@ -20,6 +21,16 @@ interface TrainingRecord {
   time: string;
   duration: string;
   type: 'call' | 'roleplay';
+}
+
+// Define document interface
+interface Document {
+  id: string;
+  title: string;
+  type: string;
+  size: string;
+  date: string;
+  format?: string;
 }
 
 interface StepProps {
@@ -459,6 +470,26 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       type: 'roleplay'
     }
   ];
+
+  // Sample documents for knowledge base
+  const sampleDocuments: Document[] = [
+    {
+      id: '1',
+      title: 'Company Guidelines.pdf',
+      type: 'pdf',
+      format: 'PDF',
+      size: '2.5 MB',
+      date: '2024-02-20'
+    },
+    {
+      id: '2',
+      title: 'Product Manual.docx',
+      type: 'docx',
+      format: 'DOCX',
+      size: '1.8 MB',
+      date: '2024-02-19'
+    }
+  ];
   
   return (
     <div className="space-y-6 animate-fade-in">
@@ -514,48 +545,41 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           trainingRecords={sampleTrainingRecords}
         />
         
-        {/* Knowledge Base Step */}
-        <Step 
-          title="Knowledge Base" 
-          description="Upload documents to give your agent its specific knowledge"
-          icon={<BookOpen className="h-5 w-5 text-primary" />}
-          isActive={steps.knowledge.active}
-          isCompleted={steps.knowledge.completed}
-          progress={steps.knowledge.progress}
-          stepNumber={2}
-        >
-          <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 rounded-lg p-4 mb-4">
-            <div className="flex items-start gap-3">
-              <div className="bg-amber-100 dark:bg-amber-900/20 p-2 rounded-full">
-                <ArrowRight className="h-4 w-4 text-amber-500" />
-              </div>
-              <div>
-                <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Status: Partially complete</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">You've added some knowledge, but we recommend adding more documents to improve your agent's accuracy.</p>
-              </div>
-            </div>
-          </div>
+        {/* Knowledge Base Cards - Replace the old Step with our new cards */}
+        <KnowledgeBaseCard 
+          status="not-started" 
+        />
         
-          <div className="bg-primary/5 rounded-lg p-4 mb-4 dark:bg-primary/5">
-            <h4 className="font-medium mb-2 text-gray-900 dark:text-white">Add Knowledge Sources</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Select a method to provide training data for your agent:</p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
-                <File className="h-4 w-4" />
-                <span>Add Web Page</span>
-              </Button>
-              <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
-                <Upload className="h-4 w-4" />
-                <span>Upload Documents</span>
-              </Button>
-              <Button variant="outline" className="flex items-center justify-center gap-2 bg-black/30 border-gray-800 text-white hover:bg-gray-800">
-                <CircleDashed className="h-4 w-4" />
-                <span>Add Text</span>
-              </Button>
-            </div>
-          </div>
-        </Step>
+        <KnowledgeBaseCard 
+          status="in-progress" 
+          documents={sampleDocuments}
+          processedCount={2}
+          totalCount={10}
+        />
+        
+        <KnowledgeBaseCard 
+          status="completed" 
+          documents={[...sampleDocuments, 
+            {
+              id: '3',
+              title: 'FAQ Documentation.pdf',
+              type: 'pdf',
+              format: 'PDF',
+              size: '4.2 MB',
+              date: '2024-02-22'
+            },
+            {
+              id: '4',
+              title: 'Training Materials.pptx',
+              type: 'pptx',
+              format: 'PPTX',
+              size: '8.5 MB',
+              date: '2024-02-23'
+            }
+          ]}
+          processedCount={10}
+          totalCount={10}
+        />
         
         {/* Workflow Step */}
         <Step 
