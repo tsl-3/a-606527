@@ -18,7 +18,7 @@ interface TrainingScenario {
   completed: boolean;
 }
 
-// Defined simulation result interface
+// Update Simulation Result interface to use string for tokens
 interface SimulationResult {
   id: string;
   name: string;
@@ -26,7 +26,7 @@ interface SimulationResult {
   coverage: number;
   performance: number;
   scenarios: number;
-  tokens: number;
+  tokens: string; // Changed from number to string to match actual usage
 }
 
 interface SimulationCardProps {

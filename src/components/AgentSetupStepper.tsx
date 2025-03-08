@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { 
   BookOpen, Workflow, FlaskConical, CheckCircle2, 
@@ -96,7 +95,6 @@ const Step: React.FC<StepProps> = ({
   );
 };
 
-// New Training Card Component with three states: not-started, in-progress, and completed
 const AgentTrainingCard: React.FC<{ 
   status: 'not-started' | 'in-progress' | 'completed';
   voiceSamples?: number;
@@ -116,7 +114,6 @@ const AgentTrainingCard: React.FC<{
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleUploadClick = () => {
-    // Trigger the hidden file input click
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
@@ -125,11 +122,7 @@ const AgentTrainingCard: React.FC<{
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
-      // Here you would typically handle the file upload logic
       console.log('Files selected:', files);
-      
-      // In a real app, you would upload these files to your server
-      // For now, just log the file names
       const fileNames = Array.from(files).map(file => file.name);
       console.log('File names:', fileNames);
     }
@@ -443,7 +436,6 @@ interface AgentSetupStepperProps {
 }
 
 export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) => {
-  // In a real application, these would come from agent data
   const steps = {
     training: { completed: false, progress: 30, active: true },
     knowledge: { completed: false, progress: 15, active: false },
@@ -451,12 +443,10 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
     simulation: { completed: false, progress: 0, active: false }
   };
   
-  // Calculate overall setup progress
   const totalSteps = Object.keys(steps).length;
   const completedSteps = Object.values(steps).filter(step => step.completed).length;
   const overallProgress = Math.round((completedSteps / totalSteps) * 100);
 
-  // Sample training records - would come from backend in real app
   const sampleTrainingRecords: TrainingRecord[] = [
     {
       id: '1',
@@ -476,7 +466,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
     }
   ];
 
-  // Sample documents for knowledge base
   const sampleDocuments: Document[] = [
     {
       id: '1',
@@ -496,7 +485,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
     }
   ];
   
-  // Sample simulation scenarios and results
   const sampleScenarios = [
     { id: "1", name: "Product Information Requests", completed: true },
     { id: "2", name: "Account Management", completed: true },
@@ -542,10 +530,8 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       </div>
       
       <div className="space-y-4 mt-8">
-        {/* Not Started Training Example */}
         <AgentTrainingCard status="not-started" />
         
-        {/* In Progress Training Example */}
         <AgentTrainingCard 
           status="in-progress" 
           voiceSamples={3} 
@@ -554,7 +540,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           trainingRecords={sampleTrainingRecords}
         />
         
-        {/* Completed Training Example */}
         <AgentTrainingCard 
           status="completed" 
           voiceSamples={10} 
@@ -564,7 +549,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           trainingRecords={sampleTrainingRecords}
         />
         
-        {/* Knowledge Base Cards */}
         <KnowledgeBaseCard 
           status="not-started" 
         />
@@ -600,7 +584,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           totalCount={10}
         />
         
-        {/* Workflow Cards */}
         <WorkflowCard 
           status="not-started" 
         />
@@ -613,7 +596,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           status="completed" 
         />
         
-        {/* Simulation Cards */}
         <SimulationCard 
           status="not-started" 
         />
