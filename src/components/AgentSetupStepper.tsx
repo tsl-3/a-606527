@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { 
   BookOpen, Workflow, FlaskConical, CheckCircle2, 
@@ -12,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { AgentChannels } from "./AgentChannels";
 import { KnowledgeBaseCard } from "./KnowledgeBaseCard";
 import { WorkflowCard } from "./WorkflowCard";
+import { SimulationCard } from "./SimulationCard";
 
 // Define training record interface
 interface TrainingRecord {
@@ -494,6 +496,35 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
     }
   ];
   
+  // Sample simulation scenarios and results
+  const sampleScenarios = [
+    { id: "1", name: "Product Information Requests", completed: true },
+    { id: "2", name: "Account Management", completed: true },
+    { id: "3", name: "Billing Questions", completed: true },
+    { id: "4", name: "Service Status Updates", completed: true }
+  ];
+  
+  const sampleSimulations = [
+    {
+      id: "1",
+      name: "Basic Customer Inquiries",
+      date: "Feb 25, 2024",
+      coverage: 52,
+      performance: 68,
+      scenarios: 4,
+      tokens: "25.3k"
+    },
+    {
+      id: "2",
+      name: "Technical Support Basics",
+      date: "Feb 24, 2024",
+      coverage: 48,
+      performance: 65,
+      scenarios: 3,
+      tokens: "18.6k"
+    }
+  ];
+  
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="mb-8">
@@ -504,8 +535,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             <Progress value={overallProgress} className="w-24 h-2" />
           </div>
         </div>
-        
-        
         
         <p className="text-gray-600 dark:text-gray-300">
           Complete these steps in order to fully configure your agent for optimal performance
@@ -584,30 +613,22 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           status="completed" 
         />
         
-        {/* Simulation Step */}
-        <Step 
-          title="Simulations" 
-          description="Test your agent's performance through different scenarios"
-          icon={<FlaskConical className="h-5 w-5 text-primary" />}
-          isActive={steps.simulation.active}
-          isCompleted={steps.simulation.completed}
-          progress={steps.simulation.progress}
-          stepNumber={4}
-        >
-          <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/20 rounded-lg p-4 mb-4">
-            <div className="flex items-start gap-3">
-              <div className="bg-gray-100 dark:bg-gray-700/20 p-2 rounded-full">
-                <ArrowRight className="h-4 w-4 text-gray-500" />
-              </div>
-              <div>
-                <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Status: Not started</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                  You'll need to complete the Workflow step before running simulations.
-                </p>
-              </div>
-            </div>
-          </div>
-        </Step>
+        {/* Simulation Cards */}
+        <SimulationCard 
+          status="not-started" 
+        />
+        
+        <SimulationCard 
+          status="in-progress"
+          coverage={52}
+          performance={68}
+          scenarios={sampleScenarios}
+          simulations={sampleSimulations}
+        />
+        
+        <SimulationCard 
+          status="completed"
+        />
       </div>
     </div>
   );
