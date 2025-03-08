@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -786,5 +787,380 @@ const AgentDetails = () => {
                                       return (
                                         <div 
                                           key={voiceName} 
-                                         
+                                          className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}
+                                        >
+                                          <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} />
+                                          <div className="flex w-full justify-between items-center">
+                                            <div className="flex gap-3">
+                                              {voiceDef.avatar && (
+                                                <Avatar className="h-10 w-10 rounded-full">
+                                                  <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                                  <AvatarFallback>
+                                                    {voiceName.substring(0, 2)}
+                                                  </AvatarFallback>
+                                                </Avatar>
+                                              )}
+                                              <div>
+                                                <Label 
+                                                  htmlFor={`voice-${voiceName}`}
+                                                  className="text-base font-medium cursor-pointer"
+                                                >
+                                                  {voiceName}
+                                                </Label>
+                                                <div className="flex items-center gap-1.5 mt-1.5">
+                                                  {voiceDef.traits.map((trait, i) => (
+                                                    <span 
+                                                      key={i} 
+                                                      className={`text-xs px-2 py-0.5 rounded-full ${trait.color}`}
+                                                    >
+                                                      {trait.name}
+                                                    </span>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <Button 
+                                              size="sm" 
+                                              variant="ghost" 
+                                              className="ml-auto h-7 w-7 p-0 rounded-full"
+                                              onClick={() => handlePlaySample(voiceName)}
+                                            >
+                                              {currentlyPlaying === voiceName ? (
+                                                <Pause className="h-4 w-4" />
+                                              ) : (
+                                                <Play className="h-4 w-4" />
+                                              )}
+                                              <span className="sr-only">
+                                                {currentlyPlaying === voiceName ? "Pause" : "Play"} sample
+                                              </span>
+                                            </Button>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
 
+                                    <div 
+                                      className={`flex items-start space-x-3 rounded-lg border p-3 ${isCustomVoice ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}
+                                    >
+                                      <RadioGroupItem value="Custom" id="voice-custom" />
+                                      <div className="flex flex-col w-full gap-3">
+                                        <Label 
+                                          htmlFor="voice-custom"
+                                          className="text-base font-medium cursor-pointer"
+                                        >
+                                          Custom Voice ID
+                                        </Label>
+                                        <Input 
+                                          disabled={!isCustomVoice}
+                                          placeholder="Enter custom voice ID"
+                                          value={customVoiceId}
+                                          onChange={handleCustomVoiceIdChange}
+                                        />
+                                      </div>
+                                    </div>
+                                  </RadioGroup>
+                                </TabsContent>
+
+                                <TabsContent value="Amazon Polly" className="border-none p-0">
+                                  <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
+                                    {Object.keys(voiceSamples["Amazon Polly"] || {}).map((voiceName) => {
+                                      const voiceDef = voiceSamples["Amazon Polly"][voiceName];
+                                      return (
+                                        <div 
+                                          key={voiceName} 
+                                          className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}
+                                        >
+                                          <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} />
+                                          <div className="flex w-full justify-between items-center">
+                                            <div className="flex gap-3">
+                                              {voiceDef.avatar && (
+                                                <Avatar className="h-10 w-10 rounded-full">
+                                                  <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                                  <AvatarFallback>
+                                                    {voiceName.substring(0, 2)}
+                                                  </AvatarFallback>
+                                                </Avatar>
+                                              )}
+                                              <div>
+                                                <Label 
+                                                  htmlFor={`voice-${voiceName}`}
+                                                  className="text-base font-medium cursor-pointer"
+                                                >
+                                                  {voiceName}
+                                                </Label>
+                                                <div className="flex items-center gap-1.5 mt-1.5">
+                                                  {voiceDef.traits.map((trait, i) => (
+                                                    <span 
+                                                      key={i} 
+                                                      className={`text-xs px-2 py-0.5 rounded-full ${trait.color}`}
+                                                    >
+                                                      {trait.name}
+                                                    </span>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <Button 
+                                              size="sm" 
+                                              variant="ghost" 
+                                              className="ml-auto h-7 w-7 p-0 rounded-full"
+                                              onClick={() => handlePlaySample(voiceName)}
+                                            >
+                                              {currentlyPlaying === voiceName ? (
+                                                <Pause className="h-4 w-4" />
+                                              ) : (
+                                                <Play className="h-4 w-4" />
+                                              )}
+                                              <span className="sr-only">
+                                                {currentlyPlaying === voiceName ? "Pause" : "Play"} sample
+                                              </span>
+                                            </Button>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </RadioGroup>
+                                </TabsContent>
+
+                                <TabsContent value="Google TTS" className="border-none p-0">
+                                  <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
+                                    {Object.keys(voiceSamples["Google TTS"] || {}).map((voiceName) => {
+                                      const voiceDef = voiceSamples["Google TTS"][voiceName];
+                                      return (
+                                        <div 
+                                          key={voiceName} 
+                                          className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}
+                                        >
+                                          <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} />
+                                          <div className="flex w-full justify-between items-center">
+                                            <div className="flex gap-3">
+                                              {voiceDef.avatar && (
+                                                <Avatar className="h-10 w-10 rounded-full">
+                                                  <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                                  <AvatarFallback>
+                                                    {voiceName.substring(0, 2)}
+                                                  </AvatarFallback>
+                                                </Avatar>
+                                              )}
+                                              <div>
+                                                <Label 
+                                                  htmlFor={`voice-${voiceName}`}
+                                                  className="text-base font-medium cursor-pointer"
+                                                >
+                                                  {voiceName}
+                                                </Label>
+                                                <div className="flex items-center gap-1.5 mt-1.5">
+                                                  {voiceDef.traits.map((trait, i) => (
+                                                    <span 
+                                                      key={i} 
+                                                      className={`text-xs px-2 py-0.5 rounded-full ${trait.color}`}
+                                                    >
+                                                      {trait.name}
+                                                    </span>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <Button 
+                                              size="sm" 
+                                              variant="ghost" 
+                                              className="ml-auto h-7 w-7 p-0 rounded-full"
+                                              onClick={() => handlePlaySample(voiceName)}
+                                            >
+                                              {currentlyPlaying === voiceName ? (
+                                                <Pause className="h-4 w-4" />
+                                              ) : (
+                                                <Play className="h-4 w-4" />
+                                              )}
+                                              <span className="sr-only">
+                                                {currentlyPlaying === voiceName ? "Pause" : "Play"} sample
+                                              </span>
+                                            </Button>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </RadioGroup>
+                                </TabsContent>
+                              </ScrollArea>
+                            </div>
+                          </Tabs>
+                          
+                          <div className="mt-5 flex justify-end">
+                            <Button onClick={handleVoiceSelectionSave}>
+                              Save Voice Settings
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </div>
+                  
+                  <AgentStats
+                    agent={{
+                      ...agent,
+                      interactions: agent.interactions || 0,
+                      csat: agent.csat || 85,
+                      performance: agent.performance || 92,
+                      avmScore: 7.8,
+                    }}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="setup">
+              <div className="space-y-8">
+                <div className="bg-secondary/10 p-6 rounded-lg">
+                  <h3 className="text-xl font-medium mb-4">Agent Setup Steps</h3>
+                  <AgentSetupStepper agent={agent} />
+                </div>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Environment Configuration</CardTitle>
+                    <CardDescription>
+                      Configure your agent's environment variables and settings.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="api-key">API Key</Label>
+                          <Input id="api-key" type="password" value="••••••••••••••••••••" disabled />
+                        </div>
+                        <div>
+                          <Label htmlFor="endpoint">Endpoint URL</Label>
+                          <Input id="endpoint" value="https://api.example.com/agents" />
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="integration-id">Integration ID</Label>
+                        <Input id="integration-id" value={`int_${agent.id}_${Math.random().toString(36).substring(2, 8)}`} />
+                      </div>
+                      <div className="flex justify-end">
+                        <Button>Save Configuration</Button>
+                      </div>
+                    </form>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="channels">
+              <div className="space-y-6">
+                <div className="bg-secondary/10 p-6 rounded-lg">
+                  <h3 className="text-xl font-medium mb-4">Communication Channels</h3>
+                  <p className="text-muted-foreground">
+                    Configure the channels through which your agent can communicate with users.
+                    Enable or disable channels and set up the necessary configuration.
+                  </p>
+                </div>
+                
+                <AgentChannels 
+                  channels={agent.channelConfigs || {}}
+                  onUpdateChannel={handleUpdateChannel}
+                />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="settings">
+              <div className="space-y-6">
+                <div className="bg-secondary/10 p-6 rounded-lg">
+                  <h3 className="text-xl font-medium mb-4">Agent Settings</h3>
+                  <p className="text-muted-foreground">
+                    Configure general settings for your agent including name, description, and other properties.
+                  </p>
+                </div>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">General Settings</CardTitle>
+                    <CardDescription>
+                      Basic information about your agent
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="agent-name">Agent Name</Label>
+                          <Input id="agent-name" defaultValue={agent.name} />
+                        </div>
+                        <div>
+                          <Label htmlFor="agent-type">Agent Type</Label>
+                          <Select defaultValue={agent.type}>
+                            <SelectTrigger id="agent-type">
+                              <SelectValue placeholder="Select type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="customer_support">Customer Support</SelectItem>
+                              <SelectItem value="sales">Sales</SelectItem>
+                              <SelectItem value="technical_support">Technical Support</SelectItem>
+                              <SelectItem value="concierge">Concierge</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="agent-description">Description</Label>
+                        <textarea
+                          id="agent-description"
+                          className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                          rows={3}
+                          defaultValue={agent.description}
+                        ></textarea>
+                      </div>
+                      <div className="flex justify-end">
+                        <Button>Save Settings</Button>
+                      </div>
+                    </form>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Danger Zone</CardTitle>
+                    <CardDescription>
+                      Destructive actions for your agent
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-4 border border-red-200 bg-red-50 dark:bg-red-900/10 dark:border-red-800/30 rounded-lg">
+                        <div>
+                          <h4 className="font-medium">Delete Agent</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Permanently delete this agent and all associated data
+                          </p>
+                        </div>
+                        <Button variant="destructive" onClick={handleDelete}>
+                          Delete Agent
+                        </Button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between p-4 border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/10 dark:border-yellow-800/30 rounded-lg">
+                        <div>
+                          <h4 className="font-medium">Archive Agent</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Temporarily archive this agent (can be restored later)
+                          </p>
+                        </div>
+                        <Button variant="outline" onClick={handleArchiveAgent}>
+                          Archive Agent
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default AgentDetails;
