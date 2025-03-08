@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -12,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -485,16 +484,6 @@ const AgentDetails = () => {
     );
   }
 
-  const agentWithAvmScore = {
-    ...agent,
-    avmScore: agent.avmScore || 7.8,
-    voiceProvider: voiceProvider,
-    voice: voice,
-    model: model,
-    channelConfigs: agent.channelConfigs || {},
-    onUpdateChannel: handleUpdateChannel
-  };
-  
   const lastUpdated = new Date().toLocaleString();
   
   const voicePhoneNumber = agent.channelConfigs?.voice?.details || null;
@@ -513,7 +502,6 @@ const AgentDetails = () => {
         </Link>
       </div>
       
-      {/* Main agent details card with overview content */}
       <Card className="mb-6 overflow-hidden">
         <CardHeader className="pb-3">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -681,42 +669,41 @@ const AgentDetails = () => {
         </CardHeader>
         
         <CardContent>
-          {/* Overview content */}
           <div className="space-y-6">
             <div className="grid grid-cols-1 gap-6">
               <div className="grid grid-cols-1 gap-4">
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  <div className="bg-secondary/30 px-4 py-3 rounded-lg border border-border">
+                  <div className="bg-secondary/30 dark:bg-secondary/10 px-4 py-3 rounded-lg border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <Bot className="h-3.5 w-3.5 text-agent-primary" />
                       <span className="text-xs text-muted-foreground">Type</span>
                     </div>
-                    <p className="text-sm font-medium capitalize">
+                    <p className="text-sm font-medium capitalize text-foreground">
                       {agent.type}
                     </p>
                   </div>
                 
-                  <div className="bg-secondary/30 px-4 py-3 rounded-lg border border-border">
+                  <div className="bg-secondary/30 dark:bg-secondary/10 px-4 py-3 rounded-lg border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <Calendar className="h-3.5 w-3.5 text-agent-primary" />
                       <span className="text-xs text-muted-foreground">Created On</span>
                     </div>
-                    <p className="text-sm font-medium">
+                    <p className="text-sm font-medium text-foreground">
                       {agent.createdAt}
                     </p>
                   </div>
                   
-                  <div className="bg-secondary/30 px-4 py-3 rounded-lg border border-border">
+                  <div className="bg-secondary/30 dark:bg-secondary/10 px-4 py-3 rounded-lg border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <History className="h-3.5 w-3.5 text-agent-primary" />
                       <span className="text-xs text-muted-foreground">Updated</span>
                     </div>
-                    <p className="text-sm font-medium">
+                    <p className="text-sm font-medium text-foreground">
                       {lastUpdated.split(',')[0]}
                     </p>
                   </div>
 
-                  <div className="bg-secondary/30 px-4 py-3 rounded-lg border border-border">
+                  <div className="bg-secondary/30 dark:bg-secondary/10 px-4 py-3 rounded-lg border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <Cpu className="h-3.5 w-3.5 text-agent-primary" />
                       <span className="text-xs text-muted-foreground">Model</span>
@@ -734,7 +721,7 @@ const AgentDetails = () => {
                     </Select>
                   </div>
                   
-                  <div className="bg-secondary/30 px-4 py-3 rounded-lg border border-border">
+                  <div className="bg-secondary/30 dark:bg-secondary/10 px-4 py-3 rounded-lg border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <Volume2 className="h-3.5 w-3.5 text-agent-primary" />
                       <span className="text-xs text-muted-foreground">Voice</span>
@@ -1008,85 +995,80 @@ const AgentDetails = () => {
               </div>
             </div>
           </div>
+          
+          <div className="mt-8">
+            <h3 className="text-lg font-medium text-foreground mb-4">Performance Stats</h3>
+            <AgentStats 
+              avmScore={agent.avmScore || 7.8}
+              interactionCount={agent.interactionCount || 325}
+              csat={agent.csat || 92}
+              performance={agent.performance || 88}
+            />
+          </div>
         </CardContent>
       </Card>
       
-      {/* Tabs outside the card */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-3 mb-6">
-          <TabsTrigger value="setup" className="flex items-center gap-2">
-            <Cpu className="h-4 w-4" />
-            <span>Setup</span>
+      <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="mt-8">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="setup" className="text-sm">
+            <span className="flex items-center gap-2">
+              <Cog className="h-4 w-4" />
+              Setup
+            </span>
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-2">
-            <BarChart2 className="h-4 w-4" />
-            <span>Analytics</span>
+          <TabsTrigger value="analytics" className="text-sm">
+            <span className="flex items-center gap-2">
+              <BarChart2 className="h-4 w-4" />
+              Analytics
+            </span>
           </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2">
-            <Cog className="h-4 w-4" />
-            <span>Settings</span>
+          <TabsTrigger value="settings" className="text-sm">
+            <span className="flex items-center gap-2">
+              <Cpu className="h-4 w-4" />
+              Settings
+            </span>
           </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="setup" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Configure Your Agent</CardTitle>
-              <CardDescription>
-                Set up channels and capabilities for your virtual agent
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <AgentSetupStepper agent={agent} />
-              <div className="mt-8">
-                <h3 className="text-lg font-medium mb-4">Communication Channels</h3>
-                <AgentChannels agent={agentWithAvmScore} />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="analytics" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Performance Analytics</CardTitle>
-              <CardDescription>
-                View usage statistics and performance metrics for your agent
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <AgentStats agent={agentWithAvmScore} />
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="settings" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Agent Settings</CardTitle>
-              <CardDescription>
-                Configure advanced settings and preferences for your agent
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-medium mb-4">Danger Zone</h3>
-                  <div className="bg-red-500/5 border border-red-200 dark:border-red-900/30 rounded-lg p-4">
-                    <h4 className="text-red-600 dark:text-red-400 font-medium mb-2">Delete Agent</h4>
-                    <p className="text-muted-foreground text-sm mb-4">
-                      This action cannot be undone. This will permanently delete this agent and all associated data.
-                    </p>
-                    <Button variant="destructive" onClick={handleDelete}>
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete Agent
-                    </Button>
-                  </div>
+        <div className="mt-6">
+          <TabsContent value="setup" className="space-y-6">
+            <AgentSetupStepper agent={agent} />
+          </TabsContent>
+          
+          <TabsContent value="analytics" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Analytics</CardTitle>
+                <CardDescription>
+                  View your agent's performance metrics and usage statistics.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-muted-foreground">
+                  Analytics dashboard coming soon...
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="settings" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Integration Channels</CardTitle>
+                <CardDescription>
+                  Configure how users can communicate with your agent.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AgentChannels
+                  channels={agent.channels || []}
+                  channelConfigs={agent.channelConfigs || {}}
+                  onUpdateChannel={handleUpdateChannel}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </div>
       </Tabs>
     </div>
   );
