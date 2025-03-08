@@ -277,7 +277,7 @@ const AgentsDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAgents.map((agent) => (
             <Link to={`/agents/${agent.id}`} key={agent.id} className="block">
-              <Card className="h-full card-hover bg-white dark:bg-[#000313]/80">
+              <Card className="h-full card-hover">
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
