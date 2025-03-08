@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { 
   BookOpen, Workflow, FlaskConical, CheckCircle2, 
@@ -44,7 +43,7 @@ const Step: React.FC<StepProps> = ({
   stepNumber
 }) => {
   return (
-    <Card className={`mb-6 ${isActive ? 'border-primary/50 shadow-md' : 'border-gray-100 dark:border-gray-800'} dark:bg-[#000313] dark:text-white`}>
+    <Card className={`mb-6 ${isActive ? 'border-primary/50 shadow-md' : 'border-gray-100 dark:border-gray-800'}`}>
       <CardHeader className="flex flex-row items-start gap-4 pb-2">
         <div className={`p-2 rounded-full flex items-center justify-center ${
           isCompleted 
@@ -123,7 +122,7 @@ const AgentTrainingCard: React.FC<{
   };
 
   return (
-    <div className="bg-[#000313] rounded-lg overflow-hidden mb-6 border border-gray-800">
+    <div className="rounded-lg overflow-hidden mb-6 border border-gray-800">
       <div className="p-6 pb-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
