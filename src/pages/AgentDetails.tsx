@@ -17,7 +17,7 @@ import { AgentSetupStepper } from "@/components/AgentSetupStepper";
 import { AgentToggle } from "@/components/AgentToggle";
 import { AgentChannels } from "@/components/AgentChannels";
 import { AgentStats } from "@/components/AgentStats";
-import { AnalyticsTab } from "@/components/AnalyticsTab";
+import AnalyticsTab from "@/components/AnalyticsTab";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
