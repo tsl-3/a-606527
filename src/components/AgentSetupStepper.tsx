@@ -505,20 +505,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           </div>
         </div>
         
-        {/* Next Action Recommendation */}
-        <div className="bg-primary/10 rounded-lg p-4 mb-6 dark:bg-primary/5">
-          <div className="flex items-start gap-3">
-            <div className="bg-primary/20 p-2 rounded-full dark:bg-primary/10">
-              <ArrowRight className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-medium text-base mb-1 text-gray-900 dark:text-white">Recommended Next Action</h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Complete your agent training by uploading call recordings or starting a role-play conversation.
-              </p>
-            </div>
-          </div>
-        </div>
+        
         
         <p className="text-gray-600 dark:text-gray-300">
           Complete these steps in order to fully configure your agent for optimal performance
@@ -625,4 +612,3 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
     </div>
   );
 };
-
