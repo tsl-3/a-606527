@@ -1,13 +1,13 @@
+
 import { useState } from "react";
-import { CalendarDays, Filter, Download, BarChart2, TestTube, Heart, MessageSquare, LayoutGrid } from "lucide-react";
+import { CalendarDays, Filter, Download, BarChart2, TestTube, Heart, MessageSquare, LayoutGrid, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AgentType } from "@/types/agent";
 import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
-// Sample data for charts (copied from AgentAnalytics.tsx)
+// Sample data for charts
 const timeSeriesData = Array.from({ length: 30 }, (_, i) => {
   const date = new Date();
   date.setDate(date.getDate() - i);
@@ -59,6 +59,23 @@ const topicTimeData = timeSeriesData.map(item => {
   };
 });
 
+const wordCloudData = [
+  { text: "Payment", value: 100, sentiment: "neutral" },
+  { text: "Help", value: 85, sentiment: "neutral" },
+  { text: "Account", value: 80, sentiment: "neutral" },
+  { text: "Bill", value: 70, sentiment: "negative" },
+  { text: "Support", value: 65, sentiment: "positive" },
+  { text: "Problem", value: 60, sentiment: "negative" },
+  { text: "Thanks", value: 55, sentiment: "positive" },
+  { text: "Credit", value: 50, sentiment: "neutral" },
+  { text: "Update", value: 45, sentiment: "neutral" },
+  { text: "Great", value: 40, sentiment: "positive" },
+  { text: "Issue", value: 35, sentiment: "negative" },
+  { text: "Service", value: 30, sentiment: "neutral" },
+  { text: "Excellent", value: 25, sentiment: "positive" },
+  { text: "Question", value: 20, sentiment: "neutral" },
+];
+
 const channelPerformanceData = [
   { name: "Voice", responseTime: 87, successRate: 92, sentiment: 88 },
   { name: "Chat", responseTime: 95, successRate: 88, sentiment: 92 },
@@ -77,7 +94,6 @@ interface AnalyticsTabProps {
 const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
   const [dateRange, setDateRange] = useState("30days");
   const [channelFilter, setChannelFilter] = useState("all");
-  const [currentTab, setCurrentTab] = useState("performance");
 
   // Calculate latest metrics and changes
   const latestData = timeSeriesData[timeSeriesData.length - 1];
@@ -90,6 +106,14 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
                       (previousData.inboundCalls + previousData.outboundCalls) * 100).toFixed(1);
   const sentimentChange = ((latestData.positivePercent - previousData.positivePercent) / previousData.positivePercent * 100).toFixed(1);
   const coverageChange = ((latestData.testCoverage - previousData.testCoverage) / previousData.testCoverage * 100).toFixed(1);
+
+  // Generate sentiment time series data
+  const sentimentTimeData = timeSeriesData.map(item => ({
+    date: item.date,
+    Positive: item.positivePercent,
+    Neutral: item.neutralPercent,
+    Negative: item.negativePercent,
+  }));
 
   return (
     <div className="max-w-7xl mx-auto animate-in space-y-6">
@@ -222,46 +246,26 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
         </Card>
       </div>
       
-      {/* Tabbed Analytics Interface */}
-      <Tabs defaultValue="performance" value={currentTab} onValueChange={setCurrentTab} className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <TabsTrigger value="performance" className="gap-2">
-            <BarChart2 className="h-4 w-4" />
-            <span>Performance</span>
-          </TabsTrigger>
-          <TabsTrigger value="testing" className="gap-2">
-            <TestTube className="h-4 w-4" />
-            <span>Testing</span>
-          </TabsTrigger>
-          <TabsTrigger value="sentiment" className="gap-2">
-            <Heart className="h-4 w-4" />
-            <span>Sentiment</span>
-          </TabsTrigger>
-          <TabsTrigger value="topics" className="gap-2">
-            <MessageSquare className="h-4 w-4" />
-            <span>Topics</span>
-          </TabsTrigger>
-          <TabsTrigger value="channels" className="gap-2">
-            <LayoutGrid className="h-4 w-4" />
-            <span>Channels</span>
-          </TabsTrigger>
-        </TabsList>
-        
-        {/* Performance Tab */}
-        <TabsContent value="performance" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="col-span-1">
-              <CardHeader>
-                <CardTitle>AVM Score Trend</CardTitle>
-                <CardDescription>
-                  Agent Versatility Metric score over time
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="h-80">
+      {/* Performance Card */}
+      <Card className="mb-6">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-lg font-bold flex items-center gap-2">
+              <BarChart2 className="h-5 w-5 text-agent-primary" />
+              Performance Metrics
+            </CardTitle>
+            <CardDescription>Agent performance and interaction statistics</CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <h3 className="text-sm font-medium mb-3">AVM Score Trend</h3>
+              <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
                     data={timeSeriesData}
-                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                    margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
                   >
                     <defs>
                       <linearGradient id="avmScore" x1="0" y1="0" x2="0" y2="1">
@@ -288,18 +292,320 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
                     />
                   </AreaChart>
                 </ResponsiveContainer>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
             
-            <Card className="col-span-1">
-              <CardHeader>
-                <CardTitle>Interactions Breakdown</CardTitle>
-                <CardDescription>
-                  Total interactions per channel
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="h-80">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+            <div>
+              <h3 className="text-sm font-medium mb-3">Call Performance</h3>
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart 
+                    data={timeSeriesData}
+                    margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={(value) => value.split('-')[2]} 
+                    />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) => [value, 'Calls']}
+                      labelFormatter={(label) => new Date(label).toLocaleDateString()}
+                    />
+                    <Legend />
+                    <Bar dataKey="inboundCalls" name="Inbound" stackId="a" fill="#3b82f6" />
+                    <Bar dataKey="outboundCalls" name="Outbound" stackId="a" fill="#8b5cf6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h3 className="text-sm font-medium mb-3">Test Coverage Trends</h3>
+            <div className="h-60">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={timeSeriesData}
+                  margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={(value) => value.split('-')[2]} 
+                  />
+                  <YAxis domain={[0, 100]} />
+                  <Tooltip
+                    formatter={percentFormatter}
+                    labelFormatter={(label) => new Date(label).toLocaleDateString()}
+                  />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="testCoverage" 
+                    name="Test Coverage" 
+                    stroke="#10b981" 
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                    activeDot={{ r: 5 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Sentiment Analysis Card */}
+      <Card className="mb-6">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-lg font-bold flex items-center gap-2">
+              <Heart className="h-5 w-5 text-agent-primary" />
+              User Sentiment Analysis
+            </CardTitle>
+            <CardDescription>How users feel when interacting with the AI agent</CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <h3 className="text-sm font-medium mb-3">Sentiment Trend</h3>
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={sentimentTimeData}
+                    margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+                    stackOffset="expand"
+                  >
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={(value) => value.split('-')[2]} 
+                    />
+                    <YAxis tickFormatter={(tick) => `${tick * 100}%`} />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <Tooltip 
+                      formatter={(value: number) => [`${(value * 100).toFixed(1)}%`, '']}
+                      labelFormatter={(label) => new Date(label).toLocaleDateString()}
+                    />
+                    <Legend />
+                    <Area 
+                      type="monotone" 
+                      dataKey="Positive" 
+                      stackId="1"
+                      stroke="#10b981" 
+                      fill="#10b981" 
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="Neutral" 
+                      stackId="1"
+                      stroke="#6b7280" 
+                      fill="#6b7280" 
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="Negative" 
+                      stackId="1"
+                      stroke="#ef4444" 
+                      fill="#ef4444" 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-medium mb-3">Sentiment Breakdown</h3>
+              <div className="h-72 flex items-center justify-center">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full w-full">
+                  <div className="flex items-center justify-center">
+                    <ResponsiveContainer width="100%" height={200}>
+                      <PieChart>
+                        <Pie
+                          data={sentimentData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          paddingAngle={2}
+                          dataKey="value"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                          labelLine={false}
+                        >
+                          {sentimentData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    {sentimentData.map((item, index) => (
+                      <div key={index} className="flex items-center mb-2">
+                        <div style={{ backgroundColor: item.color }} className="w-3 h-3 mr-2 rounded-full"></div>
+                        <span className="text-sm">{item.name}: {item.value}%</span>
+                      </div>
+                    ))}
+                    <div className="mt-4 text-sm text-muted-foreground">
+                      <p><strong>Overall Sentiment:</strong> {latestData.positivePercent}% Positive</p>
+                      <p className={`text-xs mt-2 ${Number(sentimentChange) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        <span>{Number(sentimentChange) >= 0 ? '↑' : '↓'} {Math.abs(Number(sentimentChange))}%</span>
+                        <span className="text-muted-foreground ml-1">change since last period</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Popular Topics Card */}
+      <Card className="mb-6">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-lg font-bold flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-agent-primary" />
+              Popular Topics & Conversation Insights
+            </CardTitle>
+            <CardDescription>Analyze what users are discussing with your agent</CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <h3 className="text-sm font-medium mb-3">Topic Distribution</h3>
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={topicData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      paddingAngle={2}
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      labelLine={false}
+                    >
+                      {topicData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-medium mb-3">Topic Trends Over Time</h3>
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={topicTimeData}
+                    margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+                  >
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={(value) => value.split('-')[2]} 
+                    />
+                    <YAxis />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <Tooltip 
+                      formatter={(value: number) => [`${value}%`, '']}
+                      labelFormatter={(label) => new Date(label).toLocaleDateString()}
+                    />
+                    <Legend />
+                    <Area 
+                      type="monotone" 
+                      dataKey="Issue Resolution" 
+                      stackId="1"
+                      stroke="#3b82f6" 
+                      fill="#3b82f6" 
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="Billing Questions" 
+                      stackId="1"
+                      stroke="#8b5cf6" 
+                      fill="#8b5cf6" 
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="Technical Support" 
+                      stackId="1"
+                      stroke="#ec4899" 
+                      fill="#ec4899" 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h3 className="text-sm font-medium mb-3">Common Keywords & Phrases</h3>
+            <div className="p-4 bg-secondary/30 rounded-lg border border-border">
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                {wordCloudData.map((word, index) => {
+                  // Calculate size based on value (higher value = larger size)
+                  const size = 14 + (word.value / 10);
+                  
+                  // Determine color based on sentiment
+                  let color;
+                  if (word.sentiment === "positive") color = "text-green-500";
+                  else if (word.sentiment === "negative") color = "text-red-500";
+                  else color = "text-gray-500";
+                  
+                  return (
+                    <div key={index} className="group relative">
+                      <span 
+                        className={`${color} font-medium cursor-help transition-all duration-200 hover:scale-110`} 
+                        style={{ fontSize: `${size}px` }}
+                      >
+                        {word.text}
+                      </span>
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-secondary-foreground text-secondary text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                        <strong>Frequency:</strong> {word.value}
+                        <div className="text-[10px] capitalize">
+                          <strong>Sentiment:</strong> {word.sentiment}
+                        </div>
+                        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 border-[5px] border-transparent border-t-secondary-foreground"></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Channel Breakdown Card */}
+      <Card className="mb-6">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-lg font-bold flex items-center gap-2">
+              <LayoutGrid className="h-5 w-5 text-agent-primary" />
+              Channel Performance
+            </CardTitle>
+            <CardDescription>Performance analysis across different communication channels</CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <h3 className="text-sm font-medium mb-3">Distribution by Channel</h3>
+              <div className="h-72 flex items-center justify-center">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full w-full">
                   <div className="flex items-center justify-center">
                     <ResponsiveContainer width="100%" height={200}>
                       <PieChart>
@@ -332,105 +638,100 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
                     ))}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-medium mb-3">Channel Usage Trends</h3>
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={timeSeriesData}
+                    margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={(value) => value.split('-')[2]} 
+                    />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) => [value, 'Interactions']}
+                      labelFormatter={(label) => new Date(label).toLocaleDateString()}
+                    />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="Voice" 
+                      stroke="#3b82f6" 
+                      strokeWidth={2}
+                      dot={{ r: 2 }}
+                      activeDot={{ r: 5 }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="Chat" 
+                      stroke="#8b5cf6" 
+                      strokeWidth={2}
+                      dot={{ r: 2 }}
+                      activeDot={{ r: 5 }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="Email" 
+                      stroke="#ec4899" 
+                      strokeWidth={2}
+                      dot={{ r: 2 }}
+                      activeDot={{ r: 5 }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="Social" 
+                      stroke="#10b981" 
+                      strokeWidth={2}
+                      dot={{ r: 2 }}
+                      activeDot={{ r: 5 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
           
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Call Performance</CardTitle>
-              <CardDescription>
-                Inbound vs Outbound Calls over time
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="h-80">
+          <div>
+            <h3 className="text-sm font-medium mb-3">Performance Comparison by Channel</h3>
+            <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart 
-                  data={timeSeriesData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                <BarChart
+                  data={channelPerformanceData}
+                  margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickFormatter={(value) => value.split('-')[2]} 
-                  />
-                  <YAxis />
-                  <Tooltip
-                    formatter={(value: number) => [value, 'Calls']}
-                    labelFormatter={(label) => new Date(label).toLocaleDateString()}
-                  />
+                  <XAxis dataKey="name" />
+                  <YAxis domain={[0, 100]} />
+                  <Tooltip formatter={percentFormatter} />
                   <Legend />
-                  <Bar dataKey="inboundCalls" name="Inbound" stackId="a" fill="#3b82f6" />
-                  <Bar dataKey="outboundCalls" name="Outbound" stackId="a" fill="#8b5cf6" />
+                  <Bar 
+                    dataKey="responseTime" 
+                    name="Response Time" 
+                    fill="#3b82f6" 
+                  />
+                  <Bar 
+                    dataKey="successRate" 
+                    name="Success Rate" 
+                    fill="#8b5cf6" 
+                  />
+                  <Bar 
+                    dataKey="sentiment" 
+                    name="Positive Sentiment" 
+                    fill="#10b981" 
+                  />
                 </BarChart>
               </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        {/* Other tabs would go here - simplified for brevity */}
-        <TabsContent value="testing" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Test Coverage Trends</CardTitle>
-              <CardDescription>
-                Testing coverage percentage over time
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={timeSeriesData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickFormatter={(value) => value.split('-')[2]} 
-                  />
-                  <YAxis domain={[0, 100]} />
-                  <Tooltip
-                    formatter={percentFormatter}
-                    labelFormatter={(label) => new Date(label).toLocaleDateString()}
-                  />
-                  <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="testCoverage" 
-                    name="Test Coverage" 
-                    stroke="#10b981" 
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                    activeDot={{ r: 5 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="sentiment">
-          <div className="text-center py-10">
-            <h3 className="text-lg font-medium">Sentiment Analysis</h3>
-            <p className="text-muted-foreground mt-2">Detailed sentiment metrics coming soon</p>
+            </div>
           </div>
-        </TabsContent>
-        
-        <TabsContent value="topics">
-          <div className="text-center py-10">
-            <h3 className="text-lg font-medium">Topics Analysis</h3>
-            <p className="text-muted-foreground mt-2">Detailed topic metrics coming soon</p>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="channels">
-          <div className="text-center py-10">
-            <h3 className="text-lg font-medium">Channels Analysis</h3>
-            <p className="text-muted-foreground mt-2">Detailed channel metrics coming soon</p>
-          </div>
-        </TabsContent>
-      </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 };
