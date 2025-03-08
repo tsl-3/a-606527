@@ -1,3 +1,4 @@
+<lov-code>
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -511,7 +512,7 @@ const AgentDetails = () => {
         </Link>
       </div>
       
-      <Card className="bg-agent-dark-bg border-gray-800 mb-6 overflow-hidden">
+      <Card className="mb-6 overflow-hidden">
         <CardHeader className="pb-3">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex items-center gap-4">
@@ -528,7 +529,9 @@ const AgentDetails = () => {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-bold text-white">{agent.name}</h1>
+                  <h1 className="text-2xl font-bold">
+                    {agent.name}
+                  </h1>
                   <Badge 
                     variant="outline" 
                     className={`${isActive 
@@ -550,7 +553,7 @@ const AgentDetails = () => {
                     </span>
                   </Badge>
                 </div>
-                <p className="text-gray-300 mt-1.5 max-w-2xl">{agent.description}</p>
+                <p className="text-muted-foreground mt-1.5 max-w-2xl">{agent.description}</p>
                 
                 {activeChannels.length > 0 && (
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -583,24 +586,24 @@ const AgentDetails = () => {
                 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white">
+                    <Button variant="outline" className="hover:bg-secondary">
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-black border-gray-700 text-white">
-                    <DropdownMenuItem onClick={handleEditClick} className="cursor-pointer flex items-center gap-2 hover:bg-white/10">
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={handleEditClick} className="cursor-pointer flex items-center gap-2">
                       <PenSquare className="h-4 w-4 text-agent-primary" />
                       <span>Edit Agent</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleDeactivateAgent} className="cursor-pointer flex items-center gap-2 hover:bg-white/10">
+                    <DropdownMenuItem onClick={handleDeactivateAgent} className="cursor-pointer flex items-center gap-2">
                       <UserMinus className="h-4 w-4 text-yellow-500" />
                       <span>Deactivate Agent</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleArchiveAgent} className="cursor-pointer flex items-center gap-2 hover:bg-white/10">
+                    <DropdownMenuItem onClick={handleArchiveAgent} className="cursor-pointer flex items-center gap-2">
                       <Archive className="h-4 w-4 text-blue-500" />
                       <span>Archive Agent</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleDelete} className="cursor-pointer flex items-center gap-2 hover:bg-white/10 text-red-400">
+                    <DropdownMenuItem onClick={handleDelete} className="cursor-pointer flex items-center gap-2 text-red-400">
                       <Trash2 className="h-4 w-4" />
                       <span>Delete Agent</span>
                     </DropdownMenuItem>
@@ -611,18 +614,20 @@ const AgentDetails = () => {
               <div className="mt-3 flex items-center gap-2 flex-wrap">
                 {voicePhoneNumber && (
                   <div className="flex items-center">
-                    <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
+                    <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
                       <Phone className="h-3.5 w-3.5 text-blue-500" />
-                      <span className="text-xs text-white">{voicePhoneNumber}</span>
+                      <span className="text-xs">
+                        {voicePhoneNumber}
+                      </span>
                       <div className="flex gap-1 ml-2">
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-6 w-6 rounded-full hover:bg-gray-700/50"
+                          className="h-6 w-6 rounded-full hover:bg-secondary"
                           onClick={handleCopyPhoneNumber}
                           title="Copy phone number"
                         >
-                          <Copy className="h-3 w-3 text-gray-400" />
+                          <Copy className="h-3 w-3 text-muted-foreground" />
                         </Button>
                         <Button 
                           variant="ghost" 
@@ -640,18 +645,20 @@ const AgentDetails = () => {
                 
                 {emailAddress && (
                   <div className="flex items-center">
-                    <div className="flex items-center gap-2 bg-black/30 rounded-lg border border-gray-700/50 p-2">
+                    <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
                       <Mail className="h-3.5 w-3.5 text-red-500" />
-                      <span className="text-xs text-white">{emailAddress}</span>
+                      <span className="text-xs">
+                        {emailAddress}
+                      </span>
                       <div className="flex gap-1 ml-2">
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-6 w-6 rounded-full hover:bg-gray-700/50"
+                          className="h-6 w-6 rounded-full hover:bg-secondary"
                           onClick={handleCopyEmail}
                           title="Copy email address"
                         >
-                          <Copy className="h-3 w-3 text-gray-400" />
+                          <Copy className="h-3 w-3 text-muted-foreground" />
                         </Button>
                         <Button 
                           variant="ghost" 
@@ -676,40 +683,46 @@ const AgentDetails = () => {
             <div className="grid grid-cols-1 gap-6">
               <div className="grid grid-cols-1 gap-4">
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  <div className="bg-secondary/30 px-4 py-3 rounded-lg border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <Bot className="h-3.5 w-3.5 text-agent-primary" />
-                      <span className="text-xs text-gray-400">Type</span>
+                      <span className="text-xs text-muted-foreground">Type</span>
                     </div>
-                    <p className="text-sm font-medium text-white capitalize">{agent.type}</p>
+                    <p className="text-sm font-medium capitalize">
+                      {agent.type}
+                    </p>
                   </div>
                 
-                  <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  <div className="bg-secondary/30 px-4 py-3 rounded-lg border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <Calendar className="h-3.5 w-3.5 text-agent-primary" />
-                      <span className="text-xs text-gray-400">Created On</span>
+                      <span className="text-xs text-muted-foreground">Created On</span>
                     </div>
-                    <p className="text-sm font-medium text-white">{agent.createdAt}</p>
+                    <p className="text-sm font-medium">
+                      {agent.createdAt}
+                    </p>
                   </div>
                   
-                  <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  <div className="bg-secondary/30 px-4 py-3 rounded-lg border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <History className="h-3.5 w-3.5 text-agent-primary" />
-                      <span className="text-xs text-gray-400">Updated</span>
+                      <span className="text-xs text-muted-foreground">Updated</span>
                     </div>
-                    <p className="text-sm font-medium text-white">{lastUpdated.split(',')[0]}</p>
+                    <p className="text-sm font-medium">
+                      {lastUpdated.split(',')[0]}
+                    </p>
                   </div>
 
-                  <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  <div className="bg-secondary/30 px-4 py-3 rounded-lg border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <Cpu className="h-3.5 w-3.5 text-agent-primary" />
-                      <span className="text-xs text-gray-400">Model</span>
+                      <span className="text-xs text-muted-foreground">Model</span>
                     </div>
                     <Select value={model} onValueChange={handleModelChange}>
-                      <SelectTrigger className="h-7 w-full bg-black/20 border-gray-700/50 text-white">
+                      <SelectTrigger className="h-7 w-full bg-background/50 border-input">
                         <SelectValue placeholder="Select model" />
                       </SelectTrigger>
-                      <SelectContent className="bg-black text-white border-gray-700">
+                      <SelectContent>
                         <SelectItem value="GPT-4">GPT-4</SelectItem>
                         <SelectItem value="GPT-3.5 Turbo">GPT-3.5 Turbo</SelectItem>
                         <SelectItem value="Claude-2">Claude-2</SelectItem>
@@ -718,41 +731,41 @@ const AgentDetails = () => {
                     </Select>
                   </div>
                   
-                  <div className="bg-black/30 px-4 py-3 rounded-lg border border-gray-800/50">
+                  <div className="bg-secondary/30 px-4 py-3 rounded-lg border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <Volume2 className="h-3.5 w-3.5 text-agent-primary" />
-                      <span className="text-xs text-gray-400">Voice</span>
+                      <span className="text-xs text-muted-foreground">Voice</span>
                     </div>
                     <Dialog open={isVoiceDialogOpen} onOpenChange={setIsVoiceDialogOpen}>
                       <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="h-7 w-full bg-black/20 border-gray-700/50 text-white justify-between">
+                        <Button variant="outline" size="sm" className="h-7 w-full bg-background/50 border-input justify-between">
                           <span className="truncate">
                             {isCustomVoice ? `Custom (${customVoiceId.substring(0, 6)}...)` : `${voice} (${voiceProvider})`}
                           </span>
                           {voicePhoneNumber && (
-                            <span className="text-xs text-gray-400 truncate ml-1">{voicePhoneNumber}</span>
+                            <span className="text-xs text-muted-foreground truncate ml-1">{voicePhoneNumber}</span>
                           )}
                           <span className="sr-only">Edit voice</span>
                         </Button>
                       </DialogTrigger>
                       
-                      <DialogContent className="sm:max-w-4xl bg-black text-white border-gray-700 max-h-[85vh] overflow-hidden flex flex-col">
+                      <DialogContent className="sm:max-w-4xl max-h-[85vh] overflow-hidden flex flex-col">
                         <DialogHeader>
                           <DialogTitle>Configure Voice</DialogTitle>
-                          <DialogDescription className="text-gray-400">
+                          <DialogDescription>
                             Select a voice provider and voice for your agent, or enter a custom voice ID
                           </DialogDescription>
                         </DialogHeader>
                         
                         <Tabs defaultValue={voiceProvider} className="w-full" onValueChange={handleProviderChange}>
-                          <TabsList className="w-full grid grid-cols-3 bg-black/30 border border-gray-800">
-                            <TabsTrigger value="Eleven Labs" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
+                          <TabsList className="w-full grid grid-cols-3">
+                            <TabsTrigger value="Eleven Labs">
                               Eleven Labs
                             </TabsTrigger>
-                            <TabsTrigger value="Amazon Polly" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
+                            <TabsTrigger value="Amazon Polly">
                               Amazon Polly
                             </TabsTrigger>
-                            <TabsTrigger value="Google TTS" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
+                            <TabsTrigger value="Google TTS">
                               Google TTS
                             </TabsTrigger>
                           </TabsList>
@@ -797,275 +810,4 @@ const AgentDetails = () => {
                                             </Label>
                                           </div>
                                           
-                                          <div className="flex-1 flex items-center gap-2 flex-wrap">
-                                            {voiceDef.traits.map((trait, index) => (
-                                              <Badge 
-                                                key={index} 
-                                                className={`${trait.color || 'bg-gray-100 text-gray-800'} border-none mb-1`}
-                                              >
-                                                {trait.name}
-                                              </Badge>
-                                            ))}
-                                          </div>
-                                          
-                                          <div className="text-xs text-gray-400 font-mono">
-                                            {voiceDef.id}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                  
-                                  <div 
-                                    className="rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50 mt-3"
-                                    onClick={() => handleVoiceChange("Custom")}
-                                  >
-                                    <div className="flex items-center space-x-3">
-                                      <RadioGroupItem value="Custom" id="eleven-custom" />
-                                      <div className="flex items-center gap-3">
-                                        <Plus className="w-5 h-5 text-agent-primary" />
-                                        <Label htmlFor="eleven-custom" className="font-medium cursor-pointer">
-                                          Custom Voice ID
-                                        </Label>
-                                      </div>
-                                    </div>
-                                    
-                                    {isCustomVoice && (
-                                      <div className="mt-4 p-4 rounded-md border border-gray-700 bg-black/30 ml-7">
-                                        <Label htmlFor="custom-voice-id" className="text-sm mb-2 block text-gray-300">
-                                          Enter Eleven Labs Voice ID
-                                        </Label>
-                                        <Input
-                                          id="custom-voice-id"
-                                          value={customVoiceId}
-                                          onChange={handleCustomVoiceIdChange}
-                                          placeholder="e.g. 21m00Tcm4TlvDq8ikWAM"
-                                          className="bg-black/50 border-gray-600 text-white"
-                                          onClick={(e) => e.stopPropagation()}
-                                        />
-                                        <p className="text-xs text-gray-400 mt-3 flex items-center gap-1.5">
-                                          <AlertCircle className="h-3.5 w-3.5 text-gray-400" />
-                                          Find your voice IDs in the 
-                                          <a 
-                                            href="https://elevenlabs.io/app" 
-                                            target="_blank" 
-                                            rel="noopener noreferrer" 
-                                            className="text-agent-primary hover:underline inline-flex items-center gap-1 ml-1"
-                                            onClick={(e) => e.stopPropagation()}
-                                          >
-                                            Eleven Labs dashboard
-                                            <ExternalLink className="h-3 w-3" />
-                                          </a>
-                                        </p>
-                                      </div>
-                                    )}
-                                  </div>
-                                </RadioGroup>
-                              </TabsContent>
-                              
-                              <TabsContent value="Amazon Polly" className="border-none p-0">
-                                <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
-                                  {Object.keys(voiceSamples["Amazon Polly"]).map((voiceName) => {
-                                    const voiceDef = voiceSamples["Amazon Polly"][voiceName];
-                                    return (
-                                      <div 
-                                        key={voiceName} 
-                                        className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50"
-                                        onClick={() => handleVoiceChange(voiceName)}
-                                      >
-                                        <RadioGroupItem value={voiceName} id={`polly-${voiceName.toLowerCase()}`} className="mt-0" />
-                                        
-                                        <div className="flex flex-1 items-center space-x-6">
-                                          <div className="flex items-center gap-4 min-w-[180px]">
-                                            <Button
-                                              variant="play" 
-                                              size="play"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                handlePlaySample(voiceName);
-                                              }}
-                                              className="flex-shrink-0"
-                                            >
-                                              {currentlyPlaying === voiceName ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                                            </Button>
-                                            
-                                            <Avatar className="h-10 w-10 border border-gray-600">
-                                              <AvatarImage src={voiceDef.avatar} alt={voiceName} />
-                                              <AvatarFallback className="bg-agent-primary/20 text-agent-primary">
-                                                {voiceName.charAt(0)}
-                                              </AvatarFallback>
-                                            </Avatar>
-                                            
-                                            <Label htmlFor={`polly-${voiceName.toLowerCase()}`} className="font-medium cursor-pointer">
-                                              {voiceName}
-                                            </Label>
-                                          </div>
-                                          
-                                          <div className="flex-1 flex items-center gap-2 flex-wrap">
-                                            {voiceDef.traits.map((trait, index) => (
-                                              <Badge 
-                                                key={index} 
-                                                className={`${trait.color || 'bg-gray-100 text-gray-800'} border-none mb-1`}
-                                              >
-                                                {trait.name}
-                                              </Badge>
-                                            ))}
-                                          </div>
-                                          
-                                          <div className="text-xs text-gray-400 font-mono">
-                                            {voiceDef.id}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </RadioGroup>
-                              </TabsContent>
-                              
-                              <TabsContent value="Google TTS" className="border-none p-0">
-                                <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
-                                  {Object.keys(voiceSamples["Google TTS"]).map((voiceName) => {
-                                    const voiceDef = voiceSamples["Google TTS"][voiceName];
-                                    return (
-                                      <div 
-                                        key={voiceName} 
-                                        className="flex items-center space-x-3 rounded-md border border-gray-700 p-4 cursor-pointer hover:bg-gray-800/50"
-                                        onClick={() => handleVoiceChange(voiceName)}
-                                      >
-                                        <RadioGroupItem value={voiceName} id={`google-${voiceName.toLowerCase().replace(' ', '-')}`} className="mt-0" />
-                                        
-                                        <div className="flex flex-1 items-center space-x-6">
-                                          <div className="flex items-center gap-4 min-w-[180px]">
-                                            <Button
-                                              variant="play" 
-                                              size="play"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                handlePlaySample(voiceName);
-                                              }}
-                                              className="flex-shrink-0"
-                                            >
-                                              {currentlyPlaying === voiceName ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                                            </Button>
-                                            
-                                            <Avatar className="h-10 w-10 border border-gray-600">
-                                              <AvatarImage src={voiceDef.avatar} alt={voiceName} />
-                                              <AvatarFallback className="bg-agent-primary/20 text-agent-primary">
-                                                {voiceName.charAt(0)}
-                                              </AvatarFallback>
-                                            </Avatar>
-                                            
-                                            <Label htmlFor={`google-${voiceName.toLowerCase().replace(' ', '-')}`} className="font-medium cursor-pointer">
-                                              {voiceName}
-                                            </Label>
-                                          </div>
-                                          
-                                          <div className="flex-1 flex items-center gap-2 flex-wrap">
-                                            {voiceDef.traits.map((trait, index) => (
-                                              <Badge 
-                                                key={index} 
-                                                className={`${trait.color || 'bg-gray-100 text-gray-800'} border-none mb-1`}
-                                              >
-                                                {trait.name}
-                                              </Badge>
-                                            ))}
-                                          </div>
-                                          
-                                          <div className="text-xs text-gray-400 font-mono">
-                                            {voiceDef.id}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </RadioGroup>
-                              </TabsContent>
-                            </ScrollArea>
-                          </div>
-                        </Tabs>
-                        
-                        <div className="flex justify-end gap-2 mt-4 pt-2 border-t border-gray-700">
-                          <Button variant="outline" onClick={() => setIsVoiceDialogOpen(false)} className="bg-black/20 border-gray-700 hover:bg-gray-800">
-                            Cancel
-                          </Button>
-                          <Button onClick={handleVoiceSelectionSave} className="bg-agent-primary hover:bg-agent-primary/90">
-                            Save Changes
-                          </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 gap-4">
-                  <AgentStats 
-                    avmScore={agent.avmScore || 7.8} 
-                    interactionCount={agent.interactions || 0}
-                    csat={agent.csat || 85}
-                    performance={agent.performance || 92}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Tabs defaultValue="setup" className="space-y-6">
-        <TabsList className="bg-agent-dark-bg/50 border border-gray-800">
-          <TabsTrigger value="setup" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
-            Setup
-          </TabsTrigger>
-          <TabsTrigger value="analytics" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
-            Analytics
-          </TabsTrigger>
-          <TabsTrigger value="settings" className="data-[state=active]:bg-agent-primary data-[state=active]:text-white text-gray-400">
-            Settings
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="setup" className="animate-fade-in">
-          <AgentSetupStepper agent={agentWithAvmScore} />
-        </TabsContent>
-        
-        <TabsContent value="analytics" className="animate-fade-in">
-          <Card className="bg-agent-dark-bg border-gray-800">
-            <CardHeader>
-              <CardTitle className="text-white">Performance Analytics</CardTitle>
-              <CardDescription className="text-gray-400">Monitor your agent's performance</CardDescription>
-            </CardHeader>
-            <CardContent className="h-[300px] flex items-center justify-center">
-              <div className="text-center">
-                <BarChart2 className="h-12 w-12 text-agent-primary/30 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-white">Analytics Dashboard</h3>
-                <p className="text-gray-400 max-w-md">
-                  Detailed performance metrics will appear here once your agent has more interactions.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="settings" className="animate-fade-in">
-          <Card className="bg-agent-dark-bg border-gray-800">
-            <CardHeader>
-              <CardTitle className="text-white">Agent Settings</CardTitle>
-              <CardDescription className="text-gray-400">Configure your agent's behavior</CardDescription>
-            </CardHeader>
-            <CardContent className="h-[300px] flex items-center justify-center">
-              <div className="text-center">
-                <Cog className="h-12 w-12 text-agent-primary/30 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-white">Settings Panel</h3>
-                <p className="text-gray-400 max-w-md">
-                  Configure how your agent works including behavior, voice, and response parameters.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-};
-
-export default AgentDetails;
+                                          <div className="flex-1 flex items-center gap-2

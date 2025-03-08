@@ -54,24 +54,24 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
     <div className="flex gap-2 w-full">
       {/* AVM Score Card */}
       <Card className="flex-1 overflow-hidden shadow-sm">
-        <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
-          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">AVM</span>
+        <div className="px-2 py-1 flex items-center justify-between border-b border-border">
+          <span className="text-xs font-medium text-muted-foreground">AVM</span>
           <div className={`w-2 h-2 rounded-full ${getScoreColor(avmScore)}`}></div>
         </div>
         <CardContent className="p-2 text-center">
-          <span className="text-xl font-semibold text-gray-900 dark:text-white">{avmScore.toFixed(1)}</span>
-          <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">/10</span>
+          <span className="text-xl font-semibold">{avmScore.toFixed(1)}</span>
+          <span className="text-xs text-muted-foreground ml-1">/10</span>
         </CardContent>
       </Card>
 
       {/* Interactions Card */}
       <Card className="flex-1 overflow-hidden shadow-sm">
-        <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
-          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Interactions</span>
+        <div className="px-2 py-1 flex items-center justify-between border-b border-border">
+          <span className="text-xs font-medium text-muted-foreground">Interactions</span>
           <span className={`text-xs font-medium ${interactionTier.color}`}>{interactionTier.label}</span>
         </div>
         <CardContent className="p-2 text-center">
-          <span className="text-xl font-semibold text-gray-900 dark:text-white">
+          <span className="text-xl font-semibold">
             {interactionCount >= 1000 
               ? `${(interactionCount / 1000).toFixed(1)}k` 
               : interactionCount}
@@ -79,11 +79,11 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
         </CardContent>
       </Card>
       
-      {/* CSAT Card - Only shown when not in compact mode or part of the first 2 stats */}
+      {/* CSAT Card - Only shown when not in compact mode */}
       {!compact && (
         <Card className="flex-1 overflow-hidden shadow-sm">
-          <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
-            <span className="text-xs font-medium text-gray-700 dark:text-gray-300">CSAT</span>
+          <div className="px-2 py-1 flex items-center justify-between border-b border-border">
+            <span className="text-xs font-medium text-muted-foreground">CSAT</span>
             <Smile className={`w-3.5 h-3.5 ${csatColor}`} />
           </div>
           <CardContent className="p-2 text-center">
@@ -95,8 +95,8 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       {/* Performance Card - Only shown when not in compact mode */}
       {!compact && (
         <Card className="flex-1 overflow-hidden shadow-sm">
-          <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
-            <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Performance</span>
+          <div className="px-2 py-1 flex items-center justify-between border-b border-border">
+            <span className="text-xs font-medium text-muted-foreground">Performance</span>
             <Zap className={`w-3.5 h-3.5 ${performanceColor}`} />
           </div>
           <CardContent className="p-2 text-center">
