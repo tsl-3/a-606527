@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -1014,7 +1013,7 @@ const AgentDetails = () => {
                   <h2 className="text-lg font-semibold mb-4">Channels</h2>
                   
                   <AgentChannels 
-                    agent={agentWithAvmScore} 
+                    channels={agent.channelConfigs} 
                     onUpdateChannel={handleUpdateChannel}
                   />
                 </div>
