@@ -25,4 +25,20 @@ const Switch = React.forwardRef<
 ))
 Switch.displayName = SwitchPrimitives.Root.displayName
 
-export { Switch }
+// Add a SwitchWithLabels component for easier use with labels
+const SwitchWithLabels = React.forwardRef<
+  React.ElementRef<typeof SwitchPrimitives.Root>,
+  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> & {
+    offLabel?: string;
+    onLabel?: string;
+  }
+>(({ className, offLabel = "OFF", onLabel = "ON", ...props }, ref) => (
+  <div className="flex items-center gap-2">
+    {offLabel && <span className="text-xs text-gray-500 dark:text-gray-400">{offLabel}</span>}
+    <Switch ref={ref} className={className} {...props} />
+    {onLabel && <span className="text-xs text-gray-500 dark:text-gray-400">{onLabel}</span>}
+  </div>
+))
+SwitchWithLabels.displayName = "SwitchWithLabels"
+
+export { Switch, SwitchWithLabels }

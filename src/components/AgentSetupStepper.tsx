@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { 
   BookOpen, Workflow, FlaskConical, CheckCircle2, 
@@ -12,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { AgentChannels } from "./AgentChannels";
 import { KnowledgeBaseCard } from "./KnowledgeBaseCard";
+import { WorkflowCard } from "./WorkflowCard";
 
 // Define training record interface
 interface TrainingRecord {
@@ -419,6 +419,9 @@ const AgentTrainingCard: React.FC<{
                           <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
                             <Download className="h-4 w-4" />
                           </Button>
+                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -545,7 +548,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           trainingRecords={sampleTrainingRecords}
         />
         
-        {/* Knowledge Base Cards - Replace the old Step with our new cards */}
+        {/* Knowledge Base Cards */}
         <KnowledgeBaseCard 
           status="not-started" 
         />
@@ -581,43 +584,18 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           totalCount={10}
         />
         
-        {/* Workflow Step */}
-        <Step 
-          title="Workflow" 
-          description="Design and automate your agent's conversation flow"
-          icon={<Workflow className="h-5 w-5 text-primary" />}
-          isActive={steps.workflow.active}
-          isCompleted={steps.workflow.completed}
-          progress={steps.workflow.progress}
-          stepNumber={3}
-        >
-          <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/20 rounded-lg p-4 mb-4">
-            <div className="flex items-start gap-3">
-              <div className="bg-gray-100 dark:bg-gray-700/20 p-2 rounded-full">
-                <ArrowRight className="h-4 w-4 text-gray-500" />
-              </div>
-              <div>
-                <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Status: Not started</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                  You'll need to complete the Knowledge Base step before designing your workflow.
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Adding Channel Configuration Section */}
-          <div className="bg-black/30 p-4 rounded-lg border border-gray-800/50 mb-4">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm text-white font-medium">Channel Configuration</span>
-            </div>
-            {agent.onUpdateChannel && (
-              <AgentChannels 
-                channels={agent.channelConfigs} 
-                onUpdateChannel={agent.onUpdateChannel} 
-              />
-            )}
-          </div>
-        </Step>
+        {/* Workflow Cards */}
+        <WorkflowCard 
+          status="not-started" 
+        />
+        
+        <WorkflowCard 
+          status="in-progress" 
+        />
+        
+        <WorkflowCard 
+          status="completed" 
+        />
         
         {/* Simulation Step */}
         <Step 
@@ -647,3 +625,4 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
     </div>
   );
 };
+
