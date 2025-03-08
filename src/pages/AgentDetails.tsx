@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -486,7 +485,7 @@ const AgentDetails = () => {
 
   const agentWithAvmScore = {
     ...agent,
-    avmScore: 7.8,
+    avmScore: agent.avmScore || 7.8,
     voiceProvider: voiceProvider,
     voice: voice,
     model: model,
@@ -997,13 +996,10 @@ const AgentDetails = () => {
                   </div>
                   
                   <AgentStats
-                    agent={{
-                      ...agent,
-                      interactions: agent.interactions || 0,
-                      csat: agent.csat || 85,
-                      performance: agent.performance || 92,
-                      avmScore: 7.8,
-                    }}
+                    avmScore={agent.avmScore || 7.8}
+                    interactionCount={agent.interactions || 0}
+                    csat={agent.csat || 85}
+                    performance={agent.performance || 92}
                   />
                 </div>
               </div>
