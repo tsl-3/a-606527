@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
@@ -1000,7 +1001,7 @@ const AgentDetails = () => {
             <h3 className="text-lg font-medium text-foreground mb-4">Performance Stats</h3>
             <AgentStats 
               avmScore={agent.avmScore || 7.8}
-              interactionCount={agent.interactionCount || 325}
+              interactionCount={agent.interactions || 0}
               csat={agent.csat || 92}
               performance={agent.performance || 88}
             />
@@ -1061,8 +1062,7 @@ const AgentDetails = () => {
               </CardHeader>
               <CardContent>
                 <AgentChannels
-                  channels={agent.channels || []}
-                  channelConfigs={agent.channelConfigs || {}}
+                  channels={agent.channelConfigs || {}}
                   onUpdateChannel={handleUpdateChannel}
                 />
               </CardContent>
