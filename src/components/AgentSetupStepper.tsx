@@ -252,10 +252,10 @@ const AgentTrainingCard: React.FC<{
                   </div>
                 </div>
 
-                <div className="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800/30 rounded-lg p-4 mb-6">
+                <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30 rounded-lg p-4 mb-6">
                   <div className="flex items-start gap-3">
-                    <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-full">
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <div className="bg-amber-100 dark:bg-amber-900/20 p-2 rounded-full">
+                      <ArrowRight className="h-4 w-4 text-amber-500" />
                     </div>
                     <div>
                       <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Progress: 3 of 10 voice samples uploaded</h4>
