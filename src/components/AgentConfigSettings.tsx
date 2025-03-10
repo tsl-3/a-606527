@@ -13,7 +13,7 @@ import {
   Bot, Copy, Save, Target, User, FileText, Code, Building, Briefcase, 
   Headphones, ShoppingCart, Wrench, CircuitBoard, GraduationCap, Plane, 
   Factory, ShieldCheck, Phone, Home, Plus, CirclePlus, MessageSquare,
-  HeartPulse, Landmark, Wallet, HelpCircle, BarChart4, Pen
+  HeartPulse, Landmark, Wallet, HelpCircle, BarChart4, Pen, Calendar
 } from 'lucide-react';
 
 interface AgentConfigSettingsProps {
