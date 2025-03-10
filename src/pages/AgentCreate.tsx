@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Bot, Mic, Phone, CheckCircle2, Loader2, PlayCircle } from "lucide-react";
@@ -30,17 +29,12 @@ const AgentCreate = () => {
     customFunction: "",
   });
   
-  // Simulated transcription for demo purposes
-  const [transcription, setTranscription] = useState<{ role: "system" | "user", text: string }[]>([]);
-  
   const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Allow only numbers, spaces, parentheses, and dashes
     const value = e.target.value.replace(/[^\d\s()\-+]/g, '');
     setPhoneNumber(value);
   };
   
   const validatePhoneNumber = () => {
-    // Basic validation - should be improved in production
     return phoneNumber.replace(/[^\d]/g, '').length >= 10;
   };
   
@@ -56,7 +50,6 @@ const AgentCreate = () => {
     
     setCallState("connecting");
     
-    // Simulate the call connection
     setTimeout(() => {
       setCallState("active");
       simulateConversation();
@@ -64,7 +57,6 @@ const AgentCreate = () => {
   };
   
   const simulateConversation = () => {
-    // This is a demo simulation - in a real app, this would be replaced by actual API calls
     const conversation = [
       { delay: 1000, role: "system" as const, text: "Hello! I'm your AI assistant, and I'll help you create a new agent. What would you like to name your agent?" },
       { delay: 4000, role: "user" as const, text: "Customer Support Bot" },
@@ -87,7 +79,6 @@ const AgentCreate = () => {
       setTimeout(() => {
         setTranscription(prev => [...prev, item]);
         
-        // Update agent config based on the conversation
         if (item.role === "user") {
           switch (index) {
             case 1: // Name response
@@ -110,7 +101,6 @@ const AgentCreate = () => {
           }
         }
         
-        // When conversation is done
         if (index === conversation.length - 1) {
           setTimeout(() => {
             setCallState("completed");
@@ -123,7 +113,6 @@ const AgentCreate = () => {
   const handleCreateAgent = () => {
     setIsSubmitting(true);
     
-    // Simulate API call
     setTimeout(() => {
       toast({
         title: "Agent Created!",
@@ -144,9 +133,6 @@ const AgentCreate = () => {
       </div>
       
       <div className="flex items-center space-x-3 mb-6">
-        <div className="bg-agent-primary/10 p-3 rounded-full">
-          <Bot className="h-8 w-8 text-agent-primary" />
-        </div>
         <div>
           <h1 className="text-3xl font-semibold text-foreground dark:text-agent-light">Create New Agent by Voice</h1>
           <p className="text-gray-500 mt-1">Talk with our system to configure your new agent</p>
