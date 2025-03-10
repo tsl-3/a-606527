@@ -1,9 +1,10 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Search, Users, UserRound, MessageCircle, Brain, ArrowRight, Send, Phone, Mic, PhoneCall, Pause, Play, PhoneOff, Volume2, Timer, FileText, Volume, MicOff, StopCircle } from "lucide-react";
+import { Search, Users, UserRound, MessageCircle, Brain, ArrowRight, Send, Phone, Mic, PhoneCall, Pause, Play, PhoneOff, Volume2, Timer, FileText, Volume, MicOff, StopCircle, Save, Trash, X, Check, Redo } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
@@ -16,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
 const samplePersonas = [
@@ -38,6 +40,16 @@ interface Message {
   timestamp: Date;
 }
 
+interface Recording {
+  id: string;
+  name: string;
+  persona: string;
+  date: Date;
+  duration: number;
+  transcript: string[];
+  isTraining: boolean;
+}
+
 export const RolePlayDialog = ({ 
   open, 
   onOpenChange 
@@ -45,7 +57,7 @@ export const RolePlayDialog = ({
   open: boolean; 
   onOpenChange: (open: boolean) => void;
 }) => {
-  const [stage, setStage] = useState<'selection' | 'persona-setup' | 'persona-list' | 'persona-detail' | 'chat' | 'call'>('selection');
+  const [stage, setStage] = useState<'selection' | 'persona-setup' | 'persona-list' | 'persona-detail' | 'chat' | 'call' | 'recording-review' | 'recordings-list'>('selection');
   const [personaDescription, setPersonaDescription] = useState('');
   const [selectedPersona, setSelectedPersona] = useState<typeof samplePersonas[0] | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -61,8 +73,40 @@ export const RolePlayDialog = ({
   const [transcription, setTranscription] = useState<string[]>([]);
   const [isLoadingTranscription, setIsLoadingTranscription] = useState(false);
   const [isRecording, setIsRecording] = useState(true);
+  const [playbackProgress, setPlaybackProgress] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [recordings, setRecordings] = useState<Recording[]>([
+    {
+      id: "1",
+      name: "Call with Sarah",
+      persona: "Sarah",
+      date: new Date(Date.now() - 86400000), // Yesterday
+      duration: 125, // 2:05 minutes
+      transcript: [
+        "Call connected with Sarah",
+        "You: Thanks for explaining that. I have a question about your experience with our product.",
+        "Sarah: I've been using your product for about 6 months now. It's mostly been positive, but I've had some challenges with the reporting features."
+      ],
+      isTraining: true
+    },
+    {
+      id: "2",
+      name: "IT Support Discussion",
+      persona: "Michael",
+      date: new Date(Date.now() - 172800000), // 2 days ago
+      duration: 210, // 3:30 minutes
+      transcript: [
+        "Call connected with Michael",
+        "You: Hi Michael, I'm having issues with my login access.",
+        "Michael: I understand. Let me walk you through some troubleshooting steps."
+      ],
+      isTraining: true
+    }
+  ]);
+  const [currentRecording, setCurrentRecording] = useState<Recording | null>(null);
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const playbackTimerRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -130,15 +174,47 @@ export const RolePlayDialog = ({
     };
   }, [isCallActive]);
 
+  useEffect(() => {
+    if (isPlaying && !playbackTimerRef.current && currentRecording) {
+      const totalDuration = currentRecording.duration;
+      const startTime = Date.now();
+      const startProgress = playbackProgress;
+      
+      playbackTimerRef.current = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min(startProgress + (elapsed / (totalDuration * 10)), 100);
+        setPlaybackProgress(newProgress);
+        
+        if (newProgress >= 100) {
+          setIsPlaying(false);
+          clearInterval(playbackTimerRef.current!);
+          playbackTimerRef.current = null;
+        }
+      }, 100);
+    } else if (!isPlaying && playbackTimerRef.current) {
+      clearInterval(playbackTimerRef.current);
+      playbackTimerRef.current = null;
+    }
+    
+    return () => {
+      if (playbackTimerRef.current) {
+        clearInterval(playbackTimerRef.current);
+        playbackTimerRef.current = null;
+      }
+    };
+  }, [isPlaying, currentRecording, playbackProgress]);
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleOptionSelect = (option: 'someone' | 'personas') => {
+  const handleOptionSelect = (option: 'someone' | 'personas' | 'recordings') => {
     if (option === 'someone') {
       setStage('call');
+    } else if (option === 'recordings') {
+      setStage('recordings-list');
     } else {
       setStage('persona-setup');
     }
@@ -196,11 +272,6 @@ export const RolePlayDialog = ({
       return;
     }
 
-    if (!selectedMic || !selectedSpeaker) {
-      toast.error('Please select both microphone and speaker devices');
-      return;
-    }
-
     setPhoneNumberError('');
     setIsCallActive(true);
     setCallDuration(0);
@@ -228,15 +299,21 @@ export const RolePlayDialog = ({
     setIsCallActive(false);
     setIsRecording(false);
     
-    if (selectedPersona && transcription.length > 0) {
-      const newMessage: Message = {
+    // Create a new recording object
+    if (transcription.length > 0) {
+      const newRecording: Recording = {
         id: Date.now().toString(),
-        sender: 'persona',
-        text: `Call ended. Here's the transcript:\n\n${transcription.join('\n')}`,
-        timestamp: new Date(),
+        name: `Call with ${selectedPersona ? selectedPersona.name : phoneNumber}`,
+        persona: selectedPersona ? selectedPersona.name : phoneNumber,
+        date: new Date(),
+        duration: callDuration,
+        transcript: [...transcription],
+        isTraining: true
       };
       
-      setMessages(prev => [...prev, newMessage]);
+      setCurrentRecording(newRecording);
+      setPlaybackProgress(0);
+      setStage('recording-review');
     }
   };
 
@@ -265,6 +342,58 @@ export const RolePlayDialog = ({
   const handleStopRecording = () => {
     setIsRecording(false);
     toast.success("Recording stopped");
+  };
+
+  const handlePlayRecording = () => {
+    if (isPlaying) {
+      setIsPlaying(false);
+    } else {
+      setIsPlaying(true);
+    }
+  };
+
+  const handleResetPlayback = () => {
+    setPlaybackProgress(0);
+    setIsPlaying(false);
+  };
+
+  const handleSaveAndTrain = () => {
+    if (currentRecording) {
+      setRecordings(prev => [currentRecording, ...prev]);
+      toast.success("Recording saved and added to training");
+      setStage('selection');
+      setCurrentRecording(null);
+    }
+  };
+
+  const handleRedoRecording = () => {
+    setCurrentRecording(null);
+    setStage('call');
+    setCallDuration(0);
+    setTranscription([]);
+    setTimeout(() => {
+      handleStartCall();
+    }, 500);
+  };
+
+  const handleToggleTraining = (id: string) => {
+    setRecordings(prev => prev.map(recording => 
+      recording.id === id 
+        ? { ...recording, isTraining: !recording.isTraining }
+        : recording
+    ));
+    toast.success("Training status updated");
+  };
+
+  const handleDeleteRecording = (id: string) => {
+    setRecordings(prev => prev.filter(recording => recording.id !== id));
+    toast.success("Recording deleted");
+  };
+
+  const handlePlayRecordingFromList = (recording: Recording) => {
+    setCurrentRecording(recording);
+    setPlaybackProgress(0);
+    setStage('recording-review');
   };
 
   const handleSendMessage = () => {
@@ -312,9 +441,14 @@ export const RolePlayDialog = ({
     setIsCallActive(false);
     setCallDuration(0);
     setTranscription([]);
+    setCurrentRecording(null);
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
+    }
+    if (playbackTimerRef.current) {
+      clearInterval(playbackTimerRef.current);
+      playbackTimerRef.current = null;
     }
     onOpenChange(false);
   };
@@ -331,7 +465,7 @@ export const RolePlayDialog = ({
               </DialogDescription>
             </DialogHeader>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-6">
               <div 
                 className="border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:border-primary/50 hover:bg-primary/5 cursor-pointer flex flex-col items-center text-center transition-all"
                 onClick={() => handleOptionSelect('someone')}
@@ -355,6 +489,19 @@ export const RolePlayDialog = ({
                 <h3 className="text-lg font-medium mb-2">User Personas</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Define customer types and generate personas for targeted training calls
+                </p>
+              </div>
+
+              <div 
+                className="border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:border-primary/50 hover:bg-primary/5 cursor-pointer flex flex-col items-center text-center transition-all"
+                onClick={() => handleOptionSelect('recordings')}
+              >
+                <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                  <FileText className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-lg font-medium mb-2">Recordings</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  View and manage your saved role-play recordings
                 </p>
               </div>
             </div>
@@ -538,40 +685,6 @@ export const RolePlayDialog = ({
                     <p className="text-sm text-red-500">{phoneNumberError}</p>
                   )}
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Microphone</Label>
-                    <Select value={selectedMic} onValueChange={setSelectedMic}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select microphone" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableMics.map((device) => (
-                          <SelectItem key={device.deviceId} value={device.deviceId}>
-                            {device.label || `Microphone ${device.deviceId.slice(0, 5)}`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Speaker</Label>
-                    <Select value={selectedSpeaker} onValueChange={setSelectedSpeaker}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select speaker" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableSpeakers.map((device) => (
-                          <SelectItem key={device.deviceId} value={device.deviceId}>
-                            {device.label || `Speaker ${device.deviceId.slice(0, 5)}`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
               </div>
 
               <div className="w-full">
@@ -630,132 +743,118 @@ export const RolePlayDialog = ({
             
             <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden py-4">
               <div className="flex-1 flex flex-col h-[400px]">
-                {!isCallActive ? (
-                  <div className="flex flex-col items-center justify-center flex-1">
-                    <div className="bg-primary/10 h-24 w-24 rounded-full flex items-center justify-center mb-4">
-                      <Phone className="h-12 w-12 text-primary" />
-                    </div>
-                    <h3 className="text-lg font-medium mb-2">Ready to start your call</h3>
-                    <p className="text-sm text-center text-muted-foreground mb-6 max-w-md">
-                      {selectedPersona 
-                        ? `You'll be connected to ${selectedPersona.name} for a role-play conversation.` 
-                        : "You'll be connected to the person for a role-play conversation."} 
-                      Everything will be recorded for your training purposes.
-                    </p>
-                    <Button 
-                      onClick={handleStartCall} 
-                      className="bg-green-500 hover:bg-green-600 text-white"
-                      size="lg"
+                <div className="flex items-center justify-between mb-4 bg-secondary/30 p-3 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Timer className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium">{formatTime(callDuration)}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`${isCallMuted ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30' : ''}`}
+                      onClick={handleToggleMute}
                     >
-                      <PhoneCall className="mr-2 h-4 w-4" />
-                      Start Call
+                      {isCallMuted ? <Volume2 className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                      <span className="ml-1.5">{isCallMuted ? 'Unmute' : 'Mute'}</span>
+                    </Button>
+                    
+                    {isRecording ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="bg-red-500/10 text-red-500 border-red-500/30"
+                        onClick={handleStopRecording}
+                      >
+                        <StopCircle className="h-4 w-4" />
+                        <span className="ml-1.5">Stop Recording</span>
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleStartRecording}
+                      >
+                        <Mic className="h-4 w-4" />
+                        <span className="ml-1.5">Start Recording</span>
+                      </Button>
+                    )}
+                    
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleEndCall}
+                    >
+                      <PhoneOff className="h-4 w-4" />
+                      <span className="ml-1.5">End</span>
                     </Button>
                   </div>
-                ) : (
-                  <div className="flex-1 flex flex-col">
-                    <div className="flex items-center justify-between mb-4 bg-secondary/30 p-3 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <Timer className="h-4 w-4 text-primary" />
-                        <span className="text-sm font-medium">{formatTime(callDuration)}</span>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className={`${isCallMuted ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30' : ''}`}
-                          onClick={handleToggleMute}
-                        >
-                          {isCallMuted ? <Volume2 className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                          <span className="ml-1.5">{isCallMuted ? 'Unmute' : 'Mute'}</span>
-                        </Button>
-                        
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className={`${isRecording ? 'bg-red-500/10 text-red-500 border-red-500/30' : ''}`}
-                          onClick={isRecording ? handleStopRecording : handleStartRecording}
-                        >
-                          {isRecording ? <StopCircle className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                          <span className="ml-1.5">{isRecording ? 'Stop Recording' : 'Start Recording'}</span>
-                        </Button>
-                        
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={handleEndCall}
-                        >
-                          <PhoneOff className="h-4 w-4" />
-                          <span className="ml-1.5">End</span>
-                        </Button>
-                      </div>
+                </div>
+                
+                <div className="flex-1 overflow-y-auto mb-4 bg-secondary/20 rounded-lg p-4">
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-center">
+                      <Badge className="bg-blue-500/10 text-blue-500 border border-blue-500/30">
+                        Call started with {selectedPersona ? selectedPersona.name : phoneNumber}
+                      </Badge>
                     </div>
                     
-                    <div className="flex-1 overflow-y-auto mb-4 bg-secondary/20 rounded-lg p-4">
-                      <div className="space-y-6">
-                        <div className="flex items-center justify-center">
-                          <Badge className="bg-blue-500/10 text-blue-500 border border-blue-500/30">
-                            Call started with {selectedPersona ? selectedPersona.name : phoneNumber}
-                          </Badge>
-                        </div>
-                        
-                        {isLoadingTranscription && (
-                          <div className="flex items-center justify-center py-4">
-                            <div className="flex flex-col items-center">
-                              <div className="flex space-x-1">
-                                <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                                <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                                <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                              </div>
-                              <span className="text-xs text-muted-foreground mt-2">Transcribing...</span>
-                            </div>
+                    {isLoadingTranscription && (
+                      <div className="flex items-center justify-center py-4">
+                        <div className="flex flex-col items-center">
+                          <div className="flex space-x-1">
+                            <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                            <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                            <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }}></div>
                           </div>
-                        )}
-                        
-                        {transcription.map((line, index) => {
-                          const [speaker, ...textParts] = line.split(': ');
-                          const text = textParts.join(': ');
-                          const isUser = speaker === 'You';
-                          
-                          return (
-                            <div key={index} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
-                              <div className="flex items-start gap-3 max-w-[80%]">
-                                {!isUser && selectedPersona && (
-                                  <Avatar className="h-8 w-8">
-                                    <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                                      {selectedPersona.avatar}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                )}
-                                
-                                <div className={`rounded-lg p-3 ${
-                                  isUser 
-                                    ? 'bg-primary text-white' 
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
-                                }`}>
-                                  <p className="text-sm">{text}</p>
-                                </div>
-                                
-                                {isUser && (
-                                  <Avatar className="h-8 w-8">
-                                    <AvatarFallback className="bg-secondary text-primary text-sm">
-                                      You
-                                    </AvatarFallback>
-                                  </Avatar>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
+                          <span className="text-xs text-muted-foreground mt-2">Transcribing...</span>
+                        </div>
                       </div>
-                    </div>
+                    )}
                     
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-primary" />
-                      <span className="text-sm font-medium">Live Transcription</span>
-                    </div>
+                    {transcription.map((line, index) => {
+                      const [speaker, ...textParts] = line.split(': ');
+                      const text = textParts.join(': ');
+                      const isUser = speaker === 'You';
+                      
+                      return (
+                        <div key={index} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+                          <div className="flex items-start gap-3 max-w-[80%]">
+                            {!isUser && selectedPersona && (
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                                  {selectedPersona.avatar}
+                                </AvatarFallback>
+                              </Avatar>
+                            )}
+                            
+                            <div className={`rounded-lg p-3 ${
+                              isUser 
+                                ? 'bg-primary text-white' 
+                                : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
+                            }`}>
+                              <p className="text-sm">{text}</p>
+                            </div>
+                            
+                            {isUser && (
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback className="bg-secondary text-primary text-sm">
+                                  You
+                                </AvatarFallback>
+                              </Avatar>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                )}
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium">Live Transcription</span>
+                </div>
               </div>
               
               <div className="w-full md:w-[250px] border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-4 flex flex-col">
@@ -802,6 +901,210 @@ export const RolePlayDialog = ({
                 </div>
               </div>
             </div>
+          </>
+        )}
+
+        {stage === 'recording-review' && currentRecording && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl">Recording Review</DialogTitle>
+              <DialogDescription>
+                Review your recording before saving it for training
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="py-4 flex flex-col">
+              <div className="bg-secondary/30 p-4 rounded-lg mb-4">
+                <div className="flex justify-between items-center mb-3">
+                  <div>
+                    <h3 className="font-medium">{currentRecording.name}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {currentRecording.date.toLocaleDateString()} • {formatTime(currentRecording.duration)}
+                    </p>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={handlePlayRecording}
+                    >
+                      {isPlaying ? (
+                        <Pause className="h-4 w-4 mr-1" />
+                      ) : (
+                        <Play className="h-4 w-4 mr-1" />
+                      )}
+                      {isPlaying ? 'Pause' : 'Play'}
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="mb-2">
+                  <Progress value={playbackProgress} className="h-2" />
+                </div>
+                
+                <div className="flex justify-between items-center text-xs text-muted-foreground">
+                  <span>{formatTime(Math.floor(currentRecording.duration * (playbackProgress / 100)))}</span>
+                  <span>{formatTime(currentRecording.duration)}</span>
+                </div>
+              </div>
+              
+              <div className="border rounded-lg flex-1 overflow-y-auto max-h-[300px] mb-4">
+                <div className="p-4 space-y-4">
+                  {currentRecording.transcript.map((line, index) => {
+                    const [speaker, ...textParts] = line.split(': ');
+                    const text = textParts.join(': ');
+                    const isUser = speaker === 'You';
+                    
+                    if (!text) return null; // Skip lines without proper format
+                    
+                    return (
+                      <div key={index} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+                        <div className="flex items-start gap-3 max-w-[80%]">
+                          {!isUser && (
+                            <Avatar className="h-8 w-8">
+                              <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                                {currentRecording.persona.charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                          )}
+                          
+                          <div className={`rounded-lg p-3 ${
+                            isUser 
+                              ? 'bg-primary text-white' 
+                              : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
+                          }`}>
+                            <p className="text-sm">{text}</p>
+                          </div>
+                          
+                          {isUser && (
+                            <Avatar className="h-8 w-8">
+                              <AvatarFallback className="bg-secondary text-primary text-sm">
+                                You
+                              </AvatarFallback>
+                            </Avatar>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              
+              <DialogFooter>
+                <div className="flex gap-3 w-full justify-between md:justify-end">
+                  <Button
+                    variant="outline"
+                    onClick={handleRedoRecording}
+                  >
+                    <Redo className="h-4 w-4 mr-2" />
+                    Re-do Recording
+                  </Button>
+                  
+                  <Button
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                    onClick={handleSaveAndTrain}
+                  >
+                    <Check className="h-4 w-4 mr-2" />
+                    Save & Use for Training
+                  </Button>
+                </div>
+              </DialogFooter>
+            </div>
+          </>
+        )}
+
+        {stage === 'recordings-list' && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl">Saved Recordings</DialogTitle>
+              <DialogDescription>
+                Manage your role-play recordings and training data
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="py-4 overflow-y-auto max-h-[500px]">
+              <div className="space-y-4">
+                {recordings.length > 0 ? (
+                  recordings.map((recording) => (
+                    <Card key={recording.id} className="overflow-hidden">
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <CardTitle className="text-base">{recording.name}</CardTitle>
+                            <CardDescription className="text-xs">
+                              {recording.date.toLocaleDateString()} • {formatTime(recording.duration)}
+                            </CardDescription>
+                          </div>
+                          
+                          <div className="flex items-center gap-1">
+                            <Button 
+                              size="sm" 
+                              variant="ghost"
+                              onClick={() => handleToggleTraining(recording.id)}
+                              className={recording.isTraining ? 'text-green-600' : 'text-gray-400'}
+                            >
+                              {recording.isTraining ? (
+                                <Check className="h-4 w-4" />
+                              ) : (
+                                <X className="h-4 w-4" />
+                              )}
+                              <span className="sr-only">{recording.isTraining ? 'Remove from training' : 'Add to training'}</span>
+                            </Button>
+                            
+                            <Button 
+                              size="sm" 
+                              variant="ghost"
+                              className="text-red-500 hover:text-red-700"
+                              onClick={() => handleDeleteRecording(recording.id)}
+                            >
+                              <Trash className="h-4 w-4" />
+                              <span className="sr-only">Delete</span>
+                            </Button>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      
+                      <CardContent className="pt-0">
+                        <p className="text-xs truncate text-muted-foreground">
+                          {recording.transcript.length > 1 ? recording.transcript[1] : "No transcript available"}
+                        </p>
+                      </CardContent>
+                      
+                      <CardFooter className="pt-0 pb-3 justify-end">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handlePlayRecordingFromList(recording)}
+                        >
+                          <Play className="h-3 w-3 mr-1" />
+                          Play Recording
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="bg-gray-100 dark:bg-gray-800 h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <FileText className="h-8 w-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-base font-medium mb-1">No recordings yet</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Complete a role-play call to create your first recording
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setStage('selection')}
+              >
+                Back to Options
+              </Button>
+            </DialogFooter>
           </>
         )}
       </DialogContent>
