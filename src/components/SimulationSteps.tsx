@@ -225,6 +225,17 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
   }
 ];
 
+const LOADING_CAPTIONS = [
+  "Analyzing your agent purpose...",
+  "Studying your industry context...",
+  "Mapping user personas...",
+  "Processing call recordings...",
+  "Crafting simulation scenarios...",
+  "Optimizing difficulty levels...",
+  "Balancing conversation flows...",
+  "Finalizing simulations..."
+];
+
 export const SimulationSteps = ({ 
   onComplete, 
   initialStatus = 'not-started', 
@@ -243,6 +254,8 @@ export const SimulationSteps = ({
   const [currentInsight, setCurrentInsight] = useState(0);
   const [simulationsGenerated, setSimulationsGenerated] = useState(false);
   const [availableSimulations, setAvailableSimulations] = useState<Simulation[]>([]);
+  const [loadingCaption, setLoadingCaption] = useState(LOADING_CAPTIONS[0]);
+  const [loadingCaptionIndex, setLoadingCaptionIndex] = useState(0);
 
   useEffect(() => {
     if (initialScenarios && initialScenarios.length > 0) {
@@ -257,6 +270,20 @@ export const SimulationSteps = ({
       setSelectedSimulations(simulationIds);
     }
   }, [initialScenarios]);
+
+  useEffect(() => {
+    if (isGenerating) {
+      const interval = setInterval(() => {
+        setLoadingCaptionIndex(prev => {
+          const newIndex = (prev + 1) % LOADING_CAPTIONS.length;
+          setLoadingCaption(LOADING_CAPTIONS[newIndex]);
+          return newIndex;
+        });
+      }, 2500);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isGenerating]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -310,7 +337,6 @@ export const SimulationSteps = ({
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {
       if (currentStep === 0) {
-        // Transition to simulation selection - simulate generation
         setIsGenerating(true);
         startGenerationAnimation();
       } else {
@@ -327,11 +353,9 @@ export const SimulationSteps = ({
   };
 
   const startGenerationAnimation = () => {
-    // Reset states
     setGenerationProgress(0);
     setCurrentInsight(0);
     
-    // Progress animation
     let progress = 0;
     const insightInterval = setInterval(() => {
       setCurrentInsight(prev => {
@@ -737,12 +761,16 @@ export const SimulationSteps = ({
         <Button
           onClick={handleNext}
           disabled={!canProceed() || isGenerating}
+          className={isGenerating ? "min-w-[180px]" : ""}
         >
           {isGenerating ? (
-            <>
-              <BrainCircuit className="mr-2 h-4 w-4 animate-spin" /> 
-              Generating
-            </>
+            <div className="flex items-center">
+              <div className="relative mr-3">
+                <div className="w-5 h-5 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+                <BrainCircuit className="absolute inset-0 h-3 w-3 m-auto text-primary" />
+              </div>
+              <span className="text-sm">{loadingCaption}</span>
+            </div>
           ) : currentStep === STEPS.length - 1 ? "Start Simulations" : "Continue"}
         </Button>
       </div>
