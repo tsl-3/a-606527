@@ -24,6 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { updateAgent } from "@/services/agentService";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import AgentConfigSettings from "@/components/AgentConfigSettings";
 
 const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
 
@@ -465,6 +466,16 @@ const AgentDetails = () => {
       toast({
         title: "Avatar copied",
         description: "Avatar URL has been copied to clipboard."
+      });
+    }
+  };
+
+  const handleAgentUpdate = (updatedAgent: AgentType) => {
+    setIsActive(updatedAgent.status === "active");
+    if (updatedAgent.name !== agent?.name) {
+      toast({
+        title: "Agent name updated",
+        description: `The agent name has been updated to ${updatedAgent.name}.`
       });
     }
   };
@@ -911,6 +922,8 @@ const AgentDetails = () => {
           </TabsContent>
           
           <TabsContent value="settings" className="space-y-6">
+            {agent && <AgentConfigSettings agent={agent} onAgentUpdate={handleAgentUpdate} />}
+            
             <Card>
               <CardHeader>
                 <CardTitle>Integration Channels</CardTitle>

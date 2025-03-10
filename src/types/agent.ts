@@ -35,4 +35,7 @@ export interface AgentType {
   isPersonal?: boolean;
   phone?: string;
   email?: string;
+  avatar?: string;
+  purpose?: string;
+  prompt?: string;
 }

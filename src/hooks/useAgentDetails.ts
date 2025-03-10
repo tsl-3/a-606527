@@ -55,6 +55,10 @@ export const useAgentDetails = (agentId: string | undefined) => {
           avmScore: data.avmScore || 7.8,
           channels: data.channels || ["voice", "chat", "email"],
           channelConfigs: channelConfigs,
+          // Add default values for new fields if they're missing
+          avatar: data.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${data.id}`,
+          purpose: data.purpose || "Help users with their questions and provide assistance.",
+          prompt: data.prompt || `You are ${data.name}, an AI assistant. Your job is to be helpful, harmless, and honest. Answer questions to the best of your ability.`
         };
         
         setAgent(enhancedData);

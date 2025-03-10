@@ -1,4 +1,3 @@
-
 import { AgentType, AgentTypeCategory } from '@/types/agent';
 
 // Mock data for development
@@ -13,7 +12,10 @@ const mockAgents: AgentType[] = [
     interactions: 1253,
     isPersonal: true,
     model: "GPT-4",
-    channels: ["voice", "chat", "email"]
+    channels: ["voice", "chat", "email"],
+    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=1",
+    purpose: "Help users with their customer support questions and resolve issues.",
+    prompt: "You are a customer support bot. Your job is to help users solve their problems and answer their questions about our products and services."
   },
   {
     id: "2",
@@ -25,7 +27,10 @@ const mockAgents: AgentType[] = [
     interactions: 876,
     isPersonal: false,
     model: "Claude-2",
-    channels: ["voice", "chat", "whatsapp", "sms"]
+    channels: ["voice", "chat", "whatsapp", "sms"],
+    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=2",
+    purpose: "Help users find the right products and make purchasing decisions.",
+    prompt: "You are a sales assistant bot. Your job is to help users find the right products for their needs and guide them through the purchasing process."
   },
   {
     id: "3",
