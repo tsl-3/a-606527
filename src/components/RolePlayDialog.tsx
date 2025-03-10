@@ -882,16 +882,7 @@ export const RolePlayDialog = ({
                 </div>
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-4 mt-4">
-                <Button
-                  onClick={handleSaveAndTrain}
-                  className="bg-gradient-to-r from-green-500 to-emerald-600 text-white"
-                  size="lg"
-                >
-                  <Save className="mr-2 h-5 w-5" />
-                  Save & Train AI
-                </Button>
-                
+              <div className="flex flex-col sm:flex-row gap-4 mt-4 justify-between w-full max-w-xl">
                 <Button
                   onClick={handleRetake}
                   variant="outline"
@@ -899,6 +890,15 @@ export const RolePlayDialog = ({
                 >
                   <Redo className="mr-2 h-5 w-5" />
                   Retake Call
+                </Button>
+                
+                <Button
+                  onClick={handleSaveAndTrain}
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 text-white"
+                  size="lg"
+                >
+                  <Save className="mr-2 h-5 w-5" />
+                  Save & Train AI
                 </Button>
               </div>
             </div>
