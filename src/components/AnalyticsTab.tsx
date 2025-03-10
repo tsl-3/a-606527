@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { CalendarDays, Filter, Download, BarChart2, TestTube, Heart, MessageSquare, LayoutGrid, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -424,14 +423,15 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
                           fill="#8884d8"
                           paddingAngle={2}
                           dataKey="value"
-                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                          labelLine={true}
+                          label={false}
+                          labelLine={false}
                         >
                           {sentimentData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
                         <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+                        <Legend />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -483,7 +483,7 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
                       fill="#8884d8"
                       paddingAngle={2}
                       dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      label={false}
                       labelLine={false}
                     >
                       {topicData.map((entry, index) => (
@@ -491,6 +491,7 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
                       ))}
                     </Pie>
                     <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+                    <Legend />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -606,14 +607,15 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
                           fill="#8884d8"
                           paddingAngle={2}
                           dataKey="value"
-                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                          labelLine={true}
+                          label={false}
+                          labelLine={false}
                         >
                           {channelData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
                         <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+                        <Legend />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -725,3 +727,4 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
 };
 
 export default AnalyticsTab;
+
