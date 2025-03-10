@@ -3,7 +3,33 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { SimulationSteps } from "./SimulationSteps";
 import { useToast } from "@/hooks/use-toast";
 
-export const SimulationCard = () => {
+interface SimulationCardProps {
+  status?: 'not-started' | 'in-progress' | 'completed';
+  coverage?: number;
+  performance?: number;
+  scenarios?: Array<{
+    id: string;
+    name: string;
+    completed: boolean;
+  }>;
+  simulations?: Array<{
+    id: string;
+    name: string;
+    date: string;
+    coverage: number;
+    performance: number;
+    scenarios: number;
+    tokens: string;
+  }>;
+}
+
+export const SimulationCard = ({
+  status = 'not-started',
+  coverage,
+  performance,
+  scenarios,
+  simulations
+}: SimulationCardProps) => {
   const { toast } = useToast();
 
   const handleSimulationComplete = (data: any) => {
@@ -23,7 +49,14 @@ export const SimulationCard = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <SimulationSteps onComplete={handleSimulationComplete} />
+        <SimulationSteps 
+          onComplete={handleSimulationComplete}
+          initialStatus={status}
+          coverage={coverage}
+          performance={performance}
+          scenarios={scenarios}
+          simulations={simulations}
+        />
       </CardContent>
     </Card>
   );
