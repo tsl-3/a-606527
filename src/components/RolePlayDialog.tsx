@@ -1,10 +1,9 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Search, Users, UserRound, MessageCircle, Brain, ArrowRight, Send, Phone, Mic, PhoneCall, Pause, Play, PhoneOff, Volume2, Timer, FileText } from "lucide-react";
+import { Search, Users, UserRound, MessageCircle, Brain, ArrowRight, Send, Phone, Mic, PhoneCall, Pause, Play, PhoneOff, Volume2, Timer, FileText, Volume, MicOff } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
@@ -49,6 +48,8 @@ export const RolePlayDialog = ({
   const [isCallActive, setIsCallActive] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [isCallMuted, setIsCallMuted] = useState(false);
+  const [isMicMuted, setIsMicMuted] = useState(false);
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [transcription, setTranscription] = useState<string[]>([]);
   const [isLoadingTranscription, setIsLoadingTranscription] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -144,6 +145,16 @@ export const RolePlayDialog = ({
       setTranscription([`Call connected with ${phoneNumber}`]);
       toast.success("Call connected successfully");
     }, 2000);
+  };
+
+  const handleToggleMic = () => {
+    setIsMicMuted(!isMicMuted);
+    toast.success(isMicMuted ? "Microphone unmuted" : "Microphone muted");
+  };
+
+  const handleToggleAudio = () => {
+    setIsAudioMuted(!isAudioMuted);
+    toast.success(isAudioMuted ? "Audio unmuted" : "Audio muted");
   };
 
   const handleEndCall = () => {
@@ -428,12 +439,12 @@ export const RolePlayDialog = ({
             <DialogHeader>
               <DialogTitle className="text-xl">Start Role-Play Call</DialogTitle>
               <DialogDescription>
-                Enter the phone number of the person you want to call
+                Enter the phone number and start the call
               </DialogDescription>
             </DialogHeader>
             
-            <div className="py-4">
-              <div className="space-y-4">
+            <div className="py-8 flex flex-col items-center justify-center">
+              <div className="space-y-6 w-full max-w-md mx-auto">
                 <div className="space-y-2">
                   <Label htmlFor="phoneNumber">Phone Number</Label>
                   <Input
@@ -450,6 +461,26 @@ export const RolePlayDialog = ({
                   {phoneNumberError && (
                     <p className="text-sm text-red-500">{phoneNumberError}</p>
                   )}
+                </div>
+                
+                <div className="flex justify-center gap-4 pt-4">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className={`rounded-full h-12 w-12 ${isMicMuted ? 'bg-red-500/10 text-red-500 border-red-500/30' : ''}`}
+                    onClick={handleToggleMic}
+                  >
+                    {isMicMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className={`rounded-full h-12 w-12 ${isAudioMuted ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30' : ''}`}
+                    onClick={handleToggleAudio}
+                  >
+                    {isAudioMuted ? <Volume className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                  </Button>
                 </div>
                 
                 <Button 
@@ -685,4 +716,3 @@ export const RolePlayDialog = ({
     </Dialog>
   );
 };
-
