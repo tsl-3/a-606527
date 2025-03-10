@@ -146,7 +146,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
   },
   {
     id: "5",
-    title: "Order Status",
+3 title: "Order Status",
     description: "Provide updates on order processing and delivery",
     scenarios: [
       "Check order status",
@@ -810,8 +810,8 @@ export const SimulationSteps = ({
           {isGenerating ? (
             <div className="flex items-center">
               <div className="relative mr-3">
-                <div className="w-5 h-5 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
-                <BrainCircuit className="absolute inset-0 h-3 w-3 m-auto text-primary" />
+                <div className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
+                <BrainCircuit className="absolute inset-0 h-3 w-3 m-auto text-white" />
               </div>
               <span className="text-sm">{loadingCaption}</span>
             </div>
