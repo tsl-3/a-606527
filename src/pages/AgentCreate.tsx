@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Bot, Mic, Phone, CheckCircle2, Loader2, PlayCircle } from "lucide-react";
@@ -16,6 +17,7 @@ const AgentCreate = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [callState, setCallState] = useState<"idle" | "connecting" | "active" | "completed">("idle");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [transcription, setTranscription] = useState<{ role: "system" | "user", text: string }[]>([]);
   const [agentConfig, setAgentConfig] = useState({
     name: "",
     description: "",
