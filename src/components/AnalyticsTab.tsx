@@ -411,14 +411,14 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
               <h3 className="text-sm font-medium mb-3">Sentiment Breakdown</h3>
               <div className="h-72 flex items-center justify-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full w-full">
-                  <div className="flex items-center justify-center h-full">
-                    <ResponsiveContainer width="100%" height={250}>
-                      <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                  <div className="flex items-center justify-center h-full w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart margin={{ top: 20, right: 30, bottom: 20, left: 30 }}>
                         <Pie
                           data={sentimentData}
                           cx="50%"
                           cy="50%"
-                          innerRadius={45}
+                          innerRadius={40}
                           outerRadius={70}
                           fill="#8884d8"
                           paddingAngle={2}
@@ -593,20 +593,20 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
               <h3 className="text-sm font-medium mb-3">Distribution by Channel</h3>
               <div className="h-72 flex items-center justify-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full w-full">
-                  <div className="flex items-center justify-center h-full">
-                    <ResponsiveContainer width="100%" height={200}>
-                      <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                  <div className="flex items-center justify-center h-full w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart margin={{ top: 20, right: 30, bottom: 20, left: 30 }}>
                         <Pie
                           data={channelData}
                           cx="50%"
                           cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
+                          innerRadius={40}
+                          outerRadius={70}
                           fill="#8884d8"
                           paddingAngle={2}
                           dataKey="value"
                           label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                          labelLine={false}
+                          labelLine={true}
                         >
                           {channelData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
