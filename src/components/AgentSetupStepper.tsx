@@ -3,7 +3,7 @@ import {
   BookOpen, Workflow, FlaskConical, CheckCircle2, 
   Upload, PlayCircle, Bot, File, CircleDashed, ArrowRight,
   Clock, BarChart, ChevronUp, Download, Trash2, User, Mic,
-  Users, UserRound, MessageCircle, Brain, Search, LightBulb
+  Users, UserRound, MessageCircle, Brain, Search, Lightbulb
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
