@@ -71,6 +71,15 @@ export const RolePlayDialog = ({
   const [availableMics, setAvailableMics] = useState<MediaDeviceInfo[]>([]);
   const [availableSpeakers, setAvailableSpeakers] = useState<MediaDeviceInfo[]>([]);
 
+  const handleOptionSelect = (option: 'someone' | 'personas') => {
+    if (option === 'someone') {
+      setStage('call');
+      setSelectedPersona(null);
+    } else {
+      setStage('persona-list');
+    }
+  };
+
   useEffect(() => {
     const getDevices = async () => {
       try {
@@ -106,7 +115,7 @@ export const RolePlayDialog = ({
       }
     };
 
-    if (stage === 'call' && !isCallActive) {
+    if (stage === 'call' && !isCallActive && !selectedPersona) {
       getDevices();
 
       navigator.mediaDevices.addEventListener('devicechange', getDevices);
@@ -115,7 +124,7 @@ export const RolePlayDialog = ({
         navigator.mediaDevices.removeEventListener('devicechange', getDevices);
       };
     }
-  }, [stage, isCallActive]);
+  }, [stage, isCallActive, selectedPersona]);
 
   useEffect(() => {
     if (isCallActive && !timerRef.current) {
@@ -138,14 +147,6 @@ export const RolePlayDialog = ({
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const handleOptionSelect = (option: 'someone' | 'personas') => {
-    if (option === 'someone') {
-      setStage('call');
-    } else {
-      setStage('persona-list');
-    }
   };
 
   const handlePersonaSelect = (persona: typeof samplePersonas[0]) => {
@@ -476,77 +477,104 @@ export const RolePlayDialog = ({
                 </div>
                 <div>
                   <DialogTitle className="text-xl">Role-Play Call</DialogTitle>
-                  <DialogDescription>External Call</DialogDescription>
+                  <DialogDescription>
+                    {selectedPersona ? `Call with ${selectedPersona.name}` : "External Call"}
+                  </DialogDescription>
                 </div>
               </div>
             </DialogHeader>
             
-            <div className="flex flex-col items-center justify-center flex-1 max-w-md mx-auto w-full gap-8">
-              <div className="w-full space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="phoneNumber">Phone Number</Label>
-                  <Input
-                    id="phoneNumber"
-                    type="tel"
-                    placeholder="+1234567890"
-                    value={phoneNumber}
-                    onChange={(e) => {
-                      setPhoneNumber(e.target.value);
-                      setPhoneNumberError('');
-                    }}
-                    className={phoneNumberError ? 'border-red-500' : ''}
-                  />
-                  {phoneNumberError && (
-                    <p className="text-sm text-red-500">{phoneNumberError}</p>
-                  )}
+            {!selectedPersona ? (
+              <div className="flex flex-col items-center justify-center flex-1 max-w-md mx-auto w-full gap-8">
+                <div className="w-full space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                    <Input
+                      id="phoneNumber"
+                      type="tel"
+                      placeholder="+1234567890"
+                      value={phoneNumber}
+                      onChange={(e) => {
+                        setPhoneNumber(e.target.value);
+                        setPhoneNumberError('');
+                      }}
+                      className={phoneNumberError ? 'border-red-500' : ''}
+                    />
+                    {phoneNumberError && (
+                      <p className="text-sm text-red-500">{phoneNumberError}</p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Microphone</Label>
+                      <Select value={selectedMic} onValueChange={setSelectedMic}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select microphone" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableMics.map((device) => (
+                            <SelectItem key={device.deviceId} value={device.deviceId}>
+                              {device.label || `Microphone ${device.deviceId.slice(0, 5)}`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Speaker</Label>
+                      <Select value={selectedSpeaker} onValueChange={setSelectedSpeaker}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select speaker" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableSpeakers.map((device) => (
+                            <SelectItem key={device.deviceId} value={device.deviceId}>
+                              {device.label || `Speaker ${device.deviceId.slice(0, 5)}`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Microphone</Label>
-                    <Select value={selectedMic} onValueChange={setSelectedMic}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select microphone" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableMics.map((device) => (
-                          <SelectItem key={device.deviceId} value={device.deviceId}>
-                            {device.label || `Microphone ${device.deviceId.slice(0, 5)}`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Speaker</Label>
-                    <Select value={selectedSpeaker} onValueChange={setSelectedSpeaker}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select speaker" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableSpeakers.map((device) => (
-                          <SelectItem key={device.deviceId} value={device.deviceId}>
-                            {device.label || `Speaker ${device.deviceId.slice(0, 5)}`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="w-full">
+                  <Button 
+                    onClick={handleStartCall} 
+                    className="bg-primary hover:bg-primary/90 text-white w-full"
+                    size="lg"
+                  >
+                    <PhoneCall className="mr-2 h-5 w-5" />
+                    Start Call
+                  </Button>
                 </div>
               </div>
-
-              <div className="w-full">
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8">
+                <div className="bg-primary/10 h-24 w-24 rounded-full flex items-center justify-center mb-6">
+                  <Avatar className="h-20 w-20">
+                    <AvatarFallback className="bg-primary/10 text-primary text-2xl">
+                      {selectedPersona.avatar}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+                <h3 className="text-xl font-medium mb-2">Ready to call {selectedPersona.name}</h3>
+                <p className="text-sm text-center text-muted-foreground mb-6 max-w-lg">
+                  You'll be connected with {selectedPersona.name}, a {selectedPersona.role}. 
+                  This call will help you practice handling typical conversations with this persona type.
+                </p>
                 <Button 
                   onClick={handleStartCall} 
-                  className="bg-primary hover:bg-primary/90 text-white w-full"
+                  className="bg-green-500 hover:bg-green-600 text-white"
                   size="lg"
                 >
                   <PhoneCall className="mr-2 h-5 w-5" />
-                  Start Call
+                  Start Call with {selectedPersona.name}
                 </Button>
               </div>
-            </div>
+            )}
           </>
         )}
 
@@ -592,132 +620,107 @@ export const RolePlayDialog = ({
             
             <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden py-4">
               <div className="flex-1 flex flex-col h-[400px]">
-                {!isCallActive ? (
-                  <div className="flex flex-col items-center justify-center flex-1">
-                    <div className="bg-primary/10 h-24 w-24 rounded-full flex items-center justify-center mb-4">
-                      <Phone className="h-12 w-12 text-primary" />
-                    </div>
-                    <h3 className="text-lg font-medium mb-2">Ready to start your call</h3>
-                    <p className="text-sm text-center text-muted-foreground mb-6 max-w-md">
-                      {selectedPersona 
-                        ? `You'll be connected to ${selectedPersona.name} for a role-play conversation.` 
-                        : "You'll be connected to the person for a role-play conversation."} 
-                      Everything will be recorded for your training purposes.
-                    </p>
-                    <Button 
-                      onClick={handleStartCall} 
-                      className="bg-green-500 hover:bg-green-600 text-white"
-                      size="lg"
+                <div className="flex items-center justify-between mb-4 bg-secondary/30 p-3 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Timer className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium">{formatTime(callDuration)}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`${isCallMuted ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30' : ''}`}
+                      onClick={handleToggleMute}
                     >
-                      <PhoneCall className="mr-2 h-4 w-4" />
-                      Start Call
+                      {isCallMuted ? <Volume2 className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                      <span className="ml-1.5">{isCallMuted ? 'Unmute' : 'Mute'}</span>
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`${isRecording ? 'bg-red-500/10 text-red-500 border-red-500/30' : ''}`}
+                      onClick={handleToggleRecording}
+                    >
+                      {isRecording ? <Pause className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                      <span className="ml-1.5">{isRecording ? 'Stop' : 'Record'}</span>
+                    </Button>
+                    
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleEndCall}
+                    >
+                      <PhoneOff className="h-4 w-4" />
+                      <span className="ml-1.5">End</span>
                     </Button>
                   </div>
-                ) : (
-                  <div className="flex-1 flex flex-col">
-                    <div className="flex items-center justify-between mb-4 bg-secondary/30 p-3 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <Timer className="h-4 w-4 text-primary" />
-                        <span className="text-sm font-medium">{formatTime(callDuration)}</span>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className={`${isCallMuted ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30' : ''}`}
-                          onClick={handleToggleMute}
-                        >
-                          {isCallMuted ? <Volume2 className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                          <span className="ml-1.5">{isCallMuted ? 'Unmute' : 'Mute'}</span>
-                        </Button>
-                        
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className={`${isRecording ? 'bg-red-500/10 text-red-500 border-red-500/30' : ''}`}
-                          onClick={handleToggleRecording}
-                        >
-                          {isRecording ? <Pause className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                          <span className="ml-1.5">{isRecording ? 'Stop' : 'Record'}</span>
-                        </Button>
-                        
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={handleEndCall}
-                        >
-                          <PhoneOff className="h-4 w-4" />
-                          <span className="ml-1.5">End</span>
-                        </Button>
-                      </div>
+                </div>
+                
+                <div className="flex-1 overflow-y-auto mb-4 bg-secondary/20 rounded-lg p-4">
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-center">
+                      <Badge className="bg-blue-500/10 text-blue-500 border border-blue-500/30">
+                        Call started with {selectedPersona ? selectedPersona.name : phoneNumber}
+                      </Badge>
                     </div>
                     
-                    <div className="flex-1 overflow-y-auto mb-4 bg-secondary/20 rounded-lg p-4">
-                      <div className="space-y-6">
-                        <div className="flex items-center justify-center">
-                          <Badge className="bg-blue-500/10 text-blue-500 border border-blue-500/30">
-                            Call started with {selectedPersona ? selectedPersona.name : phoneNumber}
-                          </Badge>
-                        </div>
-                        
-                        {isLoadingTranscription && (
-                          <div className="flex items-center justify-center py-4">
-                            <div className="flex flex-col items-center">
-                              <div className="flex space-x-1">
-                                <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                                <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                                <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                              </div>
-                              <span className="text-xs text-muted-foreground mt-2">Transcribing...</span>
-                            </div>
+                    {isLoadingTranscription && (
+                      <div className="flex items-center justify-center py-4">
+                        <div className="flex flex-col items-center">
+                          <div className="flex space-x-1">
+                            <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                            <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                            <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }}></div>
                           </div>
-                        )}
-                        
-                        {transcription.map((line, index) => {
-                          const [speaker, ...textParts] = line.split(': ');
-                          const text = textParts.join(': ');
-                          const isUser = speaker === 'You';
-                          
-                          return (
-                            <div key={index} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
-                              <div className="flex items-start gap-3 max-w-[80%]">
-                                {!isUser && selectedPersona && (
-                                  <Avatar className="h-8 w-8">
-                                    <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                                      {selectedPersona.avatar}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                )}
-                                
-                                <div className={`rounded-lg p-3 ${
-                                  isUser 
-                                    ? 'bg-primary text-white' 
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
-                                }`}>
-                                  <p className="text-sm">{text}</p>
-                                </div>
-                                
-                                {isUser && (
-                                  <Avatar className="h-8 w-8">
-                                    <AvatarFallback className="bg-secondary text-primary text-sm">
-                                      You
-                                    </AvatarFallback>
-                                  </Avatar>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
+                          <span className="text-xs text-muted-foreground mt-2">Transcribing...</span>
+                        </div>
                       </div>
-                    </div>
+                    )}
                     
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-primary" />
-                      <span className="text-sm font-medium">Live Transcription</span>
-                    </div>
+                    {transcription.map((line, index) => {
+                      const [speaker, ...textParts] = line.split(': ');
+                      const text = textParts.join(': ');
+                      const isUser = speaker === 'You';
+                      
+                      return (
+                        <div key={index} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+                          <div className="flex items-start gap-3 max-w-[80%]">
+                            {!isUser && selectedPersona && (
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                                  {selectedPersona.avatar}
+                                </AvatarFallback>
+                              </Avatar>
+                            )}
+                            
+                            <div className={`rounded-lg p-3 ${
+                              isUser 
+                                ? 'bg-primary text-white' 
+                                : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
+                            }`}>
+                              <p className="text-sm">{text}</p>
+                            </div>
+                            
+                            {isUser && (
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback className="bg-secondary text-primary text-sm">
+                                  You
+                                </AvatarFallback>
+                              </Avatar>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                )}
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium">Live Transcription</span>
+                </div>
               </div>
               
               <div className="w-full md:w-[250px] border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-4 flex flex-col">
