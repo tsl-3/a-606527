@@ -1,12 +1,17 @@
 
-import React, { useState } from "react";
-import { Mic, MessageSquare, Smartphone, Mail, MessageCircle } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Mic, MessageSquare, Smartphone, Mail, MessageCircle, Search, DollarSign, Phone, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface AgentChannelConfig {
   enabled: boolean;
@@ -28,6 +33,16 @@ interface ChannelInfo {
   color: string;
   bgColor: string;
   placeholder: string;
+}
+
+// Mock phone number data
+interface PhoneNumberOption {
+  number: string;
+  areaCode: string;
+  isTollFree: boolean;
+  price: number;
+  type: string;
+  available: boolean;
 }
 
 // All available channels with their info
@@ -69,6 +84,26 @@ const CHANNEL_INFO: Record<string, ChannelInfo> = {
   }
 };
 
+// Sample phone numbers for demonstration
+const SAMPLE_PHONE_NUMBERS: PhoneNumberOption[] = [
+  { number: "+1 (800) 555-0123", areaCode: "800", isTollFree: true, price: 5, type: "Toll-Free", available: true },
+  { number: "+1 (844) 555-0124", areaCode: "844", isTollFree: true, price: 5, type: "Toll-Free", available: true },
+  { number: "+1 (855) 555-0125", areaCode: "855", isTollFree: true, price: 5, type: "Toll-Free", available: true },
+  { number: "+1 (866) 555-0126", areaCode: "866", isTollFree: true, price: 5, type: "Toll-Free", available: true },
+  { number: "+1 (877) 555-0127", areaCode: "877", isTollFree: true, price: 5, type: "Toll-Free", available: true },
+  { number: "+1 (888) 555-0128", areaCode: "888", isTollFree: true, price: 5, type: "Toll-Free", available: true },
+  { number: "+1 (212) 555-0129", areaCode: "212", isTollFree: false, price: 3, type: "New York", available: true },
+  { number: "+1 (213) 555-0130", areaCode: "213", isTollFree: false, price: 3, type: "Los Angeles", available: true },
+  { number: "+1 (312) 555-0131", areaCode: "312", isTollFree: false, price: 3, type: "Chicago", available: true },
+  { number: "+1 (415) 555-0132", areaCode: "415", isTollFree: false, price: 3, type: "San Francisco", available: true },
+  { number: "+1 (305) 555-0133", areaCode: "305", isTollFree: false, price: 3, type: "Miami", available: true },
+  { number: "+1 (404) 555-0134", areaCode: "404", isTollFree: false, price: 3, type: "Atlanta", available: true },
+  { number: "+1 (512) 555-0135", areaCode: "512", isTollFree: false, price: 3, type: "Austin", available: true },
+  { number: "+1 (702) 555-0136", areaCode: "702", isTollFree: false, price: 3, type: "Las Vegas", available: true },
+  { number: "+1 (206) 555-0137", areaCode: "206", isTollFree: false, price: 3, type: "Seattle", available: true },
+  { number: "+1 (303) 555-0138", areaCode: "303", isTollFree: false, price: 3, type: "Denver", available: true },
+];
+
 // All available channels
 const ALL_CHANNELS = Object.keys(CHANNEL_INFO);
 
@@ -81,6 +116,12 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
 }) => {
   const [activeDialogChannel, setActiveDialogChannel] = useState<string | null>(null);
   const [channelDetails, setChannelDetails] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState<string>("");
+  const [phoneNumbers, setPhoneNumbers] = useState<PhoneNumberOption[]>(SAMPLE_PHONE_NUMBERS);
+  const [showPhoneNumberSearch, setShowPhoneNumberSearch] = useState<boolean>(false);
+  const [filterTollFree, setFilterTollFree] = useState<boolean | null>(null);
+  const { toast } = useToast();
 
   // Ensure channels object has entries for all available channels
   const normalizedChannels = ALL_CHANNELS.reduce((acc, channel) => {
@@ -121,6 +162,18 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
     );
   }
 
+  // Filter phone numbers based on search query and toll-free filter
+  const filteredPhoneNumbers = phoneNumbers.filter((phone) => {
+    const matchesQuery = searchQuery === "" || 
+      phone.number.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      phone.areaCode.includes(searchQuery) || 
+      phone.type.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesTollFree = filterTollFree === null || phone.isTollFree === filterTollFree;
+    
+    return matchesQuery && matchesTollFree;
+  });
+
   // Interactive channel configuration mode
   const handleToggleChannel = (channel: string, enabled: boolean) => {
     if (onUpdateChannel) {
@@ -132,17 +185,47 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
   const handleOpenConfigDialog = (channel: string) => {
     setActiveDialogChannel(channel);
     setChannelDetails(normalizedChannels[channel]?.details || "");
+    
+    // Reset phone number search if opening voice channel config
+    if (channel === 'voice') {
+      setShowPhoneNumberSearch(false);
+      setSearchQuery("");
+      setFilterTollFree(null);
+      setSelectedPhoneNumber(normalizedChannels[channel]?.details || "");
+    }
   };
 
   const handleSaveConfig = () => {
     if (activeDialogChannel && onUpdateChannel) {
       const currentConfig = normalizedChannels[activeDialogChannel] || { enabled: false };
+      // For voice channel, use the selected phone number if available
+      const details = activeDialogChannel === 'voice' && selectedPhoneNumber 
+        ? selectedPhoneNumber 
+        : channelDetails;
+        
       onUpdateChannel(activeDialogChannel, {
         ...currentConfig,
-        details: channelDetails
+        details: details
       });
       setActiveDialogChannel(null);
     }
+  };
+
+  const handlePurchasePhoneNumber = (phoneNumber: string) => {
+    setSelectedPhoneNumber(phoneNumber);
+    setShowPhoneNumberSearch(false);
+    toast({
+      title: "Phone Number Selected",
+      description: `${phoneNumber} has been selected. You will be charged $5/month when you save.`,
+    });
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleToggleTollFree = (value: boolean | null) => {
+    setFilterTollFree(value);
   };
 
   return (
@@ -194,22 +277,177 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
                   </DialogHeader>
                   
                   <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor={`${channel}-details`}>
-                        {channel === 'voice' || channel === 'sms' || channel === 'whatsapp' 
-                          ? 'Phone Number' 
-                          : channel === 'chat' 
-                            ? 'URL' 
-                            : 'Email Address'}
-                      </Label>
-                      <Input
-                        id={`${channel}-details`}
-                        placeholder={info.placeholder}
-                        value={channelDetails}
-                        onChange={(e) => setChannelDetails(e.target.value)}
-                        className="bg-black/30 border-gray-700 text-white"
-                      />
-                    </div>
+                    {channel === 'voice' ? (
+                      <>
+                        {!showPhoneNumberSearch ? (
+                          <div className="space-y-2">
+                            <Label htmlFor={`${channel}-details`}>Phone Number</Label>
+                            <div className="flex gap-2">
+                              <Input
+                                id={`${channel}-details`}
+                                placeholder={info.placeholder}
+                                value={selectedPhoneNumber || channelDetails}
+                                onChange={(e) => setChannelDetails(e.target.value)}
+                                className="bg-black/30 border-gray-700 text-white"
+                                readOnly={!!selectedPhoneNumber}
+                              />
+                              <Button 
+                                variant="outline" 
+                                className="shrink-0 bg-transparent border-gray-700 hover:bg-gray-800"
+                                onClick={() => setShowPhoneNumberSearch(true)}
+                              >
+                                Search
+                              </Button>
+                            </div>
+                            {selectedPhoneNumber && (
+                              <div className="flex items-center justify-between mt-2 p-2 bg-agent-primary/10 rounded border border-agent-primary/20">
+                                <div className="flex items-center gap-2">
+                                  <Phone className="h-4 w-4 text-agent-primary" />
+                                  <span className="text-sm">{selectedPhoneNumber}</span>
+                                </div>
+                                <div className="flex items-center gap-1 text-xs text-gray-400">
+                                  <DollarSign className="h-3 w-3" />
+                                  <span>$5/month</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                              <Label>Search Phone Numbers</Label>
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                className="text-xs h-7 px-2"
+                                onClick={() => setShowPhoneNumberSearch(false)}
+                              >
+                                Back
+                              </Button>
+                            </div>
+                            
+                            <div className="flex gap-2">
+                              <div className="relative flex-1">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                                <Input
+                                  placeholder="Search by area code, location..."
+                                  className="pl-9 bg-black/30 border-gray-700 text-white"
+                                  value={searchQuery}
+                                  onChange={handleSearchChange}
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="flex flex-wrap gap-2">
+                              <Button
+                                variant={filterTollFree === null ? "secondary" : "outline"}
+                                size="sm"
+                                className="text-xs h-7"
+                                onClick={() => handleToggleTollFree(null)}
+                              >
+                                All
+                              </Button>
+                              <Button
+                                variant={filterTollFree === true ? "secondary" : "outline"}
+                                size="sm"
+                                className="text-xs h-7"
+                                onClick={() => handleToggleTollFree(true)}
+                              >
+                                Toll-Free
+                              </Button>
+                              <Button
+                                variant={filterTollFree === false ? "secondary" : "outline"}
+                                size="sm"
+                                className="text-xs h-7"
+                                onClick={() => handleToggleTollFree(false)}
+                              >
+                                Local
+                              </Button>
+                            </div>
+                            
+                            <ScrollArea className="h-[300px] pr-4 -mr-4">
+                              <div className="space-y-2">
+                                {filteredPhoneNumbers.length > 0 ? (
+                                  filteredPhoneNumbers.map((phone) => (
+                                    <div 
+                                      key={phone.number}
+                                      className="flex items-center justify-between p-3 bg-gray-900/50 border border-gray-700 rounded-md hover:bg-gray-900/80 transition-colors"
+                                    >
+                                      <div className="flex flex-col">
+                                        <span className="font-medium">{phone.number}</span>
+                                        <div className="flex items-center gap-1.5 mt-1">
+                                          <Badge variant="outline" className="text-[0.65rem] h-4 px-1.5 bg-gray-800">
+                                            {phone.type}
+                                          </Badge>
+                                          {phone.isTollFree && (
+                                            <Badge className="text-[0.65rem] h-4 px-1.5 bg-blue-900/60 text-blue-200">
+                                              Toll-Free
+                                            </Badge>
+                                          )}
+                                        </div>
+                                      </div>
+                                      
+                                      <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                          <Button size="sm" className="bg-agent-primary hover:bg-agent-primary/90 text-white">
+                                            <DollarSign className="h-3 w-3 mr-1" />
+                                            ${phone.price}/mo
+                                          </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent className="bg-black border-gray-700 text-white">
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle>Confirm Phone Number Purchase</AlertDialogTitle>
+                                            <AlertDialogDescription className="text-gray-400">
+                                              You are about to select {phone.number} for your voice channel. 
+                                              This will cost ${phone.price}/month. You will not be charged 
+                                              until you save your changes.
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter>
+                                            <AlertDialogCancel className="bg-transparent border-gray-700 hover:bg-gray-800 text-white">
+                                              Cancel
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction 
+                                              className="bg-agent-primary hover:bg-agent-primary/90"
+                                              onClick={() => handlePurchasePhoneNumber(phone.number)}
+                                            >
+                                              Select Number
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <div className="flex flex-col items-center justify-center py-8 text-center text-gray-500">
+                                    <Search className="h-8 w-8 mb-2 opacity-50" />
+                                    <p>No phone numbers found matching your search criteria.</p>
+                                    <p className="text-sm mt-1">Try a different search term or filter.</p>
+                                  </div>
+                                )}
+                              </div>
+                            </ScrollArea>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="space-y-2">
+                        <Label htmlFor={`${channel}-details`}>
+                          {channel === 'sms' || channel === 'whatsapp' 
+                            ? 'Phone Number' 
+                            : channel === 'chat' 
+                              ? 'URL' 
+                              : 'Email Address'}
+                        </Label>
+                        <Input
+                          id={`${channel}-details`}
+                          placeholder={info.placeholder}
+                          value={channelDetails}
+                          onChange={(e) => setChannelDetails(e.target.value)}
+                          className="bg-black/30 border-gray-700 text-white"
+                        />
+                      </div>
+                    )}
                   </div>
                   
                   <div className="flex justify-end gap-2">
