@@ -249,6 +249,17 @@ export const SimulationSteps = ({
                   className="mt-2"
                   rows={4}
                 />
+                <div className="mt-2 text-sm text-muted-foreground">
+                  <p className="font-medium">Example:</p>
+                  <p className="italic mt-1 text-xs">
+                    "Our customers are primarily small business owners aged 30-50. They often call with urgent 
+                    scheduling issues and have limited technical knowledge. Some common personas include: 
+                    1) Busy professionals who are often multitasking during calls, 
+                    2) Older customers who speak slowly and need patient assistance, 
+                    3) Frustrated customers who've had previous negative experiences, and 
+                    4) New customers who are unfamiliar with our services and need detailed explanations."
+                  </p>
+                </div>
               </div>
             </div>
           </div>
