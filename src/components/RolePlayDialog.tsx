@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -774,3 +775,53 @@ export const RolePlayDialog = ({
                   <Brain className="h-4 w-4" />
                   Knowledge Base
                 </h4>
+                
+                <div className="flex items-center gap-2 mb-3">
+                  <Input
+                    placeholder="Search knowledge..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="text-sm"
+                  />
+                  <Button size="sm" variant="outline" onClick={handleKnowledgeSearch}>
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                {knowledgeResults.length > 0 && (
+                  <div className="space-y-2 mb-4 flex-1 overflow-y-auto">
+                    {knowledgeResults.map((result, index) => (
+                      <div key={index} className="bg-secondary/20 p-2 rounded-lg text-xs">
+                        {result}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                <div className="mt-auto">
+                  <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
+                    <MessageCircle className="h-4 w-4" />
+                    Text Chat
+                  </h4>
+                  
+                  <div className="space-y-2">
+                    <Textarea
+                      placeholder="Type a message..."
+                      value={currentMessage}
+                      onChange={(e) => setCurrentMessage(e.target.value)}
+                      className="resize-none text-sm h-[80px]"
+                    />
+                    <Button size="sm" className="w-full" onClick={handleSendMessage}>
+                      <Send className="h-4 w-4 mr-2" />
+                      Send Message
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};
