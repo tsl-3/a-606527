@@ -1,8 +1,10 @@
+
 import React, { useState } from "react";
 import { 
   FlaskConical, Target, TrendingUp, Check, PlayCircle, 
   SkipForward, List, ArrowRight, Plus, CircleCheck,
-  CheckCircle2, ChevronUp, Download, Rocket, FileText, Mic, Save
+  CheckCircle2, ChevronUp, Download, Rocket, FileText, Mic, Save,
+  Upload, File
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -10,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch, SwitchWithLabels } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
 
 interface TrainingScenario {
   id: string;
@@ -51,11 +54,49 @@ export const SimulationCard: React.FC<SimulationCardProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(status !== 'completed');
   const [showPersonaForm, setShowPersonaForm] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const isCoverageComplete = coverage >= 95;
   const isPerformanceComplete = performance >= 90;
   const isComplete = isCoverageComplete && isPerformanceComplete;
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const filesArray = Array.from(event.target.files);
+      setUploadedFiles(prev => [...prev, ...filesArray]);
+      toast({
+        title: "Files uploaded",
+        description: `${filesArray.length} audio file${filesArray.length > 1 ? 's' : ''} uploaded successfully.`,
+      });
+    }
+  };
+
+  const handleSubmitRecordings = () => {
+    if (uploadedFiles.length === 0) {
+      toast({
+        title: "No files selected",
+        description: "Please upload at least one recording before submitting.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+    
+    // Simulate processing
+    setTimeout(() => {
+      setIsProcessing(false);
+      toast({
+        title: "Personas generated",
+        description: "Your recordings have been processed and personas have been generated successfully.",
+      });
+    }, 3000);
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="rounded-lg overflow-hidden mb-6 border border-gray-200 dark:border-gray-800">
@@ -115,7 +156,7 @@ export const SimulationCard: React.FC<SimulationCardProps> = ({
                   <FlaskConical className="h-12 w-12 text-gray-500 mx-auto mb-4" />
                   <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">Define Your User Personas</h4>
                   <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-                    Before running simulations, let's understand your target users. You can either describe them or record your explanation.
+                    Before running simulations, let's understand your target users. Submit recordings of past calls for analysis or describe your users.
                   </p>
                 </div>
 
@@ -137,25 +178,82 @@ export const SimulationCard: React.FC<SimulationCardProps> = ({
 
                   <div className="bg-white dark:bg-gray-800/50 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div className="flex items-center gap-2 mb-4">
-                      <Mic className="h-5 w-5 text-indigo-500" />
-                      <h5 className="font-medium text-gray-900 dark:text-gray-100">Voice Recording</h5>
+                      <Upload className="h-5 w-5 text-indigo-500" />
+                      <h5 className="font-medium text-gray-900 dark:text-gray-100">Upload Call Recordings</h5>
                     </div>
-                    <div className="flex flex-col items-center justify-center h-32 mb-4 bg-gray-50 dark:bg-gray-800/30 rounded-lg">
-                      <Button 
-                        variant="outline" 
-                        size="icon"
-                        className={`h-12 w-12 rounded-full ${isRecording ? 'bg-red-500 text-white hover:bg-red-600' : ''}`}
-                        onClick={() => setIsRecording(!isRecording)}
-                      >
-                        <Mic className="h-6 w-6" />
-                      </Button>
-                      <span className="text-sm text-gray-500 mt-2">
-                        {isRecording ? 'Recording...' : 'Click to Record'}
-                      </span>
+                    
+                    <div className="flex flex-col gap-3 mb-4">
+                      {uploadedFiles.length > 0 ? (
+                        <div className="space-y-2 max-h-32 overflow-y-auto">
+                          {uploadedFiles.map((file, index) => (
+                            <div key={index} className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 p-2 rounded-md">
+                              <div className="flex items-center gap-2">
+                                <File className="h-4 w-4 text-indigo-500" />
+                                <span className="text-sm truncate max-w-[160px]">{file.name}</span>
+                                <span className="text-xs text-gray-500">
+                                  ({(file.size / (1024 * 1024)).toFixed(2)} MB)
+                                </span>
+                              </div>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-6 w-6" 
+                                onClick={() => removeFile(index)}
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center h-32 mb-4 bg-gray-50 dark:bg-gray-800/30 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700">
+                          <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Drag and drop call recordings or click to browse
+                          </p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                            Supports MP3, WAV, M4A files (max 50MB)
+                          </p>
+                        </div>
+                      )}
+                      
+                      <div className="relative">
+                        <input
+                          type="file"
+                          multiple
+                          accept=".mp3,.wav,.m4a,audio/*"
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          onChange={handleFileUpload}
+                        />
+                        <Button variant="outline" className="w-full gap-2">
+                          <Upload className="h-4 w-4" />
+                          {uploadedFiles.length > 0 ? "Add More Files" : "Browse Files"}
+                        </Button>
+                      </div>
                     </div>
-                    <Button variant="outline" className="w-full gap-2" disabled={!isRecording}>
-                      <Save className="h-4 w-4" />
-                      Save Recording
+                    
+                    <Button 
+                      className="w-full gap-2" 
+                      onClick={handleSubmitRecordings}
+                      disabled={uploadedFiles.length === 0 || isProcessing}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="h-4 w-4" />
+                          Generate Personas
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -164,11 +262,15 @@ export const SimulationCard: React.FC<SimulationCardProps> = ({
                   <Button 
                     variant="outline" 
                     className="border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white gap-2"
+                    disabled={uploadedFiles.length === 0 && !isProcessing}
                   >
                     <Plus className="h-4 w-4" />
                     Create Simulation
                   </Button>
-                  <Button className="gap-2 bg-gradient-to-r from-purple-500 to-indigo-500" disabled>
+                  <Button 
+                    className="gap-2 bg-gradient-to-r from-purple-500 to-indigo-500" 
+                    disabled={uploadedFiles.length === 0 && !isProcessing}
+                  >
                     <Rocket className="h-4 w-4" />
                     Generate Recommended Simulations
                   </Button>
