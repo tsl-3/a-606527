@@ -90,7 +90,6 @@ export const RolePlayDialog = ({
   }, [isCallActive]);
 
   useEffect(() => {
-    // Get available audio devices
     const getDevices = async () => {
       try {
         await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -558,7 +557,7 @@ export const RolePlayDialog = ({
           </>
         )}
 
-        {stage === 'call' && (
+        {stage === 'call' && isCallActive && (
           <>
             <DialogHeader className="border-b pb-3">
               <div className="flex items-center gap-3">
