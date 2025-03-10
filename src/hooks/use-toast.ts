@@ -1,12 +1,12 @@
 
 import * as React from "react";
-import { Toast as ToastPrimitive, ToastActionElement, ToastProps } from "@/components/ui/toast";
+import { Toast, ToastActionElement, ToastProps } from "@/components/ui/toast";
 
 // The code below is based on shadcn/ui toast implementation
 const TOAST_LIMIT = 5;
 const TOAST_REMOVE_DELAY = 1000000;
 
-type ToasterToast = ToastPrimitive & {
+type ToasterToast = typeof Toast & {
   id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;
