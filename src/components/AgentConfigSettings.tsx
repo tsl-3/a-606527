@@ -78,67 +78,72 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
           Configure your agent's basic information and behavior
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-agent-primary" />
-                <Label htmlFor="agent-name">Agent Name</Label>
-              </div>
-              <Input
-                id="agent-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter agent name"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Bot className="h-4 w-4 text-agent-primary" />
-                <Label htmlFor="agent-avatar">Agent Avatar</Label>
-              </div>
-              <div className="flex items-center gap-3 mb-3">
-                <Avatar className="h-16 w-16 border-2 border-agent-primary/30">
-                  <AvatarImage src={avatar} alt={name} />
-                  <AvatarFallback>
-                    <Bot className="h-8 w-8" />
-                  </AvatarFallback>
-                </Avatar>
-                <Button variant="outline" size="sm" onClick={generateRandomAvatar}>
-                  Generate Random
+      <CardContent className="space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
+          {/* Agent Avatar Section */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="flex flex-col items-center gap-4 p-6 border rounded-lg bg-muted/10">
+              <Avatar className="h-24 w-24 border-2 border-agent-primary/30">
+                <AvatarImage src={avatar} alt={name} />
+                <AvatarFallback>
+                  <Bot className="h-12 w-12" />
+                </AvatarFallback>
+              </Avatar>
+
+              <div className="w-full space-y-2">
+                <div className="flex items-center gap-2">
+                  <Bot className="h-4 w-4 text-agent-primary" />
+                  <Label htmlFor="agent-avatar">Agent Avatar</Label>
+                </div>
+                <Input
+                  id="agent-avatar"
+                  value={avatar}
+                  onChange={handleAvatarChange}
+                  placeholder="Enter avatar URL"
+                  className="text-xs"
+                />
+                <Button variant="outline" size="sm" onClick={generateRandomAvatar} className="w-full">
+                  Generate Random Avatar
                 </Button>
+                <p className="text-xs text-muted-foreground">
+                  Use a direct image URL or generate a random avatar
+                </p>
               </div>
-              <Input
-                id="agent-avatar"
-                value={avatar}
-                onChange={handleAvatarChange}
-                placeholder="Enter avatar URL"
-                className="text-xs"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Use a direct image URL or generate a random avatar
-              </p>
             </div>
           </div>
           
-          <div className="md:col-span-2 space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Target className="h-4 w-4 text-agent-primary" />
-                <Label htmlFor="agent-purpose">Agent Purpose</Label>
+          {/* Agent Details Section */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-agent-primary" />
+                  <Label htmlFor="agent-name">Agent Name</Label>
+                </div>
+                <Input
+                  id="agent-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter agent name"
+                />
               </div>
-              <Textarea
-                id="agent-purpose"
-                value={purpose}
-                onChange={(e) => setPurpose(e.target.value)}
-                placeholder="Describe what this agent is designed to do"
-                className="min-h-[100px]"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                A clear description of your agent's role and primary responsibilities
-              </p>
+              
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Target className="h-4 w-4 text-agent-primary" />
+                  <Label htmlFor="agent-purpose">Agent Purpose</Label>
+                </div>
+                <Textarea
+                  id="agent-purpose"
+                  value={purpose}
+                  onChange={(e) => setPurpose(e.target.value)}
+                  placeholder="Describe what this agent is designed to do"
+                  className="min-h-[120px]"
+                />
+                <p className="text-xs text-muted-foreground">
+                  A clear description of your agent's role and primary responsibilities
+                </p>
+              </div>
             </div>
           </div>
         </div>
