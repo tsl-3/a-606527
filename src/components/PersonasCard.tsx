@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   Users, ChevronUp, CheckCircle2, CircleDashed, 
@@ -7,9 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/hooks/use-toast";
 
 // Define persona interface
 interface Persona {
@@ -36,39 +34,6 @@ export const PersonasCard: React.FC<PersonasCardProps> = ({
   totalCount = 10
 }) => {
   const [isExpanded, setIsExpanded] = useState(status !== 'completed');
-  const [descriptionDialogOpen, setDescriptionDialogOpen] = useState(false);
-  const [audienceDescription, setAudienceDescription] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  const handleGeneratePersonas = () => {
-    setDescriptionDialogOpen(true);
-  };
-
-  const handleStartGeneration = () => {
-    if (!audienceDescription.trim()) {
-      toast({
-        title: "Description Required",
-        description: "Please provide a brief description of your audience.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsGenerating(true);
-    setDescriptionDialogOpen(false);
-    
-    // Simulate generation process
-    // In a real app, this would call an API to generate personas
-    setTimeout(() => {
-      toast({
-        title: "Personas Generated",
-        description: "Your personas have been successfully created based on your description.",
-      });
-      setIsGenerating(false);
-      // This would typically update the status to 'in-progress' or 'completed'
-      // and add the new personas to the list
-    }, 2000);
-  };
 
   return (
     <div className="rounded-lg overflow-hidden mb-6 border border-gray-200 dark:border-gray-800">
@@ -132,20 +97,9 @@ export const PersonasCard: React.FC<PersonasCardProps> = ({
                 <div className="flex justify-center">
                   <Button 
                     className="gap-2 bg-primary"
-                    onClick={handleGeneratePersonas}
-                    disabled={isGenerating}
                   >
-                    {isGenerating ? (
-                      <>
-                        <div className="h-4 w-4 border-2 border-current border-t-transparent animate-spin rounded-full mr-2" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <PlusCircle className="h-4 w-4" />
-                        Generate Personas
-                      </>
-                    )}
+                    <PlusCircle className="h-4 w-4" />
+                    Generate Personas
                   </Button>
                 </div>
               </div>
@@ -359,45 +313,6 @@ export const PersonasCard: React.FC<PersonasCardProps> = ({
           </>
         )}
       </div>
-
-      <Dialog open={descriptionDialogOpen} onOpenChange={setDescriptionDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Describe Your Audience</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Provide a brief description of the people you typically interact with. Include details such as:
-            </p>
-            <ul className="text-sm text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1">
-              <li>Demographics (age ranges, professions, backgrounds)</li>
-              <li>Common situations or contexts</li>
-              <li>Emotional states during interactions</li>
-              <li>Typical goals or needs</li>
-            </ul>
-            <Textarea 
-              placeholder="Example: We typically deal with professionals aged 30-45 in healthcare, finance, and tech. They're often busy, stressed, and need quick solutions. Many call from work, some are non-native English speakers, and about 30% are first-time users of our product..."
-              value={audienceDescription} 
-              onChange={(e) => setAudienceDescription(e.target.value)}
-              className="min-h-[150px]"
-            />
-          </div>
-          <DialogFooter className="flex justify-between sm:justify-between">
-            <Button 
-              variant="outline" 
-              onClick={() => setDescriptionDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleStartGeneration}
-              disabled={!audienceDescription.trim()}
-            >
-              Generate Personas
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
