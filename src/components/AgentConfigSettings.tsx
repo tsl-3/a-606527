@@ -154,18 +154,23 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-3 pt-2">
-                  <div className="flex justify-end">
-                    <Button variant="outline" size="sm" onClick={handleCopyPrompt}>
-                      <Copy className="h-3.5 w-3.5 mr-1.5" />
-                      Copy
+                  <div className="relative">
+                    <Textarea
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      placeholder="Enter the prompt or instructions for this agent"
+                      className="min-h-[250px] font-mono text-sm pr-10"
+                    />
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="absolute top-2 right-2 h-8 w-8 opacity-70 hover:opacity-100 bg-muted/50 hover:bg-muted" 
+                      onClick={handleCopyPrompt}
+                    >
+                      <Copy className="h-4 w-4" />
+                      <span className="sr-only">Copy</span>
                     </Button>
                   </div>
-                  <Textarea
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Enter the prompt or instructions for this agent"
-                    className="min-h-[250px] font-mono text-sm"
-                  />
                   <p className="text-xs text-muted-foreground">
                     These instructions tell the AI how to behave, what knowledge to use, and what tone to adopt
                   </p>
