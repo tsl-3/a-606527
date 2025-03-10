@@ -9,9 +9,12 @@ import { AgentType } from '@/types/agent';
 import { useToast } from "@/components/ui/use-toast";
 import { updateAgent } from '@/services/agentService';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bot, Copy, Save, Target, User, FileText, Code, Building, Briefcase } from "lucide-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  Bot, Copy, Save, Target, User, FileText, Code, Building, Briefcase, 
+  Headphones, ShoppingCart, Wrench, CircuitBoard, GraduationCap, Plane, 
+  Factory, ShieldCheck, Phone, Home, Plus, CirclePlus, MessageSquare,
+  HeartPulse, Landmark, Wallet, HelpCircle, BarChart4, Pen
+} from 'lucide-react';
 
 interface AgentConfigSettingsProps {
   agent: AgentType;
@@ -19,29 +22,31 @@ interface AgentConfigSettingsProps {
 }
 
 const INDUSTRIES = [
-  { id: "healthcare", name: "Healthcare" },
-  { id: "finance", name: "Finance & Banking" },
-  { id: "retail", name: "Retail & E-commerce" },
-  { id: "technology", name: "Technology & Software" },
-  { id: "education", name: "Education" },
-  { id: "hospitality", name: "Hospitality & Travel" },
-  { id: "manufacturing", name: "Manufacturing" },
-  { id: "insurance", name: "Insurance" },
-  { id: "telecommunications", name: "Telecommunications" },
-  { id: "real-estate", name: "Real Estate" }
+  { id: "healthcare", name: "Healthcare", icon: <HeartPulse className="h-4 w-4" /> },
+  { id: "finance", name: "Finance & Banking", icon: <Landmark className="h-4 w-4" /> },
+  { id: "retail", name: "Retail & E-commerce", icon: <ShoppingCart className="h-4 w-4" /> },
+  { id: "technology", name: "Technology & Software", icon: <CircuitBoard className="h-4 w-4" /> },
+  { id: "education", name: "Education", icon: <GraduationCap className="h-4 w-4" /> },
+  { id: "hospitality", name: "Hospitality & Travel", icon: <Plane className="h-4 w-4" /> },
+  { id: "manufacturing", name: "Manufacturing", icon: <Factory className="h-4 w-4" /> },
+  { id: "insurance", name: "Insurance", icon: <ShieldCheck className="h-4 w-4" /> },
+  { id: "telecommunications", name: "Telecommunications", icon: <Phone className="h-4 w-4" /> },
+  { id: "real-estate", name: "Real Estate", icon: <Home className="h-4 w-4" /> },
+  { id: "other", name: "Other Industry", icon: <Plus className="h-4 w-4" /> }
 ];
 
 const BOT_FUNCTIONS = [
-  { id: "customer-service", name: "Customer Service" },
-  { id: "sales", name: "Sales & Marketing" },
-  { id: "support", name: "Technical Support" },
-  { id: "it-helpdesk", name: "IT Helpdesk" },
-  { id: "lead-generation", name: "Lead Generation" },
-  { id: "booking", name: "Appointment Booking" },
-  { id: "faq", name: "FAQ & Knowledge Base" },
-  { id: "onboarding", name: "Customer Onboarding" },
-  { id: "billing", name: "Billing & Payments" },
-  { id: "feedback", name: "Feedback Collection" }
+  { id: "customer-service", name: "Customer Service", icon: <Headphones className="h-4 w-4" /> },
+  { id: "sales", name: "Sales & Marketing", icon: <BarChart4 className="h-4 w-4" /> },
+  { id: "support", name: "Technical Support", icon: <Wrench className="h-4 w-4" /> },
+  { id: "it-helpdesk", name: "IT Helpdesk", icon: <CircuitBoard className="h-4 w-4" /> },
+  { id: "lead-generation", name: "Lead Generation", icon: <Target className="h-4 w-4" /> },
+  { id: "booking", name: "Appointment Booking", icon: <Calendar className="h-4 w-4" /> },
+  { id: "faq", name: "FAQ & Knowledge Base", icon: <FileText className="h-4 w-4" /> },
+  { id: "onboarding", name: "Customer Onboarding", icon: <User className="h-4 w-4" /> },
+  { id: "billing", name: "Billing & Payments", icon: <Wallet className="h-4 w-4" /> },
+  { id: "feedback", name: "Feedback Collection", icon: <MessageSquare className="h-4 w-4" /> },
+  { id: "other", name: "Other Function", icon: <Plus className="h-4 w-4" /> }
 ];
 
 const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgentUpdate }) => {
@@ -52,18 +57,23 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   const [prompt, setPrompt] = useState(agent.prompt || '');
   const [industry, setIndustry] = useState(agent.industry || '');
   const [botFunction, setBotFunction] = useState(agent.botFunction || '');
+  const [customIndustry, setCustomIndustry] = useState('');
+  const [customFunction, setCustomFunction] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
     try {
       setIsSaving(true);
+      const finalIndustry = industry === 'other' ? customIndustry : industry;
+      const finalBotFunction = botFunction === 'other' ? customFunction : botFunction;
+      
       const updatedAgent = await updateAgent(agent.id, {
         name,
         avatar,
         purpose,
         prompt,
-        industry,
-        botFunction
+        industry: finalIndustry,
+        botFunction: finalBotFunction
       });
       
       onAgentUpdate(updatedAgent);
@@ -161,48 +171,6 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
               </p>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Building className="h-4 w-4 text-agent-primary" />
-                  <Label htmlFor="agent-industry">Industry</Label>
-                </div>
-                <Select value={industry} onValueChange={setIndustry}>
-                  <SelectTrigger id="agent-industry" className="w-full">
-                    <SelectValue placeholder="Select industry" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {INDUSTRIES.map((ind) => (
-                      <SelectItem key={ind.id} value={ind.id}>{ind.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  The industry context your agent operates in
-                </p>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Briefcase className="h-4 w-4 text-agent-primary" />
-                  <Label htmlFor="agent-function">Bot Function</Label>
-                </div>
-                <Select value={botFunction} onValueChange={setBotFunction}>
-                  <SelectTrigger id="agent-function" className="w-full">
-                    <SelectValue placeholder="Select function" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {BOT_FUNCTIONS.map((func) => (
-                      <SelectItem key={func.id} value={func.id}>{func.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  The primary function your agent serves
-                </p>
-              </div>
-            </div>
-            
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Target className="h-4 w-4 text-agent-primary" />
@@ -219,6 +187,78 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                 A clear description of your agent's role and primary responsibilities
               </p>
             </div>
+          </div>
+        </div>
+
+        <div className="space-y-4 pt-6 border-t">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Building className="h-4 w-4 text-agent-primary" />
+              <Label>Industry</Label>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {INDUSTRIES.map((ind) => (
+                <Button
+                  key={ind.id}
+                  type="button"
+                  variant={industry === ind.id ? "default" : "outline"}
+                  className={`justify-start gap-2 ${industry === ind.id ? "border-agent-primary bg-agent-primary text-white" : ""}`}
+                  onClick={() => setIndustry(ind.id)}
+                >
+                  {ind.icon}
+                  <span className="truncate">{ind.name}</span>
+                </Button>
+              ))}
+            </div>
+            
+            {industry === 'other' && (
+              <div className="mt-2">
+                <Input
+                  value={customIndustry}
+                  onChange={(e) => setCustomIndustry(e.target.value)}
+                  placeholder="Enter custom industry"
+                  className="w-full"
+                />
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">
+              The industry context your agent operates in
+            </p>
+          </div>
+
+          <div className="space-y-3 pt-4">
+            <div className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4 text-agent-primary" />
+              <Label>Bot Function</Label>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {BOT_FUNCTIONS.map((func) => (
+                <Button
+                  key={func.id}
+                  type="button"
+                  variant={botFunction === func.id ? "default" : "outline"}
+                  className={`justify-start gap-2 ${botFunction === func.id ? "border-agent-primary bg-agent-primary text-white" : ""}`}
+                  onClick={() => setBotFunction(func.id)}
+                >
+                  {func.icon}
+                  <span className="truncate">{func.name}</span>
+                </Button>
+              ))}
+            </div>
+            
+            {botFunction === 'other' && (
+              <div className="mt-2">
+                <Input
+                  value={customFunction}
+                  onChange={(e) => setCustomFunction(e.target.value)}
+                  placeholder="Enter custom function"
+                  className="w-full"
+                />
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">
+              The primary function your agent serves
+            </p>
           </div>
         </div>
 

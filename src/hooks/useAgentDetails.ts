@@ -61,7 +61,9 @@ export const useAgentDetails = (agentId: string | undefined) => {
           purpose: data.purpose || "Help users with their questions and provide assistance.",
           prompt: data.prompt || `You are ${data.name}, an AI assistant. Your job is to be helpful, harmless, and honest. Answer questions to the best of your ability.`,
           industry: data.industry || "",
-          botFunction: data.botFunction || ""
+          botFunction: data.botFunction || "",
+          customIndustry: data.customIndustry || "",
+          customFunction: data.customFunction || ""
         };
         
         setAgent(enhancedData);

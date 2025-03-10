@@ -39,5 +39,7 @@ export interface AgentType {
   purpose?: string;
   prompt?: string;
   industry?: string;
+  customIndustry?: string;
   botFunction?: string;
+  customFunction?: string;
 }
