@@ -420,9 +420,9 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
               <h3 className="text-sm font-medium mb-3">Sentiment Breakdown</h3>
               <div className="h-72 flex items-center justify-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full w-full">
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-center h-full">
                     <ResponsiveContainer width="100%" height={200}>
-                      <PieChart>
+                      <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                         <Pie
                           data={sentimentData}
                           cx="50%"
@@ -480,9 +480,9 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <h3 className="text-sm font-medium mb-3">Topic Distribution</h3>
-              <div className="h-72">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
+              <div className="h-72 flex items-center justify-center">
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                     <Pie
                       data={topicData}
                       cx="50%"
@@ -606,9 +606,9 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
               <h3 className="text-sm font-medium mb-3">Distribution by Channel</h3>
               <div className="h-72 flex items-center justify-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full w-full">
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-center h-full">
                     <ResponsiveContainer width="100%" height={200}>
-                      <PieChart>
+                      <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                         <Pie
                           data={channelData}
                           cx="50%"
