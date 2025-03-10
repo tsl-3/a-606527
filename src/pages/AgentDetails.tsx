@@ -26,6 +26,7 @@ import { updateAgent } from "@/services/agentService";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import AgentConfigSettings from "@/components/AgentConfigSettings";
 import { RolePlayDialog } from "@/components/RolePlayDialog";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
 
@@ -177,6 +178,8 @@ const AgentDetails = () => {
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("");
   const [activeTab, setActiveTab] = useState("setup");
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isCallTooltipOpen, setIsCallTooltipOpen] = useState(false);
+  const [customCallNumber, setCustomCallNumber] = useState<string>("");
 
   useEffect(() => {
     if (agent) {
@@ -614,6 +617,37 @@ const AgentDetails = () => {
                         <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestCall} title="Test agent call">
                           <PhoneOutgoing className="h-3 w-3 text-green-400" />
                         </Button>
+                        <Tooltip open={isCallTooltipOpen} onOpenChange={setIsCallTooltipOpen}>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-6 w-6 rounded-full hover:bg-blue-700/50" 
+                              title="Call me back"
+                            >
+                              <Phone className="h-3 w-3 text-blue-400" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" align="end" className="w-64 p-4">
+                            <div className="space-y-3">
+                              <h4 className="font-medium text-sm">Get a call from this agent</h4>
+                              <Input 
+                                type="tel" 
+                                placeholder="Enter your phone number" 
+                                value={customCallNumber} 
+                                onChange={(e) => setCustomCallNumber(e.target.value)}
+                                className="h-8 text-xs"
+                              />
+                              <Button 
+                                size="sm" 
+                                className="w-full h-8 text-xs" 
+                                onClick={handleCallMe}
+                              >
+                                Call me
+                              </Button>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
                     </div>
                   </div>}
@@ -943,3 +977,4 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
+
