@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -797,26 +796,6 @@ export const RolePlayDialog = ({
                     ))}
                   </div>
                 )}
-                
-                <div className="mt-auto">
-                  <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
-                    <MessageCircle className="h-4 w-4" />
-                    Text Chat
-                  </h4>
-                  
-                  <div className="space-y-2">
-                    <Textarea
-                      placeholder="Type a message..."
-                      value={currentMessage}
-                      onChange={(e) => setCurrentMessage(e.target.value)}
-                      className="resize-none text-sm h-[80px]"
-                    />
-                    <Button size="sm" className="w-full" onClick={handleSendMessage}>
-                      <Send className="h-4 w-4 mr-2" />
-                      Send Message
-                    </Button>
-                  </div>
-                </div>
               </div>
             </div>
           </>
