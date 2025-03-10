@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { CalendarDays, Filter, Download, BarChart2, TestTube, Heart, MessageSquare, LayoutGrid, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -717,4 +718,10 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
               </ResponsiveContainer>
             </div>
           </div>
-        </Card
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default AnalyticsTab;
