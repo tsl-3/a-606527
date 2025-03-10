@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +28,23 @@ interface Simulation {
 
 interface SimulationStepsProps {
   onComplete: (data: any) => void;
+  initialStatus?: 'not-started' | 'in-progress' | 'completed';
+  coverage?: number;
+  performance?: number;
+  scenarios?: Array<{
+    id: string;
+    name: string;
+    completed: boolean;
+  }>;
+  simulations?: Array<{
+    id: string;
+    name: string;
+    date: string;
+    coverage: number;
+    performance: number;
+    scenarios: number;
+    tokens: string;
+  }>;
 }
 
 const STEPS: SimulationStep[] = [
@@ -81,12 +97,33 @@ const SAMPLE_SIMULATIONS: Simulation[] = [
   }
 ];
 
-export const SimulationSteps = ({ onComplete }: SimulationStepsProps) => {
-  const [currentStep, setCurrentStep] = useState(0);
+export const SimulationSteps = ({ 
+  onComplete, 
+  initialStatus = 'not-started', 
+  coverage: initialCoverage, 
+  performance: initialPerformance,
+  scenarios: initialScenarios,
+  simulations: initialSimulations
+}: SimulationStepsProps) => {
+  const [currentStep, setCurrentStep] = useState(initialStatus === 'not-started' ? 0 : initialStatus === 'in-progress' ? 1 : 2);
   const [recordings, setRecordings] = useState<File[]>([]);
   const [description, setDescription] = useState("");
   const [selectedSimulations, setSelectedSimulations] = useState<string[]>([]);
   const [simulationCount, setSimulationCount] = useState(5);
+
+  useEffect(() => {
+    if (initialScenarios && initialScenarios.length > 0) {
+      const simulationIds = SAMPLE_SIMULATIONS
+        .filter(sim => sim.scenarios.some(scenario => 
+          initialScenarios.some(initScenario => 
+            scenario.includes(initScenario.name)
+          )
+        ))
+        .map(sim => sim.id);
+      
+      setSelectedSimulations(simulationIds);
+    }
+  }, [initialScenarios]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
