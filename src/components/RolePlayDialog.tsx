@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 
 const samplePersonas = [
   { id: 1, name: "Emily", role: "Product Manager", avatar: "E", description: "Focused on feature prioritization and roadmap planning", background: "8 years in product management, previously worked at Google", communication: "Direct and data-driven", painPoints: "Tight deadlines, resource constraints" },
@@ -44,8 +44,7 @@ export const RolePlayDialog = ({
   open: boolean; 
   onOpenChange: (open: boolean) => void;
 }) => {
-  const [stage, setStage] = useState<'selection' | 'persona-setup' | 'persona-list' | 'persona-detail' | 'chat' | 'call'>('selection');
-  const [personaDescription, setPersonaDescription] = useState('');
+  const [stage, setStage] = useState<'selection' | 'persona-list' | 'persona-detail' | 'chat' | 'call'>('selection');
   const [selectedPersona, setSelectedPersona] = useState<typeof samplePersonas[0] | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
@@ -81,7 +80,10 @@ export const RolePlayDialog = ({
           })
           .catch(error => {
             console.error('Permission denied for audio:', error);
-            toast.error('Please allow microphone access to use audio features');
+            toast({
+              title: "Permission Error",
+              description: "Please allow microphone access to use audio features"
+            });
             return;
           });
 
@@ -97,7 +99,10 @@ export const RolePlayDialog = ({
 
       } catch (error) {
         console.error('Error accessing media devices:', error);
-        toast.error('Unable to access audio devices. Please check your browser permissions.');
+        toast({
+          title: "Device Error",
+          description: "Unable to access audio devices. Please check your browser permissions."
+        });
       }
     };
 
@@ -139,12 +144,8 @@ export const RolePlayDialog = ({
     if (option === 'someone') {
       setStage('call');
     } else {
-      setStage('persona-setup');
+      setStage('persona-list');
     }
-  };
-
-  const handleGeneratePersonas = () => {
-    setStage('persona-list');
   };
 
   const handlePersonaSelect = (persona: typeof samplePersonas[0]) => {
@@ -190,7 +191,10 @@ export const RolePlayDialog = ({
     }
 
     if (!selectedMic || !selectedSpeaker) {
-      toast.error('Please select both microphone and speaker devices');
+      toast({
+        title: "Device Error",
+        description: "Please select both microphone and speaker devices"
+      });
       return;
     }
 
@@ -200,18 +204,27 @@ export const RolePlayDialog = ({
     
     setTimeout(() => {
       setTranscription([`Call connected with ${phoneNumber}`]);
-      toast.success("Call connected successfully");
+      toast({
+        title: "Call Connected",
+        description: "Call connected successfully"
+      });
     }, 2000);
   };
 
   const handleToggleMic = () => {
     setIsMicMuted(!isMicMuted);
-    toast.success(isMicMuted ? "Microphone unmuted" : "Microphone muted");
+    toast({
+      title: isMicMuted ? "Microphone Unmuted" : "Microphone Muted",
+      description: isMicMuted ? "Your microphone is now active" : "Your microphone has been muted"
+    });
   };
 
   const handleToggleAudio = () => {
     setIsAudioMuted(!isAudioMuted);
-    toast.success(isAudioMuted ? "Audio unmuted" : "Audio muted");
+    toast({
+      title: isAudioMuted ? "Audio Unmuted" : "Audio Muted",
+      description: isAudioMuted ? "You can now hear the call" : "Call audio has been muted"
+    });
   };
 
   const handleEndCall = () => {
@@ -289,7 +302,6 @@ export const RolePlayDialog = ({
 
   const handleClose = () => {
     setStage('selection');
-    setPersonaDescription('');
     setSelectedPersona(null);
     setMessages([]);
     setCurrentMessage('');
@@ -340,46 +352,10 @@ export const RolePlayDialog = ({
                 </div>
                 <h3 className="text-lg font-medium mb-2">User Personas</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Define customer types and generate personas for targeted training calls
+                  Choose from common user personas for targeted training calls
                 </p>
               </div>
             </div>
-          </>
-        )}
-
-        {stage === 'persona-setup' && (
-          <>
-            <DialogHeader>
-              <DialogTitle className="text-xl">Define Your User Personas</DialogTitle>
-              <DialogDescription>
-                Describe how your typical customers or users behave to generate relevant personas
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="py-4">
-              <Textarea 
-                placeholder="Describe your typical customers or users. For example: 'Our users are primarily small business owners who need help with accounting software. They often have questions about invoicing, taxes, and financial reports.'"
-                className="min-h-[150px]"
-                value={personaDescription}
-                onChange={(e) => setPersonaDescription(e.target.value)}
-              />
-            </div>
-            
-            <DialogFooter>
-              <Button 
-                variant="outline"
-                onClick={() => setStage('selection')}
-              >
-                Back
-              </Button>
-              <Button
-                onClick={handleGeneratePersonas}
-                disabled={personaDescription.trim().length < 10}
-                className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
-              >
-                Generate Personas
-              </Button>
-            </DialogFooter>
           </>
         )}
 
@@ -388,7 +364,7 @@ export const RolePlayDialog = ({
             <DialogHeader>
               <DialogTitle className="text-xl">Select a Persona</DialogTitle>
               <DialogDescription>
-                Choose one of the generated personas to start a role-play session
+                Choose one of the personas to start a role-play session
               </DialogDescription>
             </DialogHeader>
             
@@ -415,7 +391,7 @@ export const RolePlayDialog = ({
             <DialogFooter>
               <Button 
                 variant="outline"
-                onClick={() => setStage('persona-setup')}
+                onClick={() => setStage('selection')}
               >
                 Back
               </Button>
