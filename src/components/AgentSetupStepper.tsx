@@ -550,7 +550,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       name: 'Sarah Johnson',
       role: 'Marketing Manager',
       age: '32',
-      description: 'Sarah is a busy marketing manager at a mid-sized tech company. She needs to stay on top of industry trends while managing her team and multiple campaigns.',
+      description: "Sarah is a busy marketing manager at a mid-sized tech company. She needs to stay on top of industry trends while managing her team and multiple campaigns.",
       pain_points: ['Time management', 'Information overload', 'Reporting'],
       goals: ['Increase ROI', 'Streamline workflows', 'Develop team']
     },
@@ -559,7 +559,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       name: 'Michael Chen',
       role: 'Software Developer',
       age: '28',
-      description: 'Michael is a full-stack developer who works remotely. He values technical documentation and efficient problem-solving approaches.',
+      description: "Michael is a full-stack developer who works remotely. He values technical documentation and efficient problem-solving approaches.",
       pain_points: ['Legacy code', 'Unclear requirements', 'Technical debt'],
       goals: ['Write clean code', 'Learn new technologies', 'Build scalable systems']
     },
@@ -568,7 +568,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       name: 'Emma Rodriguez',
       role: 'Customer Support Lead',
       age: '35',
-      description: 'Emma manages a team of support representatives. She's focused on improving customer satisfaction and reducing resolution times.',
+      description: "Emma manages a team of support representatives. She's focused on improving customer satisfaction and reducing resolution times.",
       pain_points: ['High ticket volume', 'Training new staff', 'Complex issues'],
       goals: ['Improve CSAT scores', 'Reduce response time', 'Develop knowledge base']
     },
@@ -577,7 +577,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       name: 'David Washington',
       role: 'Finance Director',
       age: '45',
-      description: 'David oversees financial operations and needs accurate data for forecasting and reporting to stakeholders.',
+      description: "David oversees financial operations and needs accurate data for forecasting and reporting to stakeholders.",
       pain_points: ['Data accuracy', 'Manual processes', 'Compliance'],
       goals: ['Automate reporting', 'Improve forecasting', 'Reduce costs']
     }
@@ -683,7 +683,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
               name: 'Jennifer Lee',
               role: 'Product Manager',
               age: '36',
-              description: 'Jennifer oversees product development and works closely with engineering and design teams to deliver solutions that meet customer needs.',
+              description: "Jennifer oversees product development and works closely with engineering and design teams to deliver solutions that meet customer needs.",
               pain_points: ['Feature prioritization', 'Stakeholder management', 'Market fit'],
               goals: ['Increase user adoption', 'Improve retention', 'Drive innovation']
             },
@@ -692,7 +692,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
               name: 'Robert Taylor',
               role: 'Sales Director',
               age: '42',
-              description: 'Robert leads the sales team and is focused on expanding the customer base while maintaining strong relationships with existing clients.',
+              description: "Robert leads the sales team and is focused on expanding the customer base while maintaining strong relationships with existing clients.",
               pain_points: ['Long sales cycles', 'Competitive market', 'CRM management'],
               goals: ['Exceed quota', 'Expand territories', 'Improve forecasting']
             },
@@ -701,7 +701,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
               name: 'Lisa Morgan',
               role: 'HR Specialist',
               age: '39',
-              description: 'Lisa handles employee relations, recruitment, and policy implementation across the organization.',
+              description: "Lisa handles employee relations, recruitment, and policy implementation across the organization.",
               pain_points: ['Talent retention', 'Policy compliance', 'Employee engagement'],
               goals: ['Streamline hiring', 'Improve culture', 'Reduce turnover']
             },
@@ -710,7 +710,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
               name: 'James Wilson',
               role: 'Operations Manager',
               age: '47',
-              description: 'James ensures business processes run efficiently and is always looking for ways to improve operational effectiveness.',
+              description: "James ensures business processes run efficiently and is always looking for ways to improve operational effectiveness.",
               pain_points: ['Process bottlenecks', 'Resource allocation', 'Quality control'],
               goals: ['Optimize processes', 'Reduce costs', 'Improve scalability']
             },
@@ -719,7 +719,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
               name: 'Sophia Garcia',
               role: 'UX Designer',
               age: '31',
-              description: 'Sophia creates user-centered designs and conducts research to ensure products meet user needs and expectations.',
+              description: "Sophia creates user-centered designs and conducts research to ensure products meet user needs and expectations.",
               pain_points: ['Usability testing', 'Design constraints', 'Developer handoff'],
               goals: ['Improve usability', 'Create design systems', 'User advocacy']
             },
@@ -728,7 +728,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
               name: 'Thomas Brown',
               role: 'IT Administrator',
               age: '38',
-              description: 'Thomas manages the IT infrastructure and ensures systems are secure, up-to-date, and functioning properly.',
+              description: "Thomas manages the IT infrastructure and ensures systems are secure, up-to-date, and functioning properly.",
               pain_points: ['Security threats', 'Legacy systems', 'User support'],
               goals: ['Enhance security', 'System reliability', 'Automate maintenance']
             }
