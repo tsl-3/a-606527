@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { 
   BookOpen, Upload, CircleDashed, ArrowRight, File, Database,
@@ -54,7 +53,7 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-8 h-8 text-gray-900 dark:text-white">
-              2
+              1
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Knowledge Base</h3>
             {status === 'in-progress' && (
@@ -127,6 +126,10 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
                   <Button className="gap-2 bg-primary">
                     <File className="h-4 w-4" />
                     Add Web Page
+                  </Button>
+                  <Button variant="outline" className="gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white">
+                    <CircleDashed className="h-4 w-4" />
+                    Add Text
                   </Button>
                 </div>
               </div>
@@ -211,40 +214,6 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
               </>
             )}
 
-            {(status === 'in-progress' || status === 'not-started') && (
-              <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg mb-6 border border-gray-200 dark:border-gray-800">
-                <h4 className="font-medium text-gray-900 dark:text-white mb-3">Add Knowledge Sources</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Select a method to provide training data for your agent:</p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <Button variant="outline" className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
-                    <File className="h-4 w-4" />
-                    <span>Add Web Page</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
-                    onClick={handleUploadClick}
-                  >
-                    <Upload className="h-4 w-4" />
-                    <span>Upload Documents</span>
-                  </Button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    style={{ display: 'none' }}
-                    onChange={handleFileChange}
-                    multiple
-                    accept=".pdf,.doc,.docx,.txt"
-                  />
-                  <Button variant="outline" className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
-                    <CircleDashed className="h-4 w-4" />
-                    <span>Add Text</span>
-                  </Button>
-                </div>
-              </div>
-            )}
-
             {status === 'completed' && (
               <div className="mb-6">
                 <div className="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800/30 rounded-lg p-4 mb-6">
@@ -317,6 +286,40 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
                       </div>
                     ))}
                   </div>
+                </div>
+              </div>
+            )}
+
+            {(status === 'in-progress' || status === 'completed') && (
+              <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg mb-6 border border-gray-200 dark:border-gray-800">
+                <h4 className="font-medium text-gray-900 dark:text-white mb-3">Add Knowledge Sources</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Select a method to provide training data for your agent:</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <Button variant="outline" className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <File className="h-4 w-4" />
+                    <span>Add Web Page</span>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                    onClick={handleUploadClick}
+                  >
+                    <Upload className="h-4 w-4" />
+                    <span>Upload Documents</span>
+                  </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    onChange={handleFileChange}
+                    multiple
+                    accept=".pdf,.doc,.docx,.txt"
+                  />
+                  <Button variant="outline" className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <CircleDashed className="h-4 w-4" />
+                    <span>Add Text</span>
+                  </Button>
                 </div>
               </div>
             )}
