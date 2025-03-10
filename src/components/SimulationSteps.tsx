@@ -4,12 +4,9 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/hooks/use-toast";
-import { Upload, Play, Check, FileAudio, X, ChevronRight, Users, Target, PlayCircle, Percent, Zap, Bot, BrainCircuit, PenLine, Users2, Phone, Building, FileText, Database, Lightbulb, BarChart } from 'lucide-react';
-import { Skeleton } from "@/components/ui/skeleton";
+import { Label } from "@/components/ui/label";
+import { Check, ChevronRight, Target, PlayCircle, Percent, Zap, Bot, BrainCircuit, PenLine, Users2, Phone, Building, FileText, Database, Lightbulb, BarChart } from 'lucide-react';
 
 interface SimulationStep {
   title: string;
@@ -49,7 +46,6 @@ interface SimulationStepsProps {
   }>;
 }
 
-// Updated steps array with "Generate Personas" step removed
 const STEPS: SimulationStep[] = [
   {
     title: "Select Simulations",
@@ -142,7 +138,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
   },
   {
     id: "5",
-    title: "Order Status",
+0 title: "Order Status",
     description: "Provide updates on order processing and delivery",
     scenarios: [
       "Check order status",
@@ -251,7 +247,6 @@ export const SimulationSteps = ({
   scenarios: initialScenarios,
   simulations: initialSimulations
 }: SimulationStepsProps) => {
-  // Update the current step logic to account for the removed first step
   const [currentStep, setCurrentStep] = useState(initialStatus === 'not-started' ? 0 : initialStatus === 'in-progress' ? 0 : 1);
   const [selectedSimulations, setSelectedSimulations] = useState<string[]>([]);
   const [simulationCount, setSimulationCount] = useState(5);
@@ -448,7 +443,7 @@ export const SimulationSteps = ({
             <div className="space-y-4">
               <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-8 mb-8 text-center">
                 <Target className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-                <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">No simulations generated yet</h4>
+                <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">Generate Simulations</h4>
                 <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
                   Generate simulation scenarios to test your agent's performance under different conditions.
                 </p>
