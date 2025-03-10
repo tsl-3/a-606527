@@ -59,7 +59,7 @@ export const RolePlayDialog = ({
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [transcription, setTranscription] = useState<string[]>([]);
   const [isLoadingTranscription, setIsLoadingTranscription] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
+  const [isRecording, setIsRecording] = useState(true);
   const [isPlayingRecording, setIsPlayingRecording] = useState(false);
   const [recordingProgress, setRecordingProgress] = useState(0);
   
@@ -235,15 +235,8 @@ export const RolePlayDialog = ({
   const handleEndCall = () => {
     setIsCallActive(false);
     
-    if (selectedPersona && transcription.length > 0) {
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        sender: 'persona',
-        text: `Call ended. Here's the transcript:\n\n${transcription.join('\n')}`,
-        timestamp: new Date(),
-      };
-      
-      setMessages(prev => [...prev, newMessage]);
+    if (transcription.length > 0) {
+      setStage('success');
     }
   };
 
@@ -318,7 +311,7 @@ export const RolePlayDialog = ({
         }
         return prev + 1;
       });
-    }, callDuration * 10);
+    }, 50); // Make it faster to simulate a realistic playback
   };
 
   const handleStopPlayback = () => {
@@ -360,9 +353,18 @@ export const RolePlayDialog = ({
     setKnowledgeResults([]);
     setIsCallActive(false);
     setCallDuration(0);
+    setIsCallMuted(false);
+    setIsMicMuted(false);
+    setIsAudioMuted(false);
     setTranscription([]);
-    setRecordingProgress(0);
+    setIsLoadingTranscription(false);
+    setIsRecording(false);
     setIsPlayingRecording(false);
+    setRecordingProgress(0);
+    setPhoneNumber('');
+    setPhoneNumberError('');
+    setSelectedMic('');
+    setSelectedSpeaker('');
     
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -397,7 +399,7 @@ export const RolePlayDialog = ({
                 <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <PhoneCall className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-lg font-medium mb-2">Role-Play Call</h3>
+                <h3 className="text-lg font-medium mb-2">Role-Play Call</h3
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Start a voice call session with a real person to practice customer conversations
                 </p>
@@ -787,183 +789,3 @@ export const RolePlayDialog = ({
                     {transcription.map((line, index) => {
                       const [speaker, ...textParts] = line.split(': ');
                       const text = textParts.join(': ');
-                      const isUser = speaker === 'You';
-                      
-                      return (
-                        <div key={index} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
-                          <div className="flex items-start gap-3 max-w-[80%]">
-                            {!isUser && selectedPersona && (
-                              <Avatar className="h-8 w-8">
-                                <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                                  {selectedPersona.avatar}
-                                </AvatarFallback>
-                              </Avatar>
-                            )}
-                            
-                            <div className={`rounded-lg p-3 ${
-                              isUser 
-                                ? 'bg-primary text-white' 
-                                : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
-                            }`}>
-                              <p className="text-sm">{text}</p>
-                            </div>
-                            
-                            {isUser && (
-                              <Avatar className="h-8 w-8">
-                                <AvatarFallback className="bg-secondary text-primary text-sm">
-                                  You
-                                </AvatarFallback>
-                              </Avatar>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium">Live Transcription</span>
-                </div>
-              </div>
-              
-              <div className="w-full md:w-[250px] border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-4 flex flex-col">
-                <h4 className="font-medium text-sm mb-3 flex items-center gap-2">
-                  <Brain className="h-4 w-4" />
-                  Knowledge Base
-                </h4>
-                
-                <div className="flex items-center gap-2 mb-3">
-                  <Input
-                    placeholder="Search knowledge..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="text-sm"
-                  />
-                  <Button size="sm" variant="outline" onClick={handleKnowledgeSearch}>
-                    <Search className="h-4 w-4" />
-                  </Button>
-                </div>
-                
-                {knowledgeResults.length > 0 && (
-                  <div className="space-y-2 mb-4 flex-1 overflow-y-auto">
-                    {knowledgeResults.map((result, index) => (
-                      <div key={index} className="bg-secondary/20 p-2 rounded-lg text-xs">
-                        {result}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </>
-        )}
-        
-        {stage === 'success' && (
-          <>
-            <DialogHeader>
-              <DialogTitle className="text-2xl flex items-center gap-2">
-                <CheckCircle className="h-6 w-6 text-green-500" />
-                Great Job!
-              </DialogTitle>
-              <DialogDescription className="text-base mt-2">
-                You're one step closer to creating a more human-like AI. Here's the recording from your call.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="py-6 flex flex-col items-center">
-              <Card className="w-full max-w-2xl">
-                <CardHeader>
-                  <CardTitle className="text-lg">Call Summary</CardTitle>
-                  <CardDescription>
-                    {selectedPersona 
-                      ? `Call with ${selectedPersona.name} (${selectedPersona.role})`
-                      : `Call with ${phoneNumber || "External Contact"}`
-                    }
-                  </CardDescription>
-                </CardHeader>
-                
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <Timer className="h-4 w-4 text-primary" />
-                      <span>Duration: {formatTime(callDuration)}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-primary" />
-                      <span>{transcription.length} messages exchanged</span>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-secondary/20 rounded-lg p-4 space-y-3">
-                    <div className="flex items-center gap-3">
-                      <Play 
-                        className={`h-8 w-8 p-1.5 rounded-full ${isPlayingRecording ? 'bg-red-500 text-white' : 'bg-primary text-white'} cursor-pointer transition-colors`}
-                        onClick={isPlayingRecording ? handleStopPlayback : handlePlayRecording}
-                      />
-                      
-                      <div className="flex-1">
-                        <Progress value={recordingProgress} className="h-2 w-full" />
-                      </div>
-                      
-                      <span className="text-xs font-medium">
-                        {formatTime(Math.floor(callDuration * (recordingProgress / 100)))} / {formatTime(callDuration)}
-                      </span>
-                    </div>
-                    
-                    <p className="text-sm text-muted-foreground">
-                      {isPlayingRecording ? "Playing recording..." : "Click play to listen to the recording"}
-                    </p>
-                  </div>
-                  
-                  <div className="bg-secondary/10 rounded-lg p-4">
-                    <h4 className="font-medium mb-2">Transcript Preview</h4>
-                    <div className="max-h-[150px] overflow-y-auto space-y-3">
-                      {transcription.slice(0, 3).map((line, index) => {
-                        const [speaker, ...textParts] = line.split(': ');
-                        const text = textParts.join(': ');
-                        
-                        return (
-                          <div key={index} className="text-sm">
-                            <span className="font-medium">{speaker}:</span> {text}
-                          </div>
-                        );
-                      })}
-                      
-                      {transcription.length > 3 && (
-                        <p className="text-xs text-muted-foreground">
-                          +{transcription.length - 3} more messages...
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-                
-                <CardFooter className="flex justify-between pt-2">
-                  <Button
-                    variant="outline"
-                    onClick={handleRetake}
-                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-                  >
-                    <Redo className="mr-2 h-4 w-4" />
-                    Retake Call
-                  </Button>
-                  
-                  <Button
-                    onClick={handleSaveAndTrain}
-                    className="bg-gradient-to-r from-green-500 to-emerald-600 text-white"
-                  >
-                    <Save className="mr-2 h-4 w-4" />
-                    Save & Train AI
-                  </Button>
-                </CardFooter>
-              </Card>
-            </div>
-          </>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-};
