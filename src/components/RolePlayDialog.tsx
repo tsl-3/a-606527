@@ -73,6 +73,46 @@ export const RolePlayDialog = ({
   const [availableSpeakers, setAvailableSpeakers] = useState<MediaDeviceInfo[]>([]);
 
   useEffect(() => {
+    const getDevices = async () => {
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            stream.getTracks().forEach(track => track.stop());
+          })
+          .catch(error => {
+            console.error('Permission denied for audio:', error);
+            toast.error('Please allow microphone access to use audio features');
+            return;
+          });
+
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const mics = devices.filter(device => device.kind === 'audioinput' && device.deviceId);
+        const speakers = devices.filter(device => device.kind === 'audiooutput' && device.deviceId);
+        
+        setAvailableMics(mics);
+        setAvailableSpeakers(speakers);
+        
+        if (mics.length > 0) setSelectedMic(mics[0].deviceId);
+        if (speakers.length > 0) setSelectedSpeaker(speakers[0].deviceId);
+
+      } catch (error) {
+        console.error('Error accessing media devices:', error);
+        toast.error('Unable to access audio devices. Please check your browser permissions.');
+      }
+    };
+
+    if (stage === 'call' && !isCallActive) {
+      getDevices();
+
+      navigator.mediaDevices.addEventListener('devicechange', getDevices);
+      
+      return () => {
+        navigator.mediaDevices.removeEventListener('devicechange', getDevices);
+      };
+    }
+  }, [stage, isCallActive]);
+
+  useEffect(() => {
     if (isCallActive && !timerRef.current) {
       timerRef.current = setInterval(() => {
         setCallDuration(prev => prev + 1);
@@ -89,29 +129,6 @@ export const RolePlayDialog = ({
     };
   }, [isCallActive]);
 
-  useEffect(() => {
-    const getDevices = async () => {
-      try {
-        await navigator.mediaDevices.getUserMedia({ audio: true });
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        
-        const mics = devices.filter(device => device.kind === 'audioinput');
-        const speakers = devices.filter(device => device.kind === 'audiooutput');
-        
-        setAvailableMics(mics);
-        setAvailableSpeakers(speakers);
-        
-        if (mics.length > 0) setSelectedMic(mics[0].deviceId);
-        if (speakers.length > 0) setSelectedSpeaker(speakers[0].deviceId);
-      } catch (error) {
-        console.error('Error accessing media devices:', error);
-        toast.error('Unable to access audio devices');
-      }
-    };
-
-    getDevices();
-  }, []);
-  
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
