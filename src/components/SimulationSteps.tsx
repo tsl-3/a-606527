@@ -25,6 +25,7 @@ interface Simulation {
   coverage: number;
   performance: number;
   tokens: number;
+  count?: number;
 }
 
 interface SimulationStepsProps {
@@ -94,7 +95,8 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 35,
     performance: 40,
-    tokens: 2500
+    tokens: 2500,
+    count: 1
   },
   {
     id: "2",
@@ -108,7 +110,8 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 25,
     performance: 30,
-    tokens: 2000
+    tokens: 2000,
+    count: 1
   },
   {
     id: "3",
@@ -122,7 +125,8 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 20,
     performance: 25,
-    tokens: 1800
+    tokens: 1800,
+    count: 1
   },
   {
     id: "4",
@@ -137,7 +141,8 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 15,
     performance: 20,
-    tokens: 1700
+    tokens: 1700,
+    count: 1
   },
   {
     id: "5",
@@ -151,7 +156,8 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 18,
     performance: 22,
-    tokens: 1900
+    tokens: 1900,
+    count: 1
   },
   {
     id: "6",
@@ -165,7 +171,8 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 12,
     performance: 18,
-    tokens: 1600
+    tokens: 1600,
+    count: 1
   },
   {
     id: "7",
@@ -179,7 +186,8 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 10,
     performance: 15,
-    tokens: 1500
+    tokens: 1500,
+    count: 1
   },
   {
     id: "8",
@@ -193,7 +201,8 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 22,
     performance: 28,
-    tokens: 2100
+    tokens: 2100,
+    count: 1
   },
   {
     id: "9",
@@ -207,7 +216,8 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 30,
     performance: 35,
-    tokens: 2300
+    tokens: 2300,
+    count: 1
   },
   {
     id: "10",
@@ -221,7 +231,8 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 28,
     performance: 33,
-    tokens: 2200
+    tokens: 2200,
+    count: 1
   }
 ];
 
@@ -256,6 +267,7 @@ export const SimulationSteps = ({
   const [availableSimulations, setAvailableSimulations] = useState<Simulation[]>([]);
   const [loadingCaption, setLoadingCaption] = useState(LOADING_CAPTIONS[0]);
   const [loadingCaptionIndex, setLoadingCaptionIndex] = useState(0);
+  const [simulationCounts, setSimulationCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (initialScenarios && initialScenarios.length > 0) {
@@ -312,16 +324,34 @@ export const SimulationSteps = ({
         ? prev.filter(simId => simId !== id)
         : [...prev, id]
     );
+    
+    if (!simulationCounts[id]) {
+      setSimulationCounts(prev => ({
+        ...prev,
+        [id]: 1
+      }));
+    }
+  };
+
+  const updateSimulationCount = (id: string, count: number) => {
+    const validCount = Math.max(1, count);
+    setSimulationCounts(prev => ({
+      ...prev,
+      [id]: validCount
+    }));
   };
 
   const calculateTotals = () => {
     return availableSimulations
       .filter(sim => selectedSimulations.includes(sim.id))
-      .reduce((acc, sim) => ({
-        coverage: acc.coverage + sim.coverage,
-        performance: acc.performance + sim.performance,
-        tokens: acc.tokens + sim.tokens
-      }), { coverage: 0, performance: 0, tokens: 0 });
+      .reduce((acc, sim) => {
+        const count = simulationCounts[sim.id] || 1;
+        return {
+          coverage: acc.coverage + sim.coverage,
+          performance: acc.performance + sim.performance,
+          tokens: acc.tokens + (sim.tokens * count)
+        };
+      }, { coverage: 0, performance: 0, tokens: 0 });
   };
 
   const canProceed = () => {
@@ -646,26 +676,38 @@ export const SimulationSteps = ({
                         <span className="font-medium">{sim.tokens}</span>
                       </div>
                     </div>
+                    
+                    {selectedSimulations.includes(sim.id) && (
+                      <div className="mt-4 pt-4 border-t border-border">
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor={`sim-count-${sim.id}`} className="text-xs">Simulation Runs:</Label>
+                          <div className="flex items-center w-24">
+                            <Input
+                              id={`sim-count-${sim.id}`}
+                              type="number"
+                              value={simulationCounts[sim.id] || 1}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                updateSimulationCount(sim.id, parseInt(e.target.value) || 1);
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                              min={1}
+                              max={20}
+                              className="h-8 text-xs"
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-2 text-xs flex justify-between">
+                          <span className="text-muted-foreground">Total tokens:</span>
+                          <span className="font-medium">
+                            {(sim.tokens * (simulationCounts[sim.id] || 1)).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
-            </div>
-
-            <div className="mt-6">
-              <Label>Number of Simulations</Label>
-              <div className="flex items-center gap-4">
-                <Input
-                  type="number"
-                  value={simulationCount}
-                  onChange={(e) => setSimulationCount(Number(e.target.value))}
-                  min={1}
-                  max={20}
-                  className="w-24"
-                />
-                <span className="text-sm text-muted-foreground">
-                  Recommended: 5 simulations ({totals.tokens.toLocaleString()} tokens)
-                </span>
-              </div>
             </div>
           </div>
         );
@@ -702,8 +744,10 @@ export const SimulationSteps = ({
                   <span>{finalTotals.tokens.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Simulation Count:</span>
-                  <span>{simulationCount}</span>
+                  <span>Total Simulation Runs:</span>
+                  <span>
+                    {selectedSimulations.reduce((total, simId) => total + (simulationCounts[simId] || 1), 0)}
+                  </span>
                 </div>
               </div>
             </div>
