@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -71,122 +70,116 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Agent Configuration</CardTitle>
+    <Card className="border-0 shadow-none">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-2xl font-bold">Agent Configuration</CardTitle>
         <CardDescription>
           Configure your agent's basic information and behavior
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-          {/* Agent Avatar Section */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="flex flex-col items-center gap-4 p-6 border rounded-lg bg-muted/10">
-              <Avatar className="h-24 w-24 border-2 border-agent-primary/30">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="bg-muted/30 rounded-lg p-6 flex flex-col items-center space-y-4 w-full">
+              <Avatar className="h-32 w-32 border-2 border-agent-primary/30">
                 <AvatarImage src={avatar} alt={name} />
                 <AvatarFallback>
-                  <Bot className="h-12 w-12" />
+                  <Bot className="h-16 w-16" />
                 </AvatarFallback>
               </Avatar>
-
-              <div className="w-full space-y-2">
+              
+              <div className="w-full space-y-3">
                 <div className="flex items-center gap-2">
                   <Bot className="h-4 w-4 text-agent-primary" />
-                  <Label htmlFor="agent-avatar">Agent Avatar</Label>
+                  <Label htmlFor="agent-avatar">Agent Avatar URL</Label>
                 </div>
                 <Input
                   id="agent-avatar"
                   value={avatar}
                   onChange={handleAvatarChange}
                   placeholder="Enter avatar URL"
-                  className="text-xs"
                 />
-                <Button variant="outline" size="sm" onClick={generateRandomAvatar} className="w-full">
+                <Button 
+                  variant="outline" 
+                  onClick={generateRandomAvatar} 
+                  className="w-full mt-2"
+                  size="sm"
+                >
                   Generate Random Avatar
                 </Button>
-                <p className="text-xs text-muted-foreground">
-                  Use a direct image URL or generate a random avatar
-                </p>
               </div>
             </div>
           </div>
           
-          {/* Agent Details Section */}
-          <div className="lg:col-span-4 space-y-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-agent-primary" />
-                  <Label htmlFor="agent-name">Agent Name</Label>
-                </div>
-                <Input
-                  id="agent-name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter agent name"
-                />
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-agent-primary" />
+                <Label htmlFor="agent-name">Agent Name</Label>
               </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Target className="h-4 w-4 text-agent-primary" />
-                  <Label htmlFor="agent-purpose">Agent Purpose</Label>
-                </div>
-                <Textarea
-                  id="agent-purpose"
-                  value={purpose}
-                  onChange={(e) => setPurpose(e.target.value)}
-                  placeholder="Describe what this agent is designed to do"
-                  className="min-h-[120px]"
-                />
-                <p className="text-xs text-muted-foreground">
-                  A clear description of your agent's role and primary responsibilities
-                </p>
+              <Input
+                id="agent-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter agent name"
+                className="w-full"
+              />
+              <p className="text-xs text-muted-foreground">
+                This name will be displayed to users when they interact with your agent
+              </p>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Target className="h-4 w-4 text-agent-primary" />
+                <Label htmlFor="agent-purpose">Agent Purpose</Label>
               </div>
+              <Textarea
+                id="agent-purpose"
+                value={purpose}
+                onChange={(e) => setPurpose(e.target.value)}
+                placeholder="Describe what this agent is designed to do"
+                className="min-h-[150px] w-full"
+              />
+              <p className="text-xs text-muted-foreground">
+                A clear description of your agent's role and primary responsibilities
+              </p>
             </div>
           </div>
         </div>
 
-        <div className="pt-4">
-          <Accordion type="single" collapsible defaultValue="prompt">
-            <AccordionItem value="prompt">
-              <AccordionTrigger className="py-3">
-                <div className="flex items-center gap-2">
-                  <Code className="h-4 w-4 text-agent-primary" />
-                  <span>Agent Prompt (Instructions)</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-3 pt-2">
-                  <div className="relative">
-                    <Textarea
-                      value={prompt}
-                      onChange={(e) => setPrompt(e.target.value)}
-                      placeholder="Enter the prompt or instructions for this agent"
-                      className="min-h-[250px] font-mono text-sm pr-10"
-                    />
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="absolute top-2 right-2 h-8 w-8 opacity-70 hover:opacity-100 bg-muted/50 hover:bg-muted" 
-                      onClick={handleCopyPrompt}
-                    >
-                      <Copy className="h-4 w-4" />
-                      <span className="sr-only">Copy</span>
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    These instructions tell the AI how to behave, what knowledge to use, and what tone to adopt
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+        <div className="pt-4 border-t">
+          <div className="flex items-center gap-2 mb-4">
+            <Code className="h-4 w-4 text-agent-primary" />
+            <Label htmlFor="agent-prompt" className="text-lg font-medium">Agent Prompt Instructions</Label>
+          </div>
+          
+          <div className="relative">
+            <Textarea
+              id="agent-prompt"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Enter the prompt or instructions for this agent"
+              className="min-h-[250px] font-mono text-sm pr-10"
+            />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="absolute top-2 right-2 h-8 w-8 opacity-70 hover:opacity-100 bg-muted/50 hover:bg-muted" 
+              onClick={handleCopyPrompt}
+              title="Copy to clipboard"
+            >
+              <Copy className="h-4 w-4" />
+              <span className="sr-only">Copy</span>
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            These instructions tell the AI how to behave, what knowledge to use, and what tone to adopt
+          </p>
         </div>
         
-        <div className="flex justify-end pt-4">
-          <Button onClick={handleSave} disabled={isSaving}>
+        <div className="flex justify-end pt-4 border-t">
+          <Button onClick={handleSave} disabled={isSaving} className="px-6">
             {isSaving ? (
               <>Loading...</>
             ) : (

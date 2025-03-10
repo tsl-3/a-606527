@@ -147,10 +147,7 @@ const AgentsDashboard = () => {
   const handleEditAgent = (e: React.MouseEvent, agentId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    toast({
-      title: "Edit Agent",
-      description: "Edit functionality will be implemented soon.",
-    });
+    navigate(`/agents/${agentId}?tab=settings`);
   };
 
   const handleArchiveAgent = (e: React.MouseEvent, agentId: string) => {
