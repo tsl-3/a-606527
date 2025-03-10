@@ -3,11 +3,12 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, Di
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Search, Users, UserRound, MessageCircle, Brain, ArrowRight, Send, Phone, Mic, PhoneCall, Pause, Play, PhoneOff, Volume2, Timer, FileText, Volume, MicOff } from "lucide-react";
+import { Search, Users, UserRound, MessageCircle, Brain, ArrowRight, Send, Phone, Mic, PhoneCall, Pause, Play, PhoneOff, Volume2, Timer, FileText, Volume, MicOff, StopCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
+import { Switch, SwitchWithLabels } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -59,7 +60,7 @@ export const RolePlayDialog = ({
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [transcription, setTranscription] = useState<string[]>([]);
   const [isLoadingTranscription, setIsLoadingTranscription] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
+  const [isRecording, setIsRecording] = useState(true);
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -158,7 +159,10 @@ export const RolePlayDialog = ({
       setTimeout(() => {
         setIsCallActive(true);
         setCallDuration(0);
+        setIsRecording(true);
         setTranscription([`Call connected with ${selectedPersona.name}`]);
+        
+        handleStartRecording();
       }, 500);
     }
   };
@@ -172,9 +176,12 @@ export const RolePlayDialog = ({
     if (selectedPersona) {
       setIsCallActive(true);
       setCallDuration(0);
+      setIsRecording(true);
       
       setTimeout(() => {
         setTranscription([`Call connected with ${selectedPersona.name}`]);
+        
+        handleStartRecording();
       }, 2000);
       return;
     }
@@ -197,10 +204,13 @@ export const RolePlayDialog = ({
     setPhoneNumberError('');
     setIsCallActive(true);
     setCallDuration(0);
+    setIsRecording(true);
     
     setTimeout(() => {
       setTranscription([`Call connected with ${phoneNumber}`]);
       toast.success("Call connected successfully");
+      
+      handleStartRecording();
     }, 2000);
   };
 
@@ -216,6 +226,7 @@ export const RolePlayDialog = ({
 
   const handleEndCall = () => {
     setIsCallActive(false);
+    setIsRecording(false);
     
     if (selectedPersona && transcription.length > 0) {
       const newMessage: Message = {
@@ -233,24 +244,27 @@ export const RolePlayDialog = ({
     setIsCallMuted(!isCallMuted);
   };
 
-  const handleToggleRecording = () => {
-    setIsRecording(!isRecording);
+  const handleStartRecording = () => {
+    setIsRecording(true);
+    setIsLoadingTranscription(true);
     
-    if (!isRecording) {
-      setIsLoadingTranscription(true);
+    setTimeout(() => {
+      setIsLoadingTranscription(false);
+      
+      const userTranscript = "Thanks for explaining that. I have a question about your experience with our product.";
+      setTranscription(prev => [...prev, `You: ${userTranscript}`]);
+      
       setTimeout(() => {
-        setIsLoadingTranscription(false);
-        
-        const userTranscript = "Thanks for explaining that. I have a question about your experience with our product.";
-        setTranscription(prev => [...prev, `You: ${userTranscript}`]);
-        
-        setTimeout(() => {
-          if (selectedPersona) {
-            setTranscription(prev => [...prev, `${selectedPersona.name}: I've been using your product for about 6 months now. It's mostly been positive, but I've had some challenges with the reporting features.`]);
-          }
-        }, 3000);
-      }, 2000);
-    }
+        if (selectedPersona) {
+          setTranscription(prev => [...prev, `${selectedPersona.name}: I've been using your product for about 6 months now. It's mostly been positive, but I've had some challenges with the reporting features.`]);
+        }
+      }, 3000);
+    }, 2000);
+  };
+
+  const handleStopRecording = () => {
+    setIsRecording(false);
+    toast.success("Recording stopped");
   };
 
   const handleSendMessage = () => {
@@ -660,10 +674,10 @@ export const RolePlayDialog = ({
                           variant="outline"
                           size="sm"
                           className={`${isRecording ? 'bg-red-500/10 text-red-500 border-red-500/30' : ''}`}
-                          onClick={handleToggleRecording}
+                          onClick={isRecording ? handleStopRecording : handleStartRecording}
                         >
-                          {isRecording ? <Pause className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                          <span className="ml-1.5">{isRecording ? 'Stop' : 'Record'}</span>
+                          {isRecording ? <StopCircle className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                          <span className="ml-1.5">{isRecording ? 'Stop Recording' : 'Start Recording'}</span>
                         </Button>
                         
                         <Button
