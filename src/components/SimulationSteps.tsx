@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -195,11 +196,14 @@ export const SimulationSteps = ({
             <div className="space-y-4">
               <div>
                 <Label>Upload Call Recordings</Label>
-                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10">
+                <label className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/10 transition-colors">
                   <div className="text-center">
                     <FileAudio className="mx-auto h-12 w-12 text-gray-400" />
-                    <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                      <label className="relative cursor-pointer rounded-md bg-white font-semibold text-primary hover:text-primary/80">
+                    <div className="mt-4 flex flex-col items-center text-sm leading-6 text-gray-600">
+                      <Button 
+                        variant="outline"
+                        className="relative px-6 py-5 font-semibold text-primary hover:text-primary/80"
+                      >
                         <span>Upload files</span>
                         <Input
                           type="file"
@@ -208,11 +212,19 @@ export const SimulationSteps = ({
                           multiple
                           onChange={handleFileUpload}
                         />
-                      </label>
+                      </Button>
+                      <p className="mt-2 text-xs leading-5 text-muted-foreground">or drag and drop</p>
                     </div>
-                    <p className="text-xs leading-5 text-gray-600">MP3, WAV, or M4A up to 10MB each</p>
+                    <p className="text-xs leading-5 text-gray-600 mt-2">MP3, WAV, or M4A up to 10MB each</p>
                   </div>
-                </div>
+                  <Input
+                    type="file"
+                    className="sr-only"
+                    accept=".mp3,.wav,.m4a"
+                    multiple
+                    onChange={handleFileUpload}
+                  />
+                </label>
               </div>
 
               {recordings.length > 0 && (
