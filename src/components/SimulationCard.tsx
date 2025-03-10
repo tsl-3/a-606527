@@ -45,7 +45,7 @@ export const SimulationCard = ({
       <CardHeader>
         <CardTitle>Simulation Setup</CardTitle>
         <CardDescription>
-          Generate personas and run simulations to test your agent's performance
+          Generate and run scenarios to test your agent's performance
         </CardDescription>
       </CardHeader>
       <CardContent>

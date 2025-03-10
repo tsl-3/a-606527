@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -50,12 +49,8 @@ interface SimulationStepsProps {
   }>;
 }
 
+// Updated steps array with "Generate Personas" step removed
 const STEPS: SimulationStep[] = [
-  {
-    title: "Generate Personas",
-    description: "Upload call recordings or describe your customer personas",
-    icon: <Users className="h-5 w-5" />
-  },
   {
     title: "Select Simulations",
     description: "Choose and customize simulation scenarios",
@@ -256,9 +251,8 @@ export const SimulationSteps = ({
   scenarios: initialScenarios,
   simulations: initialSimulations
 }: SimulationStepsProps) => {
-  const [currentStep, setCurrentStep] = useState(initialStatus === 'not-started' ? 0 : initialStatus === 'in-progress' ? 1 : 2);
-  const [recordings, setRecordings] = useState<File[]>([]);
-  const [description, setDescription] = useState("");
+  // Update the current step logic to account for the removed first step
+  const [currentStep, setCurrentStep] = useState(initialStatus === 'not-started' ? 0 : initialStatus === 'in-progress' ? 0 : 1);
   const [selectedSimulations, setSelectedSimulations] = useState<string[]>([]);
   const [simulationCount, setSimulationCount] = useState(5);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -298,27 +292,6 @@ export const SimulationSteps = ({
     }
   }, [isGenerating]);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const validFiles = files.filter(file => 
-      ['audio/mpeg', 'audio/wav', 'audio/x-m4a'].includes(file.type)
-    );
-    
-    if (validFiles.length !== files.length) {
-      toast({
-        title: "Invalid file type",
-        description: "Please upload only MP3, WAV, or M4A files",
-        variant: "destructive"
-      });
-    }
-    
-    setRecordings(prev => [...prev, ...validFiles]);
-  };
-
-  const removeRecording = (index: number) => {
-    setRecordings(prev => prev.filter((_, i) => i !== index));
-  };
-
   const toggleSimulation = (id: string) => {
     setSelectedSimulations(prev => 
       prev.includes(id) 
@@ -357,9 +330,6 @@ export const SimulationSteps = ({
 
   const canProceed = () => {
     if (currentStep === 0) {
-      return recordings.length > 0 || description.trim().length > 0;
-    }
-    if (currentStep === 1) {
       return selectedSimulations.length > 0;
     }
     return true;
@@ -367,7 +337,7 @@ export const SimulationSteps = ({
 
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {
-      if (currentStep === 0) {
+      if (currentStep === 0 && !simulationsGenerated) {
         setIsGenerating(true);
         startGenerationAnimation();
       } else {
@@ -375,8 +345,6 @@ export const SimulationSteps = ({
       }
     } else {
       onComplete({
-        recordings,
-        description,
         selectedSimulations,
         simulationCount
       });
@@ -409,102 +377,19 @@ export const SimulationSteps = ({
           setIsGenerating(false);
           setSimulationsGenerated(true);
           setAvailableSimulations(EXPANDED_SIMULATIONS);
-          setCurrentStep(prev => prev + 1);
         }, 500);
       }
     }, 100);
   };
 
+  const handleGenerateSimulations = () => {
+    setIsGenerating(true);
+    startGenerationAnimation();
+  };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
-        return (
-          <div className="space-y-4">
-            <div className="space-y-4">
-              <div>
-                <Label>Upload Call Recordings</Label>
-                <label className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/10 transition-colors">
-                  <div className="text-center">
-                    <FileAudio className="mx-auto h-12 w-12 text-gray-400" />
-                    <div className="mt-4 flex flex-col items-center text-sm leading-6 text-gray-600">
-                      <Button 
-                        variant="outline"
-                        className="relative px-6 py-5 font-semibold text-primary hover:text-primary/80"
-                      >
-                        <span>Upload files</span>
-                        <Input
-                          type="file"
-                          className="sr-only"
-                          accept=".mp3,.wav,.m4a"
-                          multiple
-                          onChange={handleFileUpload}
-                        />
-                      </Button>
-                      <p className="mt-2 text-xs leading-5 text-muted-foreground">or drag and drop</p>
-                    </div>
-                    <p className="text-xs leading-5 text-gray-600 mt-2">MP3, WAV, or M4A up to 10MB each</p>
-                  </div>
-                  <Input
-                    type="file"
-                    className="sr-only"
-                    accept=".mp3,.wav,.m4a"
-                    multiple
-                    onChange={handleFileUpload}
-                  />
-                </label>
-              </div>
-
-              {recordings.length > 0 && (
-                <div className="mt-4">
-                  <Label>Uploaded Recordings</Label>
-                  <ScrollArea className="h-[100px] w-full rounded-md border p-4">
-                    <div className="space-y-2">
-                      {recordings.map((file, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <FileAudio className="h-4 w-4 mr-2 text-primary" />
-                            <span className="text-sm">{file.name}</span>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeRecording(index)}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </div>
-              )}
-
-              <div className="mt-4">
-                <Label>Or Describe Your Customer Personas</Label>
-                <Textarea
-                  placeholder="Describe your typical customer interactions..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="mt-2"
-                  rows={4}
-                />
-                <div className="mt-2 text-sm text-muted-foreground">
-                  <p className="font-medium">Example:</p>
-                  <p className="italic mt-1 text-xs">
-                    "Our customers are primarily small business owners aged 30-50. They often call with urgent 
-                    scheduling issues and have limited technical knowledge. Some common personas include: 
-                    1) Busy professionals who are often multitasking during calls, 
-                    2) Older customers who speak slowly and need patient assistance, 
-                    3) Frustrated customers who've had previous negative experiences, and 
-                    4) New customers who are unfamiliar with our services and need detailed explanations."
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 1:
         if (isGenerating) {
           return (
             <div className="space-y-8 py-4 animate-fade-in">
@@ -552,6 +437,29 @@ export const SimulationSteps = ({
                     <Database className="h-4 w-4 text-primary" />
                     <span className="text-sm">Optimizing token usage</span>
                   </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        if (!simulationsGenerated) {
+          return (
+            <div className="space-y-4">
+              <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-8 mb-8 text-center">
+                <Target className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">No simulations generated yet</h4>
+                <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                  Generate simulation scenarios to test your agent's performance under different conditions.
+                </p>
+                <div className="flex justify-center">
+                  <Button 
+                    className="gap-2 bg-primary"
+                    onClick={handleGenerateSimulations}
+                  >
+                    <PlayCircle className="h-4 w-4" />
+                    Generate Simulations
+                  </Button>
                 </div>
               </div>
             </div>
@@ -713,7 +621,7 @@ export const SimulationSteps = ({
           </div>
         );
 
-      case 2:
+      case 1:
         const finalTotals = calculateTotals();
         return (
           <div className="space-y-6">
@@ -822,4 +730,3 @@ export const SimulationSteps = ({
     </div>
   );
 };
-
