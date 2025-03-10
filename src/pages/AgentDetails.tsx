@@ -438,6 +438,22 @@ const AgentDetails = () => {
     }
   };
 
+  const handleCallMe = () => {
+    if (customCallNumber && customCallNumber.trim() !== "") {
+      toast({
+        title: "Outbound call initiated",
+        description: `Your agent will call ${customCallNumber} shortly.`
+      });
+      setIsCallTooltipOpen(false);
+    } else {
+      toast({
+        title: "Phone number required",
+        description: "Please enter a valid phone number.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleDeactivateAgent = () => {
     setIsActive(false);
     toast({
