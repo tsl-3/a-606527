@@ -115,7 +115,7 @@ export const RolePlayDialog = ({
       }
     };
 
-    if (stage === 'call' && !isCallActive && !selectedPersona) {
+    if (stage === 'call') {
       getDevices();
 
       navigator.mediaDevices.addEventListener('devicechange', getDevices);
@@ -124,7 +124,7 @@ export const RolePlayDialog = ({
         navigator.mediaDevices.removeEventListener('devicechange', getDevices);
       };
     }
-  }, [stage, isCallActive, selectedPersona]);
+  }, [stage]);
 
   useEffect(() => {
     if (isCallActive && !timerRef.current) {
@@ -620,41 +620,87 @@ export const RolePlayDialog = ({
             
             <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden py-4">
               <div className="flex-1 flex flex-col h-[400px]">
-                <div className="flex items-center justify-between mb-4 bg-secondary/30 p-3 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Timer className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-medium">{formatTime(callDuration)}</span>
+                <div className="flex flex-col space-y-2 mb-4">
+                  <div className="flex items-center justify-between bg-secondary/30 p-3 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Timer className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">{formatTime(callDuration)}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={`${isMicMuted ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30' : ''}`}
+                        onClick={handleToggleMic}
+                      >
+                        {isMicMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                        <span className="ml-1.5">{isMicMuted ? 'Unmute' : 'Mute'}</span>
+                      </Button>
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={`${isAudioMuted ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30' : ''}`}
+                        onClick={handleToggleAudio}
+                      >
+                        {isAudioMuted ? <Volume className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                        <span className="ml-1.5">{isAudioMuted ? 'Unmute' : 'Mute'}</span>
+                      </Button>
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={`${isRecording ? 'bg-red-500/10 text-red-500 border-red-500/30' : ''}`}
+                        onClick={handleToggleRecording}
+                      >
+                        {isRecording ? <Pause className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                        <span className="ml-1.5">{isRecording ? 'Stop' : 'Record'}</span>
+                      </Button>
+                      
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={handleEndCall}
+                      >
+                        <PhoneOff className="h-4 w-4" />
+                        <span className="ml-1.5">End</span>
+                      </Button>
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className={`${isCallMuted ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30' : ''}`}
-                      onClick={handleToggleMute}
-                    >
-                      {isCallMuted ? <Volume2 className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                      <span className="ml-1.5">{isCallMuted ? 'Unmute' : 'Mute'}</span>
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className={`${isRecording ? 'bg-red-500/10 text-red-500 border-red-500/30' : ''}`}
-                      onClick={handleToggleRecording}
-                    >
-                      {isRecording ? <Pause className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                      <span className="ml-1.5">{isRecording ? 'Stop' : 'Record'}</span>
-                    </Button>
-                    
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={handleEndCall}
-                    >
-                      <PhoneOff className="h-4 w-4" />
-                      <span className="ml-1.5">End</span>
-                    </Button>
+
+                  <div className="grid grid-cols-2 gap-4 bg-secondary/10 p-3 rounded-lg">
+                    <div className="space-y-1">
+                      <Label className="text-xs">Microphone</Label>
+                      <Select value={selectedMic} onValueChange={setSelectedMic}>
+                        <SelectTrigger className="h-8 text-xs">
+                          <SelectValue placeholder="Select microphone" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableMics.map((device) => (
+                            <SelectItem key={device.deviceId} value={device.deviceId}>
+                              {device.label || `Microphone ${device.deviceId.slice(0, 5)}`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-xs">Speaker</Label>
+                      <Select value={selectedSpeaker} onValueChange={setSelectedSpeaker}>
+                        <SelectTrigger className="h-8 text-xs">
+                          <SelectValue placeholder="Select speaker" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableSpeakers.map((device) => (
+                            <SelectItem key={device.deviceId} value={device.deviceId}>
+                              {device.label || `Speaker ${device.deviceId.slice(0, 5)}`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
                 
@@ -728,48 +774,3 @@ export const RolePlayDialog = ({
                   <Brain className="h-4 w-4" />
                   Knowledge Base
                 </h4>
-                
-                <div className="flex gap-2 mb-4">
-                  <Input
-                    placeholder="Search knowledge..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleKnowledgeSearch();
-                      }
-                    }}
-                  />
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={handleKnowledgeSearch}
-                  >
-                    <Search className="h-4 w-4" />
-                  </Button>
-                </div>
-                
-                <div className="flex-1 overflow-y-auto space-y-2">
-                  {knowledgeResults.length > 0 ? (
-                    knowledgeResults.map((result, index) => (
-                      <div 
-                        key={index}
-                        className="bg-gray-50 dark:bg-gray-800/50 p-2 rounded-md text-xs"
-                      >
-                        {result}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center text-gray-500 text-xs pt-4">
-                      Search the knowledge base to find relevant information
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-};
