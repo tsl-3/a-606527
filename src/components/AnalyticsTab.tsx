@@ -409,7 +409,7 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
             
             <div>
               <h3 className="text-sm font-medium mb-3">Sentiment Breakdown</h3>
-              <div className="h-[400px] sm:h-[450px] md:h-[350px] lg:h-[400px]">
+              <div className="h-[250px] sm:h-[275px] md:h-[200px] lg:h-[220px]">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full w-full">
                   <div className="relative flex items-center justify-center h-full w-full p-4">
                     <ResponsiveContainer width="100%" height="100%">
@@ -726,4 +726,3 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
 };
 
 export default AnalyticsTab;
-
