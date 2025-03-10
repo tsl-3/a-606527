@@ -32,8 +32,8 @@ interface MediaDevice {
 
 enum CallState {
   MODE_SELECT = 'mode_select',
-  PERSONA_SELECT = 'persona_select',
   PERSON_SETUP = 'person_setup',
+  PERSONA_SELECT = 'persona_select',
   ACTIVE = 'active',
   COMPLETED = 'completed',
   REVIEW = 'review',
@@ -301,10 +301,6 @@ export const CustomRolePlayDialog = ({
     setIsPlaying(false);
   };
 
-  const resetFlow = () => {
-    setCallState(CallState.MODE_SELECT);
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[900px] max-h-[85vh] overflow-hidden flex flex-col">
@@ -313,10 +309,10 @@ export const CustomRolePlayDialog = ({
         </DialogHeader>
         
         <div className="flex-1 overflow-hidden flex flex-col">
-          {/* Mode Selection Screen */}
+          {/* Mode Selection Screen - Only 2 options */}
           {callState === CallState.MODE_SELECT && (
             <div className="flex flex-col items-center justify-center p-8 space-y-8">
-              <h2 className="text-xl font-semibold text-center">How would you like to role play?</h2>
+              <h2 className="text-xl font-semibold text-center">Choose a role-play option to start training your agent</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
                 <Button 
@@ -325,11 +321,11 @@ export const CustomRolePlayDialog = ({
                   onClick={() => selectRolePlayMode('person')}
                 >
                   <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center">
-                    <User className="h-8 w-8 text-primary" />
+                    <Phone className="h-8 w-8 text-primary" />
                   </div>
                   <div className="text-center">
-                    <h3 className="text-lg font-medium mb-2">Role Play with Someone</h3>
-                    <p className="text-muted-foreground">Call a real person to practice with</p>
+                    <h3 className="text-lg font-medium mb-2">Role-Play Call</h3>
+                    <p className="text-muted-foreground">Start a voice call session with a real person to practice customer conversations</p>
                   </div>
                 </Button>
                 
@@ -339,11 +335,11 @@ export const CustomRolePlayDialog = ({
                   onClick={() => selectRolePlayMode('ai')}
                 >
                   <div className="h-16 w-16 bg-agent-primary/10 rounded-full flex items-center justify-center">
-                    <Rocket className="h-8 w-8 text-agent-primary" />
+                    <User className="h-8 w-8 text-agent-primary" />
                   </div>
                   <div className="text-center">
-                    <h3 className="text-lg font-medium mb-2">Role Play with AI</h3>
-                    <p className="text-muted-foreground">Practice with AI-simulated personas</p>
+                    <h3 className="text-lg font-medium mb-2">User Personas</h3>
+                    <p className="text-muted-foreground">Practice with pre-generated customer personas for targeted training calls</p>
                   </div>
                 </Button>
               </div>
@@ -406,7 +402,7 @@ export const CustomRolePlayDialog = ({
                     </div>
                     
                     <div className="flex justify-between mt-6">
-                      <Button variant="outline" onClick={resetFlow}>
+                      <Button variant="outline" onClick={() => setCallState(CallState.MODE_SELECT)}>
                         Back
                       </Button>
                       <Button onClick={startCall} disabled={!phoneNumber.trim()}>
@@ -460,20 +456,19 @@ export const CustomRolePlayDialog = ({
                 <h3 className="text-lg font-medium mb-4">Select a Persona to Practice With</h3>
                 <div className="grid grid-cols-1 gap-3">
                   {personas.map(persona => (
-                    <RadioGroup key={persona.id} value={selectedPersona} onValueChange={selectPersona}>
-                      <div 
-                        className={`flex items-start space-x-3 rounded-lg border p-4 cursor-pointer ${selectedPersona === persona.id ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}
-                        onClick={() => selectPersona(persona.id)}
-                      >
-                        <RadioGroupItem value={persona.id} id={`persona-${persona.id}`} />
-                        <div className="flex flex-col space-y-1">
-                          <Label htmlFor={`persona-${persona.id}`} className="text-base font-medium cursor-pointer">
-                            {persona.name}
-                          </Label>
-                          <p className="text-sm text-muted-foreground">{persona.description}</p>
-                        </div>
+                    <div 
+                      key={persona.id}
+                      className={`flex items-start space-x-3 rounded-lg border p-4 cursor-pointer ${selectedPersona === persona.id ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}
+                      onClick={() => selectPersona(persona.id)}
+                    >
+                      <RadioGroupItem value={persona.id} id={`persona-${persona.id}`} checked={selectedPersona === persona.id} />
+                      <div className="flex flex-col space-y-1">
+                        <Label htmlFor={`persona-${persona.id}`} className="text-base font-medium cursor-pointer">
+                          {persona.name}
+                        </Label>
+                        <p className="text-sm text-muted-foreground">{persona.description}</p>
                       </div>
-                    </RadioGroup>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -519,7 +514,7 @@ export const CustomRolePlayDialog = ({
               </div>
               
               <div className="flex justify-between mt-6">
-                <Button variant="outline" onClick={resetFlow}>
+                <Button variant="outline" onClick={() => setCallState(CallState.MODE_SELECT)}>
                   Back
                 </Button>
                 <Button onClick={startCall}>
