@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { 
   BookOpen, Workflow, FlaskConical, CheckCircle2, 
@@ -137,7 +138,7 @@ const AgentTrainingCard: React.FC<{
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-8 h-8 text-gray-900 dark:text-white">
-              1
+              2
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Agent Training</h3>
             {status === 'in-progress' && (
@@ -482,8 +483,8 @@ interface AgentSetupStepperProps {
 
 export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) => {
   const steps = {
-    training: { completed: false, progress: 30, active: true },
-    knowledge: { completed: false, progress: 15, active: false },
+    knowledge: { completed: false, progress: 15, active: true },
+    training: { completed: false, progress: 30, active: false },
     workflow: { completed: false, progress: 0, active: false },
     simulation: { completed: false, progress: 0, active: false }
   };
@@ -575,25 +576,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       </div>
       
       <div className="space-y-4 mt-8">
-        <AgentTrainingCard status="not-started" />
-        
-        <AgentTrainingCard 
-          status="in-progress" 
-          voiceSamples={3} 
-          voiceConfidence={65} 
-          talkTime="45s" 
-          trainingRecords={sampleTrainingRecords}
-        />
-        
-        <AgentTrainingCard 
-          status="completed" 
-          voiceSamples={10} 
-          totalSamples={10}
-          voiceConfidence={95} 
-          talkTime="120s" 
-          trainingRecords={sampleTrainingRecords}
-        />
-        
         <KnowledgeBaseCard 
           status="not-started" 
         />
@@ -627,6 +609,25 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           ]}
           processedCount={10}
           totalCount={10}
+        />
+      
+        <AgentTrainingCard status="not-started" />
+        
+        <AgentTrainingCard 
+          status="in-progress" 
+          voiceSamples={3} 
+          voiceConfidence={65} 
+          talkTime="45s" 
+          trainingRecords={sampleTrainingRecords}
+        />
+        
+        <AgentTrainingCard 
+          status="completed" 
+          voiceSamples={10} 
+          totalSamples={10}
+          voiceConfidence={95} 
+          talkTime="120s" 
+          trainingRecords={sampleTrainingRecords}
         />
         
         <WorkflowCard 
