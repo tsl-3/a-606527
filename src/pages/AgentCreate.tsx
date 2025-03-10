@@ -1,112 +1,133 @@
 
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Bot, Upload, Plus, X, Check, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Bot, Mic, Phone, CheckCircle2, Loader2, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-
-const AGENT_TYPES = [
-  {
-    id: "customer-service",
-    name: "Customer Service",
-    description: "Help customers with inquiries, issues, and support requests."
-  },
-  {
-    id: "sales",
-    name: "Sales Assistant",
-    description: "Guide customers through product options and purchase decisions."
-  },
-  {
-    id: "knowledge-base",
-    name: "Knowledge Base",
-    description: "Answer questions based on your organization's documentation."
-  },
-  {
-    id: "custom",
-    name: "Custom Agent",
-    description: "Design a specialized agent for your unique use case."
-  }
-];
-
-const MODELS = [
-  { id: "gpt-4", name: "GPT-4", description: "Most capable model, complex tasks" },
-  { id: "gpt-3.5-turbo", name: "GPT-3.5 Turbo", description: "Fast and efficient, general tasks" },
-  { id: "claude-2", name: "Claude 2", description: "Anthropic's assistant, ethical responses" },
-  { id: "llama-2", name: "Llama 2", description: "Open source model by Meta" }
-];
+import { LiveTranscription } from "@/components/LiveTranscription";
+import { AgentConfigSidebar } from "@/components/AgentConfigSidebar";
 
 const AgentCreate = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [agentType, setAgentType] = useState("");
-  const [model, setModel] = useState("");
-  const [isPersonal, setIsPersonal] = useState(true);
-  const [files, setFiles] = useState<File[]>([]);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [callState, setCallState] = useState<"idle" | "connecting" | "active" | "completed">("idle");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [agentConfig, setAgentConfig] = useState({
+    name: "",
+    description: "",
+    agentType: "",
+    model: "gpt-4",
+    purpose: "",
+    prompt: "",
+    industry: "",
+    botFunction: "",
+    customIndustry: "",
+    customFunction: "",
+  });
   
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFiles(Array.from(e.target.files));
-    }
+  // Simulated transcription for demo purposes
+  const [transcription, setTranscription] = useState<{ role: "system" | "user", text: string }[]>([]);
+  
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Allow only numbers, spaces, parentheses, and dashes
+    const value = e.target.value.replace(/[^\d\s()\-+]/g, '');
+    setPhoneNumber(value);
   };
   
-  const removeFile = (index: number) => {
-    setFiles(files.filter((_, i) => i !== index));
+  const validatePhoneNumber = () => {
+    // Basic validation - should be improved in production
+    return phoneNumber.replace(/[^\d]/g, '').length >= 10;
   };
   
-  const validateForm = () => {
-    const newErrors: {[key: string]: string} = {};
-    
-    if (!name.trim()) {
-      newErrors.name = "Agent name is required";
-    }
-    
-    if (!description.trim()) {
-      newErrors.description = "Description is required";
-    }
-    
-    if (!agentType) {
-      newErrors.agentType = "Please select an agent type";
-    }
-    
-    if (!model) {
-      newErrors.model = "Please select a model";
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
+  const startAgentCreationCall = () => {
+    if (!validatePhoneNumber()) {
       toast({
-        title: "Validation Error",
-        description: "Please fix the errors in the form.",
+        title: "Invalid Phone Number",
+        description: "Please enter a valid phone number.",
         variant: "destructive",
       });
       return;
     }
     
+    setCallState("connecting");
+    
+    // Simulate the call connection
+    setTimeout(() => {
+      setCallState("active");
+      simulateConversation();
+    }, 2000);
+  };
+  
+  const simulateConversation = () => {
+    // This is a demo simulation - in a real app, this would be replaced by actual API calls
+    const conversation = [
+      { delay: 1000, role: "system" as const, text: "Hello! I'm your AI assistant, and I'll help you create a new agent. What would you like to name your agent?" },
+      { delay: 4000, role: "user" as const, text: "Customer Support Bot" },
+      { delay: 2000, role: "system" as const, text: "Great name! What industry will this agent be working in?" },
+      { delay: 4000, role: "user" as const, text: "E-commerce" },
+      { delay: 2000, role: "system" as const, text: "E-commerce is selected. What function will this agent serve? For example, customer service, sales, or technical support?" },
+      { delay: 4000, role: "user" as const, text: "Customer service for order issues and returns" },
+      { delay: 2000, role: "system" as const, text: "I've set the function to Customer Service. Can you describe the main purpose of this agent?" },
+      { delay: 5000, role: "user" as const, text: "Help customers track orders, process returns, and resolve common shopping issues" },
+      { delay: 2000, role: "system" as const, text: "Great! Based on our conversation, I've created a prompt for your agent. You can review and edit it in the sidebar. Is there anything else you'd like to customize?" },
+      { delay: 4000, role: "user" as const, text: "No, that looks good" },
+      { delay: 2000, role: "system" as const, text: "Perfect! Your Customer Support Bot has been created successfully. You can now review all the details in the sidebar and make any final adjustments before finishing." },
+    ];
+    
+    let cumulativeDelay = 0;
+    
+    conversation.forEach((item, index) => {
+      cumulativeDelay += item.delay;
+      
+      setTimeout(() => {
+        setTranscription(prev => [...prev, item]);
+        
+        // Update agent config based on the conversation
+        if (item.role === "user") {
+          switch (index) {
+            case 1: // Name response
+              setAgentConfig(prev => ({ ...prev, name: item.text }));
+              break;
+            case 3: // Industry response
+              setAgentConfig(prev => ({ ...prev, industry: "retail" }));
+              break;
+            case 5: // Function response
+              setAgentConfig(prev => ({ ...prev, botFunction: "customer-service" }));
+              break;
+            case 7: // Purpose response
+              setAgentConfig(prev => ({ 
+                ...prev, 
+                description: item.text,
+                purpose: item.text,
+                prompt: `You are a Customer Support Bot for an e-commerce platform. Your main purpose is to ${item.text.toLowerCase()}. Always be helpful, friendly, and efficient in addressing customer concerns.`
+              }));
+              break;
+          }
+        }
+        
+        // When conversation is done
+        if (index === conversation.length - 1) {
+          setTimeout(() => {
+            setCallState("completed");
+          }, 2000);
+        }
+      }, cumulativeDelay);
+    });
+  };
+  
+  const handleCreateAgent = () => {
     setIsSubmitting(true);
     
     // Simulate API call
     setTimeout(() => {
       toast({
         title: "Agent Created!",
-        description: `${name} has been successfully created.`,
+        description: `${agentConfig.name} has been successfully created.`,
       });
       setIsSubmitting(false);
       navigate("/agents");
@@ -114,7 +135,7 @@ const AgentCreate = () => {
   };
   
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in">
+    <div className="max-w-7xl mx-auto animate-fade-in">
       <div className="mb-8">
         <Link to="/agents" className="flex items-center text-gray-500 hover:text-agent-primary">
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -127,193 +148,120 @@ const AgentCreate = () => {
           <Bot className="h-8 w-8 text-agent-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-semibold text-agent-dark">Create New Agent</h1>
-          <p className="text-gray-500 mt-1">Configure your agent's capabilities and behavior</p>
+          <h1 className="text-3xl font-semibold text-agent-dark">Create New Agent by Voice</h1>
+          <p className="text-gray-500 mt-1">Talk with our system to configure your new agent</p>
         </div>
       </div>
       
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-8">
-          <Card className="dark:bg-[#000313]/80">
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-              <CardDescription>Define your agent's identity and purpose</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="name" className={errors.name ? "text-destructive" : ""}>
-                  Agent Name<span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="name"
-                  placeholder="E.g., Support Assistant, Sales Bot"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className={`dark:bg-[#000313]/70 ${errors.name ? "border-destructive" : ""}`}
-                />
-                {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="description" className={errors.description ? "text-destructive" : ""}>
-                  Description<span className="text-destructive">*</span>
-                </Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe what your agent does and how it can help users"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className={`min-h-[100px] dark:bg-[#000313]/70 ${errors.description ? "border-destructive" : ""}`}
-                />
-                {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
-              </div>
-              
-              <div className="space-y-2">
-                <Label className={errors.agentType ? "text-destructive" : ""}>
-                  Agent Type<span className="text-destructive">*</span>
-                </Label>
-                <RadioGroup value={agentType} onValueChange={setAgentType} className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                  {AGENT_TYPES.map((type) => (
-                    <div key={type.id} className={`flex items-start space-x-3 border rounded-md p-4 transition-all hover:border-agent-primary/50 ${agentType === type.id ? "border-agent-primary bg-agent-secondary/50" : "border-gray-200 dark:bg-[#000313]/50"}`}>
-                      <RadioGroupItem value={type.id} id={type.id} className="mt-1" />
-                      <Label htmlFor={type.id} className="flex-1 cursor-pointer">
-                        <span className="font-medium text-agent-dark">{type.name}</span>
-                        <p className="text-sm text-gray-500 mt-1">{type.description}</p>
-                      </Label>
+      <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex-1">
+          {callState === "idle" ? (
+            <Card className="dark:bg-[#000313]/80">
+              <CardHeader>
+                <CardTitle>Step 1: Start Agent Creation Call</CardTitle>
+                <CardDescription>
+                  Enter your phone number to begin the guided agent creation process
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <div className="flex space-x-2">
+                    <div className="relative flex-1">
+                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                      <Input
+                        id="phone"
+                        placeholder="+1 (555) 123-4567"
+                        value={phoneNumber}
+                        onChange={handlePhoneNumberChange}
+                        className="pl-10 dark:bg-[#000313]/70"
+                      />
                     </div>
-                  ))}
-                </RadioGroup>
-                {errors.agentType && <p className="text-sm text-destructive">{errors.agentType}</p>}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="dark:bg-[#000313]/80">
-            <CardHeader>
-              <CardTitle>Agent Configuration</CardTitle>
-              <CardDescription>Select capabilities and access settings</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label className={errors.model ? "text-destructive" : ""}>
-                  AI Model<span className="text-destructive">*</span>
-                </Label>
-                <Select value={model} onValueChange={setModel}>
-                  <SelectTrigger className={`dark:bg-[#000313]/70 ${errors.model ? "border-destructive" : ""}`}>
-                    <SelectValue placeholder="Select a model" />
-                  </SelectTrigger>
-                  <SelectContent className="dark:bg-[#000313]">
-                    {MODELS.map((m) => (
-                      <SelectItem key={m.id} value={m.id}>
-                        <div className="flex flex-col">
-                          <span>{m.name}</span>
-                          <span className="text-xs text-gray-500">{m.description}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.model && <p className="text-sm text-destructive">{errors.model}</p>}
-              </div>
-              
-              <div className="space-y-2">
-                <Label>Access Level</Label>
-                <RadioGroup defaultValue="personal" value={isPersonal ? "personal" : "team"} onValueChange={(value) => setIsPersonal(value === "personal")}>
-                  <div className="flex flex-col space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="personal" id="personal" />
-                      <Label htmlFor="personal">Personal (Only you can access)</Label>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="team" id="team" />
-                      <Label htmlFor="team">Team (All team members can access)</Label>
-                    </div>
+                    <Button 
+                      onClick={startAgentCreationCall}
+                      disabled={!phoneNumber}
+                      className="gap-2"
+                    >
+                      <Mic className="h-4 w-4" />
+                      Start Call
+                    </Button>
                   </div>
-                </RadioGroup>
-              </div>
-              
-              <Separator />
-              
-              <div className="space-y-2">
-                <Label>Knowledge Base (Optional)</Label>
-                <Alert className="bg-agent-secondary border-agent-primary/20">
-                  <AlertCircle className="h-4 w-4 text-agent-primary" />
-                  <AlertTitle>Train your agent</AlertTitle>
-                  <AlertDescription>
-                    Upload documents to help your agent learn your specific content and provide more accurate responses.
-                  </AlertDescription>
-                </Alert>
-                
-                <div className="mt-4">
-                  <div className="border-2 border-dashed rounded-md border-gray-300 p-6 text-center hover:border-agent-primary/50 transition-all dark:bg-[#000313]/30">
-                    <input
-                      type="file"
-                      id="file-upload"
-                      multiple
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-                    <label htmlFor="file-upload" className="cursor-pointer">
-                      <Upload className="h-8 w-8 mx-auto text-gray-400" />
-                      <p className="mt-2 text-sm font-medium text-gray-600">Drag and drop files or click to browse</p>
-                      <p className="mt-1 text-xs text-gray-500">PDF, DOCX, TXT, CSV (Max 10MB per file)</p>
-                    </label>
-                  </div>
-                  
-                  {files.length > 0 && (
-                    <div className="mt-4 space-y-2">
-                      <Label>Uploaded Files</Label>
-                      <div className="space-y-2">
-                        {files.map((file, index) => (
-                          <div key={index} className="flex items-center justify-between dark:bg-[#000313]/50 rounded p-2">
-                            <div className="flex items-center space-x-2 text-sm">
-                              <div className="bg-agent-primary/10 p-1 rounded">
-                                <Bot className="h-4 w-4 text-agent-primary" />
-                              </div>
-                              <span>{file.name}</span>
-                              <span className="text-xs text-gray-500">({(file.size / 1024).toFixed(1)} KB)</span>
-                            </div>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={() => removeFile(index)}
-                              className="h-6 w-6 rounded-full"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <p className="text-xs text-muted-foreground">
+                    We'll call you at this number to guide you through agent creation
+                  </p>
                 </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between border-t pt-6">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate("/agents")}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting} className="min-w-[120px]">
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create Agent
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="dark:bg-[#000313]/80">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle>
+                      {callState === "connecting" && "Connecting..."}
+                      {callState === "active" && "Agent Creation Call"}
+                      {callState === "completed" && "Agent Configuration Complete"}
+                    </CardTitle>
+                    <CardDescription>
+                      {callState === "connecting" && "Please wait while we connect your call..."}
+                      {callState === "active" && "Live transcription of your conversation"}
+                      {callState === "completed" && "Your agent has been configured based on the call"}
+                    </CardDescription>
+                  </div>
+                  <div>
+                    {callState === "connecting" && (
+                      <div className="bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Connecting
+                      </div>
+                    )}
+                    {callState === "active" && (
+                      <div className="bg-green-500/20 text-green-600 dark:text-green-400 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+                        <span className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></span>
+                        Active Call
+                      </div>
+                    )}
+                    {callState === "completed" && (
+                      <div className="bg-blue-500/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4" />
+                        Completed
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <LiveTranscription messages={transcription} isCallActive={callState === "active"} />
+              </CardContent>
+              {callState === "completed" && (
+                <CardFooter className="flex justify-end border-t pt-6">
+                  <Button 
+                    onClick={handleCreateAgent} 
+                    disabled={isSubmitting}
+                    className="gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="h-4 w-4" />
+                        Create Agent
+                      </>
+                    )}
+                  </Button>
+                </CardFooter>
+              )}
+            </Card>
+          )}
         </div>
-      </form>
+        
+        <div className="w-full md:w-[400px]">
+          <AgentConfigSidebar agentConfig={agentConfig} />
+        </div>
+      </div>
     </div>
   );
 };
