@@ -2,7 +2,8 @@ import React, { useState, useRef } from "react";
 import { 
   BookOpen, Workflow, FlaskConical, CheckCircle2, 
   Upload, PlayCircle, Bot, File, CircleDashed, ArrowRight,
-  Clock, BarChart, ChevronUp, Download, Trash2, User, Mic
+  Clock, BarChart, ChevronUp, Download, Trash2, User, Mic,
+  Users, UserRound, MessageCircle, Brain, Search, LightBulb
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -13,6 +14,7 @@ import { AgentChannels } from "./AgentChannels";
 import { KnowledgeBaseCard } from "./KnowledgeBaseCard";
 import { WorkflowCard } from "./WorkflowCard";
 import { SimulationCard } from "./SimulationCard";
+import { RolePlayDialog } from "./RolePlayDialog";
 
 // Define training record interface
 interface TrainingRecord {
@@ -112,6 +114,7 @@ const AgentTrainingCard: React.FC<{
 }) => {
   const [isExpanded, setIsExpanded] = useState(status !== 'completed');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [openRolePlayDialog, setOpenRolePlayDialog] = useState(false);
 
   const handleUploadClick = () => {
     if (fileInputRef.current) {
@@ -204,7 +207,10 @@ const AgentTrainingCard: React.FC<{
                     multiple
                     accept="audio/*"
                   />
-                  <Button className="gap-2 bg-gradient-to-r from-purple-500 to-indigo-500">
+                  <Button 
+                    className="gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
+                    onClick={() => setOpenRolePlayDialog(true)}
+                  >
                     <PlayCircle className="h-4 w-4" />
                     Start Role-Play
                   </Button>
@@ -317,7 +323,11 @@ const AgentTrainingCard: React.FC<{
                     multiple
                     accept="audio/*"
                   />
-                  <Button variant="outline" className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                    onClick={() => setOpenRolePlayDialog(true)}
+                  >
                     <PlayCircle className="h-4 w-4" />
                     <span>Start Role-Playing</span>
                   </Button>
@@ -427,6 +437,11 @@ const AgentTrainingCard: React.FC<{
           </>
         )}
       </div>
+      
+      <RolePlayDialog 
+        open={openRolePlayDialog} 
+        onOpenChange={setOpenRolePlayDialog} 
+      />
     </div>
   );
 };
