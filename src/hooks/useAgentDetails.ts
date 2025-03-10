@@ -7,6 +7,7 @@ export const useAgentDetails = (agentId: string | undefined) => {
   const [agent, setAgent] = useState<AgentType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isRolePlayOpen, setIsRolePlayOpen] = useState(false);
 
   useEffect(() => {
     if (!agentId) {
@@ -74,5 +75,20 @@ export const useAgentDetails = (agentId: string | undefined) => {
     loadAgentDetails();
   }, [agentId]);
 
-  return { agent, isLoading, error };
+  const openRolePlay = () => {
+    setIsRolePlayOpen(true);
+  };
+
+  const closeRolePlay = () => {
+    setIsRolePlayOpen(false);
+  };
+
+  return { 
+    agent, 
+    isLoading, 
+    error,
+    isRolePlayOpen,
+    openRolePlay,
+    closeRolePlay
+  };
 };
