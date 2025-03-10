@@ -187,7 +187,7 @@ const AgentTrainingCard: React.FC<{
               <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-8 mb-8 text-center">
                 <Mic className="h-12 w-12 text-gray-500 mx-auto mb-4" />
                 <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">No voice samples yet</h4>
-                <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
                   Upload call recordings or start a role-playing session to begin training your agent.
                 </p>
                 <div className="flex justify-center gap-4">
@@ -298,41 +298,39 @@ const AgentTrainingCard: React.FC<{
                     ))}
                   </div>
                 </div>
-              </>
-            )}
 
-            {(status === 'in-progress' || status === 'not-started') && (
-              <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg mb-6 border border-gray-200 dark:border-gray-800">
-                <h4 className="font-medium text-gray-900 dark:text-white mb-3">Get Started with Training</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Choose one of the following options to begin training your AI agent:</p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
-                    onClick={handleUploadClick}
-                  >
-                    <Upload className="h-4 w-4" />
-                    <span>Upload Call Recordings</span>
-                  </Button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    style={{ display: 'none' }}
-                    onChange={handleFileChange}
-                    multiple
-                    accept="audio/*"
-                  />
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
-                    onClick={() => setOpenRolePlayDialog(true)}
-                  >
-                    <PlayCircle className="h-4 w-4" />
-                    <span>Start Role-Playing</span>
-                  </Button>
+                <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg mb-6 border border-gray-200 dark:border-gray-800">
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-3">Get Started with Training</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Choose one of the following options to begin training your AI agent:</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                      onClick={handleUploadClick}
+                    >
+                      <Upload className="h-4 w-4" />
+                      <span>Upload Call Recordings</span>
+                    </Button>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      style={{ display: 'none' }}
+                      onChange={handleFileChange}
+                      multiple
+                      accept="audio/*"
+                    />
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                      onClick={() => setOpenRolePlayDialog(true)}
+                    >
+                      <PlayCircle className="h-4 w-4" />
+                      <span>Start Role-Playing</span>
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              </>
             )}
 
             {status === 'completed' && (
@@ -430,6 +428,38 @@ const AgentTrainingCard: React.FC<{
                         </div>
                       </div>
                     ))}
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg mb-6 border border-gray-200 dark:border-gray-800">
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-3">Continue Training</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Add more voice samples to further improve your AI agent:</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                      onClick={handleUploadClick}
+                    >
+                      <Upload className="h-4 w-4" />
+                      <span>Upload More Recordings</span>
+                    </Button>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      style={{ display: 'none' }}
+                      onChange={handleFileChange}
+                      multiple
+                      accept="audio/*"
+                    />
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                      onClick={() => setOpenRolePlayDialog(true)}
+                    >
+                      <PlayCircle className="h-4 w-4" />
+                      <span>New Role-Play Session</span>
+                    </Button>
                   </div>
                 </div>
               </div>
