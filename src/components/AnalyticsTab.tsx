@@ -431,7 +431,6 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
                           ))}
                         </Pie>
                         <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
-                        <Legend />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
