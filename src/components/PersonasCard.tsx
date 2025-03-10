@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Users, ChevronUp, CheckCircle2, CircleDashed, 
@@ -8,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/hooks/use-toast";
 
-// Define persona interface
 interface Persona {
   id: string;
   name: string;
@@ -34,6 +35,41 @@ export const PersonasCard: React.FC<PersonasCardProps> = ({
   totalCount = 10
 }) => {
   const [isExpanded, setIsExpanded] = useState(status !== 'completed');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [audienceDescription, setAudienceDescription] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleGenerateClick = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+    setAudienceDescription("");
+  };
+
+  const handleGeneratePersonas = () => {
+    if (!audienceDescription.trim()) {
+      toast({
+        title: "Description Required",
+        description: "Please provide a description of your target audience",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    // Simulate persona generation
+    setTimeout(() => {
+      setIsGenerating(false);
+      setIsDialogOpen(false);
+      setAudienceDescription("");
+      toast({
+        title: "Personas Generated",
+        description: "Your personas are being created based on your description",
+      });
+    }, 2000);
+  };
 
   return (
     <div className="rounded-lg overflow-hidden mb-6 border border-gray-200 dark:border-gray-800">
@@ -97,6 +133,7 @@ export const PersonasCard: React.FC<PersonasCardProps> = ({
                 <div className="flex justify-center">
                   <Button 
                     className="gap-2 bg-primary"
+                    onClick={handleGenerateClick}
                   >
                     <PlusCircle className="h-4 w-4" />
                     Generate Personas
@@ -200,7 +237,10 @@ export const PersonasCard: React.FC<PersonasCardProps> = ({
                 </div>
 
                 <div className="flex justify-center mb-6">
-                  <Button className="gap-2 bg-primary">
+                  <Button 
+                    className="gap-2 bg-primary"
+                    onClick={handleGenerateClick}
+                  >
                     <PlusCircle className="h-4 w-4" />
                     Generate More Personas
                   </Button>
@@ -303,7 +343,10 @@ export const PersonasCard: React.FC<PersonasCardProps> = ({
                 </div>
 
                 <div className="flex justify-center mb-6">
-                  <Button className="gap-2">
+                  <Button 
+                    className="gap-2"
+                    onClick={handleGenerateClick}
+                  >
                     <PlusCircle className="h-4 w-4" />
                     Generate Additional Personas
                   </Button>
@@ -313,6 +356,43 @@ export const PersonasCard: React.FC<PersonasCardProps> = ({
           </>
         )}
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[525px]">
+          <DialogHeader>
+            <DialogTitle>Describe Your Target Audience</DialogTitle>
+            <DialogDescription>
+              Provide details about who your typical users are to help generate accurate personas.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <Textarea 
+              placeholder="Example: Our audience includes working professionals aged 30-45 in the finance industry who need help with investment decisions. They are typically pressed for time, technically savvy, and concerned about financial security."
+              rows={6}
+              className="w-full resize-none"
+              value={audienceDescription}
+              onChange={(e) => setAudienceDescription(e.target.value)}
+            />
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={handleDialogClose}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleGeneratePersonas}
+              disabled={isGenerating}
+              className="bg-primary"
+            >
+              {isGenerating ? "Generating..." : "Generate Personas"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
