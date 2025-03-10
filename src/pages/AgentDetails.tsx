@@ -633,7 +633,7 @@ const AgentDetails = () => {
                         <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestCall} title="Test agent call">
                           <PhoneOutgoing className="h-3 w-3 text-green-400" />
                         </Button>
-                        <Tooltip open={isCallTooltipOpen} onOpenChange={setIsCallTooltipOpen}>
+                        <Tooltip>
                           <TooltipTrigger asChild>
                             <Button 
                               variant="ghost" 
@@ -641,7 +641,7 @@ const AgentDetails = () => {
                               className="h-6 w-6 rounded-full hover:bg-blue-700/50" 
                               title="Call me back"
                             >
-                              <Phone className="h-3 w-3 text-blue-400" />
+                              <PhoneIncoming className="h-3 w-3 text-blue-400" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent side="bottom" align="end" className="w-64 p-4">
@@ -993,4 +993,3 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
-
