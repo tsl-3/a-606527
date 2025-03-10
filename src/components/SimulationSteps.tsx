@@ -9,7 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-import { Upload, Play, Check, FileAudio, X, ChevronRight, Users, Target, PlayCircle } from 'lucide-react';
+import { Upload, Play, Check, FileAudio, X, ChevronRight, Users, Target, PlayCircle, Percent, Zap, Bot, BrainCircuit, PenLine, Users2, Phone, Building, FileText, Database, Lightbulb, BarChart } from 'lucide-react';
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface SimulationStep {
   title: string;
@@ -66,7 +67,21 @@ const STEPS: SimulationStep[] = [
   }
 ];
 
-const SAMPLE_SIMULATIONS: Simulation[] = [
+const SIMULATION_INSIGHTS = [
+  "Analyzing agent purpose and industry context...",
+  "Extracting key user personas from data...",
+  "Identifying common interaction patterns...",
+  "Processing call recordings for tone and content...",
+  "Mapping customer journey touchpoints...",
+  "Designing scenarios for maximum coverage...",
+  "Calibrating difficulty levels across scenarios...",
+  "Optimizing for performance metrics...",
+  "Generating diverse conversation flows...",
+  "Creating edge cases for thorough testing...",
+  "Finalizing simulation parameters..."
+];
+
+const EXPANDED_SIMULATIONS: Simulation[] = [
   {
     id: "1",
     title: "Schedule Appointment",
@@ -95,6 +110,119 @@ const SAMPLE_SIMULATIONS: Simulation[] = [
     coverage: 25,
     performance: 30,
     tokens: 2000
+  },
+  {
+    id: "3",
+    title: "Troubleshooting",
+    description: "Resolve technical issues and customer problems",
+    scenarios: [
+      "Basic troubleshooting steps",
+      "Complex technical problem",
+      "Frustrated customer with recurring issue",
+      "Service outage explanation"
+    ],
+    coverage: 20,
+    performance: 25,
+    tokens: 1800
+  },
+  {
+    id: "4",
+    title: "Billing Questions",
+    description: "Handle payment and invoice inquiries",
+    scenarios: [
+      "Billing cycle explanation",
+      "Disputed charge",
+      "Payment method update",
+      "Invoice request",
+      "Late payment discussion"
+    ],
+    coverage: 15,
+    performance: 20,
+    tokens: 1700
+  },
+  {
+    id: "5",
+    title: "Order Status",
+    description: "Provide updates on order processing and delivery",
+    scenarios: [
+      "Check order status",
+      "Delivery delay explanation",
+      "Order modification request",
+      "Lost package handling"
+    ],
+    coverage: 18,
+    performance: 22,
+    tokens: 1900
+  },
+  {
+    id: "6",
+    title: "Returns and Refunds",
+    description: "Process return requests and issue refunds",
+    scenarios: [
+      "Return policy explanation",
+      "Damaged product return",
+      "Refund status inquiry",
+      "Exchange process"
+    ],
+    coverage: 12,
+    performance: 18,
+    tokens: 1600
+  },
+  {
+    id: "7",
+    title: "Account Management",
+    description: "Help with account-related tasks and questions",
+    scenarios: [
+      "Password reset assistance",
+      "Account upgrade discussion",
+      "Account verification",
+      "Profile update help"
+    ],
+    coverage: 10,
+    performance: 15,
+    tokens: 1500
+  },
+  {
+    id: "8",
+    title: "Feature Onboarding",
+    description: "Guide customers through new features",
+    scenarios: [
+      "First-time user guidance",
+      "Advanced feature tutorial",
+      "Mobile app walkthrough",
+      "Integration explanation"
+    ],
+    coverage: 22,
+    performance: 28,
+    tokens: 2100
+  },
+  {
+    id: "9",
+    title: "Complaint Handling",
+    description: "Address and resolve customer complaints",
+    scenarios: [
+      "Service quality complaint",
+      "Employee behavior complaint",
+      "Long wait time complaint",
+      "Repeated issues complaint"
+    ],
+    coverage: 30,
+    performance: 35,
+    tokens: 2300
+  },
+  {
+    id: "10",
+    title: "Cross-selling Opportunities",
+    description: "Identify and present related products",
+    scenarios: [
+      "Complementary product suggestion",
+      "Upgrade opportunity",
+      "New service introduction",
+      "Loyalty program enrollment"
+    ],
+    coverage: 28,
+    performance: 33,
+    tokens: 2200
   }
 ];
 
@@ -111,10 +239,15 @@ export const SimulationSteps = ({
   const [description, setDescription] = useState("");
   const [selectedSimulations, setSelectedSimulations] = useState<string[]>([]);
   const [simulationCount, setSimulationCount] = useState(5);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationProgress, setGenerationProgress] = useState(0);
+  const [currentInsight, setCurrentInsight] = useState(0);
+  const [simulationsGenerated, setSimulationsGenerated] = useState(false);
+  const [availableSimulations, setAvailableSimulations] = useState<Simulation[]>([]);
 
   useEffect(() => {
     if (initialScenarios && initialScenarios.length > 0) {
-      const simulationIds = SAMPLE_SIMULATIONS
+      const simulationIds = EXPANDED_SIMULATIONS
         .filter(sim => sim.scenarios.some(scenario => 
           initialScenarios.some(initScenario => 
             scenario.includes(initScenario.name)
@@ -156,7 +289,7 @@ export const SimulationSteps = ({
   };
 
   const calculateTotals = () => {
-    return SAMPLE_SIMULATIONS
+    return availableSimulations
       .filter(sim => selectedSimulations.includes(sim.id))
       .reduce((acc, sim) => ({
         coverage: acc.coverage + sim.coverage,
@@ -177,7 +310,13 @@ export const SimulationSteps = ({
 
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {
-      setCurrentStep(prev => prev + 1);
+      if (currentStep === 0) {
+        // Transition to simulation selection - simulate generation
+        setIsGenerating(true);
+        startGenerationAnimation();
+      } else {
+        setCurrentStep(prev => prev + 1);
+      }
     } else {
       onComplete({
         recordings,
@@ -186,6 +325,40 @@ export const SimulationSteps = ({
         simulationCount
       });
     }
+  };
+
+  const startGenerationAnimation = () => {
+    // Reset states
+    setGenerationProgress(0);
+    setCurrentInsight(0);
+    
+    // Progress animation
+    let progress = 0;
+    const insightInterval = setInterval(() => {
+      setCurrentInsight(prev => {
+        if (prev < SIMULATION_INSIGHTS.length - 1) {
+          return prev + 1;
+        }
+        return prev;
+      });
+    }, 1800);
+    
+    const progressInterval = setInterval(() => {
+      progress += 1;
+      setGenerationProgress(progress);
+      
+      if (progress >= 100) {
+        clearInterval(progressInterval);
+        clearInterval(insightInterval);
+        
+        setTimeout(() => {
+          setIsGenerating(false);
+          setSimulationsGenerated(true);
+          setAvailableSimulations(EXPANDED_SIMULATIONS);
+          setCurrentStep(prev => prev + 1);
+        }, 500);
+      }
+    }, 100);
   };
 
   const renderStepContent = () => {
@@ -278,13 +451,83 @@ export const SimulationSteps = ({
         );
 
       case 1:
+        if (isGenerating) {
+          return (
+            <div className="space-y-8 py-4 animate-fade-in">
+              <div className="text-center space-y-4">
+                <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full">
+                  <BrainCircuit className="h-10 w-10 text-primary animate-pulse" />
+                </div>
+                <h3 className="text-xl font-medium">Generating Your Simulations</h3>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  We're analyzing your inputs to create the most effective simulation scenarios for your agent.
+                </p>
+              </div>
+              
+              <div className="max-w-md mx-auto space-y-6">
+                <Progress value={generationProgress} className="h-2" />
+                <div className="flex items-center px-4 py-3 rounded-lg border bg-card">
+                  <div className="mr-4">
+                    {currentInsight <= 2 ? (
+                      <PenLine className="h-5 w-5 text-blue-500" />
+                    ) : currentInsight <= 5 ? (
+                      <Users2 className="h-5 w-5 text-violet-500" />
+                    ) : currentInsight <= 8 ? (
+                      <Bot className="h-5 w-5 text-orange-500" />
+                    ) : (
+                      <Lightbulb className="h-5 w-5 text-green-500" />
+                    )}
+                  </div>
+                  <p className="text-sm font-medium">{SIMULATION_INSIGHTS[currentInsight]}</p>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg border bg-card">
+                    <Building className="h-4 w-4 text-primary" />
+                    <span className="text-sm">Analyzing industry context</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg border bg-card">
+                    <Phone className="h-4 w-4 text-primary" />
+                    <span className="text-sm">Processing call recordings</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg border bg-card">
+                    <FileText className="h-4 w-4 text-primary" />
+                    <span className="text-sm">Creating varied scenarios</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg border bg-card">
+                    <Database className="h-4 w-4 text-primary" />
+                    <span className="text-sm">Optimizing token usage</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
         const totals = calculateTotals();
         return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="space-y-4 animate-fade-in">
+            {simulationsGenerated && (
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900/30 rounded-lg p-4 mb-6 flex items-center gap-3">
+                <div className="bg-green-100 dark:bg-green-800/30 p-2 rounded-full">
+                  <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-green-800 dark:text-green-400">Simulations Generated Successfully</p>
+                  <p className="text-xs text-green-700 dark:text-green-500 mt-0.5">
+                    {availableSimulations.length} simulations created based on your inputs
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            <div className="grid grid-cols-3 gap-4 mb-6">
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-center">
+                    <div className="flex items-center justify-center mb-2">
+                      <Percent className="h-5 w-5 text-blue-500" />
+                    </div>
                     <div className="text-2xl font-bold text-primary">
                       {totals.coverage}%
                     </div>
@@ -297,6 +540,9 @@ export const SimulationSteps = ({
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-center">
+                    <div className="flex items-center justify-center mb-2">
+                      <BarChart className="h-5 w-5 text-purple-500" />
+                    </div>
                     <div className="text-2xl font-bold text-primary">
                       {totals.performance}%
                     </div>
@@ -306,10 +552,25 @@ export const SimulationSteps = ({
                   </div>
                 </CardContent>
               </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <div className="flex items-center justify-center mb-2">
+                      <Zap className="h-5 w-5 text-yellow-500" />
+                    </div>
+                    <div className="text-2xl font-bold text-primary">
+                      {totals.tokens.toLocaleString()}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Tokens
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
             <div className="space-y-4">
-              {SAMPLE_SIMULATIONS.map((sim) => (
+              {availableSimulations.map((sim) => (
                 <Card
                   key={sim.id}
                   className={`cursor-pointer transition-colors ${
@@ -345,6 +606,23 @@ export const SimulationSteps = ({
                         ))}
                       </div>
                     </div>
+                    <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
+                      <div className="flex items-center gap-1">
+                        <Percent className="h-3 w-3 text-blue-500" />
+                        <span className="text-muted-foreground">Coverage:</span>
+                        <span className="font-medium">+{sim.coverage}%</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <BarChart className="h-3 w-3 text-purple-500" />
+                        <span className="text-muted-foreground">Performance:</span>
+                        <span className="font-medium">+{sim.performance}%</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Zap className="h-3 w-3 text-yellow-500" />
+                        <span className="text-muted-foreground">Tokens:</span>
+                        <span className="font-medium">{sim.tokens}</span>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -362,7 +640,7 @@ export const SimulationSteps = ({
                   className="w-24"
                 />
                 <span className="text-sm text-muted-foreground">
-                  Recommended: 5 simulations ({totals.tokens} tokens)
+                  Recommended: 5 simulations ({totals.tokens.toLocaleString()} tokens)
                 </span>
               </div>
             </div>
@@ -383,7 +661,7 @@ export const SimulationSteps = ({
                 <div className="flex justify-between">
                   <span>Total Scenarios:</span>
                   <span>
-                    {SAMPLE_SIMULATIONS
+                    {availableSimulations
                       .filter(sim => selectedSimulations.includes(sim.id))
                       .reduce((acc, sim) => acc + sim.scenarios.length, 0)}
                   </span>
@@ -398,7 +676,7 @@ export const SimulationSteps = ({
                 </div>
                 <div className="flex justify-between">
                   <span>Token Usage:</span>
-                  <span>{finalTotals.tokens}</span>
+                  <span>{finalTotals.tokens.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Simulation Count:</span>
@@ -449,7 +727,7 @@ export const SimulationSteps = ({
       <div className="mt-8">{renderStepContent()}</div>
 
       <div className="flex justify-end gap-4 mt-6">
-        {currentStep > 0 && (
+        {currentStep > 0 && !isGenerating && (
           <Button
             variant="outline"
             onClick={() => setCurrentStep((prev) => prev - 1)}
@@ -459,9 +737,14 @@ export const SimulationSteps = ({
         )}
         <Button
           onClick={handleNext}
-          disabled={!canProceed()}
+          disabled={!canProceed() || isGenerating}
         >
-          {currentStep === STEPS.length - 1 ? "Start Simulations" : "Continue"}
+          {isGenerating ? (
+            <>
+              <BrainCircuit className="mr-2 h-4 w-4 animate-spin" /> 
+              Generating
+            </>
+          ) : currentStep === STEPS.length - 1 ? "Start Simulations" : "Continue"}
         </Button>
       </div>
     </div>
