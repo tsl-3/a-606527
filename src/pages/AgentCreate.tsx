@@ -148,7 +148,7 @@ const AgentCreate = () => {
           <Bot className="h-8 w-8 text-agent-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-semibold text-agent-dark">Create New Agent by Voice</h1>
+          <h1 className="text-3xl font-semibold text-foreground dark:text-agent-light">Create New Agent by Voice</h1>
           <p className="text-gray-500 mt-1">Talk with our system to configure your new agent</p>
         </div>
       </div>
