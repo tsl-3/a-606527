@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -632,54 +633,6 @@ export const RolePlayDialog = ({
                     </div>
                   </div>
                 )}
-                
-                <div className="flex-1 overflow-y-auto mt-6 border-t pt-4">
-                  <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
-                    <MessageCircle className="h-4 w-4 text-primary" />
-                    Chat History
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    {messages.map((message) => (
-                      <div 
-                        key={message.id}
-                        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                      >
-                        <div 
-                          className={`max-w-[80%] rounded-lg p-3 ${
-                            message.sender === 'user' 
-                              ? 'bg-primary text-white' 
-                              : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
-                          }`}
-                        >
-                          <p className="text-sm whitespace-pre-line">{message.text}</p>
-                          <span className="text-xs opacity-70 mt-1 block">
-                            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="flex gap-2 mt-4">
-                    <Input
-                      placeholder="Type your message..."
-                      value={currentMessage}
-                      onChange={(e) => setCurrentMessage(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleSendMessage();
-                        }
-                      }}
-                    />
-                    <Button 
-                      onClick={handleSendMessage}
-                      className="bg-primary"
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
               </div>
               
               <div className="w-full md:w-[250px] border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-4 flex flex-col">
@@ -732,3 +685,4 @@ export const RolePlayDialog = ({
     </Dialog>
   );
 };
+
