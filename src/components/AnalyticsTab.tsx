@@ -419,16 +419,16 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
             <div>
               <h3 className="text-sm font-medium mb-3">Sentiment Breakdown</h3>
               <div className="h-72 flex items-center justify-center">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full w-full">
-                  <div className="flex items-center justify-center h-full">
-                    <ResponsiveContainer width="100%" height={200}>
-                      <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                  <div className="flex items-center justify-center">
+                    <ResponsiveContainer width={180} height={180}>
+                      <PieChart>
                         <Pie
                           data={sentimentData}
                           cx="50%"
                           cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
+                          innerRadius={40}
+                          outerRadius={70}
                           fill="#8884d8"
                           paddingAngle={2}
                           dataKey="value"
@@ -481,14 +481,14 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
             <div>
               <h3 className="text-sm font-medium mb-3">Topic Distribution</h3>
               <div className="h-72 flex items-center justify-center">
-                <ResponsiveContainer width="100%" height={250}>
-                  <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                <ResponsiveContainer width={180} height={180}>
+                  <PieChart>
                     <Pie
                       data={topicData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
+                      innerRadius={40}
+                      outerRadius={70}
                       fill="#8884d8"
                       paddingAngle={2}
                       dataKey="value"
@@ -605,16 +605,16 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
             <div>
               <h3 className="text-sm font-medium mb-3">Distribution by Channel</h3>
               <div className="h-72 flex items-center justify-center">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full w-full">
-                  <div className="flex items-center justify-center h-full">
-                    <ResponsiveContainer width="100%" height={200}>
-                      <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                  <div className="flex items-center justify-center">
+                    <ResponsiveContainer width={180} height={180}>
+                      <PieChart>
                         <Pie
                           data={channelData}
                           cx="50%"
                           cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
+                          innerRadius={40}
+                          outerRadius={70}
                           fill="#8884d8"
                           paddingAngle={2}
                           dataKey="value"
