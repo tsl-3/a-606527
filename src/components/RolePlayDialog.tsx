@@ -238,7 +238,7 @@ export const RolePlayDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[800px] max-h-[80vh] flex flex-col">
+      <DialogContent className="sm:max-w-[95vw] lg:max-w-[85vw] max-h-[90vh] flex flex-col">
         {stage === 'selection' && (
           <>
             <DialogHeader>
