@@ -8,8 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
-// Sample persona data - in a real application, this would be generated dynamically
 const samplePersonas = [
   { id: 1, name: "Emily", role: "Product Manager", avatar: "E", description: "Focused on feature prioritization and roadmap planning", background: "8 years in product management, previously worked at Google", communication: "Direct and data-driven", painPoints: "Tight deadlines, resource constraints" },
   { id: 2, name: "Michael", role: "IT Support", avatar: "M", description: "Technical support specialist with hardware expertise", background: "5 years in IT support, CompTIA certified", communication: "Patient and methodical", painPoints: "Complex legacy systems, urgent requests" },
@@ -37,7 +37,6 @@ export const RolePlayDialog = ({
   open: boolean; 
   onOpenChange: (open: boolean) => void;
 }) => {
-  // State for different stages of the role-play flow
   const [stage, setStage] = useState<'selection' | 'persona-setup' | 'persona-list' | 'persona-detail' | 'chat' | 'call'>('selection');
   const [personaDescription, setPersonaDescription] = useState('');
   const [selectedPersona, setSelectedPersona] = useState<typeof samplePersonas[0] | null>(null);
@@ -46,7 +45,6 @@ export const RolePlayDialog = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [knowledgeResults, setKnowledgeResults] = useState<string[]>([]);
   
-  // Voice call related states
   const [isCallActive, setIsCallActive] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [isCallMuted, setIsCallMuted] = useState(false);
@@ -54,14 +52,12 @@ export const RolePlayDialog = ({
   const [isLoadingTranscription, setIsLoadingTranscription] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   
-  // Timer reference for call duration
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumberError, setPhoneNumberError] = useState('');
 
-  // Effects for call timer
   useEffect(() => {
     if (isCallActive && !timerRef.current) {
       timerRef.current = setInterval(() => {
@@ -79,14 +75,12 @@ export const RolePlayDialog = ({
     };
   }, [isCallActive]);
   
-  // Format seconds to MM:SS
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Handle option selection
   const handleOptionSelect = (option: 'someone' | 'personas') => {
     if (option === 'someone') {
       setStage('call');
@@ -95,32 +89,42 @@ export const RolePlayDialog = ({
     }
   };
 
-  // Handle generating personas based on description
   const handleGeneratePersonas = () => {
-    // In a real application, this would call an AI service to generate personas based on the description
-    // For this demo, we'll just use the sample data
     setStage('persona-list');
   };
 
-  // Handle selecting a persona from the list
   const handlePersonaSelect = (persona: typeof samplePersonas[0]) => {
     setSelectedPersona(persona);
     setStage('persona-detail');
   };
-  
-  // Start role-play with the selected persona
+
   const handleStartRolePlay = () => {
-    setStage('call');
+    if (selectedPersona) {
+      setStage('call');
+      setTimeout(() => {
+        setIsCallActive(true);
+        setCallDuration(0);
+        setTranscription([`Call connected with ${selectedPersona.name}`]);
+      }, 500);
+    }
   };
 
-  // Add phone number validation
   const validatePhoneNumber = (number: string) => {
     const phoneRegex = /^\+?[1-9]\d{1,14}$/;
     return phoneRegex.test(number);
   };
 
-  // Handle starting a voice call
   const handleStartCall = () => {
+    if (selectedPersona) {
+      setIsCallActive(true);
+      setCallDuration(0);
+      
+      setTimeout(() => {
+        setTranscription([`Call connected with ${selectedPersona.name}`]);
+      }, 2000);
+      return;
+    }
+
     if (!phoneNumber) {
       setPhoneNumberError('Please enter a phone number');
       return;
@@ -135,17 +139,15 @@ export const RolePlayDialog = ({
     setIsCallActive(true);
     setCallDuration(0);
     
-    // In a real implementation, this would initiate the actual phone call
     setTimeout(() => {
       setTranscription([`Call connected with ${phoneNumber}`]);
+      toast.success("Call connected successfully");
     }, 2000);
   };
-  
-  // Handle ending a voice call
+
   const handleEndCall = () => {
     setIsCallActive(false);
     
-    // Add call summary to messages for chat history
     if (selectedPersona && transcription.length > 0) {
       const newMessage: Message = {
         id: Date.now().toString(),
@@ -157,27 +159,22 @@ export const RolePlayDialog = ({
       setMessages(prev => [...prev, newMessage]);
     }
   };
-  
-  // Toggle microphone mute state
+
   const handleToggleMute = () => {
     setIsCallMuted(!isCallMuted);
   };
-  
-  // Toggle recording state
+
   const handleToggleRecording = () => {
     setIsRecording(!isRecording);
     
     if (!isRecording) {
       setIsLoadingTranscription(true);
-      // Simulate recording and transcription
       setTimeout(() => {
         setIsLoadingTranscription(false);
         
-        // Add user message to transcription
         const userTranscript = "Thanks for explaining that. I have a question about your experience with our product.";
         setTranscription(prev => [...prev, `You: ${userTranscript}`]);
         
-        // Simulate persona response after a delay
         setTimeout(() => {
           if (selectedPersona) {
             setTranscription(prev => [...prev, `${selectedPersona.name}: I've been using your product for about 6 months now. It's mostly been positive, but I've had some challenges with the reporting features.`]);
@@ -187,11 +184,9 @@ export const RolePlayDialog = ({
     }
   };
 
-  // Handle sending a message in the chat
   const handleSendMessage = () => {
     if (currentMessage.trim() === '') return;
 
-    // Add user message to the chat
     const newUserMessage: Message = {
       id: Date.now().toString(),
       sender: 'user',
@@ -202,8 +197,6 @@ export const RolePlayDialog = ({
     setMessages([...messages, newUserMessage]);
     setCurrentMessage('');
 
-    // In a real application, this would call an AI service to generate a response
-    // For this demo, we'll simulate a response after a delay
     setTimeout(() => {
       const newPersonaMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -215,12 +208,9 @@ export const RolePlayDialog = ({
     }, 1000);
   };
 
-  // Handle searching the knowledge base
   const handleKnowledgeSearch = () => {
     if (searchQuery.trim() === '') return;
 
-    // In a real application, this would search an actual knowledge base
-    // For this demo, we'll simulate results
     setKnowledgeResults([
       `Article about "${searchQuery}" from the knowledge base.`,
       `FAQ entry related to "${searchQuery}".`,
@@ -228,7 +218,6 @@ export const RolePlayDialog = ({
     ]);
   };
 
-  // Reset function when closing the dialog
   const handleClose = () => {
     setStage('selection');
     setPersonaDescription('');
@@ -475,19 +464,35 @@ export const RolePlayDialog = ({
           </>
         )}
 
-        {stage === 'call' && selectedPersona && (
+        {stage === 'call' && (
           <>
             <DialogHeader className="border-b pb-3">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-lg font-medium text-primary">
-                  {selectedPersona.avatar}
-                </div>
-                <div>
-                  <DialogTitle className="text-xl">{selectedPersona.name}</DialogTitle>
-                  <DialogDescription className="text-sm">
-                    {selectedPersona.role}
-                  </DialogDescription>
-                </div>
+                {selectedPersona ? (
+                  <>
+                    <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-lg font-medium text-primary">
+                      {selectedPersona.avatar}
+                    </div>
+                    <div>
+                      <DialogTitle className="text-xl">{selectedPersona.name}</DialogTitle>
+                      <DialogDescription className="text-sm">
+                        {selectedPersona.role}
+                      </DialogDescription>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-lg font-medium text-primary">
+                      <Phone className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <DialogTitle className="text-xl">{phoneNumber || "Role-Play Call"}</DialogTitle>
+                      <DialogDescription className="text-sm">
+                        External Call
+                      </DialogDescription>
+                    </div>
+                  </>
+                )}
                 {isCallActive && (
                   <Badge variant="outline" className="ml-auto border-green-500/30 text-green-500 bg-green-500/10">
                     <span className="flex items-center gap-1.5">
@@ -500,7 +505,6 @@ export const RolePlayDialog = ({
             </DialogHeader>
             
             <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden py-4">
-              {/* Call & Chat section */}
               <div className="flex-1 flex flex-col h-[400px]">
                 {!isCallActive ? (
                   <div className="flex flex-col items-center justify-center flex-1">
@@ -509,7 +513,10 @@ export const RolePlayDialog = ({
                     </div>
                     <h3 className="text-lg font-medium mb-2">Ready to start your call</h3>
                     <p className="text-sm text-center text-muted-foreground mb-6 max-w-md">
-                      You'll be connected to {selectedPersona.name} for a role-play conversation. Everything will be recorded for your training purposes.
+                      {selectedPersona 
+                        ? `You'll be connected to ${selectedPersona.name} for a role-play conversation.` 
+                        : "You'll be connected to the person for a role-play conversation."} 
+                      Everything will be recorded for your training purposes.
                     </p>
                     <Button 
                       onClick={handleStartCall} 
@@ -564,7 +571,7 @@ export const RolePlayDialog = ({
                       <div className="space-y-6">
                         <div className="flex items-center justify-center">
                           <Badge className="bg-blue-500/10 text-blue-500 border border-blue-500/30">
-                            Call started with {selectedPersona.name}
+                            Call started with {selectedPersona ? selectedPersona.name : phoneNumber}
                           </Badge>
                         </div>
                         
@@ -589,7 +596,7 @@ export const RolePlayDialog = ({
                           return (
                             <div key={index} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
                               <div className="flex items-start gap-3 max-w-[80%]">
-                                {!isUser && (
+                                {!isUser && selectedPersona && (
                                   <Avatar className="h-8 w-8">
                                     <AvatarFallback className="bg-primary/10 text-primary text-sm">
                                       {selectedPersona.avatar}
@@ -626,59 +633,55 @@ export const RolePlayDialog = ({
                   </div>
                 )}
                 
-                {/* Chat UI is hidden during active calls but available after call ends */}
-                {!isCallActive && messages.length > 0 && (
-                  <div className="flex-1 overflow-y-auto mt-6 border-t pt-4">
-                    <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
-                      <MessageCircle className="h-4 w-4 text-primary" />
-                      Chat History
-                    </h3>
-                    
-                    <div className="space-y-4">
-                      {messages.map((message) => (
-                        <div 
-                          key={message.id}
-                          className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                        >
-                          <div 
-                            className={`max-w-[80%] rounded-lg p-3 ${
-                              message.sender === 'user' 
-                                ? 'bg-primary text-white' 
-                                : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
-                            }`}
-                          >
-                            <p className="text-sm whitespace-pre-line">{message.text}</p>
-                            <span className="text-xs opacity-70 mt-1 block">
-                              {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="flex gap-2 mt-4">
-                      <Input
-                        placeholder="Type your message..."
-                        value={currentMessage}
-                        onChange={(e) => setCurrentMessage(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handleSendMessage();
-                          }
-                        }}
-                      />
-                      <Button 
-                        onClick={handleSendMessage}
-                        className="bg-primary"
+                <div className="flex-1 overflow-y-auto mt-6 border-t pt-4">
+                  <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
+                    <MessageCircle className="h-4 w-4 text-primary" />
+                    Chat History
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    {messages.map((message) => (
+                      <div 
+                        key={message.id}
+                        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
-                        <Send className="h-4 w-4" />
-                      </Button>
-                    </div>
+                        <div 
+                          className={`max-w-[80%] rounded-lg p-3 ${
+                            message.sender === 'user' 
+                              ? 'bg-primary text-white' 
+                              : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
+                          }`}
+                        >
+                          <p className="text-sm whitespace-pre-line">{message.text}</p>
+                          <span className="text-xs opacity-70 mt-1 block">
+                            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                )}
+                  
+                  <div className="flex gap-2 mt-4">
+                    <Input
+                      placeholder="Type your message..."
+                      value={currentMessage}
+                      onChange={(e) => setCurrentMessage(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSendMessage();
+                        }
+                      }}
+                    />
+                    <Button 
+                      onClick={handleSendMessage}
+                      className="bg-primary"
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
               
-              {/* Knowledge base section */}
               <div className="w-full md:w-[250px] border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-4 flex flex-col">
                 <h4 className="font-medium text-sm mb-3 flex items-center gap-2">
                   <Brain className="h-4 w-4" />
