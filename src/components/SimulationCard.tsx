@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import { 
   FlaskConical, Target, TrendingUp, Check, PlayCircle, 
   SkipForward, List, ArrowRight, Plus, CircleCheck,
-  CheckCircle2, ChevronUp, Download, Rocket
+  CheckCircle2, ChevronUp, Download, Rocket, FileText, Mic, Save
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -11,14 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch, SwitchWithLabels } from "@/components/ui/switch";
 
-// Define scenario interface
 interface TrainingScenario {
   id: string;
   name: string;
   completed: boolean;
 }
 
-// Update Simulation Result interface to use string for tokens
 interface SimulationResult {
   id: string;
   name: string;
@@ -26,7 +23,14 @@ interface SimulationResult {
   coverage: number;
   performance: number;
   scenarios: number;
-  tokens: string; // Changed from number to string to match actual usage
+  tokens: string;
+}
+
+interface PersonaTemplate {
+  location: string;
+  ageRange: string;
+  gender: string;
+  seekingFor: string;
 }
 
 interface SimulationCardProps {
@@ -45,8 +49,9 @@ export const SimulationCard: React.FC<SimulationCardProps> = ({
   simulations = []
 }) => {
   const [isExpanded, setIsExpanded] = useState(status !== 'completed');
+  const [showPersonaForm, setShowPersonaForm] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
 
-  // Determine if metrics are in the success range
   const isCoverageComplete = coverage >= 95;
   const isPerformanceComplete = performance >= 90;
   const isComplete = isCoverageComplete && isPerformanceComplete;
@@ -104,12 +109,56 @@ export const SimulationCard: React.FC<SimulationCardProps> = ({
         {isExpanded && (
           <>
             {status === 'not-started' && (
-              <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-8 mb-8 text-center">
-                <FlaskConical className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-                <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">No simulations yet</h4>
-                <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-                  Create simulations based on common customer scenarios to test your agent's performance in real-world situations.
-                </p>
+              <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-8 mb-8">
+                <div className="text-center mb-8">
+                  <FlaskConical className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                  <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">Define Your User Personas</h4>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                    Before running simulations, let's understand your target users. You can either describe them or record your explanation.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div className="bg-white dark:bg-gray-800/50 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center gap-2 mb-4">
+                      <FileText className="h-5 w-5 text-indigo-500" />
+                      <h5 className="font-medium text-gray-900 dark:text-gray-100">Written Description</h5>
+                    </div>
+                    <Textarea
+                      placeholder="Example: Our users are professionals aged 25-40 from urban areas in the US, predominantly female (65%), seeking productivity tools for remote work management."
+                      className="mb-4 h-32"
+                    />
+                    <Button variant="outline" className="w-full gap-2">
+                      <FileText className="h-4 w-4" />
+                      Submit Description
+                    </Button>
+                  </div>
+
+                  <div className="bg-white dark:bg-gray-800/50 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Mic className="h-5 w-5 text-indigo-500" />
+                      <h5 className="font-medium text-gray-900 dark:text-gray-100">Voice Recording</h5>
+                    </div>
+                    <div className="flex flex-col items-center justify-center h-32 mb-4 bg-gray-50 dark:bg-gray-800/30 rounded-lg">
+                      <Button 
+                        variant="outline" 
+                        size="icon"
+                        className={`h-12 w-12 rounded-full ${isRecording ? 'bg-red-500 text-white hover:bg-red-600' : ''}`}
+                        onClick={() => setIsRecording(!isRecording)}
+                      >
+                        <Mic className="h-6 w-6" />
+                      </Button>
+                      <span className="text-sm text-gray-500 mt-2">
+                        {isRecording ? 'Recording...' : 'Click to Record'}
+                      </span>
+                    </div>
+                    <Button variant="outline" className="w-full gap-2" disabled={!isRecording}>
+                      <Save className="h-4 w-4" />
+                      Save Recording
+                    </Button>
+                  </div>
+                </div>
+
                 <div className="flex justify-center gap-4">
                   <Button 
                     variant="outline" 
@@ -118,7 +167,7 @@ export const SimulationCard: React.FC<SimulationCardProps> = ({
                     <Plus className="h-4 w-4" />
                     Create Simulation
                   </Button>
-                  <Button className="gap-2 bg-gradient-to-r from-purple-500 to-indigo-500">
+                  <Button className="gap-2 bg-gradient-to-r from-purple-500 to-indigo-500" disabled>
                     <Rocket className="h-4 w-4" />
                     Generate Recommended Simulations
                   </Button>
@@ -479,7 +528,6 @@ export const SimulationCard: React.FC<SimulationCardProps> = ({
   );
 };
 
-// Add missing Circle component that was used in the code
 export const Circle = ({ className = "", ...props }) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
