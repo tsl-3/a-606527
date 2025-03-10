@@ -470,8 +470,8 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <h3 className="text-sm font-medium mb-3">Topic Distribution</h3>
-              <div className="h-72 flex items-center justify-center">
-                <ResponsiveContainer width="100%" height={250}>
+              <div className="h-[250px] sm:h-[275px] md:h-[200px] lg:h-[220px] flex items-center justify-center">
+                <ResponsiveContainer width="100%" height={200}>
                   <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                     <Pie
                       data={topicData}
@@ -490,7 +490,6 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
                       ))}
                     </Pie>
                     <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
-                    <Legend />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
