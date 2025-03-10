@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Mic, MicOff, Save, Trash, Volume2, RefreshCw, Phone, User, Rocket, ArrowRight, Check, X } from 'lucide-react';
+import { Play, Pause, Mic, MicOff, Save, Trash, Volume2, RefreshCw, Phone, User, Rocket, Check, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -39,6 +38,13 @@ enum CallState {
   REVIEW = 'review',
 }
 
+const personas = [
+  { id: '1', name: 'Customer', description: 'A standard customer calling for help' },
+  { id: '2', name: 'Angry Customer', description: 'A frustrated customer with a problem' },
+  { id: '3', name: 'New User', description: 'Someone unfamiliar with your product' },
+  { id: '4', name: 'Technical User', description: 'Someone with technical knowledge' },
+];
+
 export const CustomRolePlayDialog = ({
   open,
   onOpenChange,
@@ -58,12 +64,6 @@ export const CustomRolePlayDialog = ({
   const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [recordings, setRecordings] = useState<{id: string, title: string, url: string, isTraining: boolean}[]>([]);
-  const [personas, setPersonas] = useState([
-    { id: '1', name: 'Customer', description: 'A standard customer calling for help' },
-    { id: '2', name: 'Angry Customer', description: 'A frustrated customer with a problem' },
-    { id: '3', name: 'New User', description: 'Someone unfamiliar with your product' },
-    { id: '4', name: 'Technical User', description: 'Someone with technical knowledge' },
-  ]);
   const [selectedPersona, setSelectedPersona] = useState('1');
   const [phoneNumber, setPhoneNumber] = useState('');
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -136,10 +136,6 @@ export const CustomRolePlayDialog = ({
     } else {
       setCallState(CallState.PERSONA_SELECT);
     }
-  };
-
-  const selectPersona = (personaId: string) => {
-    setSelectedPersona(personaId);
   };
 
   const startCall = () => {
@@ -312,7 +308,7 @@ export const CustomRolePlayDialog = ({
           {/* Mode Selection Screen - Only 2 options */}
           {callState === CallState.MODE_SELECT && (
             <div className="flex flex-col items-center justify-center p-8 space-y-8">
-              <h2 className="text-xl font-semibold text-center">Choose a role-play option to start training your agent</h2>
+              <h2 className="text-xl font-semibold text-center">Choose a role-play option</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
                 <Button 
@@ -325,7 +321,7 @@ export const CustomRolePlayDialog = ({
                   </div>
                   <div className="text-center">
                     <h3 className="text-lg font-medium mb-2">Role-Play Call</h3>
-                    <p className="text-muted-foreground">Start a voice call session with a real person to practice customer conversations</p>
+                    <p className="text-muted-foreground">Start a voice call session with a real person</p>
                   </div>
                 </Button>
                 
@@ -339,7 +335,7 @@ export const CustomRolePlayDialog = ({
                   </div>
                   <div className="text-center">
                     <h3 className="text-lg font-medium mb-2">User Personas</h3>
-                    <p className="text-muted-foreground">Practice with pre-generated customer personas for targeted training calls</p>
+                    <p className="text-muted-foreground">Practice with pre-generated customer personas</p>
                   </div>
                 </Button>
               </div>
@@ -349,7 +345,7 @@ export const CustomRolePlayDialog = ({
           {/* Person Setup Screen */}
           {callState === CallState.PERSON_SETUP && (
             <div className="space-y-6 p-4">
-              <Card className="border-dashed">
+              <Card>
                 <CardContent className="p-6">
                   <div className="flex flex-col gap-4">
                     <div className="mb-4">
@@ -363,12 +359,9 @@ export const CustomRolePlayDialog = ({
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <Label htmlFor="microphone">Microphone</Label>
-                        <Select 
-                          value={selectedMicrophone || ''} 
-                          onValueChange={setMicrophone}
-                        >
-                          <SelectTrigger id="microphone">
+                        <Label>Microphone</Label>
+                        <Select value={selectedMicrophone || ''} onValueChange={setMicrophone}>
+                          <SelectTrigger>
                             <SelectValue placeholder="Select a microphone" />
                           </SelectTrigger>
                           <SelectContent>
@@ -382,12 +375,9 @@ export const CustomRolePlayDialog = ({
                       </div>
                       
                       <div>
-                        <Label htmlFor="speaker">Speaker</Label>
-                        <Select 
-                          value={selectedSpeaker || ''} 
-                          onValueChange={setSpeaker}
-                        >
-                          <SelectTrigger id="speaker">
+                        <Label>Speaker</Label>
+                        <Select value={selectedSpeaker || ''} onValueChange={setSpeaker}>
+                          <SelectTrigger>
                             <SelectValue placeholder="Select a speaker" />
                           </SelectTrigger>
                           <SelectContent>
@@ -405,156 +395,85 @@ export const CustomRolePlayDialog = ({
                       <Button variant="outline" onClick={() => setCallState(CallState.MODE_SELECT)}>
                         Back
                       </Button>
-                      <Button onClick={startCall} disabled={!phoneNumber.trim()}>
+                      <Button onClick={() => setCallState(CallState.ACTIVE)} disabled={!phoneNumber.trim()}>
                         Start Call
                       </Button>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              
-              {recordings.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-medium mb-3">Previous Recordings</h3>
-                  <ScrollArea className="h-[200px]">
-                    <div className="space-y-2">
-                      {recordings.map(recording => (
-                        <div key={recording.id} className="flex items-center justify-between border p-3 rounded-lg">
-                          <div className="flex-1">
-                            <p className="font-medium">{recording.title}</p>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              onClick={() => toggleTraining(recording.id)}
-                              className={recording.isTraining ? "bg-green-100 text-green-800" : ""}
-                            >
-                              {recording.isTraining ? "In Training" : "Add to Training"}
-                            </Button>
-                            <Button 
-                              variant="destructive" 
-                              size="sm" 
-                              onClick={() => deleteRecording(recording.id)}
-                            >
-                              <Trash className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </div>
-              )}
             </div>
           )}
           
           {/* Persona Selection Screen */}
           {callState === CallState.PERSONA_SELECT && (
             <div className="space-y-6 p-4">
-              <div className="mb-6">
-                <h3 className="text-lg font-medium mb-4">Select a Persona to Practice With</h3>
-                <div className="grid grid-cols-1 gap-3">
-                  {personas.map(persona => (
-                    <div 
-                      key={persona.id}
-                      className={`flex items-start space-x-3 rounded-lg border p-4 cursor-pointer ${selectedPersona === persona.id ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}
-                      onClick={() => selectPersona(persona.id)}
-                    >
-                      <RadioGroupItem value={persona.id} id={`persona-${persona.id}`} checked={selectedPersona === persona.id} />
-                      <div className="flex flex-col space-y-1">
-                        <Label htmlFor={`persona-${persona.id}`} className="text-base font-medium cursor-pointer">
-                          {persona.name}
-                        </Label>
-                        <p className="text-sm text-muted-foreground">{persona.description}</p>
+              <div className="grid grid-cols-1 gap-4">
+                {personas.map(persona => (
+                  <div 
+                    key={persona.id}
+                    className={`p-4 border rounded-lg cursor-pointer ${
+                      selectedPersona === persona.id ? 'border-primary bg-primary/5' : ''
+                    }`}
+                    onClick={() => setSelectedPersona(persona.id)}
+                  >
+                    <div className="flex items-start gap-4">
+                      <RadioGroupItem value={persona.id} id={`persona-${persona.id}`} className="mt-1" />
+                      <div>
+                        <Label className="text-lg font-medium">{persona.name}</Label>
+                        <p className="text-muted-foreground mt-1">{persona.description}</p>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                <div>
-                  <Label htmlFor="ai-microphone">Microphone</Label>
-                  <Select 
-                    value={selectedMicrophone || ''} 
-                    onValueChange={setMicrophone}
-                  >
-                    <SelectTrigger id="ai-microphone">
-                      <SelectValue placeholder="Select a microphone" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {audioDevices.map(device => (
-                        <SelectItem key={device.deviceId} value={device.deviceId}>
-                          {device.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <Label htmlFor="ai-speaker">Speaker</Label>
-                  <Select 
-                    value={selectedSpeaker || ''} 
-                    onValueChange={setSpeaker}
-                  >
-                    <SelectTrigger id="ai-speaker">
-                      <SelectValue placeholder="Select a speaker" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {outputDevices.map(device => (
-                        <SelectItem key={device.deviceId} value={device.deviceId}>
-                          {device.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div className="flex justify-between mt-6">
-                <Button variant="outline" onClick={() => setCallState(CallState.MODE_SELECT)}>
-                  Back
-                </Button>
-                <Button onClick={startCall}>
-                  Start Call with {personas.find(p => p.id === selectedPersona)?.name}
-                </Button>
-              </div>
-              
-              {recordings.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-medium mb-3">Previous Recordings</h3>
-                  <ScrollArea className="h-[200px]">
-                    <div className="space-y-2">
-                      {recordings.map(recording => (
-                        <div key={recording.id} className="flex items-center justify-between border p-3 rounded-lg">
-                          <div className="flex-1">
-                            <p className="font-medium">{recording.title}</p>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              onClick={() => toggleTraining(recording.id)}
-                              className={recording.isTraining ? "bg-green-100 text-green-800" : ""}
-                            >
-                              {recording.isTraining ? "In Training" : "Add to Training"}
-                            </Button>
-                            <Button 
-                              variant="destructive" 
-                              size="sm" 
-                              onClick={() => deleteRecording(recording.id)}
-                            >
-                              <Trash className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
+
+              <Card className="mt-6">
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label>Microphone</Label>
+                      <Select value={selectedMicrophone || ''} onValueChange={setMicrophone}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a microphone" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {audioDevices.map(device => (
+                            <SelectItem key={device.deviceId} value={device.deviceId}>
+                              {device.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </ScrollArea>
-                </div>
-              )}
+                    
+                    <div>
+                      <Label>Speaker</Label>
+                      <Select value={selectedSpeaker || ''} onValueChange={setSpeaker}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a speaker" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {outputDevices.map(device => (
+                            <SelectItem key={device.deviceId} value={device.deviceId}>
+                              {device.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between mt-6">
+                    <Button variant="outline" onClick={() => setCallState(CallState.MODE_SELECT)}>
+                      Back
+                    </Button>
+                    <Button onClick={() => setCallState(CallState.ACTIVE)}>
+                      Start Call
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           )}
           
@@ -571,36 +490,15 @@ export const CustomRolePlayDialog = ({
                   : `Call in progress with ${personas.find(p => p.id === selectedPersona)?.name}`
                 }
               </p>
-              <p className="text-muted-foreground">Recording is active...</p>
               
-              <div className="space-x-4 mt-8">
-                {isRecording ? (
-                  <Button 
-                    variant="destructive" 
-                    size="lg" 
-                    onClick={stopRecording}
-                    className="min-w-32"
-                  >
-                    <MicOff className="mr-2 h-5 w-5" />
-                    Stop Recording
-                  </Button>
-                ) : (
-                  <Button 
-                    variant="default" 
-                    size="lg" 
-                    onClick={startRecording}
-                    className="min-w-32"
-                  >
-                    <Mic className="mr-2 h-5 w-5" />
-                    Resume Recording
-                  </Button>
-                )}
-                
+              <div className="space-x-4">
                 <Button 
-                  variant="destructive" 
-                  size="lg" 
-                  onClick={endCall}
-                  className="min-w-32"
+                  variant="destructive"
+                  size="lg"
+                  onClick={() => {
+                    stopRecording();
+                    setCallState(CallState.REVIEW);
+                  }}
                 >
                   End Call
                 </Button>
@@ -609,7 +507,7 @@ export const CustomRolePlayDialog = ({
           )}
           
           {/* Review Screen */}
-          {callState === CallState.REVIEW && recordingUrl && (
+          {callState === CallState.REVIEW && (
             <div className="flex flex-col items-center justify-center flex-1 p-8 space-y-6">
               <div className="text-center mb-4">
                 <h3 className="text-xl font-semibold">Great job!</h3>
@@ -618,62 +516,71 @@ export const CustomRolePlayDialog = ({
                 </p>
               </div>
               
-              <div className="w-full max-w-md p-6 border rounded-lg shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="font-medium">
-                    {rolePlayMode === 'person' 
-                      ? `Call with ${phoneNumber}` 
-                      : `Call with ${personas.find(p => p.id === selectedPersona)?.name}`
+              <div className="w-full max-w-md">
+                <Button 
+                  variant={isPlaying ? "destructive" : "outline"} 
+                  size="lg" 
+                  className="w-full"
+                  onClick={() => {
+                    if (isPlaying) {
+                      if (audioPlayerRef.current) {
+                        audioPlayerRef.current.pause();
+                      }
+                      setIsPlaying(false);
+                    } else {
+                      if (audioPlayerRef.current && recordingUrl) {
+                        audioPlayerRef.current.src = recordingUrl;
+                        audioPlayerRef.current.play();
+                        setIsPlaying(true);
+                      }
                     }
-                  </p>
-                  <p className="text-xs text-muted-foreground">{new Date().toLocaleString()}</p>
-                </div>
-                
-                <div className="flex justify-center my-6">
-                  <Button 
-                    variant={isPlaying ? "destructive" : "outline"} 
-                    size="lg" 
-                    onClick={playRecording}
-                    className="min-w-40"
-                  >
-                    {isPlaying ? (
-                      <>
-                        <Pause className="mr-2 h-5 w-5" />
-                        Pause
-                      </>
-                    ) : (
-                      <>
-                        <Play className="mr-2 h-5 w-5" />
-                        Play Recording
-                      </>
-                    )}
-                  </Button>
-                </div>
-                
-                <audio 
-                  ref={audioPlayerRef} 
-                  src={recordingUrl} 
-                  onEnded={handleAudioEnded} 
-                  className="hidden" 
-                />
-                
-                <div className="grid grid-cols-3 gap-3 mt-6">
-                  <Button variant="outline" onClick={discardRecording} className="flex flex-col items-center py-6 h-auto gap-2">
-                    <X className="h-5 w-5 text-red-500" />
+                  }}
+                >
+                  {isPlaying ? (
+                    <>
+                      <Pause className="mr-2 h-5 w-5" />
+                      Pause Recording
+                    </>
+                  ) : (
+                    <>
+                      <Play className="mr-2 h-5 w-5" />
+                      Play Recording
+                    </>
+                  )}
+                </Button>
+
+                <div className="grid grid-cols-3 gap-4 mt-6">
+                  <Button variant="outline" onClick={() => {
+                    setRecordingUrl(null);
+                    setCallState(rolePlayMode === 'person' ? CallState.PERSON_SETUP : CallState.PERSONA_SELECT);
+                  }} className="flex flex-col items-center py-6 h-auto">
+                    <X className="h-5 w-5 text-red-500 mb-2" />
                     <span>Discard</span>
                   </Button>
                   
-                  <Button variant="outline" onClick={retakeRecording} className="flex flex-col items-center py-6 h-auto gap-2">
-                    <RefreshCw className="h-5 w-5 text-amber-500" />
+                  <Button variant="outline" onClick={() => {
+                    setRecordingUrl(null);
+                    setCallState(CallState.ACTIVE);
+                  }} className="flex flex-col items-center py-6 h-auto">
+                    <RefreshCw className="h-5 w-5 text-amber-500 mb-2" />
                     <span>Retake</span>
                   </Button>
                   
-                  <Button onClick={saveRecording} className="flex flex-col items-center py-6 h-auto gap-2 bg-green-600 hover:bg-green-700">
-                    <Check className="h-5 w-5" />
+                  <Button onClick={() => {
+                    // Save recording logic
+                    toast({
+                      title: "Recording saved",
+                      description: "Your recording has been saved and will be used for training."
+                    });
+                    setCallState(rolePlayMode === 'person' ? CallState.PERSON_SETUP : CallState.PERSONA_SELECT);
+                  }} className="flex flex-col items-center py-6 h-auto bg-green-600 hover:bg-green-700">
+                    <Check className="h-5 w-5 mb-2" />
                     <span>Save & Train</span>
                   </Button>
                 </div>
               </div>
+              
+              <audio ref={audioPlayerRef} className="hidden" />
             </div>
           )}
         </div>
