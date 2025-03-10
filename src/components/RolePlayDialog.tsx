@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, Di
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Search, Users, UserRound, MessageCircle, Brain, ArrowRight, Send, Phone, Mic, PhoneCall, Pause, Play, PhoneOff, Volume2, Timer, FileText, Volume, MicOff } from "lucide-react";
+import { Search, Users, UserRound, MessageCircle, Brain, ArrowRight, Send, Phone, Mic, PhoneCall, Pause, Play, PhoneOff, Volume2, Timer, FileText, Volume, MicOff, Save, Redo, CheckCircle, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 const samplePersonas = [
   { id: 1, name: "Emily", role: "Product Manager", avatar: "E", description: "Focused on feature prioritization and roadmap planning", background: "8 years in product management, previously worked at Google", communication: "Direct and data-driven", painPoints: "Tight deadlines, resource constraints" },
@@ -44,7 +45,7 @@ export const RolePlayDialog = ({
   open: boolean; 
   onOpenChange: (open: boolean) => void;
 }) => {
-  const [stage, setStage] = useState<'selection' | 'persona-list' | 'persona-detail' | 'chat' | 'call'>('selection');
+  const [stage, setStage] = useState<'selection' | 'persona-list' | 'persona-detail' | 'chat' | 'call' | 'success'>('selection');
   const [selectedPersona, setSelectedPersona] = useState<typeof samplePersonas[0] | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
@@ -59,9 +60,12 @@ export const RolePlayDialog = ({
   const [transcription, setTranscription] = useState<string[]>([]);
   const [isLoadingTranscription, setIsLoadingTranscription] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isPlayingRecording, setIsPlayingRecording] = useState(false);
+  const [recordingProgress, setRecordingProgress] = useState(0);
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumberError, setPhoneNumberError] = useState('');
@@ -301,6 +305,52 @@ export const RolePlayDialog = ({
     ]);
   };
 
+  const handlePlayRecording = () => {
+    setIsPlayingRecording(true);
+    setRecordingProgress(0);
+    
+    recordingTimerRef.current = setInterval(() => {
+      setRecordingProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(recordingTimerRef.current as NodeJS.Timeout);
+          setIsPlayingRecording(false);
+          return 100;
+        }
+        return prev + 1;
+      });
+    }, callDuration * 10);
+  };
+
+  const handleStopPlayback = () => {
+    if (recordingTimerRef.current) {
+      clearInterval(recordingTimerRef.current);
+      recordingTimerRef.current = null;
+    }
+    setIsPlayingRecording(false);
+  };
+
+  const handleSaveAndTrain = () => {
+    toast({
+      title: "Recording Saved",
+      description: "Your recording has been saved and will be used for training."
+    });
+    handleClose();
+  };
+
+  const handleRetake = () => {
+    setStage('call');
+    setIsCallActive(false);
+    setCallDuration(0);
+    setTranscription([]);
+    setRecordingProgress(0);
+    setIsPlayingRecording(false);
+    
+    if (recordingTimerRef.current) {
+      clearInterval(recordingTimerRef.current);
+      recordingTimerRef.current = null;
+    }
+  };
+
   const handleClose = () => {
     setStage('selection');
     setSelectedPersona(null);
@@ -311,10 +361,19 @@ export const RolePlayDialog = ({
     setIsCallActive(false);
     setCallDuration(0);
     setTranscription([]);
+    setRecordingProgress(0);
+    setIsPlayingRecording(false);
+    
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
+    
+    if (recordingTimerRef.current) {
+      clearInterval(recordingTimerRef.current);
+      recordingTimerRef.current = null;
+    }
+    
     onOpenChange(false);
   };
 
@@ -381,8 +440,8 @@ export const RolePlayDialog = ({
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium">{persona.name}</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{persona.role}</p>
-                    <p className="text-xs text-gray-500 mt-1">{persona.description}</p>
+                    <p className="text-sm text-muted-foreground">{persona.role}</p>
+                    <p className="mt-2">{persona.description}</p>
                   </div>
                   <ArrowRight className="h-5 w-5 text-gray-400" />
                 </div>
@@ -797,6 +856,110 @@ export const RolePlayDialog = ({
                   </div>
                 )}
               </div>
+            </div>
+          </>
+        )}
+        
+        {stage === 'success' && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-2xl flex items-center gap-2">
+                <CheckCircle className="h-6 w-6 text-green-500" />
+                Great Job!
+              </DialogTitle>
+              <DialogDescription className="text-base mt-2">
+                You're one step closer to creating a more human-like AI. Here's the recording from your call.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="py-6 flex flex-col items-center">
+              <Card className="w-full max-w-2xl">
+                <CardHeader>
+                  <CardTitle className="text-lg">Call Summary</CardTitle>
+                  <CardDescription>
+                    {selectedPersona 
+                      ? `Call with ${selectedPersona.name} (${selectedPersona.role})`
+                      : `Call with ${phoneNumber || "External Contact"}`
+                    }
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <Timer className="h-4 w-4 text-primary" />
+                      <span>Duration: {formatTime(callDuration)}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-primary" />
+                      <span>{transcription.length} messages exchanged</span>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-secondary/20 rounded-lg p-4 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Play 
+                        className={`h-8 w-8 p-1.5 rounded-full ${isPlayingRecording ? 'bg-red-500 text-white' : 'bg-primary text-white'} cursor-pointer transition-colors`}
+                        onClick={isPlayingRecording ? handleStopPlayback : handlePlayRecording}
+                      />
+                      
+                      <div className="flex-1">
+                        <Progress value={recordingProgress} className="h-2 w-full" />
+                      </div>
+                      
+                      <span className="text-xs font-medium">
+                        {formatTime(Math.floor(callDuration * (recordingProgress / 100)))} / {formatTime(callDuration)}
+                      </span>
+                    </div>
+                    
+                    <p className="text-sm text-muted-foreground">
+                      {isPlayingRecording ? "Playing recording..." : "Click play to listen to the recording"}
+                    </p>
+                  </div>
+                  
+                  <div className="bg-secondary/10 rounded-lg p-4">
+                    <h4 className="font-medium mb-2">Transcript Preview</h4>
+                    <div className="max-h-[150px] overflow-y-auto space-y-3">
+                      {transcription.slice(0, 3).map((line, index) => {
+                        const [speaker, ...textParts] = line.split(': ');
+                        const text = textParts.join(': ');
+                        
+                        return (
+                          <div key={index} className="text-sm">
+                            <span className="font-medium">{speaker}:</span> {text}
+                          </div>
+                        );
+                      })}
+                      
+                      {transcription.length > 3 && (
+                        <p className="text-xs text-muted-foreground">
+                          +{transcription.length - 3} more messages...
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+                
+                <CardFooter className="flex justify-between pt-2">
+                  <Button
+                    variant="outline"
+                    onClick={handleRetake}
+                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                  >
+                    <Redo className="mr-2 h-4 w-4" />
+                    Retake Call
+                  </Button>
+                  
+                  <Button
+                    onClick={handleSaveAndTrain}
+                    className="bg-gradient-to-r from-green-500 to-emerald-600 text-white"
+                  >
+                    <Save className="mr-2 h-4 w-4" />
+                    Save & Train AI
+                  </Button>
+                </CardFooter>
+              </Card>
             </div>
           </>
         )}
