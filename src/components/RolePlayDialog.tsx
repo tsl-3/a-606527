@@ -8,6 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 
 const samplePersonas = [
@@ -60,6 +67,11 @@ export const RolePlayDialog = ({
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumberError, setPhoneNumberError] = useState('');
 
+  const [selectedMic, setSelectedMic] = useState<string>("");
+  const [selectedSpeaker, setSelectedSpeaker] = useState<string>("");
+  const [availableMics, setAvailableMics] = useState<MediaDeviceInfo[]>([]);
+  const [availableSpeakers, setAvailableSpeakers] = useState<MediaDeviceInfo[]>([]);
+
   useEffect(() => {
     if (isCallActive && !timerRef.current) {
       timerRef.current = setInterval(() => {
@@ -76,6 +88,30 @@ export const RolePlayDialog = ({
       }
     };
   }, [isCallActive]);
+
+  useEffect(() => {
+    // Get available audio devices
+    const getDevices = async () => {
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        
+        const mics = devices.filter(device => device.kind === 'audioinput');
+        const speakers = devices.filter(device => device.kind === 'audiooutput');
+        
+        setAvailableMics(mics);
+        setAvailableSpeakers(speakers);
+        
+        if (mics.length > 0) setSelectedMic(mics[0].deviceId);
+        if (speakers.length > 0) setSelectedSpeaker(speakers[0].deviceId);
+      } catch (error) {
+        console.error('Error accessing media devices:', error);
+        toast.error('Unable to access audio devices');
+      }
+    };
+
+    getDevices();
+  }, []);
   
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -134,6 +170,11 @@ export const RolePlayDialog = ({
 
     if (!validatePhoneNumber(phoneNumber)) {
       setPhoneNumberError('Please enter a valid phone number');
+      return;
+    }
+
+    if (!selectedMic || !selectedSpeaker) {
+      toast.error('Please select both microphone and speaker devices');
       return;
     }
 
@@ -437,14 +478,19 @@ export const RolePlayDialog = ({
         {stage === 'call' && !isCallActive && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-xl">Start Role-Play Call</DialogTitle>
-              <DialogDescription>
-                Enter the phone number and start the call
-              </DialogDescription>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
+                  <Phone className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <DialogTitle className="text-xl">Role-Play Call</DialogTitle>
+                  <DialogDescription>External Call</DialogDescription>
+                </div>
+              </div>
             </DialogHeader>
             
-            <div className="py-8 flex flex-col items-center justify-center">
-              <div className="space-y-6 w-full max-w-md mx-auto">
+            <div className="flex flex-col items-center justify-center flex-1 max-w-md mx-auto w-full gap-8">
+              <div className="w-full space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="phoneNumber">Phone Number</Label>
                   <Input
@@ -462,33 +508,49 @@ export const RolePlayDialog = ({
                     <p className="text-sm text-red-500">{phoneNumberError}</p>
                   )}
                 </div>
-                
-                <div className="flex justify-center gap-4 pt-4">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className={`rounded-full h-12 w-12 ${isMicMuted ? 'bg-red-500/10 text-red-500 border-red-500/30' : ''}`}
-                    onClick={handleToggleMic}
-                  >
-                    {isMicMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className={`rounded-full h-12 w-12 ${isAudioMuted ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30' : ''}`}
-                    onClick={handleToggleAudio}
-                  >
-                    {isAudioMuted ? <Volume className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-                  </Button>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Microphone</Label>
+                    <Select value={selectedMic} onValueChange={setSelectedMic}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select microphone" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableMics.map((device) => (
+                          <SelectItem key={device.deviceId} value={device.deviceId}>
+                            {device.label || `Microphone ${device.deviceId.slice(0, 5)}`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Speaker</Label>
+                    <Select value={selectedSpeaker} onValueChange={setSelectedSpeaker}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select speaker" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableSpeakers.map((device) => (
+                          <SelectItem key={device.deviceId} value={device.deviceId}>
+                            {device.label || `Speaker ${device.deviceId.slice(0, 5)}`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-                
+              </div>
+
+              <div className="w-full">
                 <Button 
                   onClick={handleStartCall} 
-                  className="bg-green-500 hover:bg-green-600 text-white w-full"
+                  className="bg-primary hover:bg-primary/90 text-white w-full"
                   size="lg"
                 >
-                  <PhoneCall className="mr-2 h-4 w-4" />
+                  <PhoneCall className="mr-2 h-5 w-5" />
                   Start Call
                 </Button>
               </div>
