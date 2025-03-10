@@ -168,7 +168,7 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
             )}
 
             {status === 'in-progress' && (
-              <>
+              <div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
                     <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
@@ -243,11 +243,11 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
                     ))}
                   </div>
                 </div>
-              </>
+              </div>
             )}
 
             {status === 'completed' && (
-              <>
+              <div>
                 <div className="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800/30 rounded-lg p-4 mb-6">
                   <div className="flex items-start gap-3">
                     <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-full">
@@ -322,7 +322,7 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
                     ))}
                   </div>
                 </div>
-              </>
+              </div>
             )}
 
             {(status === 'in-progress' || status === 'completed') && (
