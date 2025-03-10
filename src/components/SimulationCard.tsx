@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch, SwitchWithLabels } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 interface TrainingScenario {
   id: string;
