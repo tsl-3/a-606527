@@ -38,4 +38,6 @@ export interface AgentType {
   avatar?: string;
   purpose?: string;
   prompt?: string;
+  industry?: string;
+  botFunction?: string;
 }

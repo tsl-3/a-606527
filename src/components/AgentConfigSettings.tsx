@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,13 +9,40 @@ import { AgentType } from '@/types/agent';
 import { useToast } from "@/components/ui/use-toast";
 import { updateAgent } from '@/services/agentService';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bot, Copy, Save, Target, User, FileText, Code } from "lucide-react";
+import { Bot, Copy, Save, Target, User, FileText, Code, Building, Briefcase } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface AgentConfigSettingsProps {
   agent: AgentType;
   onAgentUpdate: (updatedAgent: AgentType) => void;
 }
+
+const INDUSTRIES = [
+  { id: "healthcare", name: "Healthcare" },
+  { id: "finance", name: "Finance & Banking" },
+  { id: "retail", name: "Retail & E-commerce" },
+  { id: "technology", name: "Technology & Software" },
+  { id: "education", name: "Education" },
+  { id: "hospitality", name: "Hospitality & Travel" },
+  { id: "manufacturing", name: "Manufacturing" },
+  { id: "insurance", name: "Insurance" },
+  { id: "telecommunications", name: "Telecommunications" },
+  { id: "real-estate", name: "Real Estate" }
+];
+
+const BOT_FUNCTIONS = [
+  { id: "customer-service", name: "Customer Service" },
+  { id: "sales", name: "Sales & Marketing" },
+  { id: "support", name: "Technical Support" },
+  { id: "it-helpdesk", name: "IT Helpdesk" },
+  { id: "lead-generation", name: "Lead Generation" },
+  { id: "booking", name: "Appointment Booking" },
+  { id: "faq", name: "FAQ & Knowledge Base" },
+  { id: "onboarding", name: "Customer Onboarding" },
+  { id: "billing", name: "Billing & Payments" },
+  { id: "feedback", name: "Feedback Collection" }
+];
 
 const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgentUpdate }) => {
   const { toast } = useToast();
@@ -22,6 +50,8 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   const [avatar, setAvatar] = useState(agent.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${agent.id}`);
   const [purpose, setPurpose] = useState(agent.purpose || '');
   const [prompt, setPrompt] = useState(agent.prompt || '');
+  const [industry, setIndustry] = useState(agent.industry || '');
+  const [botFunction, setBotFunction] = useState(agent.botFunction || '');
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
@@ -31,7 +61,9 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
         name,
         avatar,
         purpose,
-        prompt
+        prompt,
+        industry,
+        botFunction
       });
       
       onAgentUpdate(updatedAgent);
@@ -129,6 +161,48 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
               </p>
             </div>
             
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Building className="h-4 w-4 text-agent-primary" />
+                  <Label htmlFor="agent-industry">Industry</Label>
+                </div>
+                <Select value={industry} onValueChange={setIndustry}>
+                  <SelectTrigger id="agent-industry" className="w-full">
+                    <SelectValue placeholder="Select industry" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {INDUSTRIES.map((ind) => (
+                      <SelectItem key={ind.id} value={ind.id}>{ind.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  The industry context your agent operates in
+                </p>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Briefcase className="h-4 w-4 text-agent-primary" />
+                  <Label htmlFor="agent-function">Bot Function</Label>
+                </div>
+                <Select value={botFunction} onValueChange={setBotFunction}>
+                  <SelectTrigger id="agent-function" className="w-full">
+                    <SelectValue placeholder="Select function" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {BOT_FUNCTIONS.map((func) => (
+                      <SelectItem key={func.id} value={func.id}>{func.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  The primary function your agent serves
+                </p>
+              </div>
+            </div>
+            
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Target className="h-4 w-4 text-agent-primary" />
@@ -139,7 +213,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                 value={purpose}
                 onChange={(e) => setPurpose(e.target.value)}
                 placeholder="Describe what this agent is designed to do"
-                className="min-h-[150px] w-full"
+                className="min-h-[100px] w-full"
               />
               <p className="text-xs text-muted-foreground">
                 A clear description of your agent's role and primary responsibilities

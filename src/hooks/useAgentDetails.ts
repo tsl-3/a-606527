@@ -59,7 +59,9 @@ export const useAgentDetails = (agentId: string | undefined) => {
           // Add default values for new fields if they're missing
           avatar: data.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${data.id}`,
           purpose: data.purpose || "Help users with their questions and provide assistance.",
-          prompt: data.prompt || `You are ${data.name}, an AI assistant. Your job is to be helpful, harmless, and honest. Answer questions to the best of your ability.`
+          prompt: data.prompt || `You are ${data.name}, an AI assistant. Your job is to be helpful, harmless, and honest. Answer questions to the best of your ability.`,
+          industry: data.industry || "",
+          botFunction: data.botFunction || ""
         };
         
         setAgent(enhancedData);
