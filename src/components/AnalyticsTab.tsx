@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { CalendarDays, Filter, Download, BarChart2, TestTube, Heart, MessageSquare, LayoutGrid, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +6,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AgentType } from "@/types/agent";
 import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
-// Sample data for charts
 const timeSeriesData = Array.from({ length: 30 }, (_, i) => {
   const date = new Date();
   date.setDate(date.getDate() - i);
@@ -83,7 +81,6 @@ const channelPerformanceData = [
   { name: "Social", responseTime: 80, successRate: 78, sentiment: 85 },
 ];
 
-// Custom formatter for tooltips
 const percentFormatter = (value: number) => `${value}%`;
 const numberFormatter = (value: number) => value.toLocaleString();
 
@@ -95,7 +92,6 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
   const [dateRange, setDateRange] = useState("30days");
   const [channelFilter, setChannelFilter] = useState("all");
 
-  // Calculate latest metrics and changes
   const latestData = timeSeriesData[timeSeriesData.length - 1];
   const previousData = timeSeriesData[timeSeriesData.length - 2];
   
@@ -107,7 +103,6 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
   const sentimentChange = ((latestData.positivePercent - previousData.positivePercent) / previousData.positivePercent * 100).toFixed(1);
   const coverageChange = ((latestData.testCoverage - previousData.testCoverage) / previousData.testCoverage * 100).toFixed(1);
 
-  // Generate sentiment time series data
   const sentimentTimeData = timeSeriesData.map(item => ({
     date: item.date,
     Positive: item.positivePercent,
@@ -128,7 +123,6 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
         </Button>
       </div>
       
-      {/* Global controls */}
       <Card className="mb-6">
         <CardContent className="p-4">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -168,7 +162,6 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
         </CardContent>
       </Card>
       
-      {/* Summary KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <Card>
           <CardHeader className="p-4 pb-2">
@@ -246,7 +239,6 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
         </Card>
       </div>
       
-      {/* Performance Card */}
       <Card className="mb-6">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
@@ -357,7 +349,6 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
         </CardContent>
       </Card>
       
-      {/* Sentiment Analysis Card */}
       <Card className="mb-6">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
@@ -421,8 +412,8 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
               <div className="h-72 flex items-center justify-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full w-full">
                   <div className="flex items-center justify-center h-full">
-                    <ResponsiveContainer width="100%" height={180}>
-                      <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                         <Pie
                           data={sentimentData}
                           cx="50%"
@@ -465,7 +456,6 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
         </CardContent>
       </Card>
       
-      {/* Popular Topics Card */}
       <Card className="mb-6">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
@@ -556,10 +546,8 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
             <div className="p-4 bg-secondary/30 rounded-lg border border-border">
               <div className="flex flex-wrap items-center justify-center gap-4">
                 {wordCloudData.map((word, index) => {
-                  // Calculate size based on value (higher value = larger size)
                   const size = 14 + (word.value / 10);
                   
-                  // Determine color based on sentiment
                   let color;
                   if (word.sentiment === "positive") color = "text-green-500";
                   else if (word.sentiment === "negative") color = "text-red-500";
@@ -589,7 +577,6 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
         </CardContent>
       </Card>
       
-      {/* Channel Breakdown Card */}
       <Card className="mb-6">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
@@ -737,4 +724,3 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
 };
 
 export default AnalyticsTab;
-
