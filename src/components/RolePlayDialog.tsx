@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -399,7 +400,7 @@ export const RolePlayDialog = ({
                 <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <PhoneCall className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-lg font-medium mb-2">Role-Play Call</h3
+                <h3 className="text-lg font-medium mb-2">Role-Play Call</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Start a voice call session with a real person to practice customer conversations
                 </p>
@@ -789,3 +790,121 @@ export const RolePlayDialog = ({
                     {transcription.map((line, index) => {
                       const [speaker, ...textParts] = line.split(': ');
                       const text = textParts.join(': ');
+                      
+                      return (
+                        <div key={index} className="flex flex-col space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs px-2 py-0.5 rounded-full">
+                              {speaker}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(Date.now() - (transcription.length - 1 - index) * 5000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                          <p className="text-sm ml-1">{text}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {stage === 'success' && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl">Great Job!</DialogTitle>
+              <DialogDescription>
+                You are one step closer to a great and human-like AI. Here's the recording from your call.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="py-6 flex flex-col items-center">
+              <div className="w-full max-w-xl mx-auto bg-secondary/10 rounded-lg p-6 mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Call Recording</span>
+                  </div>
+                  <Badge variant="outline" className="border-green-500/30 text-green-500 bg-green-500/10">
+                    {formatTime(callDuration)}
+                  </Badge>
+                </div>
+                
+                <div className="mb-6">
+                  <div className="flex items-center gap-4 mb-3">
+                    <Button 
+                      size="sm"
+                      variant="outline"
+                      className="rounded-full w-10 h-10 p-0 flex items-center justify-center"
+                      onClick={isPlayingRecording ? handleStopPlayback : handlePlayRecording}
+                    >
+                      {isPlayingRecording ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                    </Button>
+                    
+                    <div className="flex-1">
+                      <Progress value={recordingProgress} className="h-2" />
+                    </div>
+                    
+                    <span className="text-sm text-muted-foreground">
+                      {formatTime(Math.floor(callDuration * recordingProgress / 100))} / {formatTime(callDuration)}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="bg-background rounded-md p-4 max-h-[200px] overflow-y-auto border">
+                  <h4 className="text-sm font-medium mb-3">Transcript Preview</h4>
+                  <div className="space-y-4">
+                    {transcription.slice(0, 3).map((line, index) => {
+                      const [speaker, ...textParts] = line.split(': ');
+                      const text = textParts.join(': ');
+                      
+                      return (
+                        <div key={index} className="flex flex-col space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs px-2 py-0.5 rounded-full">
+                              {speaker}
+                            </Badge>
+                          </div>
+                          <p className="text-sm ml-1">{text}</p>
+                        </div>
+                      );
+                    })}
+                    
+                    {transcription.length > 3 && (
+                      <p className="text-sm text-muted-foreground italic">
+                        + {transcription.length - 3} more messages
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                <Button
+                  onClick={handleSaveAndTrain}
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 text-white"
+                  size="lg"
+                >
+                  <Save className="mr-2 h-5 w-5" />
+                  Save & Train AI
+                </Button>
+                
+                <Button
+                  onClick={handleRetake}
+                  variant="outline"
+                  size="lg"
+                >
+                  <Redo className="mr-2 h-5 w-5" />
+                  Retake Call
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};
