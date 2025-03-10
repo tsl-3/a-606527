@@ -421,19 +421,19 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
               <div className="h-72 flex items-center justify-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full w-full">
                   <div className="flex items-center justify-center h-full">
-                    <ResponsiveContainer width="100%" height={200}>
+                    <ResponsiveContainer width="100%" height={180}>
                       <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                         <Pie
                           data={sentimentData}
                           cx="50%"
                           cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
+                          innerRadius={45}
+                          outerRadius={70}
                           fill="#8884d8"
                           paddingAngle={2}
                           dataKey="value"
                           label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                          labelLine={false}
+                          labelLine={true}
                         >
                           {sentimentData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
@@ -737,3 +737,4 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
 };
 
 export default AnalyticsTab;
+
