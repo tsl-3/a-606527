@@ -222,12 +222,12 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
         return (
           <div 
             key={channel}
-            className="bg-black/40 rounded-lg border border-gray-800 p-4 flex flex-col"
+            className="bg-white/90 dark:bg-black/40 rounded-lg border border-gray-200 dark:border-gray-800 p-4 flex flex-col shadow-sm"
           >
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center gap-2">
                 <span className={info.color}>{info.icon}</span>
-                <span className="font-medium text-white">{info.name}</span>
+                <span className="font-medium text-gray-800 dark:text-white">{info.name}</span>
               </div>
               <Switch
                 checked={channelConfig.enabled}
@@ -236,7 +236,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
             </div>
             
             {channelConfig.details ? (
-              <p className="text-sm text-gray-400 mb-4 truncate">{channelConfig.details}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 truncate">{channelConfig.details}</p>
             ) : (
               <p className="text-sm text-gray-500 mb-4 italic">No configuration</p>
             )}
@@ -245,7 +245,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
               <DialogTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className="mt-auto bg-transparent border-gray-700 hover:bg-gray-800 text-white"
+                  className="mt-auto border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-white"
                   onClick={() => handleOpenConfigDialog(channel)}
                 >
                   Configure
@@ -253,7 +253,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
               </DialogTrigger>
               
               {activeDialogChannel === channel && (
-                <DialogContent className="sm:max-w-md bg-black text-white border-gray-700">
+                <DialogContent className="sm:max-w-md bg-white dark:bg-black text-gray-800 dark:text-white border-gray-200 dark:border-gray-700">
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                       <span className={info.color}>{info.icon}</span>
@@ -269,7 +269,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
                             <Input
                               placeholder="Search by area code, location..."
-                              className="pl-9 bg-black/30 border-gray-700 text-white"
+                              className="pl-9 bg-white/90 dark:bg-black/30 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white"
                               value={searchQuery}
                               onChange={handleSearchChange}
                             />
@@ -309,7 +309,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
                               <Phone className="h-4 w-4 text-agent-primary" />
                               <span className="text-sm">{selectedPhoneNumber}</span>
                             </div>
-                            <div className="flex items-center gap-1 text-xs text-gray-400">
+                            <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                               <DollarSign className="h-3 w-3" />
                               <span>$5/month</span>
                             </div>
@@ -322,16 +322,16 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
                               filteredPhoneNumbers.map((phone) => (
                                 <div 
                                   key={phone.number}
-                                  className="flex items-center justify-between p-3 bg-gray-900/50 border border-gray-700 rounded-md hover:bg-gray-900/80 transition-colors"
+                                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-100 dark:hover:bg-gray-900/80 transition-colors"
                                 >
                                   <div className="flex flex-col">
                                     <span className="font-medium">{phone.number}</span>
                                     <div className="flex items-center gap-1.5 mt-1">
-                                      <Badge variant="outline" className="text-[0.65rem] h-4 px-1.5 bg-gray-800">
+                                      <Badge variant="outline" className="text-[0.65rem] h-4 px-1.5 bg-gray-100 dark:bg-gray-800">
                                         {phone.type}
                                       </Badge>
                                       {phone.isTollFree && (
-                                        <Badge className="text-[0.65rem] h-4 px-1.5 bg-blue-900/60 text-blue-200">
+                                        <Badge className="text-[0.65rem] h-4 px-1.5 bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-200">
                                           Toll-Free
                                         </Badge>
                                       )}
@@ -345,17 +345,17 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
                                         ${phone.price}/mo
                                       </Button>
                                     </AlertDialogTrigger>
-                                    <AlertDialogContent className="bg-black border-gray-700 text-white">
+                                    <AlertDialogContent className="bg-white dark:bg-black border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">
                                       <AlertDialogHeader>
                                         <AlertDialogTitle>Confirm Phone Number Purchase</AlertDialogTitle>
-                                        <AlertDialogDescription className="text-gray-400">
+                                        <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
                                           You are about to select {phone.number} for your voice channel. 
                                           This will cost ${phone.price}/month. You will not be charged 
                                           until you save your changes.
                                         </AlertDialogDescription>
                                       </AlertDialogHeader>
                                       <AlertDialogFooter>
-                                        <AlertDialogCancel className="bg-transparent border-gray-700 hover:bg-gray-800 text-white">
+                                        <AlertDialogCancel className="bg-white dark:bg-transparent border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-white">
                                           Cancel
                                         </AlertDialogCancel>
                                         <AlertDialogAction 
@@ -393,7 +393,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
                           placeholder={info.placeholder}
                           value={channelDetails}
                           onChange={(e) => setChannelDetails(e.target.value)}
-                          className="bg-black/30 border-gray-700 text-white"
+                          className="bg-white/90 dark:bg-black/30 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white"
                         />
                       </div>
                     )}
@@ -403,7 +403,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
                     <Button
                       variant="outline"
                       onClick={() => setActiveDialogChannel(null)}
-                      className="bg-transparent border-gray-700 hover:bg-gray-800 text-white"
+                      className="bg-white dark:bg-transparent border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-white"
                     >
                       Cancel
                     </Button>
