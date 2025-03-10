@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -59,6 +58,9 @@ export const RolePlayDialog = ({
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumberError, setPhoneNumberError] = useState('');
+
   // Effects for call timer
   useEffect(() => {
     if (isCallActive && !timerRef.current) {
@@ -87,9 +89,6 @@ export const RolePlayDialog = ({
   // Handle option selection
   const handleOptionSelect = (option: 'someone' | 'personas') => {
     if (option === 'someone') {
-      // For this demo, we'll just populate a random persona
-      const randomPersona = samplePersonas[Math.floor(Math.random() * samplePersonas.length)];
-      setSelectedPersona(randomPersona);
       setStage('call');
     } else {
       setStage('persona-setup');
@@ -114,17 +113,31 @@ export const RolePlayDialog = ({
     setStage('call');
   };
 
+  // Add phone number validation
+  const validatePhoneNumber = (number: string) => {
+    const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+    return phoneRegex.test(number);
+  };
+
   // Handle starting a voice call
   const handleStartCall = () => {
+    if (!phoneNumber) {
+      setPhoneNumberError('Please enter a phone number');
+      return;
+    }
+
+    if (!validatePhoneNumber(phoneNumber)) {
+      setPhoneNumberError('Please enter a valid phone number');
+      return;
+    }
+
+    setPhoneNumberError('');
     setIsCallActive(true);
     setCallDuration(0);
-    // In a real application, this would initiate the voice call
     
-    // Simulate adding initial greeting to transcription after a delay
+    // In a real implementation, this would initiate the actual phone call
     setTimeout(() => {
-      if (selectedPersona) {
-        setTranscription([`${selectedPersona.name}: Hi there! I'm ${selectedPersona.name}, ${selectedPersona.role}. How can I assist you today?`]);
-      }
+      setTranscription([`Call connected with ${phoneNumber}`]);
     }, 2000);
   };
   
@@ -256,7 +269,7 @@ export const RolePlayDialog = ({
                 </div>
                 <h3 className="text-lg font-medium mb-2">Role-Play Call</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Start a voice call session with a randomly selected persona to simulate real customer conversations
+                  Start a voice call session with a real person to practice customer conversations
                 </p>
               </div>
               
@@ -417,6 +430,48 @@ export const RolePlayDialog = ({
                 Start Role-Play Call
               </Button>
             </DialogFooter>
+          </>
+        )}
+
+        {stage === 'call' && !isCallActive && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl">Start Role-Play Call</DialogTitle>
+              <DialogDescription>
+                Enter the phone number of the person you want to call
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="py-4">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">Phone Number</Label>
+                  <Input
+                    id="phoneNumber"
+                    type="tel"
+                    placeholder="+1234567890"
+                    value={phoneNumber}
+                    onChange={(e) => {
+                      setPhoneNumber(e.target.value);
+                      setPhoneNumberError('');
+                    }}
+                    className={phoneNumberError ? 'border-red-500' : ''}
+                  />
+                  {phoneNumberError && (
+                    <p className="text-sm text-red-500">{phoneNumberError}</p>
+                  )}
+                </div>
+                
+                <Button 
+                  onClick={handleStartCall} 
+                  className="bg-green-500 hover:bg-green-600 text-white w-full"
+                  size="lg"
+                >
+                  <PhoneCall className="mr-2 h-4 w-4" />
+                  Start Call
+                </Button>
+              </div>
+            </div>
           </>
         )}
 
