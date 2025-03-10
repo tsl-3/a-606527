@@ -1,11 +1,15 @@
 import React, { useState, useRef } from "react";
 import { 
   BookOpen, Upload, CircleDashed, ArrowRight, File, Database,
-  Eye, Download, Trash2, ChevronUp, CheckCircle2, BarChart, FileText
+  Eye, Download, Trash2, ChevronUp, CheckCircle2, BarChart, FileText,
+  Globe, Type
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 // Define document interface
 interface Document {
@@ -32,6 +36,11 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(status !== 'completed');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [webUrlDialogOpen, setWebUrlDialogOpen] = useState(false);
+  const [textDialogOpen, setTextDialogOpen] = useState(false);
+  const [webUrl, setWebUrl] = useState("");
+  const [webUrls, setWebUrls] = useState<string[]>([]);
+  const [knowledgeText, setKnowledgeText] = useState("");
 
   const handleUploadClick = () => {
     if (fileInputRef.current) {
@@ -44,6 +53,22 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
     if (files && files.length > 0) {
       console.log('Files selected:', files);
       // Here you would handle file upload logic in a real app
+    }
+  };
+
+  const handleAddWebUrl = () => {
+    if (webUrl.trim()) {
+      setWebUrls([...webUrls, webUrl]);
+      setWebUrl(""); // Clear the input for next entry
+    }
+  };
+
+  const handleAddText = () => {
+    if (knowledgeText.trim()) {
+      console.log('Text added:', knowledgeText);
+      // Here you would handle saving the text in a real app
+      setTextDialogOpen(false);
+      setKnowledgeText("");
     }
   };
 
@@ -123,12 +148,19 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
                     multiple
                     accept=".pdf,.doc,.docx,.txt"
                   />
-                  <Button className="gap-2 bg-primary">
-                    <File className="h-4 w-4" />
+                  <Button 
+                    className="gap-2 bg-primary"
+                    onClick={() => setWebUrlDialogOpen(true)}
+                  >
+                    <Globe className="h-4 w-4" />
                     Add Web Page
                   </Button>
-                  <Button variant="outline" className="gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white">
-                    <CircleDashed className="h-4 w-4" />
+                  <Button 
+                    variant="outline" 
+                    className="gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white"
+                    onClick={() => setTextDialogOpen(true)}
+                  >
+                    <Type className="h-4 w-4" />
                     Add Text
                   </Button>
                 </div>
@@ -136,158 +168,11 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
             )}
 
             {status === 'in-progress' && (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
-                      <FileText className="h-4 w-4" />
-                      <span className="text-xs font-medium">Documents Processed</span>
-                    </div>
-                    <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{processedCount}/{totalCount}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Documents uploaded</div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
-                      <BarChart className="h-4 w-4" />
-                      <span className="text-xs font-medium">Processing Status</span>
-                    </div>
-                    <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{Math.round((processedCount / totalCount) * 100)}%</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Current progress</div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
-                      <Database className="h-4 w-4" />
-                      <span className="text-xs font-medium">Knowledge Sources</span>
-                    </div>
-                    <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{documents.length}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Total sources</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30 rounded-lg p-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <div className="bg-amber-100 dark:bg-amber-900/20 p-2 rounded-full">
-                      <ArrowRight className="h-4 w-4 text-amber-500" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Progress: {processedCount} of {totalCount} documents processed</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Upload {totalCount - processedCount} more documents to complete your knowledge base.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Uploaded Knowledge</h4>
-                  <div className="space-y-2">
-                    {documents.map((doc) => (
-                      <div key={doc.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
-                            <FileText className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                          </div>
-                          <div>
-                            <h5 className="font-medium text-gray-900 dark:text-white">{doc.title}</h5>
-                            <p className="text-xs text-gray-500 dark:text-gray-500">{doc.format} • {doc.size} • {doc.date}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
+              // ... keep existing code (in-progress state UI)
             )}
 
             {status === 'completed' && (
-              <div className="mb-6">
-                <div className="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800/30 rounded-lg p-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-full">
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Completed: Knowledge base ready</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">All uploaded documents have been processed and are ready for your agent.</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
-                      <FileText className="h-4 w-4" />
-                      <span className="text-xs font-medium">Documents Processed</span>
-                    </div>
-                    <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{totalCount}/{totalCount}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Documents uploaded</div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
-                      <BarChart className="h-4 w-4" />
-                      <span className="text-xs font-medium">Processing Status</span>
-                    </div>
-                    <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">100%</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Complete</div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
-                      <Database className="h-4 w-4" />
-                      <span className="text-xs font-medium">Knowledge Sources</span>
-                    </div>
-                    <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{documents.length}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Total sources</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mb-6">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Uploaded Knowledge</h4>
-                  <div className="space-y-2">
-                    {documents.map((doc) => (
-                      <div key={doc.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
-                            <FileText className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                          </div>
-                          <div>
-                            <h5 className="font-medium text-gray-900 dark:text-white">{doc.title}</h5>
-                            <p className="text-xs text-gray-500 dark:text-gray-500">{doc.format} • {doc.size} • {doc.date}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              // ... keep existing code (completed state UI)
             )}
 
             {(status === 'in-progress' || status === 'completed') && (
@@ -296,8 +181,12 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Select a method to provide training data for your agent:</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <Button variant="outline" className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
-                    <File className="h-4 w-4" />
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                    onClick={() => setWebUrlDialogOpen(true)}
+                  >
+                    <Globe className="h-4 w-4" />
                     <span>Add Web Page</span>
                   </Button>
                   <Button 
@@ -316,8 +205,12 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
                     multiple
                     accept=".pdf,.doc,.docx,.txt"
                   />
-                  <Button variant="outline" className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
-                    <CircleDashed className="h-4 w-4" />
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                    onClick={() => setTextDialogOpen(true)}
+                  >
+                    <Type className="h-4 w-4" />
                     <span>Add Text</span>
                   </Button>
                 </div>
@@ -326,6 +219,108 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
           </>
         )}
       </div>
+
+      {/* Add Web Page Dialog */}
+      <Dialog open={webUrlDialogOpen} onOpenChange={setWebUrlDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add Web Page</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="flex items-center gap-2">
+              <Input 
+                placeholder="Enter URL (e.g., https://example.com)" 
+                value={webUrl} 
+                onChange={(e) => setWebUrl(e.target.value)}
+                className="flex-1"
+              />
+              <Button onClick={handleAddWebUrl}>Add</Button>
+            </div>
+            
+            {webUrls.length > 0 && (
+              <div className="border rounded-md p-3 space-y-2">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  URLs to add ({webUrls.length})
+                </h4>
+                <div className="space-y-2">
+                  {webUrls.map((url, index) => (
+                    <div key={index} className="flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 p-2 rounded-md">
+                      <span className="text-sm truncate max-w-[250px]">{url}</span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-6 w-6 p-0" 
+                        onClick={() => setWebUrls(webUrls.filter((_, i) => i !== index))}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter className="flex justify-between sm:justify-between">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setWebUrlDialogOpen(false);
+                setWebUrl("");
+                setWebUrls([]);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="submit" 
+              onClick={() => {
+                console.log('Web URLs added:', webUrls);
+                setWebUrlDialogOpen(false);
+                setWebUrl("");
+                // Keep the list for demonstration, in a real app you'd process them
+              }}
+              disabled={webUrls.length === 0}
+            >
+              Add Web Pages
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Text Dialog */}
+      <Dialog open={textDialogOpen} onOpenChange={setTextDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add Text Knowledge</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Textarea 
+              placeholder="Enter text that will be used as knowledge for your agent..." 
+              value={knowledgeText} 
+              onChange={(e) => setKnowledgeText(e.target.value)}
+              className="min-h-[200px]"
+            />
+          </div>
+          <DialogFooter className="flex justify-between sm:justify-between">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setTextDialogOpen(false);
+                setKnowledgeText("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="submit" 
+              onClick={handleAddText}
+              disabled={knowledgeText.trim().length === 0}
+            >
+              Add Text
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
