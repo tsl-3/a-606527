@@ -170,7 +170,9 @@ const AgentDetails = () => {
     selectedMicrophone,
     selectedSpeaker,
     setMicrophone,
-    setSpeaker
+    setSpeaker,
+    rolePlayMode,
+    setRolePlayType
   } = useAgentDetails(agentId);
   const [isActive, setIsActive] = useState(false);
   const [model, setModel] = useState<string>("GPT-4");
@@ -906,6 +908,8 @@ const AgentDetails = () => {
         selectedSpeaker={selectedSpeaker}
         setMicrophone={setMicrophone}
         setSpeaker={setSpeaker}
+        rolePlayMode={rolePlayMode}
+        setRolePlayType={setRolePlayType}
       />
       
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="mt-8">

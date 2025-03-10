@@ -10,6 +10,7 @@ export const useAgentDetails = (agentId: string | undefined) => {
   const [isRolePlayOpen, setIsRolePlayOpen] = useState(false);
   const [selectedMicrophone, setSelectedMicrophone] = useState<string | null>(null);
   const [selectedSpeaker, setSelectedSpeaker] = useState<string | null>(null);
+  const [rolePlayMode, setRolePlayMode] = useState<'person' | 'ai'>('person');
 
   useEffect(() => {
     if (!agentId) {
@@ -93,6 +94,10 @@ export const useAgentDetails = (agentId: string | undefined) => {
     setSelectedSpeaker(deviceId);
   };
 
+  const setRolePlayType = (mode: 'person' | 'ai') => {
+    setRolePlayMode(mode);
+  };
+
   return { 
     agent, 
     isLoading, 
@@ -103,6 +108,8 @@ export const useAgentDetails = (agentId: string | undefined) => {
     selectedMicrophone,
     selectedSpeaker,
     setMicrophone,
-    setSpeaker
+    setSpeaker,
+    rolePlayMode,
+    setRolePlayType
   };
 };
