@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Mic, MicOff, Save, Trash, Volume2, RefreshCw, Phone, User, Rocket, Check, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -33,6 +34,7 @@ enum CallState {
   MODE_SELECT = 'mode_select',
   PERSON_SETUP = 'person_setup',
   PERSONA_SELECT = 'persona_select',
+  PERSONA_DETAIL = 'persona_detail',
   ACTIVE = 'active',
   COMPLETED = 'completed',
   REVIEW = 'review',
@@ -266,11 +268,7 @@ export const CustomRolePlayDialog = ({
   };
 
   const resetToInitialScreen = () => {
-    if (rolePlayMode === 'person') {
-      setCallState(CallState.PERSON_SETUP);
-    } else {
-      setCallState(CallState.PERSONA_SELECT);
-    }
+    setCallState(CallState.MODE_SELECT);
   };
 
   const toggleTraining = (id: string) => {
@@ -495,10 +493,7 @@ export const CustomRolePlayDialog = ({
                 <Button 
                   variant="destructive"
                   size="lg"
-                  onClick={() => {
-                    stopRecording();
-                    setCallState(CallState.REVIEW);
-                  }}
+                  onClick={endCall}
                 >
                   End Call
                 </Button>
@@ -521,20 +516,7 @@ export const CustomRolePlayDialog = ({
                   variant={isPlaying ? "destructive" : "outline"} 
                   size="lg" 
                   className="w-full"
-                  onClick={() => {
-                    if (isPlaying) {
-                      if (audioPlayerRef.current) {
-                        audioPlayerRef.current.pause();
-                      }
-                      setIsPlaying(false);
-                    } else {
-                      if (audioPlayerRef.current && recordingUrl) {
-                        audioPlayerRef.current.src = recordingUrl;
-                        audioPlayerRef.current.play();
-                        setIsPlaying(true);
-                      }
-                    }
-                  }}
+                  onClick={playRecording}
                 >
                   {isPlaying ? (
                     <>
@@ -550,37 +532,29 @@ export const CustomRolePlayDialog = ({
                 </Button>
 
                 <div className="grid grid-cols-3 gap-4 mt-6">
-                  <Button variant="outline" onClick={() => {
-                    setRecordingUrl(null);
-                    setCallState(rolePlayMode === 'person' ? CallState.PERSON_SETUP : CallState.PERSONA_SELECT);
-                  }} className="flex flex-col items-center py-6 h-auto">
+                  <Button variant="outline" onClick={discardRecording} className="flex flex-col items-center py-6 h-auto">
                     <X className="h-5 w-5 text-red-500 mb-2" />
                     <span>Discard</span>
                   </Button>
                   
-                  <Button variant="outline" onClick={() => {
-                    setRecordingUrl(null);
-                    setCallState(CallState.ACTIVE);
-                  }} className="flex flex-col items-center py-6 h-auto">
+                  <Button variant="outline" onClick={retakeRecording} className="flex flex-col items-center py-6 h-auto">
                     <RefreshCw className="h-5 w-5 text-amber-500 mb-2" />
                     <span>Retake</span>
                   </Button>
                   
-                  <Button onClick={() => {
-                    // Save recording logic
-                    toast({
-                      title: "Recording saved",
-                      description: "Your recording has been saved and will be used for training."
-                    });
-                    setCallState(rolePlayMode === 'person' ? CallState.PERSON_SETUP : CallState.PERSONA_SELECT);
-                  }} className="flex flex-col items-center py-6 h-auto bg-green-600 hover:bg-green-700">
+                  <Button onClick={saveRecording} className="flex flex-col items-center py-6 h-auto bg-green-600 hover:bg-green-700">
                     <Check className="h-5 w-5 mb-2" />
                     <span>Save & Train</span>
                   </Button>
                 </div>
               </div>
               
-              <audio ref={audioPlayerRef} className="hidden" />
+              <audio 
+                ref={audioPlayerRef} 
+                className="hidden" 
+                onEnded={handleAudioEnded}
+                src={recordingUrl || undefined}
+              />
             </div>
           )}
         </div>
