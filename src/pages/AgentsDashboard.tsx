@@ -365,13 +365,6 @@ const AgentsDashboard = () => {
                     <p className="text-sm text-gray-600 dark:text-gray-400">Finish configuring your agent</p>
                     <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Add more details to display agent stats</p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                      <Calendar className="h-3.5 w-3.5" />
-                      <span>Created {newlyCreatedAgent.createdAt}</span>
-                    </div>
-                  </div>
                 </div>
               </CardContent>
               
@@ -465,11 +458,6 @@ const AgentsDashboard = () => {
                         </div>
                       </div>
                     )}
-                    
-                    <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                      <Calendar className="h-3.5 w-3.5" />
-                      <span>Created {agent.createdAt}</span>
-                    </div>
                   </div>
                 </CardContent>
                 
