@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { fetchAgentById } from '@/services/agentService';
 import { AgentType } from '@/types/agent';
@@ -21,7 +22,7 @@ export const useAgentDetails = (agentId: string | undefined) => {
         id: "new123",
         name: "New Agent",
         description: "This agent was just created and needs configuration.",
-        type: "custom",
+        type: "Other Function", // Changed from "custom" to a valid AgentTypeCategory
         status: "inactive",
         createdAt: new Date().toISOString().split('T')[0],
         interactions: 0,
