@@ -133,11 +133,11 @@ const AgentsDashboard = () => {
   const getFilterTitle = () => {
     switch (filter) {
       case "my-agents":
-        return "My Agents";
+        return "Your Personal Agents";
       case "team-agents":
-        return "Team Agents";
+        return "Your Team's Agents";
       default:
-        return "All Agents";
+        return "Your AI Agents";
     }
   };
 
@@ -325,7 +325,7 @@ const AgentsDashboard = () => {
             {getFilterTitle()}
           </h1>
           <p className="text-muted-foreground dark:text-gray-300 mt-1">
-            Manage and monitor your intelligent agents
+            Create, customize, and manage your intelligent assistants all in one place
           </p>
         </div>
         <ThemeToggle />
