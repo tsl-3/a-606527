@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy, Sparkles, PlusCircle } from "lucide-react";
@@ -421,9 +422,24 @@ const AgentsDashboard = () => {
                   </div>
                   
                   <div className="mt-3">
-                    <CardDescription className="line-clamp-2 text-muted-foreground dark:text-gray-300">
+                    <CardDescription className="line-clamp-2 text-muted-foreground dark:text-gray-300 mb-2">
                       {agent.description}
                     </CardDescription>
+                    
+                    {/* Move channels here, right after the description */}
+                    {agent.channelConfigs ? (
+                      <AgentChannels channels={agent.channelConfigs} readonly={true} compact={true} className="mt-0" />
+                    ) : agent.channels && agent.channels.length > 0 ? (
+                      <AgentChannels 
+                        channels={agent.channels.reduce((obj, channel) => {
+                          obj[channel] = { enabled: true };
+                          return obj;
+                        }, {} as Record<string, AgentChannelConfig>)} 
+                        readonly={true} 
+                        compact={true}
+                        className="mt-0"
+                      />
+                    ) : null}
                   </div>
                 </CardHeader>
                 
@@ -436,23 +452,9 @@ const AgentsDashboard = () => {
                       hideInteractions={true}
                     />
                     
-                    <div>
-                      {agent.channelConfigs ? (
-                        <AgentChannels channels={agent.channelConfigs} readonly={true} />
-                      ) : agent.channels && agent.channels.length > 0 ? (
-                        <AgentChannels 
-                          channels={agent.channels.reduce((obj, channel) => {
-                            obj[channel] = { enabled: true };
-                            return obj;
-                          }, {} as Record<string, AgentChannelConfig>)} 
-                          readonly={true} 
-                        />
-                      ) : null}
-                    </div>
-                    
                     {agent.phone && (
                       <div className="flex items-center">
-                        <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                        <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
                           <Phone className="h-3.5 w-3.5" />
                           <span>{agent.phone}</span>
                         </div>
