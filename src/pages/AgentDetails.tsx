@@ -27,7 +27,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import AgentConfigSettings from "@/components/AgentConfigSettings";
 import { RolePlayDialog } from "@/components/RolePlayDialog";
 import { CustomTooltip } from "@/components/CustomTooltip";
+
 const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
+
 interface VoiceDefinition {
   id: string;
   name: string;
@@ -35,6 +37,7 @@ interface VoiceDefinition {
   avatar?: string;
   audioSample: string;
 }
+
 const voiceSamples: Record<string, Record<string, VoiceDefinition>> = {
   "Eleven Labs": {
     "Emma": {
@@ -147,6 +150,7 @@ const voiceSamples: Record<string, Record<string, VoiceDefinition>> = {
     }
   }
 };
+
 const AgentDetails = () => {
   const {
     agentId
@@ -504,7 +508,9 @@ const AgentDetails = () => {
   const emailAddress = agent.channelConfigs?.email?.details || null;
   const activeChannels = Object.entries(agent.channelConfigs || {}).filter(([_, config]) => config.enabled).map(([channel]) => channel);
   const isNewAgent = agent.id === "new123";
-  return <div className="max-w-6xl mx-auto animate-fade-in">
+
+  return (
+    <div className="max-w-6xl mx-auto animate-fade-in">
       <div className="mb-6">
         <Link to="/agents" className="flex items-center text-gray-500 hover:text-agent-primary transition-colors duration-200">
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -683,3 +689,12 @@ const AgentDetails = () => {
         
         <CardContent>
           <div className="space-y-4">
+            {/* Content goes here */}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default AgentDetails;
