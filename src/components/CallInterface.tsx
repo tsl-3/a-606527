@@ -1,13 +1,14 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, PhoneOff, Volume, Volume2, Phone, User, Bot } from "lucide-react";
+import { Mic, MicOff, PhoneOff, Volume, Volume2, User, Bot } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface UserPersona {
   id: string;
@@ -32,7 +33,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   const [isMuted, setIsMuted] = useState(false);
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
-  const [messages, setMessages] = useState<Array<{ sender: "agent" | "user"; text: string; timestamp: string }>>([]);
   const [selectedMic, setSelectedMic] = useState<string>("");
   const [selectedSpeaker, setSelectedSpeaker] = useState<string>("");
   const [availableMics, setAvailableMics] = useState<MediaDeviceInfo[]>([]);
@@ -51,13 +51,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         // Add initial message from persona
         if (persona) {
           const initialMessage = getInitialMessage(persona);
-          setMessages([{
-            sender: "user",
-            text: initialMessage,
-            timestamp: formatTimestamp(new Date())
-          }]);
-          
-          // Add to transcriptions
           setTranscriptions([`${persona.name}: ${initialMessage}`]);
         }
       }, 1500);
@@ -134,7 +127,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   // Auto scroll to latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [transcriptions]);
 
   const getInitialMessage = (persona: UserPersona): string => {
     switch (persona.id) {
@@ -166,7 +159,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       setTimeout(() => {
         setCallStatus("connecting");
         setCallDuration(0);
-        setMessages([]);
         setTranscriptions([]);
         setIsMuted(false);
         setIsAudioMuted(false);
@@ -192,26 +184,13 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
 
   const handleSendMessage = () => {
     // Simulate sending a message
-    const agentMessage = {
-      sender: "agent" as const,
-      text: "I understand. Let me help you with that...",
-      timestamp: formatTimestamp(new Date())
-    };
-    
-    setMessages(prev => [...prev, agentMessage]);
-    setTranscriptions(prev => [...prev, `You: ${agentMessage.text}`]);
+    const userMessage = "I understand. Let me help you with that...";
+    setTranscriptions(prev => [...prev, `You: ${userMessage}`]);
     
     // Simulate response from persona
     setTimeout(() => {
       if (persona) {
         const responseText = "Thank you for your help. Can you tell me more about the pricing options?";
-        const personaResponse = {
-          sender: "user" as const,
-          text: responseText,
-          timestamp: formatTimestamp(new Date())
-        };
-        
-        setMessages(prev => [...prev, personaResponse]);
         setTranscriptions(prev => [...prev, `${persona.name}: ${responseText}`]);
       }
     }, 3000);
@@ -221,12 +200,12 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-md sm:max-w-2xl">
-        <AlertDialogHeader className="space-y-2 border-b pb-4">
+      <AlertDialogContent className="max-w-md sm:max-w-2xl bg-[#0F172A] border-gray-800">
+        <AlertDialogHeader className="space-y-2 border-b border-gray-800 pb-4">
           <AlertDialogTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {persona.type === "customer" ? (
-                <User className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                <User className="h-5 w-5 text-gray-400" />
               ) : (
                 <Bot className="h-5 w-5 text-primary" />
               )}
@@ -253,9 +232,9 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
           
           {callStatus === "connecting" && (
             <div className="py-10 flex flex-col items-center justify-center">
-              <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4 relative">
+              <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mb-4 relative">
                 {persona.type === "customer" ? (
-                  <User className="h-8 w-8 text-gray-600 dark:text-gray-400" />
+                  <User className="h-8 w-8 text-gray-400" />
                 ) : (
                   <Bot className="h-8 w-8 text-primary" />
                 )}
@@ -268,107 +247,99 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         </AlertDialogHeader>
 
         {callStatus === "active" && (
-          <>
-            <div className="py-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-4">
-                {/* Persona Info */}
-                <div className="rounded-lg border p-3 bg-secondary/10 text-sm">
-                  <h4 className="font-medium text-sm mb-1.5">About {persona.name}</h4>
-                  <p className="text-gray-600 dark:text-gray-400 mb-2">{persona.description}</p>
-                  {persona.scenario && (
-                    <div className="bg-secondary/20 dark:bg-secondary/30 rounded p-2 text-xs">
-                      <span className="font-medium">Scenario:</span> {persona.scenario}
-                    </div>
-                  )}
-                </div>
-
-                {/* Device Controls */}
-                <div className="rounded-lg border p-3 space-y-3">
-                  <h4 className="font-medium text-sm">Audio Devices</h4>
-                  <div className="space-y-2">
-                    <Label htmlFor="mic-select" className="text-xs">Microphone</Label>
-                    <Select 
-                      value={selectedMic} 
-                      onValueChange={setSelectedMic}
-                    >
-                      <SelectTrigger id="mic-select" className="h-8 text-xs">
-                        <SelectValue placeholder="Select microphone" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableMics.map((mic) => (
-                          <SelectItem key={mic.deviceId} value={mic.deviceId}>
-                            {mic.label || `Microphone ${mic.deviceId.slice(0, 5)}`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-4 my-4">
+            {/* Left column: About persona and device controls */}
+            <div className="space-y-4">
+              {/* Persona Info */}
+              <div className="rounded-lg border border-gray-800 p-3 bg-gray-900/50 text-sm">
+                <h4 className="font-medium text-sm mb-1.5">About {persona.name}</h4>
+                <p className="text-gray-400 mb-2">{persona.description}</p>
+                {persona.scenario && (
+                  <div className="bg-gray-800 rounded p-2 text-xs">
+                    <span className="font-medium">Scenario:</span> {persona.scenario}
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="speaker-select" className="text-xs">Speaker</Label>
-                    <Select 
-                      value={selectedSpeaker} 
-                      onValueChange={setSelectedSpeaker}
-                    >
-                      <SelectTrigger id="speaker-select" className="h-8 text-xs">
-                        <SelectValue placeholder="Select speaker" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableSpeakers.map((speaker) => (
-                          <SelectItem key={speaker.deviceId} value={speaker.deviceId}>
-                            {speaker.label || `Speaker ${speaker.deviceId.slice(0, 5)}`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+                )}
               </div>
 
-              {/* Transcription */}
-              <div className="rounded-lg border p-3 flex flex-col max-h-[250px]">
-                <h4 className="font-medium text-sm mb-2">Live Transcription</h4>
-                <div className="overflow-y-auto flex-1 space-y-3 text-sm">
-                  {transcriptions.map((text, index) => (
-                    <div key={index} className="border-b border-gray-100 dark:border-gray-800 pb-2 last:border-0">
-                      {text}
-                    </div>
-                  ))}
+              {/* Device Controls */}
+              <div className="rounded-lg border border-gray-800 p-3 space-y-3">
+                <h4 className="font-medium text-sm">Audio Devices</h4>
+                <div className="space-y-2">
+                  <Label htmlFor="mic-select" className="text-xs">Microphone</Label>
+                  <Select 
+                    value={selectedMic} 
+                    onValueChange={setSelectedMic}
+                  >
+                    <SelectTrigger id="mic-select" className="h-8 text-xs border-gray-800 bg-gray-900">
+                      <SelectValue placeholder="Select microphone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableMics.map((mic) => (
+                        <SelectItem key={mic.deviceId} value={mic.deviceId}>
+                          {mic.label || `Microphone ${mic.deviceId.slice(0, 5)}`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="speaker-select" className="text-xs">Speaker</Label>
+                  <Select 
+                    value={selectedSpeaker} 
+                    onValueChange={setSelectedSpeaker}
+                  >
+                    <SelectTrigger id="speaker-select" className="h-8 text-xs border-gray-800 bg-gray-900">
+                      <SelectValue placeholder="Select speaker" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableSpeakers.map((speaker) => (
+                        <SelectItem key={speaker.deviceId} value={speaker.deviceId}>
+                          {speaker.label || `Speaker ${speaker.deviceId.slice(0, 5)}`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* Right column: Live Transcription */}
+            <div className="rounded-lg border border-gray-800 p-4 flex flex-col h-[280px]">
+              <h4 className="font-medium text-sm mb-3">Live Transcription</h4>
+              <ScrollArea className="flex-1 pr-4">
+                <div className="space-y-4">
+                  {transcriptions.map((text, index) => {
+                    const [speaker, ...messageParts] = text.split(": ");
+                    const message = messageParts.join(": ");
+                    
+                    return (
+                      <div key={index} className="pb-3 border-b border-gray-800 last:border-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge variant="outline" className="text-xs py-0 px-2">
+                            {speaker}
+                          </Badge>
+                          <span className="text-xs text-gray-500">
+                            {formatTimestamp(new Date(Date.now() - (transcriptions.length - 1 - index) * 3000))}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-300">{message}</p>
+                      </div>
+                    );
+                  })}
                   <div ref={messagesEndRef} />
                 </div>
-              </div>
+              </ScrollArea>
             </div>
-
-            {/* Messages view */}
-            <div className="max-h-40 overflow-y-auto border rounded-md p-3 mb-4">
-              {messages.map((message, index) => (
-                <div 
-                  key={index}
-                  className={`mb-3 ${message.sender === "agent" ? "text-right" : "text-left"}`}
-                >
-                  <div 
-                    className={`inline-block max-w-[80%] rounded-lg px-3 py-2 text-sm ${
-                      message.sender === "agent" 
-                        ? "bg-primary text-white" 
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                    }`}
-                  >
-                    {message.text}
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">{message.timestamp}</div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-          </>
+          </div>
         )}
 
-        <AlertDialogFooter className="flex justify-center space-x-2 border-t pt-4">
+        <AlertDialogFooter className="flex justify-center space-x-2 border-t border-gray-800 pt-4">
           <Button
             variant={isMuted ? "destructive" : "outline"}
             size="icon"
             onClick={handleToggleMute}
-            className={isMuted ? "bg-red-500/90" : ""}
+            className={isMuted ? "bg-red-500/90" : "border-gray-700"}
           >
             {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
           </Button>
@@ -377,7 +348,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
             variant="outline"
             size="icon"
             onClick={handleToggleAudio}
-            className={isAudioMuted ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/30" : ""}
+            className={isAudioMuted ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/30" : "border-gray-700"}
           >
             {isAudioMuted ? <Volume className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </Button>
@@ -386,6 +357,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
             variant="default"
             onClick={handleSendMessage}
             disabled={callStatus !== "active" || isMuted}
+            className="bg-white text-black hover:bg-gray-200"
           >
             Speak
           </Button>
