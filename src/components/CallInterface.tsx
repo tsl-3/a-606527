@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -42,13 +41,11 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   const timerRef = useRef<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Simulate connection delay
   useEffect(() => {
     if (open && callStatus === "connecting") {
       const timer = setTimeout(() => {
         setCallStatus("active");
         
-        // Add initial message from persona
         if (persona) {
           const initialMessage = getInitialMessage(persona);
           setTranscriptions([`${persona.name}: ${initialMessage}`]);
@@ -59,14 +56,11 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     }
   }, [open, callStatus, persona]);
 
-  // Initialize audio devices
   useEffect(() => {
     const getDevices = async () => {
       try {
-        // Request microphone permission first
         await navigator.mediaDevices.getUserMedia({ audio: true })
           .then(stream => {
-            // Stop the stream after permission is granted
             stream.getTracks().forEach(track => track.stop());
           })
           .catch(error => {
@@ -77,17 +71,13 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
             });
           });
 
-        // Get all available devices
         const devices = await navigator.mediaDevices.enumerateDevices();
-        
-        // Filter audio devices
         const mics = devices.filter(device => device.kind === "audioinput");
         const speakers = devices.filter(device => device.kind === "audiooutput");
         
         setAvailableMics(mics);
         setAvailableSpeakers(speakers);
         
-        // Set defaults if available
         if (mics.length > 0) setSelectedMic(mics[0].deviceId);
         if (speakers.length > 0) setSelectedSpeaker(speakers[0].deviceId);
       } catch (error) {
@@ -103,7 +93,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       getDevices();
     }
     
-    // Listen for device changes
     navigator.mediaDevices.addEventListener('devicechange', getDevices);
     
     return () => {
@@ -111,7 +100,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     };
   }, [open]);
 
-  // Simulate call duration timer
   useEffect(() => {
     if (open && callStatus === "active") {
       timerRef.current = window.setInterval(() => {
@@ -124,7 +112,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     };
   }, [open, callStatus]);
 
-  // Auto scroll to latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [transcriptions]);
@@ -155,7 +142,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     setCallStatus("ended");
     setTimeout(() => {
       onOpenChange(false);
-      // Reset state when dialog closes
       setTimeout(() => {
         setCallStatus("connecting");
         setCallDuration(0);
@@ -183,11 +169,9 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   };
 
   const handleSendMessage = () => {
-    // Simulate sending a message
     const userMessage = "I understand. Let me help you with that...";
     setTranscriptions(prev => [...prev, `You: ${userMessage}`]);
     
-    // Simulate response from persona
     setTimeout(() => {
       if (persona) {
         const responseText = "Thank you for your help. Can you tell me more about the pricing options?";
@@ -248,9 +232,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
 
         {callStatus === "active" && (
           <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-4 my-4">
-            {/* Left column: About persona and device controls */}
             <div className="space-y-4">
-              {/* Persona Info */}
               <div className="rounded-lg border border-gray-800 p-3 bg-gray-900/50 text-sm">
                 <h4 className="font-medium text-sm mb-1.5">About {persona.name}</h4>
                 <p className="text-gray-400 mb-2">{persona.description}</p>
@@ -261,7 +243,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                 )}
               </div>
 
-              {/* Device Controls */}
               <div className="rounded-lg border border-gray-800 p-3 space-y-3">
                 <h4 className="font-medium text-sm">Audio Devices</h4>
                 <div className="space-y-2">
@@ -304,11 +285,10 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
               </div>
             </div>
 
-            {/* Right column: Live Transcription - Modified to fill the column */}
             <div className="rounded-lg border border-gray-800 p-4 flex flex-col h-full min-h-[280px]">
               <h4 className="font-medium text-sm mb-3">Live Transcription</h4>
-              <ScrollArea className="flex-1 pr-4">
-                <div className="space-y-4">
+              <ScrollArea className="flex-1">
+                <div className="space-y-4 max-w-full">
                   {transcriptions.map((text, index) => {
                     const [speaker, ...messageParts] = text.split(": ");
                     const message = messageParts.join(": ");
@@ -323,7 +303,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                             {formatTimestamp(new Date(Date.now() - (transcriptions.length - 1 - index) * 3000))}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-300">{message}</p>
+                        <p className="text-sm text-gray-300 break-words overflow-hidden">{message}</p>
                       </div>
                     );
                   })}
@@ -374,3 +354,4 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     </AlertDialog>
   );
 };
+
