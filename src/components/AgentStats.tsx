@@ -84,7 +84,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       {/* AVM Score Card */}
       {displayAvmScore !== undefined && (
         <Card className="flex-1 overflow-hidden shadow-sm">
-          <div className="px-2 py-1 flex items-center justify-between border-b border-border">
+          <div className="px-2 py-1 flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground">AVM</span>
             <span className="text-xs font-medium">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
           </div>
