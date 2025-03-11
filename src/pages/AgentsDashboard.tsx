@@ -329,7 +329,7 @@ const AgentsDashboard = () => {
                           New
                         </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground dark:text-gray-400">{newlyCreatedAgent.type}</p>
+                      <p className="text-xs text-muted-foreground dark:text-gray-400">{newlyCreatedAgent.phone}</p>
                     </div>
                   </div>
                   <DropdownMenu>
@@ -390,7 +390,7 @@ const AgentsDashboard = () => {
                       </Avatar>
                       <div>
                         <h3 className="font-medium text-foreground dark:text-white">{getRandomName(agent.id)}</h3>
-                        <p className="text-xs text-muted-foreground dark:text-gray-400">{agent.name}</p>
+                        <p className="text-xs text-muted-foreground dark:text-gray-400">{agent.phone}</p>
                       </div>
                     </div>
                     <DropdownMenu>
@@ -424,15 +424,6 @@ const AgentsDashboard = () => {
                     <CardDescription className="line-clamp-2 text-muted-foreground dark:text-gray-300 mb-2">
                       {agent.description}
                     </CardDescription>
-                    
-                    {agent.phone && (
-                      <div className="flex items-center mb-2">
-                        <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
-                          <Phone className="h-3.5 w-3.5" />
-                          <span>{agent.phone}</span>
-                        </div>
-                      </div>
-                    )}
                     
                     {agent.channelConfigs ? (
                       <AgentChannels channels={agent.channelConfigs} readonly={true} compact={true} className="mt-0" />
@@ -478,4 +469,3 @@ const AgentsDashboard = () => {
 };
 
 export default AgentsDashboard;
-
