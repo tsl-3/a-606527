@@ -1,11 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AgentType } from '@/types/agent';
+import { AgentType, VoiceTrait } from '@/types/agent';
 import { useToast } from "@/components/ui/use-toast";
 import { updateAgent } from '@/services/agentService';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -13,16 +13,140 @@ import {
   Bot, Copy, Target, User, FileText, Code, Building, Briefcase, 
   Headphones, ShoppingCart, Wrench, CircuitBoard, GraduationCap, Plane, 
   Factory, ShieldCheck, Phone, Home, Plus, MessageSquare,
-  HeartPulse, Landmark, Wallet, BarChart4, Calendar, Mic, Brain
+  HeartPulse, Landmark, Wallet, BarChart4, Calendar, Mic, Brain, Play, Pause, Volume2
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import debounce from 'lodash/debounce';
 import { AgentChannels } from '@/components/AgentChannels';
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AgentConfigSettingsProps {
   agent: AgentType;
   onAgentUpdate: (updatedAgent: AgentType) => void;
 }
+
+interface VoiceDefinition {
+  id: string;
+  name: string;
+  traits: VoiceTrait[];
+  avatar?: string;
+  audioSample: string;
+}
+
+const VOICE_PROVIDERS = {
+  "Eleven Labs": {
+    "Aria": {
+      id: "9BWtsMINqrJLrRacOk9x",
+      name: "Aria",
+      traits: [{
+        name: "Young",
+        color: "bg-yellow-100 text-yellow-800"
+      }, {
+        name: "Friendly",
+        color: "bg-pink-100 text-pink-800"
+      }],
+      avatar: "/voices/avatars/aria.jpg",
+      audioSample: "/voices/eleven-aria.mp3"
+    },
+    "Roger": {
+      id: "CwhRBWXzGAHq8TQ4Fs17",
+      name: "Roger",
+      traits: [{
+        name: "American",
+        color: "bg-red-100 text-red-800"
+      }, {
+        name: "Casual",
+        color: "bg-green-100 text-green-800"
+      }],
+      avatar: "/voices/avatars/roger.jpg",
+      audioSample: "/voices/eleven-roger.mp3"
+    },
+    "Sarah": {
+      id: "EXAVITQu4vr4xnSDxMaL",
+      name: "Sarah",
+      traits: [{
+        name: "British",
+        color: "bg-blue-100 text-blue-800"
+      }, {
+        name: "Professional",
+        color: "bg-purple-100 text-purple-800"
+      }],
+      avatar: "/voices/avatars/sarah.jpg",
+      audioSample: "/voices/eleven-sarah.mp3"
+    },
+    "Charlie": {
+      id: "IKne3meq5aSn9XLyUdCD",
+      name: "Charlie",
+      traits: [{
+        name: "Australian",
+        color: "bg-green-100 text-green-800"
+      }, {
+        name: "Energetic",
+        color: "bg-orange-100 text-orange-800"
+      }],
+      avatar: "/voices/avatars/charlie.jpg",
+      audioSample: "/voices/eleven-charlie.mp3"
+    }
+  },
+  "Amazon Polly": {
+    "Joanna": {
+      id: "Joanna",
+      name: "Joanna",
+      traits: [{
+        name: "American",
+        color: "bg-red-100 text-red-800"
+      }, {
+        name: "Professional",
+        color: "bg-purple-100 text-purple-800"
+      }],
+      avatar: "/voices/avatars/joanna.jpg",
+      audioSample: "/voices/polly-joanna.mp3"
+    },
+    "Matthew": {
+      id: "Matthew",
+      name: "Matthew",
+      traits: [{
+        name: "American",
+        color: "bg-red-100 text-red-800"
+      }, {
+        name: "Deep",
+        color: "bg-blue-100 text-blue-800"
+      }],
+      avatar: "/voices/avatars/matthew.jpg",
+      audioSample: "/voices/polly-matthew.mp3"
+    }
+  },
+  "Google TTS": {
+    "Wavenet A": {
+      id: "en-US-Wavenet-A",
+      name: "Wavenet A",
+      traits: [{
+        name: "American",
+        color: "bg-red-100 text-red-800"
+      }, {
+        name: "Neutral",
+        color: "bg-gray-100 text-gray-800"
+      }],
+      avatar: "/voices/avatars/wavenet-a.jpg",
+      audioSample: "/voices/google-wavenet-a.mp3"
+    },
+    "Wavenet B": {
+      id: "en-US-Wavenet-B",
+      name: "Wavenet B",
+      traits: [{
+        name: "British",
+        color: "bg-blue-100 text-blue-800"
+      }, {
+        name: "Formal",
+        color: "bg-indigo-100 text-indigo-800"
+      }],
+      avatar: "/voices/avatars/wavenet-b.jpg",
+      audioSample: "/voices/google-wavenet-b.mp3"
+    }
+  }
+};
 
 const INDUSTRIES = [
   { id: "healthcare", name: "Healthcare", icon: <HeartPulse className="h-4 w-4" /> },
@@ -62,19 +186,6 @@ const AI_MODELS = [
   { id: "Llama-3", name: "Llama 3" }
 ];
 
-const VOICE_OPTIONS = [
-  { id: "9BWtsMINqrJLrRacOk9x", name: "Aria" },
-  { id: "CwhRBWXzGAHq8TQ4Fs17", name: "Roger" },
-  { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah" },
-  { id: "FGY2WhTYpPnrIDTdsKH5", name: "Laura" },
-  { id: "IKne3meq5aSn9XLyUdCD", name: "Charlie" },
-  { id: "JBFqnCBsd6RMkjVDRZzb", name: "George" },
-  { id: "N2lVS1w4EtoT3dr4eOWO", name: "Callum" },
-  { id: "SAz9YHcvj6GT2YYXdXww", name: "River" },
-  { id: "TX3LPaxmHKxFdv7VOQHJ", name: "Liam" },
-  { id: "XB0fDUnXU5powFXDhCwa", name: "Charlotte" }
-];
-
 const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgentUpdate }) => {
   const { toast } = useToast();
   const [name, setName] = useState(agent.name);
@@ -87,7 +198,13 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   const [customFunction, setCustomFunction] = useState('');
   const [model, setModel] = useState(agent.model || 'GPT-4');
   const [voice, setVoice] = useState(agent.voice || '9BWtsMINqrJLrRacOk9x');
+  const [voiceProvider, setVoiceProvider] = useState(agent.voiceProvider || 'Eleven Labs');
   const [isSaving, setIsSaving] = useState(false);
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [selectedVoiceTraits, setSelectedVoiceTraits] = useState<VoiceTrait[]>([]);
+  const [customVoiceId, setCustomVoiceId] = useState('');
+  const [isCustomVoice, setIsCustomVoice] = useState(false);
 
   // Create debounced save function
   const debouncedSave = React.useCallback(
@@ -127,7 +244,8 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
         finalIndustry !== agent.industry ||
         finalBotFunction !== agent.botFunction ||
         model !== agent.model ||
-        voice !== agent.voice) {
+        voice !== agent.voice ||
+        voiceProvider !== agent.voiceProvider) {
       
       debouncedSave({
         name,
@@ -137,10 +255,45 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
         industry: finalIndustry,
         botFunction: finalBotFunction,
         model,
-        voice
+        voice,
+        voiceProvider
       });
     }
-  }, [name, avatar, purpose, prompt, industry, botFunction, customIndustry, customFunction, model, voice, agent, debouncedSave]);
+  }, [name, avatar, purpose, prompt, industry, botFunction, customIndustry, customFunction, model, voice, voiceProvider, agent, debouncedSave]);
+
+  // Effect to clean up audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+      }
+    };
+  }, []);
+
+  // Initialize voice traits based on selected voice
+  useEffect(() => {
+    if (agent && agent.voice) {
+      // Check if it's a custom voice
+      if (agent.voice === "Custom") {
+        setIsCustomVoice(true);
+        setCustomVoiceId(agent.customVoiceId || "");
+      } else {
+        // Try to find the voice in our providers
+        for (const provider in VOICE_PROVIDERS) {
+          for (const voiceName in VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]) {
+            const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
+            if (voiceObj.id === agent.voice) {
+              setVoice(voiceObj.id);
+              setVoiceProvider(provider);
+              setSelectedVoiceTraits(voiceObj.traits || []);
+              break;
+            }
+          }
+        }
+      }
+    }
+  }, [agent]);
 
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText(prompt);
@@ -157,6 +310,80 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   const generateRandomAvatar = () => {
     const seed = Math.random().toString(36).substring(2, 10);
     setAvatar(`https://api.dicebear.com/7.x/bottts/svg?seed=${seed}`);
+  };
+
+  const handleVoiceProviderChange = (value: string) => {
+    setVoiceProvider(value);
+    
+    // Select the first voice from the new provider
+    const voices = Object.keys(VOICE_PROVIDERS[value as keyof typeof VOICE_PROVIDERS] || {});
+    if (voices.length > 0) {
+      const firstVoice = VOICE_PROVIDERS[value as keyof typeof VOICE_PROVIDERS][voices[0]];
+      setVoice(firstVoice.id);
+      setSelectedVoiceTraits(firstVoice.traits || []);
+    }
+    
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setCurrentlyPlaying(null);
+    }
+  };
+
+  const handleVoiceChange = (voiceId: string) => {
+    setVoice(voiceId);
+    
+    // Find the voice details across all providers
+    for (const provider in VOICE_PROVIDERS) {
+      for (const voiceName in VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]) {
+        const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
+        if (voiceObj.id === voiceId) {
+          setSelectedVoiceTraits(voiceObj.traits || []);
+          break;
+        }
+      }
+    }
+  };
+
+  const handlePlaySample = (voiceId: string, providerKey: keyof typeof VOICE_PROVIDERS, voiceName: string) => {
+    if (currentlyPlaying === voiceId) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        setCurrentlyPlaying(null);
+      }
+      return;
+    }
+    
+    const voicePath = VOICE_PROVIDERS[providerKey][voiceName]?.audioSample;
+    if (!voicePath) return;
+    
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    
+    const audio = new Audio(voicePath);
+    audioRef.current = audio;
+    
+    audio.onended = () => {
+      setCurrentlyPlaying(null);
+    };
+    
+    audio.onplay = () => {
+      setCurrentlyPlaying(voiceId);
+    };
+    
+    audio.onerror = () => {
+      toast({
+        title: "Audio Error",
+        description: `Could not play sample for ${voiceName}.`,
+        variant: "destructive"
+      });
+      setCurrentlyPlaying(null);
+    };
+    
+    audio.play().catch(err => {
+      console.error("Error playing audio:", err);
+      setCurrentlyPlaying(null);
+    });
   };
 
   const handleUpdateChannel = async (channel: string, config: {
@@ -307,21 +534,81 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
             
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Mic className="h-4 w-4 text-agent-primary" />
+                <Volume2 className="h-4 w-4 text-agent-primary" />
                 <Label htmlFor="agent-voice">Voice</Label>
               </div>
-              <Select value={voice} onValueChange={setVoice}>
-                <SelectTrigger id="agent-voice" className="w-full">
-                  <SelectValue placeholder="Select a voice" />
-                </SelectTrigger>
-                <SelectContent>
-                  {VOICE_OPTIONS.map((voiceOption) => (
-                    <SelectItem key={voiceOption.id} value={voiceOption.id}>
-                      {voiceOption.name}
-                    </SelectItem>
+
+              <Tabs defaultValue={voiceProvider} onValueChange={handleVoiceProviderChange} className="w-full">
+                <TabsList className="w-full grid grid-cols-3">
+                  {Object.keys(VOICE_PROVIDERS).map((provider) => (
+                    <TabsTrigger key={provider} value={provider}>
+                      {provider}
+                    </TabsTrigger>
                   ))}
-                </SelectContent>
-              </Select>
+                </TabsList>
+
+                {Object.keys(VOICE_PROVIDERS).map((provider) => (
+                  <TabsContent key={provider} value={provider} className="mt-4">
+                    <ScrollArea className="h-52 w-full rounded-md border">
+                      <div className="p-4 space-y-4">
+                        {Object.keys(VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]).map((voiceName) => {
+                          const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
+                          return (
+                            <div 
+                              key={voiceObj.id} 
+                              className={`flex items-start gap-4 p-3 rounded-lg cursor-pointer hover:bg-muted transition-colors ${voice === voiceObj.id ? 'bg-muted border border-agent-primary/30' : ''}`}
+                              onClick={() => handleVoiceChange(voiceObj.id)}
+                            >
+                              <div className="relative">
+                                <Avatar className="h-14 w-14">
+                                  <AvatarImage src={voiceObj.avatar || `https://api.dicebear.com/7.x/personas/svg?seed=${voiceObj.id}`} alt={voiceObj.name} />
+                                  <AvatarFallback>
+                                    <Volume2 className="h-6 w-6" />
+                                  </AvatarFallback>
+                                </Avatar>
+                                <Button
+                                  variant="play"
+                                  size="play"
+                                  className="absolute -bottom-1 -right-1 shadow-md"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handlePlaySample(voiceObj.id, provider as keyof typeof VOICE_PROVIDERS, voiceName);
+                                  }}
+                                >
+                                  {currentlyPlaying === voiceObj.id ? (
+                                    <Pause className="h-3.5 w-3.5" />
+                                  ) : (
+                                    <Play className="h-3.5 w-3.5 ml-0.5" />
+                                  )}
+                                </Button>
+                              </div>
+                              
+                              <div className="flex-1">
+                                <div className="flex items-center justify-between">
+                                  <h4 className="font-medium text-sm">{voiceObj.name}</h4>
+                                  {voice === voiceObj.id && (
+                                    <Badge variant="outline" className="bg-agent-primary/10 text-xs">
+                                      Selected
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="flex gap-1 mt-2 flex-wrap">
+                                  {voiceObj.traits?.map((trait, idx) => (
+                                    <Badge key={idx} className={trait.color}>
+                                      {trait.name}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </ScrollArea>
+                  </TabsContent>
+                ))}
+              </Tabs>
+              
               <p className="text-xs text-muted-foreground">
                 The voice your agent will use when speaking to users
               </p>
