@@ -497,35 +497,47 @@ const AgentsDashboard = () => {
                       hideInteractions={true}
                     />
                     
-                    {filterType !== "all" && (
-                      <Badge variant="secondary" className="w-fit">
-                        Type: {agent.type}
-                      </Badge>
-                    )}
-                    {filterChannel !== "all" && agent.channels && (
-                      <Badge variant="secondary" className="w-fit">
-                        Channel: {filterChannel}
-                      </Badge>
-                    )}
-                    {filterStatus !== "all" && (
-                      <Badge variant="secondary" className="w-fit">
-                        Status: {agent.status}
-                      </Badge>
-                    )}
-                    
-                    <div className="flex items-center text-xs text-muted-foreground mt-1">
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {filterType !== "all" && (
+                        <Badge variant="agent" className="w-fit">
+                          <span className="flex items-center gap-1">
+                            Type: {agent.type}
+                          </span>
+                        </Badge>
+                      )}
+                      
+                      {filterChannel !== "all" && agent.channels && (
+                        <Badge variant="agent" className="w-fit">
+                          <span className="flex items-center gap-1">
+                            Channel: {filterChannel}
+                          </span>
+                        </Badge>
+                      )}
+                      
+                      {filterStatus !== "all" && (
+                        <Badge variant="agent" className="w-fit">
+                          <span className="flex items-center gap-1">
+                            Status: {agent.status}
+                          </span>
+                        </Badge>
+                      )}
+                      
                       {(sortBy === "recent" || sortBy === "oldest") && (
-                        <div className="flex items-center">
-                          <Calendar className="h-3.5 w-3.5 mr-1" />
-                          <span>Created: {formatCreatedAt(agent.createdAt)}</span>
-                        </div>
+                        <Badge variant="agent" className="w-fit">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3.5 w-3.5 mr-1" />
+                            {formatCreatedAt(agent.createdAt)}
+                          </span>
+                        </Badge>
                       )}
                       
                       {(sortBy === "most-used" || sortBy === "less-used") && (
-                        <div className="flex items-center">
-                          <MessageCircle className="h-3.5 w-3.5 mr-1" />
-                          <span>Interactions: {agent.interactions}</span>
-                        </div>
+                        <Badge variant="agent" className="w-fit">
+                          <span className="flex items-center gap-1">
+                            <MessageCircle className="h-3.5 w-3.5 mr-1" />
+                            {agent.interactions} interactions
+                          </span>
+                        </Badge>
                       )}
                     </div>
                   </div>
@@ -548,4 +560,3 @@ const AgentsDashboard = () => {
 };
 
 export default AgentsDashboard;
-
