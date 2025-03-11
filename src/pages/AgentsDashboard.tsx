@@ -67,10 +67,10 @@ const AgentsDashboard = () => {
   
   const newlyCreatedAgent: AgentType = {
     id: "new123",
-    name: "New Agent (Just Created)",
-    description: "This agent was just created and is being initialized.",
+    name: "New Agent",
+    description: "This agent was just created and needs configuration to be fully operational.",
     status: "inactive",
-    type: "customer-support", // Added the required 'type' property
+    type: "customer-support",
     createdAt: "Just now",
     interactions: 0,
     channelConfigs: {
@@ -290,8 +290,24 @@ const AgentsDashboard = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Create New Agent Card */}
+          <Link to="/agents/create" className="block">
+            <Card className="h-full card-hover border-dashed border-2 border-agent-primary/30 hover:border-agent-primary/70 transition-all bg-transparent hover:bg-gray-50 dark:hover:bg-gray-900/30">
+              <div className="flex flex-col items-center justify-center h-full py-10">
+                <div className="h-12 w-12 rounded-full bg-agent-primary/10 flex items-center justify-center mb-4">
+                  <PlusCircle className="h-6 w-6 text-agent-primary" />
+                </div>
+                <h3 className="text-lg font-medium text-foreground dark:text-white">Create New Agent</h3>
+                <p className="text-sm text-muted-foreground dark:text-gray-400 text-center mt-2 max-w-xs">
+                  Create a custom AI agent to help with customer support, sales, or other tasks
+                </p>
+              </div>
+            </Card>
+          </Link>
+          
+          {/* Newly Created Agent Card */}
           <Link to={`/agents/${newlyCreatedAgent.id}`} key={newlyCreatedAgent.id} className="block">
-            <Card className="h-full card-hover border-dashed border-2 border-agent-primary/20">
+            <Card className="h-full card-hover border-agent-primary/10">
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-start">
                   <div className="flex items-center gap-3">
@@ -300,12 +316,12 @@ const AgentsDashboard = () => {
                     </Avatar>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-foreground dark:text-white">New Agent</h3>
+                        <h3 className="font-medium text-foreground dark:text-white">{newlyCreatedAgent.name}</h3>
                         <Badge variant="outline" className="bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30 ml-2 text-xs py-0 h-5">
-                          Initializing
+                          New
                         </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground dark:text-gray-400">{newlyCreatedAgent.name}</p>
+                      <p className="text-xs text-muted-foreground dark:text-gray-400">{newlyCreatedAgent.type}</p>
                     </div>
                   </div>
                   <DropdownMenu>
@@ -317,7 +333,7 @@ const AgentsDashboard = () => {
                     <DropdownMenuContent align="end" className="w-48 bg-white dark:bg-gray-900 z-50">
                       <DropdownMenuItem onClick={(e) => handleEditAgent(e, newlyCreatedAgent.id)}>
                         <Edit className="mr-2 h-4 w-4" />
-                        Edit Agent
+                        Configure Agent
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={(e) => handleViewDetails(e, newlyCreatedAgent.id)}>
                         <Eye className="mr-2 h-4 w-4" />
@@ -338,8 +354,8 @@ const AgentsDashboard = () => {
                 <div className="flex flex-col space-y-4">
                   <div className="bg-gray-50 dark:bg-gray-800/30 p-4 rounded-lg text-center">
                     <Sparkles className="h-5 w-5 mx-auto mb-2 text-amber-500" />
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Agent is being initialized</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Please wait a moment</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Finish configuring your agent</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Add more details to display agent stats</p>
                   </div>
                   
                   <div className="space-y-2">
