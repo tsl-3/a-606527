@@ -132,6 +132,7 @@ export const useAgentDetails = (agentId: string | undefined) => {
 
   // Start a direct call with a specific phone number
   const startDirectCall = (phoneNumber: string, deviceSettings: { mic: string; speaker: string }) => {
+    console.log("Starting direct call in useAgentDetails:", phoneNumber, deviceSettings);
     setDirectCallInfo({ phoneNumber, deviceSettings });
     setIsDirectCallActive(true);
     // Close the role play dialog if it's open

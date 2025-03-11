@@ -76,6 +76,16 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   const [userPersonasSidebarOpen, setUserPersonasSidebarOpen] = useState(false);
   const [callInterfaceOpen, setCallInterfaceOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState<any>(null);
+  const [directCallInfo, setDirectCallInfo] = useState<{
+    phoneNumber: string;
+    deviceSettings: { mic: string; speaker: string };
+  } | null>(null);
+
+  const handleStartDirectCall = (phoneNumber: string, deviceSettings: { mic: string; speaker: string }) => {
+    setDirectCallInfo({ phoneNumber, deviceSettings });
+    setCallInterfaceOpen(true);
+    setUserPersonasSidebarOpen(false);
+  };
 
   const durationToMinutes = (duration: string): number => {
     const [minutes, seconds] = duration.split(':').map(Number);
@@ -678,14 +688,16 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
           open={userPersonasSidebarOpen} 
           onOpenChange={() => setUserPersonasSidebarOpen(false)}
           onSelectPersona={handleSelectPersona}
+          onStartDirectCall={handleStartDirectCall}
         />
       )}
       
-      {callInterfaceOpen && selectedPersona && (
+      {callInterfaceOpen && (
         <CallInterface 
           open={callInterfaceOpen}
           onOpenChange={() => setCallInterfaceOpen(false)}
           persona={selectedPersona}
+          directCallInfo={directCallInfo}
           onCallComplete={handleCallComplete}
         />
       )}
