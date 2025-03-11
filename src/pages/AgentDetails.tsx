@@ -27,9 +27,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import AgentConfigSettings from "@/components/AgentConfigSettings";
 import { RolePlayDialog } from "@/components/RolePlayDialog";
 import { CustomTooltip } from "@/components/CustomTooltip";
-
 const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
-
 interface VoiceDefinition {
   id: string;
   name: string;
@@ -37,7 +35,6 @@ interface VoiceDefinition {
   avatar?: string;
   audioSample: string;
 }
-
 const voiceSamples: Record<string, Record<string, VoiceDefinition>> = {
   "Eleven Labs": {
     "Emma": {
@@ -150,7 +147,6 @@ const voiceSamples: Record<string, Record<string, VoiceDefinition>> = {
     }
   }
 };
-
 const AgentDetails = () => {
   const {
     agentId
@@ -508,9 +504,7 @@ const AgentDetails = () => {
   const emailAddress = agent.channelConfigs?.email?.details || null;
   const activeChannels = Object.entries(agent.channelConfigs || {}).filter(([_, config]) => config.enabled).map(([channel]) => channel);
   const isNewAgent = agent.id === "new123";
-
-  return (
-    <div className="max-w-6xl mx-auto animate-fade-in">
+  return <div className="max-w-6xl mx-auto animate-fade-in">
       <div className="mb-6">
         <Link to="/agents" className="flex items-center text-gray-500 hover:text-agent-primary transition-colors duration-200">
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -520,7 +514,7 @@ const AgentDetails = () => {
       
       <Card className="mb-6 overflow-hidden">
         <CardHeader className="pb-3">
-          <div className="grid grid-cols-[auto_1fr_auto] gap-4 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-4 items-start">
             <div className="relative">
               <Avatar className="h-16 w-16 border-2 border-agent-primary/30">
                 <AvatarImage src={`https://api.dicebear.com/7.x/bottts/svg?seed=${agent.id}`} alt={agent.name} />
@@ -577,124 +571,252 @@ const AgentDetails = () => {
               </DropdownMenu>
             </div>
           </div>
-
-          <div className="flex flex-row items-center gap-4 mt-4">
-            <div className="flex items-center gap-3 text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-xs">Created: {agent.createdAt}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <History className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-xs">Updated: {lastUpdated.split(',')[0]}</span>
-              </div>
-            </div>
-
-            {activeChannels.length > 0 && (
-              <div className="flex gap-2">
-                {activeChannels.includes('voice') && (
-                  <Badge variant="channel">
-                    <Mic className="h-3 w-3 mr-1 text-muted-foreground" />
-                    <span className="text-xs">Voice</span>
-                  </Badge>
-                )}
-                {activeChannels.includes('chat') && (
-                  <Badge variant="channel">
-                    <MessageSquare className="h-3 w-3 mr-1 text-muted-foreground" />
-                    <span className="text-xs">Chat</span>
-                  </Badge>
-                )}
-                {activeChannels.includes('email') && (
-                  <Badge variant="channel">
-                    <Mail className="h-3 w-3 mr-1 text-muted-foreground" />
-                    <span className="text-xs">Email</span>
-                  </Badge>
-                )}
-              </div>
-            )}
-
-            <div className="flex items-center gap-3">
-              {voicePhoneNumber && (
-                <div className="flex items-center">
-                  <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
-                    <Phone className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="text-xs">{voicePhoneNumber}</span>
-                    <div className="flex gap-1 ml-2">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-6 w-6 rounded-full hover:bg-secondary" 
-                        onClick={handleCopyPhoneNumber} 
-                        title="Copy phone number"
-                      >
-                        <Copy className="h-3 w-3 text-muted-foreground" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-6 w-6 rounded-full hover:bg-secondary" 
-                        onClick={handleTestCall} 
-                        title="Test agent call"
-                      >
-                        <PhoneOutgoing className="h-3 w-3 text-muted-foreground" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {emailAddress && (
-                <div className="flex items-center">
-                  <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
-                    <Mail className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="text-xs">{emailAddress}</span>
-                    <div className="flex gap-1 ml-2">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-6 w-6 rounded-full hover:bg-secondary" 
-                        onClick={handleCopyEmail} 
-                        title="Copy email address"
-                      >
-                        <Copy className="h-3 w-3 text-muted-foreground" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-6 w-6 rounded-full hover:bg-secondary" 
-                        onClick={handleTestEmail} 
-                        title="Test agent email"
-                      >
-                        <Send className="h-3 w-3 text-muted-foreground" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="ml-auto">
-              <AgentStats 
-                avmScore={agent.avmScore} 
-                interactionCount={agent.interactions || 0} 
-                csat={agent.csat} 
-                performance={agent.performance}
-                isNewAgent={isNewAgent} 
-                showZeroValues={false}
-                hideInteractions={true}
-              />
-            </div>
-          </div>
         </CardHeader>
         
         <CardContent>
           <div className="space-y-4">
-            {/* Content goes here */}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              {!isActive}
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Calendar className="h-3.5 w-3.5 text-agent-primary" />
+                <span>Created: {agent.createdAt}</span>
+              </div>
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <History className="h-3.5 w-3.5 text-agent-primary" />
+                <span>Updated: {lastUpdated.split(',')[0]}</span>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+              <div className="space-y-3">
+                {activeChannels.length > 0 && <div className="flex flex-wrap gap-2">
+                    {activeChannels.includes('voice') && <Badge variant="channel">
+                        <Mic className="h-3 w-3 mr-1" />
+                        <span className="text-xs">Voice</span>
+                      </Badge>}
+                    {activeChannels.includes('chat') && <Badge variant="channel">
+                        <MessageSquare className="h-3 w-3 mr-1" />
+                        <span className="text-xs">Chat</span>
+                      </Badge>}
+                    {activeChannels.includes('email') && <Badge variant="channel">
+                        <Mail className="h-3 w-3 mr-1" />
+                        <span className="text-xs">Email</span>
+                      </Badge>}
+                  </div>}
+                
+                <div className="flex flex-col gap-2">
+                  {voicePhoneNumber && <div className="flex items-center">
+                      <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
+                        <Phone className="h-3.5 w-3.5 text-blue-500" />
+                        <span className="text-xs">
+                          {voicePhoneNumber}
+                        </span>
+                        <div className="flex gap-1 ml-2">
+                          <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-secondary" onClick={handleCopyPhoneNumber} title="Copy phone number">
+                            <Copy className="h-3 w-3 text-muted-foreground" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestCall} title="Test agent call">
+                            <PhoneOutgoing className="h-3 w-3 text-green-400" />
+                          </Button>
+                          
+                          <CustomTooltip trigger={<Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-blue-700/50" title="Call me back">
+                                <PhoneIncoming className="h-3 w-3 text-blue-400" />
+                              </Button>} content={<div className="space-y-3 w-64 p-2">
+                                <h4 className="font-medium text-sm">Get a call from this agent</h4>
+                                <Input type="tel" placeholder="Enter your phone number" value={customCallNumber} onChange={e => setCustomCallNumber(e.target.value)} className="h-8 text-xs" />
+                                <Button size="sm" className="w-full h-8 text-xs" onClick={handleCallMe}>
+                                  Call me
+                                </Button>
+                              </div>} side="bottom" align="end" className="w-64 p-0" />
+                        </div>
+                      </div>
+                    </div>}
+                  
+                  {emailAddress && <div className="flex items-center">
+                      <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
+                        <Mail className="h-3.5 w-3.5 text-red-500" />
+                        <span className="text-xs">
+                          {emailAddress}
+                        </span>
+                        <div className="flex gap-1 ml-2">
+                          <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-secondary" onClick={handleCopyEmail} title="Copy email address">
+                            <Copy className="h-3 w-3 text-muted-foreground" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestEmail} title="Test agent email">
+                            <Send className="h-3 w-3 text-green-400" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>}
+                </div>
+              </div>
+              
+              <div className="mt-2">
+                <AgentStats avmScore={agent.avmScore} interactionCount={agent.interactions || 0} csat={agent.csat} performance={agent.performance} isNewAgent={isNewAgent} showZeroValues={false} hideInteractions={true} />
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
+      
+      <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="mt-8">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="setup" className="text-sm">
+            <span className="flex items-center gap-2">
+              <Cog className="h-4 w-4" />
+              Setup
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="text-sm">
+            <span className="flex items-center gap-2">
+              <BarChart2 className="h-4 w-4" />
+              Analytics
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="text-sm">
+            <span className="flex items-center gap-2">
+              <Cpu className="h-4 w-4" />
+              Settings
+            </span>
+          </TabsTrigger>
+        </TabsList>
+        
+        <div className="mt-6">
+          <TabsContent value="setup" className="space-y-6">
+            <AgentSetupStepper agent={agent} />
+          </TabsContent>
+          
+          <TabsContent value="analytics" className="space-y-6">
+            {agent && <AnalyticsTab agent={agent} isNewAgent={isNewAgent} />}
+          </TabsContent>
+          
+          <TabsContent value="settings" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Model & Voice Settings</CardTitle>
+                <CardDescription>
+                  Configure the AI model and voice settings for your agent.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-secondary/30 dark:bg-secondary/10 px-4 py-3 rounded-lg border border-border">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Cpu className="h-3.5 w-3.5 text-agent-primary" />
+                      <span className="text-xs text-muted-foreground">Model</span>
+                    </div>
+                    <Select value={model} onValueChange={handleModelChange}>
+                      <SelectTrigger className="h-7 w-full bg-background/50 border-input">
+                        <SelectValue placeholder="Select model" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="GPT-4">GPT-4</SelectItem>
+                        <SelectItem value="GPT-3.5 Turbo">GPT-3.5 Turbo</SelectItem>
+                        <SelectItem value="Claude-2">Claude-2</SelectItem>
+                        <SelectItem value="LLama-2">LLama-2</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="bg-secondary/30 dark:bg-secondary/10 px-4 py-3 rounded-lg border border-border">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Volume2 className="h-3.5 w-3.5 text-agent-primary" />
+                      <span className="text-xs text-muted-foreground">Voice</span>
+                    </div>
+                    <Dialog open={isVoiceDialogOpen} onOpenChange={setIsVoiceDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="h-7 w-full bg-background/50 border-input justify-between">
+                          <span className="truncate">
+                            {isCustomVoice ? `Custom (${customVoiceId.substring(0, 6)}...)` : `${voice} (${voiceProvider})`}
+                          </span>
+                          {voicePhoneNumber && <span className="text-xs text-muted-foreground truncate ml-1">{voicePhoneNumber}</span>}
+                          <span className="sr-only">Edit voice</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-4xl max-h-[85vh] overflow-hidden flex flex-col">
+                        <DialogHeader>
+                          <DialogTitle>Configure Voice</DialogTitle>
+                          <DialogDescription>
+                            Select a voice provider and voice for your agent, or enter a custom voice ID
+                          </DialogDescription>
+                        </DialogHeader>
+                        
+                        <Tabs defaultValue={voiceProvider} className="w-full" onValueChange={handleProviderChange}>
+                          <TabsList className="w-full">
+                            <TabsTrigger value="Eleven Labs">Eleven Labs</TabsTrigger>
+                            <TabsTrigger value="Amazon Polly">Amazon Polly</TabsTrigger>
+                            <TabsTrigger value="Google TTS">Google TTS</TabsTrigger>
+                            <TabsTrigger value="Custom">Custom</TabsTrigger>
+                          </TabsList>
+                          
+                          <TabsContent value="Custom" className="mt-4">
+                            <div className="space-y-4">
+                              <div>
+                                <Label htmlFor="customVoiceId">Custom Voice ID</Label>
+                                <Input id="customVoiceId" value={customVoiceId} onChange={handleCustomVoiceIdChange} placeholder="Enter custom voice ID" className="mt-1" />
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                Enter a custom voice ID provided by your voice service provider.
+                              </div>
+                            </div>
+                          </TabsContent>
+                          
+                          {["Eleven Labs", "Amazon Polly", "Google TTS"].map(provider => <TabsContent key={provider} value={provider} className="mt-4">
+                              <ScrollArea className="h-[300px] pr-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {Object.entries(voiceSamples[provider] || {}).map(([voiceName, voiceDef]) => <div key={voiceName} className={`border rounded-lg p-3 cursor-pointer transition-colors hover:bg-accent ${voice === voiceName ? 'border-primary bg-accent/50' : 'border-border'}`} onClick={() => handleVoiceChange(voiceName)}>
+                                      <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                          <Avatar className="h-10 w-10">
+                                            <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                            <AvatarFallback className="bg-secondary text-primary">
+                                              {voiceName.substring(0, 2)}
+                                            </AvatarFallback>
+                                          </Avatar>
+                                          <div>
+                                            <h4 className="font-medium">{voiceName}</h4>
+                                            <div className="flex items-center gap-1 mt-1">
+                                              {voiceDef.traits.map(trait => <Badge key={trait.name} className={trait.color}>
+                                                  {trait.name}
+                                                </Badge>)}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <Button variant="ghost" size="icon" onClick={e => {
+                                    e.stopPropagation();
+                                    handlePlaySample(voiceName);
+                                  }} className="h-8 w-8">
+                                          {currentlyPlaying === voiceName ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                          <span className="sr-only">
+                                            {currentlyPlaying === voiceName ? "Pause" : "Play"} sample
+                                          </span>
+                                        </Button>
+                                      </div>
+                                    </div>)}
+                                </div>
+                              </ScrollArea>
+                            </TabsContent>)}
+                        </Tabs>
+                        
+                        <div className="flex justify-end mt-4 gap-3">
+                          <Button variant="outline" onClick={() => setIsVoiceDialogOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button onClick={handleVoiceSelectionSave}>
+                            Save
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <AgentConfigSettings agent={agent} onAgentUpdate={handleAgentUpdate} />
+          </TabsContent>
+        </div>
+      </Tabs>
+    </div>;
 };
-
 export default AgentDetails;
