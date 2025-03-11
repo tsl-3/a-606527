@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { 
   BookOpen, Workflow, FlaskConical, CheckCircle2, 
@@ -18,7 +17,6 @@ import { WorkflowCard } from "./WorkflowCard";
 import { SimulationCard } from "./SimulationCard";
 import { RolePlayDialog } from "./RolePlayDialog";
 
-// Define training record interface
 interface TrainingRecord {
   id: string;
   title: string;
@@ -28,7 +26,6 @@ interface TrainingRecord {
   type: 'call' | 'roleplay';
 }
 
-// Define document interface
 interface Document {
   id: string;
   title: string;
@@ -38,7 +35,6 @@ interface Document {
   format?: string;
 }
 
-// Define persona interface
 interface Persona {
   id: string;
   name: string;
@@ -184,7 +180,7 @@ const AgentTrainingCard: React.FC<{
         </div>
         
         <p className="text-gray-700 dark:text-gray-300 mb-4">
-          Train your voice agent by uploading call recordings or role-play a conversation
+          Train your voice agent by uploading call recordings or role-play a conversation where you act as the agent
         </p>
         
         {status !== 'not-started' && (
@@ -663,7 +659,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           totalCount={10}
         />
 
-        {/* Add the new Personas Card for all states */}
         <PersonasCard 
           status="not-started" 
         />
