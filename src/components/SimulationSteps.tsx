@@ -42,8 +42,9 @@ interface SimulationStepsProps {
     coverage: number;
     performance: number;
     scenarios: number;
-    tokens: string;
+    tokens: string | number;
   }>;
+  hideProgressBar?: boolean;
 }
 
 const STEPS: SimulationStep[] = [
@@ -245,7 +246,8 @@ export const SimulationSteps = ({
   coverage: initialCoverage, 
   performance: initialPerformance,
   scenarios: initialScenarios,
-  simulations: initialSimulations
+  simulations: initialSimulations,
+  hideProgressBar
 }: SimulationStepsProps) => {
   const [currentStep, setCurrentStep] = useState(initialStatus === 'not-started' ? 0 : initialStatus === 'in-progress' ? 0 : 1);
   const [selectedSimulations, setSelectedSimulations] = useState<string[]>([]);
@@ -466,7 +468,7 @@ export const SimulationSteps = ({
         return (
           <div className="space-y-4 animate-fade-in">
             {simulationsGenerated && (
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900/30 rounded-lg p-4 mb-6 flex items-center gap-3">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900 rounded-lg p-4 mb-6 flex items-center gap-3">
                 <div className="bg-green-100 dark:bg-green-800/30 p-2 rounded-full">
                   <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
@@ -718,7 +720,10 @@ export const SimulationSteps = ({
                 <div className="text-2xl font-bold text-primary">
                   {initialSimulations ? 
                     initialSimulations.reduce((total, sim) => {
-                      return total + parseInt(sim.tokens.replace(/[^\d]/g, ''));
+                      const tokenValue = typeof sim.tokens === 'string' 
+                        ? parseInt(sim.tokens.replace(/[^\d]/g, ''))
+                        : sim.tokens;
+                      return total + tokenValue;
                     }, 0).toLocaleString() :
                     "45,200"
                   }
@@ -731,7 +736,7 @@ export const SimulationSteps = ({
           </Card>
         </div>
 
-        <Progress value={100} className="h-2 mb-6" />
+        {!hideProgressBar && <Progress value={100} className="h-2 mb-6" />}
 
         <div className="mb-6">
           <h4 className="font-medium text-gray-900 dark:text-white mb-4">Completed Simulations</h4>
@@ -827,7 +832,7 @@ export const SimulationSteps = ({
         ))}
       </div>
 
-      <Progress value={((currentStep + 1) / STEPS.length) * 100} />
+      {!hideProgressBar && <Progress value={((currentStep + 1) / STEPS.length) * 100} />}
 
       <div className="mt-8">{renderStepContent()}</div>
 
