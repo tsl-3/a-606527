@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { RolePlayDialog } from "./RolePlayDialog";
+import { UserPersonasModal } from "./UserPersonasModal";
+import { CallInterface } from "./CallInterface";
 
 interface TrainingRecord {
   id: string;
@@ -61,6 +63,10 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [openRolePlayDialog, setOpenRolePlayDialog] = useState(false);
   const [callRolePlayDialog, setCallRolePlayDialog] = useState(false);
+  
+  const [userPersonasModalOpen, setUserPersonasModalOpen] = useState(false);
+  const [callInterfaceOpen, setCallInterfaceOpen] = useState(false);
+  const [selectedPersona, setSelectedPersona] = useState<any>(null);
 
   const handleUploadClick = () => {
     if (fileInputRef.current) {
@@ -75,6 +81,12 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       const fileNames = Array.from(files).map(file => file.name);
       console.log('File names:', fileNames);
     }
+  };
+  
+  const handleSelectPersona = (persona: any) => {
+    setSelectedPersona(persona);
+    setUserPersonasModalOpen(false);
+    setCallInterfaceOpen(true);
   };
 
   return (
@@ -172,7 +184,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                   
                   {/* Option 3: Role Play with AI - Now with primary button styling */}
                   <div 
-                    onClick={() => setOpenRolePlayDialog(true)} 
+                    onClick={() => setUserPersonasModalOpen(true)} 
                     className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
                   >
                     <Bot className="h-12 w-12 text-primary dark:text-primary mb-3" />
@@ -299,7 +311,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     
                     {/* Option 3: Role Play with AI */}
                     <div 
-                      onClick={() => setOpenRolePlayDialog(true)} 
+                      onClick={() => setUserPersonasModalOpen(true)} 
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
                     >
                       <Bot className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
@@ -447,7 +459,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     
                     {/* Option 3: Role Play with AI */}
                     <div 
-                      onClick={() => setOpenRolePlayDialog(true)} 
+                      onClick={() => setUserPersonasModalOpen(true)} 
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
                     >
                       <Bot className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
@@ -470,6 +482,18 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       <RolePlayDialog 
         open={callRolePlayDialog} 
         onOpenChange={setCallRolePlayDialog} 
+      />
+      
+      <UserPersonasModal
+        open={userPersonasModalOpen}
+        onOpenChange={setUserPersonasModalOpen}
+        onSelectPersona={handleSelectPersona}
+      />
+      
+      <CallInterface
+        open={callInterfaceOpen}
+        onOpenChange={setCallInterfaceOpen}
+        persona={selectedPersona}
       />
     </div>
   );
