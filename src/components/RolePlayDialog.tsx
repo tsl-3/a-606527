@@ -402,7 +402,7 @@ export const RolePlayDialog = ({
                 </div>
                 <h3 className="text-lg font-medium mb-2">Role-Play Call</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Start a voice call session with a real person to practice customer conversations
+                  Start a voice call session with someone from your team or a real user to practice customer conversations
                 </p>
               </div>
               
