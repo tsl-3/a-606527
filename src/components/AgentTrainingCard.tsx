@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { 
   Mic, Upload, CircleDashed, ArrowRight, Clock, BarChart, 
@@ -78,20 +77,17 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   const [callInterfaceOpen, setCallInterfaceOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState<any>(null);
 
-  // Convert duration string (mm:ss) to minutes
   const durationToMinutes = (duration: string): number => {
     const [minutes, seconds] = duration.split(':').map(Number);
     return minutes + seconds / 60;
   };
 
-  // Calculate total recording minutes from all records
   const calculateTotalMinutes = (records: TrainingRecord[]): number => {
     return records.reduce((total, record) => {
       return total + durationToMinutes(record.duration);
     }, 0);
   };
 
-  // Format minutes to display (2 decimal places)
   const formatMinutes = (minutes: number): string => {
     return minutes.toFixed(1);
   };
@@ -115,7 +111,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       }
       
       const now = new Date();
-      // Generate random durations between 30s and 2m for uploaded files
       const newRecordings = Array.from(files).map((file, index) => {
         const minutes = Math.floor(Math.random() * 2) + 1;
         const seconds = Math.floor(Math.random() * 60);
@@ -144,7 +139,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
         description: `${files.length} recording${files.length > 1 ? 's' : ''} added to training data.`
       });
       
-      // Check if we've reached the target minutes
       if (newTotalMinutes >= targetMinutes && localStatus !== 'completed') {
         setLocalStatus('completed');
         if (onComplete) onComplete();
@@ -177,7 +171,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       description: "The role-play session has been added to your training data."
     });
     
-    // Check if we've reached the target minutes
     if (newTotalMinutes >= targetMinutes && localStatus !== 'completed') {
       setLocalStatus('completed');
       if (onComplete) onComplete();
@@ -192,7 +185,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
     setTotalRecordingMinutes(newTotalMinutes);
     setLocalVoiceSamples(prev => Math.max(prev - 1, 0));
     
-    // If we drop below target minutes, go back to in-progress
     if (newTotalMinutes < targetMinutes && localStatus === 'completed') {
       setLocalStatus('in-progress');
     }
@@ -212,7 +204,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
     console.log("Playing recording:", record);
   };
 
-  // Initialize total minutes when component mounts or records change
   React.useEffect(() => {
     const minutes = calculateTotalMinutes(localTrainingRecords);
     setTotalRecordingMinutes(minutes);
@@ -684,16 +675,16 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       
       {userPersonasSidebarOpen && (
         <UserPersonasSidebar 
-          isOpen={userPersonasSidebarOpen} 
-          onClose={() => setUserPersonasSidebarOpen(false)}
+          open={userPersonasSidebarOpen} 
+          onOpenChange={() => setUserPersonasSidebarOpen(false)}
           onSelectPersona={handleSelectPersona}
         />
       )}
       
       {callInterfaceOpen && selectedPersona && (
         <CallInterface 
-          isOpen={callInterfaceOpen}
-          onClose={() => setCallInterfaceOpen(false)}
+          open={callInterfaceOpen}
+          onOpenChange={() => setCallInterfaceOpen(false)}
           persona={selectedPersona}
           onCallComplete={handleCallComplete}
         />
