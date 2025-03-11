@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -242,7 +241,11 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                             <Button
                               variant="play"
                               size="play"
-                              className="absolute top-0 left-0 w-full h-full rounded-full bg-black/60 hover:bg-primary/90 shadow-md flex items-center justify-center"
+                              className={`absolute top-0 left-0 w-full h-full rounded-full shadow-md flex items-center justify-center ${
+                                currentlyPlaying === voiceObj.id 
+                                  ? 'bg-primary text-white'
+                                  : 'bg-black/60 hover:bg-primary/90'
+                              }`}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handlePlaySample(voiceObj.id, provider as keyof typeof VOICE_PROVIDERS, voiceName);
