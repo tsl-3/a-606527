@@ -128,7 +128,7 @@ const AgentCreate = () => {
   return (
     <div className="max-w-7xl mx-auto animate-fade-in">
       <div className="mb-8">
-        <Link to="/agents" className="flex items-center text-gray-500 hover:text-agent-primary">
+        <Link to="/agents" className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Agents
         </Link>
@@ -136,15 +136,15 @@ const AgentCreate = () => {
       
       <div className="flex items-center space-x-3 mb-6">
         <div>
-          <h1 className="text-3xl font-semibold text-foreground dark:text-agent-light">Create New Agent by Voice</h1>
-          <p className="text-gray-500 mt-1">Talk with our system to configure your new agent</p>
+          <h1 className="text-3xl font-semibold text-foreground">Create New Agent by Voice</h1>
+          <p className="text-muted-foreground mt-1">Talk with our system to configure your new agent</p>
         </div>
       </div>
       
       <div className="flex flex-col md:flex-row gap-6">
         <div className="flex-1">
           {callState === "idle" ? (
-            <Card className="dark:bg-[#000313]/80">
+            <Card>
               <CardHeader>
                 <CardTitle>Step 1: Start Agent Creation Call</CardTitle>
                 <CardDescription>
@@ -156,19 +156,20 @@ const AgentCreate = () => {
                   <Label htmlFor="phone">Phone Number</Label>
                   <div className="flex space-x-2">
                     <div className="relative flex-1">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="phone"
                         placeholder="+1 (555) 123-4567"
                         value={phoneNumber}
                         onChange={handlePhoneNumberChange}
-                        className="pl-10 dark:bg-[#000313]/70"
+                        className="pl-10"
                       />
                     </div>
                     <Button 
                       onClick={startAgentCreationCall}
                       disabled={!phoneNumber}
                       className="gap-2"
+                      variant="contrast"
                     >
                       <Mic className="h-4 w-4" />
                       Start Call
@@ -181,7 +182,7 @@ const AgentCreate = () => {
               </CardContent>
             </Card>
           ) : (
-            <Card className="dark:bg-[#000313]/80">
+            <Card>
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <div>
@@ -227,6 +228,7 @@ const AgentCreate = () => {
                     onClick={handleCreateAgent} 
                     disabled={isSubmitting}
                     className="gap-2"
+                    variant="contrast"
                   >
                     {isSubmitting ? (
                       <>
