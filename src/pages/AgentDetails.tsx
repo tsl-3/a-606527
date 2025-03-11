@@ -590,16 +590,16 @@ const AgentDetails = () => {
                 </div>
                 
                 {activeChannels.length > 0 && <div className="mt-4 flex flex-wrap gap-2">
-                    {activeChannels.includes('voice') && <Badge className="bg-blue-500 text-white px-2 py-0.5 flex items-center gap-1">
-                        <Mic className="h-3 w-3" />
+                    {activeChannels.includes('voice') && <Badge variant="channel">
+                        <Mic className="h-3 w-3 mr-1" />
                         <span className="text-xs">Voice</span>
                       </Badge>}
-                    {activeChannels.includes('chat') && <Badge className="bg-purple-500 text-white px-2 py-0.5 flex items-center gap-1">
-                        <MessageSquare className="h-3 w-3" />
+                    {activeChannels.includes('chat') && <Badge variant="channel">
+                        <MessageSquare className="h-3 w-3 mr-1" />
                         <span className="text-xs">Chat</span>
                       </Badge>}
-                    {activeChannels.includes('email') && <Badge className="bg-red-500 text-white px-2 py-0.5 flex items-center gap-1">
-                        <Mail className="h-3 w-3" />
+                    {activeChannels.includes('email') && <Badge variant="channel">
+                        <Mail className="h-3 w-3 mr-1" />
                         <span className="text-xs">Email</span>
                       </Badge>}
                   </div>}
