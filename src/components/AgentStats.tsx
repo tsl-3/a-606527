@@ -1,14 +1,15 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Smile, Zap } from "lucide-react";
+import { Smile, Zap, Info } from "lucide-react";
 
 interface AgentStatsProps {
-  avmScore: number;  // 1-10 score
+  avmScore?: number;  // 1-10 score
   interactionCount: number;
   csat?: number;  // 0-100 percentage
   performance?: number; // 0-100 percentage
   compact?: boolean; // If true, only show first 2 stats
+  isNewAgent?: boolean; // New flag to indicate a newly created agent
 }
 
 export const AgentStats: React.FC<AgentStatsProps> = ({ 
@@ -16,8 +17,26 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
   interactionCount, 
   csat = 85, 
   performance = 92,
-  compact = false
+  compact = false,
+  isNewAgent = false
 }) => {
+  // For new agents, show a different UI
+  if (isNewAgent) {
+    return (
+      <div className="flex gap-2 w-full">
+        <Card className="flex-1 overflow-hidden shadow-sm">
+          <div className="px-2 py-1 flex items-center justify-between border-b border-border">
+            <span className="text-xs font-medium text-muted-foreground">Agent Status</span>
+            <Info className="w-3.5 h-3.5 text-muted-foreground" />
+          </div>
+          <CardContent className="p-2 text-center text-sm text-muted-foreground">
+            New agent - no stats yet
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   // Color indicator for AVM score based on the value range
   const getScoreColor = (score: number): string => {
     if (score >= 8) return "bg-green-500"; // High score: green
@@ -53,16 +72,18 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
   return (
     <div className="flex gap-2 w-full">
       {/* AVM Score Card */}
-      <Card className="flex-1 overflow-hidden shadow-sm">
-        <div className="px-2 py-1 flex items-center justify-between border-b border-border">
-          <span className="text-xs font-medium text-muted-foreground">AVM</span>
-          <div className={`w-2 h-2 rounded-full ${getScoreColor(avmScore)}`}></div>
-        </div>
-        <CardContent className="p-2 text-center">
-          <span className="text-xl font-semibold">{avmScore.toFixed(1)}</span>
-          <span className="text-xs text-muted-foreground ml-1">/10</span>
-        </CardContent>
-      </Card>
+      {avmScore !== undefined && (
+        <Card className="flex-1 overflow-hidden shadow-sm">
+          <div className="px-2 py-1 flex items-center justify-between border-b border-border">
+            <span className="text-xs font-medium text-muted-foreground">AVM</span>
+            <div className={`w-2 h-2 rounded-full ${getScoreColor(avmScore)}`}></div>
+          </div>
+          <CardContent className="p-2 text-center">
+            <span className="text-xl font-semibold">{avmScore.toFixed(1)}</span>
+            <span className="text-xs text-muted-foreground ml-1">/10</span>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Interactions Card */}
       <Card className="flex-1 overflow-hidden shadow-sm">
@@ -79,8 +100,8 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
         </CardContent>
       </Card>
       
-      {/* CSAT Card - Only shown when not in compact mode */}
-      {!compact && (
+      {/* CSAT Card - Only shown when not in compact mode and CSAT exists */}
+      {!compact && csat !== undefined && (
         <Card className="flex-1 overflow-hidden shadow-sm">
           <div className="px-2 py-1 flex items-center justify-between border-b border-border">
             <span className="text-xs font-medium text-muted-foreground">CSAT</span>
@@ -92,8 +113,8 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
         </Card>
       )}
       
-      {/* Performance Card - Only shown when not in compact mode */}
-      {!compact && (
+      {/* Performance Card - Only shown when not in compact mode and performance exists */}
+      {!compact && performance !== undefined && (
         <Card className="flex-1 overflow-hidden shadow-sm">
           <div className="px-2 py-1 flex items-center justify-between border-b border-border">
             <span className="text-xs font-medium text-muted-foreground">Performance</span>
