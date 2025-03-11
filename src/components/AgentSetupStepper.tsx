@@ -24,6 +24,20 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
     simulation: { status: 'not-started' as StepStatus, active: false }
   });
 
+  // Track expanded state for each card
+  const [expanded, setExpanded] = useState({
+    training: true,
+    workflow: false,
+    simulation: false
+  });
+
+  const toggleExpanded = (stepName: keyof typeof steps) => {
+    setExpanded(prev => ({
+      ...prev,
+      [stepName]: !prev[stepName]
+    }));
+  };
+
   const totalSteps = Object.keys(steps).length;
   const completedSteps = Object.values(steps).filter(step => step.status === 'completed').length;
   const overallProgress = Math.round((completedSteps / totalSteps) * 100);
@@ -44,6 +58,13 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       if (nextStep) {
         newSteps[nextStep].status = 'in-progress' as StepStatus;
         newSteps[nextStep].active = true;
+        
+        // Auto-collapse completed step and expand next step
+        setExpanded(prev => ({
+          ...prev,
+          [stepName]: false,
+          [nextStep]: true
+        }));
       }
 
       return newSteps;
@@ -131,6 +152,8 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             isActive={steps.training.active}
             onStart={() => handleStepStart('training')}
             onComplete={() => handleStepComplete('training')}
+            isExpanded={expanded.training}
+            onToggleExpand={() => toggleExpanded('training')}
           />
         )}
         
@@ -144,6 +167,8 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             trainingRecords={sampleTrainingRecords}
             isActive={steps.training.active}
             onComplete={() => handleStepComplete('training')}
+            isExpanded={expanded.training}
+            onToggleExpand={() => toggleExpanded('training')}
           />
         )}
         
@@ -157,6 +182,8 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             talkTime="120s"
             trainingRecords={sampleTrainingRecords}
             isActive={steps.training.active}
+            isExpanded={expanded.training}
+            onToggleExpand={() => toggleExpanded('training')}
           />
         )}
 
@@ -166,6 +193,8 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             stepNumber={2}
             onStart={() => handleStepStart('workflow')}
             onComplete={() => handleStepComplete('workflow')}
+            isExpanded={expanded.workflow}
+            onToggleExpand={() => toggleExpanded('workflow')}
           />
         )}
         
@@ -174,6 +203,8 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             status="in-progress"
             stepNumber={2}
             onComplete={() => handleStepComplete('workflow')}
+            isExpanded={expanded.workflow}
+            onToggleExpand={() => toggleExpanded('workflow')}
           />
         )}
         
@@ -181,6 +212,8 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           <WorkflowCard 
             status="completed"
             stepNumber={2}
+            isExpanded={expanded.workflow}
+            onToggleExpand={() => toggleExpanded('workflow')}
           />
         )}
 
@@ -189,6 +222,8 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             status="not-started"
             onStart={() => handleStepStart('simulation')}
             onComplete={() => handleStepComplete('simulation')}
+            isExpanded={expanded.simulation}
+            onToggleExpand={() => toggleExpanded('simulation')}
           />
         )}
         
@@ -200,12 +235,16 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             scenarios={sampleScenarios}
             simulations={sampleSimulations}
             onComplete={() => handleStepComplete('simulation')}
+            isExpanded={expanded.simulation}
+            onToggleExpand={() => toggleExpanded('simulation')}
           />
         )}
         
         {steps.simulation.status === 'completed' && (
           <SimulationCard 
             status="completed"
+            isExpanded={expanded.simulation}
+            onToggleExpand={() => toggleExpanded('simulation')}
           />
         )}
       </div>

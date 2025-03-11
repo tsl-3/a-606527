@@ -28,6 +28,8 @@ interface SimulationCardProps {
   }>;
   onStart?: () => void;
   onComplete?: () => void;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
 }
 
 export const SimulationCard = ({
@@ -37,10 +39,24 @@ export const SimulationCard = ({
   scenarios,
   simulations,
   onStart,
-  onComplete
+  onComplete,
+  isExpanded = true,
+  onToggleExpand
 }: SimulationCardProps) => {
   const { toast } = useToast();
-  const [isExpanded, setIsExpanded] = useState(status !== 'completed');
+  // Let parent component control expanded state if provided
+  const [localExpanded, setLocalExpanded] = useState(status !== 'completed');
+  
+  // Use either controlled or uncontrolled state
+  const expanded = onToggleExpand ? isExpanded : localExpanded;
+
+  const handleToggleExpand = () => {
+    if (onToggleExpand) {
+      onToggleExpand();
+    } else {
+      setLocalExpanded(!localExpanded);
+    }
+  };
 
   const handleSimulationComplete = (data: any) => {
     toast({
@@ -124,10 +140,10 @@ export const SimulationCard = ({
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={handleToggleExpand}
               className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
             >
-              <ChevronUp className={`h-5 w-5 ${!isExpanded ? 'transform rotate-180' : ''}`} />
+              <ChevronUp className={`h-5 w-5 ${!expanded ? 'transform rotate-180' : ''}`} />
             </Button>
           </div>
         </div>
@@ -141,7 +157,7 @@ export const SimulationCard = ({
           className={`h-1.5 mb-6 [&>div]:${getProgressColorClass()}`}
         />
         
-        {isExpanded && (
+        {expanded && (
           <CardContent className="p-0 pb-6">
             <SimulationSteps 
               onComplete={handleSimulationComplete}
