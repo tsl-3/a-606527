@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Mic, MessageSquare, Smartphone, Mail, MessageCircle, Search, DollarSign, Phone, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -138,8 +139,8 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
           return (
             <Badge 
               key={channel}
-              className={`${info.bgColor} text-white px-2 py-0.5 flex items-center gap-1`}
-              variant="default"
+              className={`text-white bg-transparent border border-white px-2 py-0.5 flex items-center gap-1 hover:bg-white/10`}
+              variant="outline"
             >
               {info.icon}
               <span className="text-[0.6rem] capitalize">{channel}</span>
