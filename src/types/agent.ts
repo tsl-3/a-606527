@@ -53,7 +53,6 @@ export interface AgentType {
   customIndustry?: string;
   botFunction?: string;
   customFunction?: string;
-  // Add configuration property
   config?: {
     performance?: {
       responseSpeed?: 'fast' | 'standard';
