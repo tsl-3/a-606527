@@ -21,7 +21,7 @@ interface Simulation {
   scenarios: string[];
   coverage: number;
   performance: number;
-  tokens: number;
+  tokens: string;
   count?: number;
 }
 
@@ -138,7 +138,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
   },
   {
     id: "5",
-    title: "Order Status",
+0 title: "Order Status",
     description: "Provide updates on order processing and delivery",
     scenarios: [
       "Check order status",
@@ -660,6 +660,135 @@ export const SimulationSteps = ({
     }
   };
 
+  if (initialStatus === 'completed') {
+    return (
+      <div className="space-y-6">
+        <div className="bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 rounded-lg p-4 mb-6 flex items-center gap-3">
+          <div className="bg-green-100 dark:bg-green-800/30 p-2 rounded-full">
+            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-green-800 dark:text-green-400">Simulations Completed Successfully</p>
+            <p className="text-xs text-green-700 dark:text-green-500 mt-0.5">
+              All selected simulations have been processed
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <Percent className="h-5 w-5 text-blue-500" />
+                </div>
+                <div className="text-2xl font-bold text-primary">
+                  {initialCoverage || 85}%
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Coverage
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <BarChart className="h-5 w-5 text-purple-500" />
+                </div>
+                <div className="text-2xl font-bold text-primary">
+                  {initialPerformance || 92}%
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Performance
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <Zap className="h-5 w-5 text-yellow-500" />
+                </div>
+                <div className="text-2xl font-bold text-primary">
+                  {initialSimulations ? 
+                    initialSimulations.reduce((total, sim) => {
+                      return total + parseInt(sim.tokens.replace(/[^\d]/g, ''));
+                    }, 0).toLocaleString() :
+                    "45,200"
+                  }
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Tokens
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="mb-6">
+          <h4 className="font-medium text-gray-900 dark:text-white mb-4">Completed Simulations</h4>
+          <div className="space-y-4">
+            {initialSimulations ? initialSimulations.map((sim) => (
+              <Card key={sim.id} className="border-gray-200 dark:border-gray-800">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h3 className="font-medium">{sim.name}</h3>
+                      <p className="text-xs text-muted-foreground">{sim.date}</p>
+                    </div>
+                    <Badge variant="outline" className="bg-green-50 text-green-600 dark:bg-green-900/20 border-green-200">
+                      Completed
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="flex items-center gap-1">
+                      <Percent className="h-3 w-3 text-blue-500" />
+                      <span className="text-muted-foreground">Coverage:</span>
+                      <span className="font-medium">{sim.coverage}%</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <BarChart className="h-3 w-3 text-purple-500" />
+                      <span className="text-muted-foreground">Performance:</span>
+                      <span className="font-medium">{sim.performance}%</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Zap className="h-3 w-3 text-yellow-500" />
+                      <span className="text-muted-foreground">Tokens:</span>
+                      <span className="font-medium">{sim.tokens}</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                      <File className="h-3 w-3 text-gray-500" />
+                      <span className="text-xs text-muted-foreground">Scenarios:</span>
+                      <span className="text-xs font-medium">{sim.scenarios}</span>
+                    </div>
+                    <Button variant="ghost" size="sm" className="h-7 text-xs">
+                      View Details
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )) : (
+              <div className="text-center py-6 text-muted-foreground">
+                No simulation results available
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button onClick={() => onComplete({ action: "view-results" })}>
+            View Detailed Reports
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4 mb-8">
@@ -725,4 +854,3 @@ export const SimulationSteps = ({
     </div>
   );
 };
-
