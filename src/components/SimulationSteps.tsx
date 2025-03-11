@@ -21,7 +21,7 @@ interface Simulation {
   scenarios: string[];
   coverage: number;
   performance: number;
-  tokens: string;
+  tokens: string | number;
   count?: number;
 }
 
@@ -466,7 +466,7 @@ export const SimulationSteps = ({
         return (
           <div className="space-y-4 animate-fade-in">
             {simulationsGenerated && (
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900 rounded-lg p-4 mb-6 flex items-center gap-3">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900/30 rounded-lg p-4 mb-6 flex items-center gap-3">
                 <div className="bg-green-100 dark:bg-green-800/30 p-2 rounded-full">
                   <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
@@ -605,7 +605,9 @@ export const SimulationSteps = ({
                         <div className="mt-2 text-xs flex justify-between">
                           <span className="text-muted-foreground">Total tokens:</span>
                           <span className="font-medium">
-                            {(sim.tokens * (simulationCounts[sim.id] || 1)).toLocaleString()}
+                            {(typeof sim.tokens === 'string' 
+                              ? parseInt(sim.tokens) * (simulationCounts[sim.id] || 1)
+                              : sim.tokens * (simulationCounts[sim.id] || 1)).toLocaleString()}
                           </span>
                         </div>
                       </div>
