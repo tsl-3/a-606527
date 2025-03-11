@@ -11,6 +11,7 @@ interface AgentStatsProps {
   compact?: boolean; // If true, only show first 2 stats
   isNewAgent?: boolean; // New flag to indicate a newly created agent
   showZeroValues?: boolean; // If true, show 0 values instead of "No stats yet"
+  hideInteractions?: boolean; // New prop to hide interaction count
 }
 
 export const AgentStats: React.FC<AgentStatsProps> = ({ 
@@ -20,7 +21,8 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
   performance = 92,
   compact = false,
   isNewAgent = false,
-  showZeroValues = false
+  showZeroValues = false,
+  hideInteractions = false
 }) => {
   // For new agents, show a different UI
   if (isNewAgent && !showZeroValues) {
@@ -93,20 +95,22 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
         </Card>
       )}
 
-      {/* Interactions Card */}
-      <Card className="flex-1 overflow-hidden shadow-sm">
-        <div className="px-2 py-1 flex items-center justify-between border-b border-border">
-          <span className="text-xs font-medium text-muted-foreground">Interactions</span>
-          <span className={`text-xs font-medium ${interactionTier.color}`}>{interactionTier.label}</span>
-        </div>
-        <CardContent className="p-2 text-center">
-          <span className="text-xl font-semibold">
-            {displayInteractionCount >= 1000 
-              ? `${(displayInteractionCount / 1000).toFixed(1)}k` 
-              : displayInteractionCount}
-          </span>
-        </CardContent>
-      </Card>
+      {/* Interactions Card - Only shown when not hidden */}
+      {!hideInteractions && (
+        <Card className="flex-1 overflow-hidden shadow-sm">
+          <div className="px-2 py-1 flex items-center justify-between border-b border-border">
+            <span className="text-xs font-medium text-muted-foreground">Interactions</span>
+            <span className={`text-xs font-medium ${interactionTier.color}`}>{interactionTier.label}</span>
+          </div>
+          <CardContent className="p-2 text-center">
+            <span className="text-xl font-semibold">
+              {displayInteractionCount >= 1000 
+                ? `${(displayInteractionCount / 1000).toFixed(1)}k` 
+                : displayInteractionCount}
+            </span>
+          </CardContent>
+        </Card>
+      )}
       
       {/* CSAT Card - Only shown when not in compact mode and CSAT exists */}
       {!compact && (

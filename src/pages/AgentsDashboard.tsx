@@ -440,6 +440,7 @@ const AgentsDashboard = () => {
                       avmScore={getAgentAVMScore(agent.id)} 
                       interactionCount={agent.interactions}
                       compact={true}
+                      hideInteractions={true}
                     />
                     
                     <div>
