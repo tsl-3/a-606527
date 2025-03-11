@@ -22,7 +22,7 @@ const mockAgents: AgentType[] = [
     id: "2",
     name: "Sales Assistant",
     description: "Guides customers through the sales process and answers product questions.",
-    type: "Sales & Marketing",
+    type: "Sales & Marketing", // Ensuring this is correctly set to Sales & Marketing
     status: "active",
     createdAt: "2023-11-22",
     interactions: 876,
