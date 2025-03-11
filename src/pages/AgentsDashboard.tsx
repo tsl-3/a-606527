@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy, Sparkles, PlusCircle } from "lucide-react";
@@ -426,7 +425,15 @@ const AgentsDashboard = () => {
                       {agent.description}
                     </CardDescription>
                     
-                    {/* Move channels here, right after the description */}
+                    {agent.phone && (
+                      <div className="flex items-center mb-2">
+                        <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
+                          <Phone className="h-3.5 w-3.5" />
+                          <span>{agent.phone}</span>
+                        </div>
+                      </div>
+                    )}
+                    
                     {agent.channelConfigs ? (
                       <AgentChannels channels={agent.channelConfigs} readonly={true} compact={true} className="mt-0" />
                     ) : agent.channels && agent.channels.length > 0 ? (
@@ -451,15 +458,6 @@ const AgentsDashboard = () => {
                       compact={true}
                       hideInteractions={true}
                     />
-                    
-                    {agent.phone && (
-                      <div className="flex items-center">
-                        <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                          <Phone className="h-3.5 w-3.5" />
-                          <span>{agent.phone}</span>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </CardContent>
                 
@@ -480,3 +478,4 @@ const AgentsDashboard = () => {
 };
 
 export default AgentsDashboard;
+
