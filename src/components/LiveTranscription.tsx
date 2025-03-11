@@ -60,7 +60,7 @@ export const LiveTranscription: React.FC<LiveTranscriptionProps> = ({
                 "rounded-lg py-2 px-3 max-w-[80%]",
                 message.role === "system" 
                   ? "bg-muted text-muted-foreground" 
-                  : "bg-agent-primary text-white"
+                  : "bg-primary text-primary-foreground dark:bg-slate-600 dark:text-white"
               )}
             >
               <p>{message.text}</p>
