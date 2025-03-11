@@ -180,6 +180,7 @@ const AgentDetails = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isCallTooltipOpen, setIsCallTooltipOpen] = useState(false);
   const [customCallNumber, setCustomCallNumber] = useState<string>("");
+  const [isRolePlayOpen, setIsRolePlayOpen] = useState(false);
 
   useEffect(() => {
     if (agent) {
@@ -1019,3 +1020,4 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
+

@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { AgentType } from "@/types/agent";
 
 interface AgentChannelConfig {
   enabled: boolean;
@@ -19,8 +20,12 @@ interface AgentChannelConfig {
 }
 
 interface AgentChannelsProps {
-  channels?: Record<string, AgentChannelConfig>;
-  onUpdateChannel?: (channel: string, config: AgentChannelConfig) => void;
+  agent: AgentType;
+  onUpdateChannel: (channel: string, config: {
+    enabled: boolean;
+    details?: string;
+    config?: Record<string, any>;
+  }) => Promise<void>;
   readonly?: boolean;
   compact?: boolean;
   showDetails?: boolean;
@@ -104,7 +109,7 @@ const SAMPLE_PHONE_NUMBERS: PhoneNumberOption[] = [
 const ALL_CHANNELS = Object.keys(CHANNEL_INFO);
 
 export const AgentChannels: React.FC<AgentChannelsProps> = ({ 
-  channels = {}, 
+  agent,
   onUpdateChannel,
   readonly = false,
   compact = false,
@@ -120,7 +125,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
   const { toast } = useToast();
 
   const normalizedChannels = ALL_CHANNELS.reduce((acc, channel) => {
-    acc[channel] = channels[channel] || { enabled: false };
+    acc[channel] = agent.channels[channel] || { enabled: false };
     return acc;
   }, {} as Record<string, AgentChannelConfig>);
   

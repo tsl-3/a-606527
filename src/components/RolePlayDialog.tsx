@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -39,12 +38,18 @@ interface Message {
   timestamp: Date;
 }
 
-export const RolePlayDialog = ({ 
-  open, 
-  onOpenChange 
-}: { 
-  open: boolean; 
+interface RolePlayDialogProps {
+  open: boolean;
   onOpenChange: (open: boolean) => void;
+  agentId?: string;
+  agentName?: string;
+}
+
+export const RolePlayDialog: React.FC<RolePlayDialogProps> = ({ 
+  open, 
+  onOpenChange,
+  agentId,
+  agentName
 }) => {
   const [stage, setStage] = useState<'selection' | 'persona-list' | 'persona-detail' | 'chat' | 'call' | 'success'>('selection');
   const [selectedPersona, setSelectedPersona] = useState<typeof samplePersonas[0] | null>(null);
