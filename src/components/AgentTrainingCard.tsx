@@ -1,8 +1,8 @@
-
 import React, { useState, useRef } from "react";
 import { 
   Mic, Upload, CircleDashed, ArrowRight, Clock, BarChart, 
-  ChevronUp, CheckCircle2, PlayCircle, User, Download, Trash2
+  ChevronUp, CheckCircle2, PlayCircle, User, Download, Trash2,
+  FileAudio, PhoneCall, Bot
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -63,6 +63,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [openRolePlayDialog, setOpenRolePlayDialog] = useState(false);
+  const [callRolePlayDialog, setCallRolePlayDialog] = useState(false);
 
   const handleUploadClick = () => {
     if (fileInputRef.current) {
@@ -142,34 +143,50 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
                   Upload call recordings or start a role-playing session to begin training your agent.
                 </p>
-                <div className="flex justify-center gap-4">
-                  <Button 
-                    variant="outline" 
-                    className="border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white gap-2"
-                    onClick={handleUploadClick}
+                
+                <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-6">
+                  {/* Option 1: Upload Recordings */}
+                  <div 
+                    onClick={handleUploadClick} 
+                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
                   >
-                    <Upload className="h-4 w-4" />
-                    Upload Recordings
-                  </Button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    style={{ display: 'none' }}
-                    onChange={handleFileChange}
-                    multiple
-                    accept="audio/*"
-                  />
-                  <Button 
-                    className="gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
-                    onClick={() => setOpenRolePlayDialog(true)}
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      style={{ display: 'none' }}
+                      onChange={handleFileChange}
+                      multiple
+                      accept="audio/*"
+                    />
+                    <FileAudio className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Upload Recordings</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Drag files here</span>
+                  </div>
+                  
+                  {/* Option 2: Call to Role Play */}
+                  <div 
+                    onClick={() => setCallRolePlayDialog(true)} 
+                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
                   >
-                    <PlayCircle className="h-4 w-4" />
-                    Start Role-Play
-                  </Button>
-                  {onStart && (
-                    <Button onClick={onStart}>Start Training</Button>
-                  )}
+                    <PhoneCall className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Call to Role Play</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Practice with humans</span>
+                  </div>
+                  
+                  {/* Option 3: Role Play with AI */}
+                  <div 
+                    onClick={() => setOpenRolePlayDialog(true)} 
+                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
+                  >
+                    <Bot className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Role Play with AI</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Practice with AI</span>
+                  </div>
                 </div>
+                
+                {onStart && (
+                  <Button onClick={onStart}>Start Training</Button>
+                )}
               </div>
             )}
 
@@ -258,31 +275,44 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                   <h4 className="font-medium text-gray-900 dark:text-white mb-3">Get Started with Training</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Choose one of the following options to begin training your AI agent:</p>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <Button 
-                      variant="outline" 
-                      className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
-                      onClick={handleUploadClick}
+                  <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+                    {/* Option 1: Upload Recordings */}
+                    <div 
+                      onClick={handleUploadClick} 
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
                     >
-                      <Upload className="h-4 w-4" />
-                      <span>Upload Call Recordings</span>
-                    </Button>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      style={{ display: 'none' }}
-                      onChange={handleFileChange}
-                      multiple
-                      accept="audio/*"
-                    />
-                    <Button 
-                      variant="outline" 
-                      className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
-                      onClick={() => setOpenRolePlayDialog(true)}
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        onChange={handleFileChange}
+                        multiple
+                        accept="audio/*"
+                      />
+                      <FileAudio className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Upload Recordings</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Drag files here</span>
+                    </div>
+                    
+                    {/* Option 2: Call to Role Play */}
+                    <div 
+                      onClick={() => setCallRolePlayDialog(true)} 
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
                     >
-                      <PlayCircle className="h-4 w-4" />
-                      <span>Start Role-Playing</span>
-                    </Button>
+                      <PhoneCall className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Call to Role Play</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Practice with humans</span>
+                    </div>
+                    
+                    {/* Option 3: Role Play with AI */}
+                    <div 
+                      onClick={() => setOpenRolePlayDialog(true)} 
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
+                    >
+                      <Bot className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Role Play with AI</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Practice with AI</span>
+                    </div>
                   </div>
                 </div>
                 {onComplete && (
@@ -393,31 +423,44 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                   <h4 className="font-medium text-gray-900 dark:text-white mb-3">Continue Training</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Add more voice samples to further improve your AI agent:</p>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <Button 
-                      variant="outline" 
-                      className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
-                      onClick={handleUploadClick}
+                  <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+                    {/* Option 1: Upload Recordings */}
+                    <div 
+                      onClick={handleUploadClick} 
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
                     >
-                      <Upload className="h-4 w-4" />
-                      <span>Upload More Recordings</span>
-                    </Button>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      style={{ display: 'none' }}
-                      onChange={handleFileChange}
-                      multiple
-                      accept="audio/*"
-                    />
-                    <Button 
-                      variant="outline" 
-                      className="flex items-center justify-center gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
-                      onClick={() => setOpenRolePlayDialog(true)}
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        onChange={handleFileChange}
+                        multiple
+                        accept="audio/*"
+                      />
+                      <FileAudio className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Upload Recordings</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Drag files here</span>
+                    </div>
+                    
+                    {/* Option 2: Call to Role Play */}
+                    <div 
+                      onClick={() => setCallRolePlayDialog(true)} 
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
                     >
-                      <PlayCircle className="h-4 w-4" />
-                      <span>New Role-Play Session</span>
-                    </Button>
+                      <PhoneCall className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Call to Role Play</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Practice with humans</span>
+                    </div>
+                    
+                    {/* Option 3: Role Play with AI */}
+                    <div 
+                      onClick={() => setOpenRolePlayDialog(true)} 
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
+                    >
+                      <Bot className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Role Play with AI</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Practice with AI</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -429,6 +472,12 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       <RolePlayDialog 
         open={openRolePlayDialog} 
         onOpenChange={setOpenRolePlayDialog} 
+      />
+      
+      {/* We'd need a Call Role Play dialog component for the second option */}
+      <RolePlayDialog 
+        open={callRolePlayDialog} 
+        onOpenChange={setCallRolePlayDialog} 
       />
     </div>
   );
