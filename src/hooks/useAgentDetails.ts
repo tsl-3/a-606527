@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { fetchAgentById } from '@/services/agentService';
 import { AgentType } from '@/types/agent';
+import { toast } from '@/components/ui/use-toast';
 
 export const useAgentDetails = (agentId: string | undefined) => {
   const [agent, setAgent] = useState<AgentType | null>(null);
@@ -122,12 +123,21 @@ export const useAgentDetails = (agentId: string | undefined) => {
     setIsRolePlayOpen(false);
   };
 
+  // Function to show success toast
+  const showSuccessToast = (title: string, description: string) => {
+    toast({
+      title,
+      description
+    });
+  };
+
   return { 
     agent, 
     isLoading, 
     error,
     isRolePlayOpen,
     openRolePlay,
-    closeRolePlay
+    closeRolePlay,
+    showSuccessToast
   };
 };

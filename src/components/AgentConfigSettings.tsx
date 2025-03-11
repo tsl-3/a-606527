@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,7 +5,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AgentType, VoiceTrait } from '@/types/agent';
-import { useToast } from "@/components/ui/use-toast";
 import { updateAgent } from '@/services/agentService';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -21,18 +19,13 @@ import { AgentChannels } from '@/components/AgentChannels';
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/components/ui/use-toast";
+import { isEqual } from 'lodash';
 
 interface AgentConfigSettingsProps {
   agent: AgentType;
   onAgentUpdate: (updatedAgent: AgentType) => void;
-}
-
-interface VoiceDefinition {
-  id: string;
-  name: string;
-  traits: VoiceTrait[];
-  avatar?: string;
-  audioSample: string;
+  showSuccessToast?: (title: string, description: string) => void;
 }
 
 const VOICE_PROVIDERS = {
@@ -186,7 +179,7 @@ const AI_MODELS = [
   { id: "Llama-3", name: "Llama 3" }
 ];
 
-const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgentUpdate }) => {
+const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgentUpdate, showSuccessToast }) => {
   const { toast } = useToast();
   const [name, setName] = useState(agent.name);
   const [avatar, setAvatar] = useState(agent.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${agent.id}`);
@@ -205,8 +198,19 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   const [selectedVoiceTraits, setSelectedVoiceTraits] = useState<VoiceTrait[]>([]);
   const [customVoiceId, setCustomVoiceId] = useState('');
   const [isCustomVoice, setIsCustomVoice] = useState(false);
+  
+  const prevValuesRef = useRef({
+    name: agent.name,
+    avatar: agent.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${agent.id}`,
+    purpose: agent.purpose || '',
+    prompt: agent.prompt || '',
+    industry: agent.industry || '',
+    botFunction: agent.botFunction || '',
+    model: agent.model || 'GPT-4',
+    voice: agent.voice || '9BWtsMINqrJLrRacOk9x',
+    voiceProvider: agent.voiceProvider || 'Eleven Labs'
+  });
 
-  // Create debounced save function
   const debouncedSave = React.useCallback(
     debounce(async (updatedData) => {
       try {
@@ -214,10 +218,14 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
         const updatedAgent = await updateAgent(agent.id, updatedData);
         onAgentUpdate(updatedAgent);
         
-        toast({
-          title: "Changes saved",
-          description: "Agent configuration has been updated automatically."
-        });
+        if (showSuccessToast) {
+          showSuccessToast("Changes saved", "Agent configuration has been updated automatically.");
+        } else {
+          toast({
+            title: "Changes saved",
+            description: "Agent configuration has been updated automatically."
+          });
+        }
       } catch (error) {
         console.error("Error saving agent settings:", error);
         toast({
@@ -229,39 +237,31 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
         setIsSaving(false);
       }
     }, 1000),
-    [agent.id, onAgentUpdate, toast]
+    [agent.id, onAgentUpdate, toast, showSuccessToast]
   );
 
-  // Effect to trigger save when values change
   useEffect(() => {
     const finalIndustry = industry === 'other' ? customIndustry : industry;
     const finalBotFunction = botFunction === 'other' ? customFunction : botFunction;
     
-    if (name !== agent.name || 
-        avatar !== agent.avatar || 
-        purpose !== agent.purpose || 
-        prompt !== agent.prompt ||
-        finalIndustry !== agent.industry ||
-        finalBotFunction !== agent.botFunction ||
-        model !== agent.model ||
-        voice !== agent.voice ||
-        voiceProvider !== agent.voiceProvider) {
-      
-      debouncedSave({
-        name,
-        avatar,
-        purpose,
-        prompt,
-        industry: finalIndustry,
-        botFunction: finalBotFunction,
-        model,
-        voice,
-        voiceProvider
-      });
+    const currentValues = {
+      name,
+      avatar,
+      purpose,
+      prompt,
+      industry: finalIndustry,
+      botFunction: finalBotFunction,
+      model,
+      voice,
+      voiceProvider
+    };
+    
+    if (!isEqual(currentValues, prevValuesRef.current)) {
+      debouncedSave(currentValues);
+      prevValuesRef.current = { ...currentValues };
     }
-  }, [name, avatar, purpose, prompt, industry, botFunction, customIndustry, customFunction, model, voice, voiceProvider, agent, debouncedSave]);
+  }, [name, avatar, purpose, prompt, industry, botFunction, customIndustry, customFunction, model, voice, voiceProvider, debouncedSave]);
 
-  // Effect to clean up audio on unmount
   useEffect(() => {
     return () => {
       if (audioRef.current) {
@@ -271,15 +271,12 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
     };
   }, []);
 
-  // Initialize voice traits based on selected voice
   useEffect(() => {
     if (agent && agent.voice) {
-      // Check if it's a custom voice
       if (agent.voice === "Custom") {
         setIsCustomVoice(true);
         setCustomVoiceId(agent.customVoiceId || "");
       } else {
-        // Try to find the voice in our providers
         for (const provider in VOICE_PROVIDERS) {
           for (const voiceName in VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]) {
             const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
@@ -315,7 +312,6 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   const handleVoiceProviderChange = (value: string) => {
     setVoiceProvider(value);
     
-    // Select the first voice from the new provider
     const voices = Object.keys(VOICE_PROVIDERS[value as keyof typeof VOICE_PROVIDERS] || {});
     if (voices.length > 0) {
       const firstVoice = VOICE_PROVIDERS[value as keyof typeof VOICE_PROVIDERS][voices[0]];
@@ -332,7 +328,6 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   const handleVoiceChange = (voiceId: string) => {
     setVoice(voiceId);
     
-    // Find the voice details across all providers
     for (const provider in VOICE_PROVIDERS) {
       for (const voiceName in VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]) {
         const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
