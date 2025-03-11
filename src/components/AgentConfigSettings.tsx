@@ -194,11 +194,6 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   const [voice, setVoice] = useState(agent.voice || '9BWtsMINqrJLrRacOk9x');
   const [voiceProvider, setVoiceProvider] = useState(agent.voiceProvider || 'Eleven Labs');
   const [isSaving, setIsSaving] = useState(false);
-  const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [selectedVoiceTraits, setSelectedVoiceTraits] = useState<VoiceTrait[]>([]);
-  const [customVoiceId, setCustomVoiceId] = useState('');
-  const [isCustomVoice, setIsCustomVoice] = useState(false);
   const [voiceModalOpen, setVoiceModalOpen] = useState(false);
   
   const prevValuesRef = useRef({
@@ -264,36 +259,6 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
     }
   }, [name, avatar, purpose, prompt, industry, botFunction, customIndustry, customFunction, model, voice, voiceProvider, debouncedSave]);
 
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = "";
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (agent && agent.voice) {
-      if (agent.voice === "Custom") {
-        setIsCustomVoice(true);
-        setCustomVoiceId(agent.customVoiceId || "");
-      } else {
-        for (const provider in VOICE_PROVIDERS) {
-          for (const voiceName in VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]) {
-            const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
-            if (voiceObj.id === agent.voice) {
-              setVoice(voiceObj.id);
-              setVoiceProvider(provider);
-              setSelectedVoiceTraits(voiceObj.traits || []);
-              break;
-            }
-          }
-        }
-      }
-    }
-  }, [agent]);
-
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText(prompt);
     toast({
@@ -311,76 +276,34 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
     setAvatar(`https://api.dicebear.com/7.x/bottts/svg?seed=${seed}`);
   };
 
-  const handleVoiceProviderChange = (value: string) => {
-    setVoiceProvider(value);
-    
-    const voices = Object.keys(VOICE_PROVIDERS[value as keyof typeof VOICE_PROVIDERS] || {});
-    if (voices.length > 0) {
-      const firstVoice = VOICE_PROVIDERS[value as keyof typeof VOICE_PROVIDERS][voices[0]];
-      setVoice(firstVoice.id);
-      setSelectedVoiceTraits(firstVoice.traits || []);
-    }
-    
-    if (audioRef.current) {
-      audioRef.current.pause();
-      setCurrentlyPlaying(null);
-    }
+  const handleVoiceSelect = (voiceId: string) => {
+    setVoice(voiceId);
   };
 
-  const handleVoiceChange = (voiceId: string) => {
-    setVoice(voiceId);
-    
+  const handleVoiceProviderChange = (provider: string) => {
+    setVoiceProvider(provider);
+  };
+
+  const getCurrentVoiceDetails = () => {
     for (const provider in VOICE_PROVIDERS) {
       for (const voiceName in VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]) {
         const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
-        if (voiceObj.id === voiceId) {
-          setSelectedVoiceTraits(voiceObj.traits || []);
-          break;
+        if (voiceObj.id === voice) {
+          return {
+            ...voiceObj,
+            provider
+          };
         }
       }
     }
-  };
-
-  const handlePlaySample = (voiceId: string, providerKey: keyof typeof VOICE_PROVIDERS, voiceName: string) => {
-    if (currentlyPlaying === voiceId) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        setCurrentlyPlaying(null);
-      }
-      return;
-    }
     
-    const voicePath = VOICE_PROVIDERS[providerKey][voiceName]?.audioSample;
-    if (!voicePath) return;
-    
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
-    
-    const audio = new Audio(voicePath);
-    audioRef.current = audio;
-    
-    audio.onended = () => {
-      setCurrentlyPlaying(null);
+    // Default to first voice if not found
+    const firstProvider = Object.keys(VOICE_PROVIDERS)[0] as keyof typeof VOICE_PROVIDERS;
+    const firstVoiceName = Object.keys(VOICE_PROVIDERS[firstProvider])[0];
+    return {
+      ...VOICE_PROVIDERS[firstProvider][firstVoiceName],
+      provider: firstProvider
     };
-    
-    audio.onplay = () => {
-      setCurrentlyPlaying(voiceId);
-    };
-    
-    audio.onerror = () => {
-      toast({
-        title: "Audio Error",
-        description: `Could not play sample for ${voiceName}.`,
-        variant: "destructive"
-      });
-      setCurrentlyPlaying(null);
-    };
-    
-    audio.play().catch(err => {
-      console.error("Error playing audio:", err);
-      setCurrentlyPlaying(null);
-    });
   };
 
   const handleUpdateChannel = async (channel: string, config: {
@@ -424,28 +347,6 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
     } finally {
       setIsSaving(false);
     }
-  };
-
-  const getCurrentVoiceDetails = () => {
-    for (const provider in VOICE_PROVIDERS) {
-      for (const voiceName in VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]) {
-        const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
-        if (voiceObj.id === voice) {
-          return {
-            ...voiceObj,
-            provider
-          };
-        }
-      }
-    }
-    
-    // Default to first voice if not found
-    const firstProvider = Object.keys(VOICE_PROVIDERS)[0] as keyof typeof VOICE_PROVIDERS;
-    const firstVoiceName = Object.keys(VOICE_PROVIDERS[firstProvider])[0];
-    return {
-      ...VOICE_PROVIDERS[firstProvider][firstVoiceName],
-      provider: firstProvider
-    };
   };
 
   const currentVoiceDetails = getCurrentVoiceDetails();
@@ -579,14 +480,6 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                 </div>
                 <ChevronDown className="h-4 w-4 opacity-50" />
               </Button>
-              
-              <div className="flex gap-1 flex-wrap mt-1">
-                {selectedVoiceTraits.map((trait, idx) => (
-                  <Badge key={idx} className={trait.color}>
-                    {trait.name}
-                  </Badge>
-                ))}
-              </div>
               
               <p className="text-xs text-muted-foreground">
                 The voice your agent will use when speaking to users
@@ -743,7 +636,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
         open={voiceModalOpen}
         onOpenChange={setVoiceModalOpen}
         selectedVoice={voice}
-        onVoiceSelect={handleVoiceChange}
+        onVoiceSelect={handleVoiceSelect}
         voiceProvider={voiceProvider}
         onVoiceProviderChange={handleVoiceProviderChange}
       />
