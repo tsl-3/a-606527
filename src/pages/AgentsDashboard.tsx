@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy, Sparkles, PlusCircle } from "lucide-react";
@@ -69,6 +68,7 @@ const AgentsDashboard = () => {
     id: "new123",
     name: "New Agent",
     description: "This agent was just created and needs configuration to be fully operational.",
+    purpose: "Help users with customer inquiries and provide assistance with common questions.",
     status: "inactive",
     type: "customer-support",
     createdAt: "Just now",
@@ -290,7 +290,6 @@ const AgentsDashboard = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Create New Agent Card */}
           <Link to="/agents/create" className="block">
             <Card className="h-full card-hover border-dashed border-2 border-agent-primary/30 hover:border-agent-primary/70 transition-all bg-transparent hover:bg-gray-50 dark:hover:bg-gray-900/30">
               <div className="flex flex-col items-center justify-center h-full py-10">
@@ -305,7 +304,6 @@ const AgentsDashboard = () => {
             </Card>
           </Link>
           
-          {/* Newly Created Agent Card */}
           <Link to={`/agents/${newlyCreatedAgent.id}`} key={newlyCreatedAgent.id} className="block">
             <Card className="h-full card-hover border-agent-primary/10">
               <CardHeader className="pb-2">
@@ -345,7 +343,7 @@ const AgentsDashboard = () => {
                 
                 <div className="mt-3">
                   <CardDescription className="line-clamp-2 text-muted-foreground dark:text-gray-300">
-                    {newlyCreatedAgent.description}
+                    {newlyCreatedAgent.purpose}
                   </CardDescription>
                 </div>
               </CardHeader>
