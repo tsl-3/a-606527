@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { User, PhoneCall, Bot, X } from "lucide-react";
+import { User, PhoneCall, Bot } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface UserPersona {
@@ -118,7 +118,10 @@ export const UserPersonasModal: React.FC<UserPersonasModalProps> = ({
               {hoveredPersona === persona.id && (
                 <div className="absolute inset-0 bg-black/5 dark:bg-black/30 rounded-lg flex items-center justify-center">
                   <Button
-                    onClick={() => onSelectPersona(persona)}
+                    onClick={() => {
+                      onSelectPersona(persona);
+                      onOpenChange(false);
+                    }}
                     variant="contrast"
                     className="gap-2"
                   >
