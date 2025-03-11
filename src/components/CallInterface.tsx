@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter, AlertDialogDescription } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -50,35 +49,44 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   const [availableMics, setAvailableMics] = useState<MediaDeviceInfo[]>([]);
   const [availableSpeakers, setAvailableSpeakers] = useState<MediaDeviceInfo[]>([]);
   const [transcriptions, setTranscriptions] = useState<string[]>([]);
+  const [forceClose, setForceClose] = useState(false);
 
   const timerRef = useRef<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const callStartTimeRef = useRef<Date | null>(null);
   const endCallTimeoutRef = useRef<number | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
-  // Reset state when dialog opens or closes
+  const clearAllTimers = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    
+    if (endCallTimeoutRef.current) {
+      clearTimeout(endCallTimeoutRef.current);
+      endCallTimeoutRef.current = null;
+    }
+  };
+
   useEffect(() => {
     if (!open) {
-      // Ensure all state is reset when the dialog is closed
       setCallStatus("connecting");
       setCallDuration(0);
       setTranscriptions([]);
       setIsMuted(false);
       setIsAudioMuted(false);
+      setForceClose(false);
       
-      // Clear any active timers
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      
-      // Clear any pending timeouts
-      if (endCallTimeoutRef.current) {
-        clearTimeout(endCallTimeoutRef.current);
-        endCallTimeoutRef.current = null;
-      }
+      clearAllTimers();
     }
   }, [open]);
+
+  useEffect(() => {
+    return () => {
+      clearAllTimers();
+    };
+  }, []);
 
   useEffect(() => {
     if (open && callStatus === "connecting") {
@@ -184,13 +192,11 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   const handleEndCall = () => {
     setCallStatus("ended");
     
-    // Clear active timer
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
     
-    // Create recording data to pass back
     if (onCallComplete && persona) {
       const now = new Date();
       const date = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -206,29 +212,28 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         transcriptions: [...transcriptions]
       };
       
-      // Make sure any previous timeout is cleared
       if (endCallTimeoutRef.current) {
         clearTimeout(endCallTimeoutRef.current);
         endCallTimeoutRef.current = null;
       }
       
-      // Delay to allow for the ending animation, then close dialog and pass data
       endCallTimeoutRef.current = window.setTimeout(() => {
         onCallComplete(recordingData);
+        setForceClose(true);
         onOpenChange(false);
         endCallTimeoutRef.current = null;
-      }, 500);
+      }, 300);
     } else {
-      // If there's no onCallComplete handler, ensure the dialog closes
       if (endCallTimeoutRef.current) {
         clearTimeout(endCallTimeoutRef.current);
         endCallTimeoutRef.current = null;
       }
       
       endCallTimeoutRef.current = window.setTimeout(() => {
+        setForceClose(true);
         onOpenChange(false);
         endCallTimeoutRef.current = null;
-      }, 500);
+      }, 300);
     }
   };
 
@@ -264,32 +269,25 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
 
   return (
     <AlertDialog 
-      open={open} 
+      open={open && !forceClose}
       onOpenChange={(newOpen) => {
-        // Only allow closing through the proper channels to avoid UI blocking
-        if (!newOpen && callStatus === "ended") {
-          // Clear all timers before closing
-          if (timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-          }
+        if (!newOpen) {
+          clearAllTimers();
           
-          if (endCallTimeoutRef.current) {
-            clearTimeout(endCallTimeoutRef.current);
-            endCallTimeoutRef.current = null;
+          if (callStatus === "ended") {
+            onOpenChange(false);
+          } else {
+            handleEndCall();
           }
-          
-          onOpenChange(newOpen);
-        } else if (!newOpen) {
-          // If trying to close while call is active, end the call first
-          handleEndCall();
         } else {
           onOpenChange(newOpen);
         }
       }}
     >
-      <AlertDialogContent className="max-w-md sm:max-w-2xl bg-[#0F172A] border-gray-800">
-        {/* Adding a visually hidden description for accessibility */}
+      <AlertDialogContent 
+        ref={dialogRef}
+        className="max-w-md sm:max-w-2xl bg-[#0F172A] border-gray-800"
+      >
         <AlertDialogDescription className="sr-only">
           Call interface with {persona.name}. You can communicate and train with this persona.
         </AlertDialogDescription>
