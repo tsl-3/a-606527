@@ -1,9 +1,8 @@
-
 import React, { useState, useRef } from "react";
 import { 
   Mic, Upload, CircleDashed, ArrowRight, Clock, BarChart, 
   ChevronUp, CheckCircle2, PlayCircle, User, Download, Trash2,
-  FileAudio, PhoneCall, Bot
+  FileAudio, PhoneCall, Bot, Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -89,20 +88,18 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       const fileNames = Array.from(files).map(file => file.name);
       console.log('File names:', fileNames);
       
-      // Update local state to show in progress
       if (localStatus === 'not-started') {
         setLocalStatus('in-progress');
         if (onStart) onStart();
       }
       
-      // Create mock recordings for the uploaded files
       const now = new Date();
       const newRecordings = Array.from(files).map((file, index) => ({
         id: Math.random().toString(36).substring(2, 9),
         title: `Uploaded Recording ${localTrainingRecords.length + index + 1}`,
         date: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         time: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
-        duration: '3:45', // Mock duration
+        duration: '3:45',
         type: 'call' as const
       }));
       
@@ -110,7 +107,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       setLocalVoiceSamples(prev => Math.min(prev + files.length, totalSamples));
       setLocalVoiceConfidence(prev => Math.min(prev + 10, 95));
       
-      // Show success toast
       toast({
         title: "Files uploaded successfully",
         description: `${files.length} recording${files.length > 1 ? 's' : ''} added to training data.`
@@ -125,26 +121,21 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   };
   
   const handleCallComplete = (recordingData: RecordingData) => {
-    // Update local state to show in progress if it was not started
     if (localStatus === 'not-started') {
       setLocalStatus('in-progress');
       if (onStart) onStart();
     }
     
-    // Add the recording to the list
     setLocalTrainingRecords(prev => [...prev, recordingData]);
     
-    // Update training metrics
     setLocalVoiceSamples(prev => Math.min(prev + 1, totalSamples));
     setLocalVoiceConfidence(prev => Math.min(prev + 15, 95));
     
-    // Show success toast
     toast({
       title: "Call recording saved",
       description: "The role-play session has been added to your training data."
     });
     
-    // Check if we've reached the total samples needed
     if (localVoiceSamples + 1 >= totalSamples) {
       setLocalStatus('completed');
       if (onComplete) onComplete();
@@ -167,7 +158,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       description: `Now playing: ${record.title}`
     });
     
-    // In a real app, this would play the actual recording
     console.log("Playing recording:", record);
   };
 
@@ -240,7 +230,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                 </p>
                 
                 <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-                  {/* Option 1: Upload Recordings */}
                   <div 
                     onClick={handleUploadClick} 
                     className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
@@ -258,7 +247,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Drag files here</span>
                   </div>
                   
-                  {/* Option 2: Call to Role Play */}
                   <div 
                     onClick={() => setCallRolePlayDialog(true)} 
                     className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
@@ -268,7 +256,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Practice with humans</span>
                   </div>
                   
-                  {/* Option 3: Role Play with AI - Now with primary button styling */}
                   <div 
                     onClick={() => setUserPersonasModalOpen(true)} 
                     className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
@@ -380,12 +367,12 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                     size="sm"
                                     className="gap-2 text-gray-700 dark:text-gray-300"
                                   >
-                                    <Download className="h-4 w-4" />
-                                    <span className="hidden sm:inline">Download</span>
+                                    <Sparkles className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Use for Training</span>
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  <p>Download recording</p>
+                                  <p>Use this recording to enhance agent training</p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -426,7 +413,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Choose one of the following options to begin training your AI agent:</p>
                   
                   <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-                    {/* Option 1: Upload Recordings */}
                     <div 
                       onClick={handleUploadClick} 
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
@@ -444,7 +430,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Drag files here</span>
                     </div>
                     
-                    {/* Option 2: Call to Role Play */}
                     <div 
                       onClick={() => setCallRolePlayDialog(true)} 
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
@@ -454,7 +439,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Practice with humans</span>
                     </div>
                     
-                    {/* Option 3: Role Play with AI */}
                     <div 
                       onClick={() => setUserPersonasModalOpen(true)} 
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
@@ -584,12 +568,12 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                     size="sm"
                                     className="gap-2 text-gray-700 dark:text-gray-300"
                                   >
-                                    <Download className="h-4 w-4" />
-                                    <span className="hidden sm:inline">Download</span>
+                                    <Sparkles className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Use for Training</span>
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  <p>Download recording</p>
+                                  <p>Use this recording to enhance agent training</p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -624,7 +608,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Add more voice samples to further improve your AI agent:</p>
                   
                   <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-                    {/* Option 1: Upload Recordings */}
                     <div 
                       onClick={handleUploadClick} 
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
@@ -642,7 +625,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Drag files here</span>
                     </div>
                     
-                    {/* Option 2: Call to Role Play */}
                     <div 
                       onClick={() => setCallRolePlayDialog(true)} 
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
@@ -652,7 +634,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Practice with humans</span>
                     </div>
                     
-                    {/* Option 3: Role Play with AI */}
                     <div 
                       onClick={() => setUserPersonasModalOpen(true)} 
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
