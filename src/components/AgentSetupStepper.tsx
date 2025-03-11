@@ -150,7 +150,7 @@ const AgentTrainingCard: React.FC<{
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-8 h-8 text-gray-900 dark:text-white">
-              2
+              3
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Agent Training</h3>
             {status === 'in-progress' && (
@@ -758,14 +758,17 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
         
         <WorkflowCard 
           status="not-started" 
+          stepNumber={4}
         />
         
         <WorkflowCard 
-          status="in-progress" 
+          status="in-progress"
+          stepNumber={4}
         />
         
         <WorkflowCard 
-          status="completed" 
+          status="completed"
+          stepNumber={4}
         />
         
         <SimulationCard 
