@@ -14,9 +14,9 @@ export const AgentToggle: React.FC<AgentToggleProps> = ({ isActive, onToggle }) 
         checked={isActive} 
         onCheckedChange={(checked) => {}} 
         onClick={onToggle}
-        className="data-[state=checked]:bg-primary"
+        className="data-[state=checked]:bg-foreground dark:data-[state=checked]:bg-white"
       />
-      <span className={`text-sm font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+      <span className={`text-sm font-medium ${isActive ? 'text-foreground dark:text-white' : 'text-muted-foreground'}`}>
         {isActive ? 'Active' : 'Inactive'}
       </span>
     </div>

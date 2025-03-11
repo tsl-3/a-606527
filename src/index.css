@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 263 70% 50%;  /* Purple color #6d28d9 */
+    --primary: 222.2 84% 4.9%;  /* Changed from purple to slate dark */
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -30,14 +31,14 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 263 70% 50%;  /* Purple color #6d28d9 */
+    --ring: 222.2 84% 4.9%;  /* Changed from purple to slate dark */
 
     --radius: 0.5rem;
 
-    /* Agent colors - using slate theme with purple primary */
-    --agent-primary: 263 70% 50%;
+    /* Agent colors - using slate theme with dark primary */
+    --agent-primary: 222.2 84% 4.9%;
     --agent-secondary: 210 40% 96.1%;
-    --agent-accent: 263 70% 50%;
+    --agent-accent: 222.2 84% 4.9%;
     --agent-dark: 222.2 47.4% 11.2%;
     --agent-light: 210 40% 98%;
     --agent-success: 142 76% 36%;
@@ -57,8 +58,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 263 70% 50%;  /* Purple color #6d28d9 */
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 100%;  /* Changed from purple to pure white */
+    --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -74,13 +75,13 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 263 70% 50%;  /* Purple color #6d28d9 */
+    --ring: 0 0% 100%;  /* Changed from purple to pure white */
 
-    /* Agent dark mode colors - slate theme with purple primary */
+    /* Agent dark mode colors - slate theme with white primary */
     --agent-dark-bg: 222.2 84% 4.9%;
-    --agent-primary: 263 70% 50%;
+    --agent-primary: 0 0% 100%;
     --agent-secondary: 217.2 32.6% 17.5%;
-    --agent-accent: 263 70% 50%;
+    --agent-accent: 0 0% 100%;
     --agent-dark: 222.2 84% 4.9%;
     --agent-light: 210 40% 98%;
     --agent-success: 142 76% 36%;

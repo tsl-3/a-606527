@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy, Sparkles, PlusCircle } from "lucide-react";
@@ -515,7 +514,7 @@ const AgentsDashboard = () => {
                     isActive={agent.status === "active"} 
                     onToggle={(e) => handleToggleStatus(e, agent.id, agent.status)} 
                   />
-                  <div className="text-sm text-agent-primary font-medium">View Details &rarr;</div>
+                  <div className="text-sm text-foreground dark:text-white font-medium">View Details &rarr;</div>
                 </CardFooter>
               </Card>
             </Link>
