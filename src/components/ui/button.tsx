@@ -19,7 +19,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        play: "bg-black/20 rounded-full hover:bg-primary hover:text-white flex items-center justify-center",
+        play: "bg-black/60 rounded-full hover:bg-primary hover:text-white flex items-center justify-center",
         loading: "bg-primary text-white hover:bg-primary/90 min-w-[180px] transition-all duration-300",
         // Updated contrast variant to ensure text visibility in both light and dark modes
         contrast: "bg-slate-800 text-white hover:bg-slate-700 dark:bg-white dark:text-slate-800 dark:hover:bg-gray-200",
