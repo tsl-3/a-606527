@@ -61,7 +61,7 @@ const mockAgents: AgentType[] = [
     id: "5",
     name: "Document Analyzer",
     description: "Analyzes documents and extracts key information automatically.",
-    type: "Other Function",
+    type: "Technical Support", // Changed from "Other Function" to a valid category
     status: "inactive",
     createdAt: "2024-03-01",
     interactions: 52,
