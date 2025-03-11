@@ -140,7 +140,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
   },
   {
     id: "5",
-3 title: "Order Status",
+    title: "Order Status",
     description: "Provide updates on order processing and delivery",
     scenarios: [
       "Check order status",
