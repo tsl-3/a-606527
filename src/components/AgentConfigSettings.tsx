@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import debounce from 'lodash/debounce';
+import { AgentChannels } from '@/components/AgentChannels';
 
 interface AgentConfigSettingsProps {
   agent: AgentType;
@@ -156,6 +157,49 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   const generateRandomAvatar = () => {
     const seed = Math.random().toString(36).substring(2, 10);
     setAvatar(`https://api.dicebear.com/7.x/bottts/svg?seed=${seed}`);
+  };
+
+  const handleUpdateChannel = async (channel: string, config: {
+    enabled: boolean;
+    details?: string;
+    config?: Record<string, any>;
+  }) => {
+    if (!agent) return;
+    
+    let updatedChannels: string[] = [...(agent.channels || [])];
+    if (config.enabled && !updatedChannels.includes(channel)) {
+      updatedChannels.push(channel);
+    } else if (!config.enabled && updatedChannels.includes(channel)) {
+      updatedChannels = updatedChannels.filter(c => c !== channel);
+    }
+
+    try {
+      setIsSaving(true);
+      const updatedAgent = {
+        ...agent,
+        channels: updatedChannels,
+        channelConfigs: {
+          ...(agent.channelConfigs || {}),
+          [channel]: config
+        }
+      };
+      
+      const result = await updateAgent(agent.id, updatedAgent);
+      onAgentUpdate(result);
+      
+      toast({
+        title: config.enabled ? "Channel enabled" : "Channel disabled",
+        description: `The ${channel} channel has been updated.`
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to update channel",
+        description: "There was an error updating the channel configuration.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -365,6 +409,21 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
               </p>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl">Channel Configuration</CardTitle>
+          <CardDescription>
+            Configure the channels through which users can interact with your agent
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AgentChannels 
+            channels={agent.channelConfigs}
+            onUpdateChannel={handleUpdateChannel}
+          />
         </CardContent>
       </Card>
 
