@@ -1,7 +1,7 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { User, Bot, X, ArrowLeft } from "lucide-react";
+import { User, Bot, X, ArrowLeft, PhoneCall } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -70,6 +70,9 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
     }
   ];
 
+  // Track which persona is being hovered
+  const [hoveredPersonaId, setHoveredPersonaId] = useState<string | null>(null);
+
   const handleSelectPersona = (persona: UserPersona) => {
     onSelectPersona(persona);
     onOpenChange(false);
@@ -124,8 +127,10 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
             {personas.map((persona) => (
               <div
                 key={persona.id}
-                className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden cursor-pointer hover:bg-[#141e33] transition-colors"
+                className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden cursor-pointer hover:bg-[#141e33] transition-colors relative"
                 onClick={() => handleSelectPersona(persona)}
+                onMouseEnter={() => setHoveredPersonaId(persona.id)}
+                onMouseLeave={() => setHoveredPersonaId(null)}
               >
                 <div className="p-4">
                   <div className="flex items-center gap-4 mb-3">
@@ -159,6 +164,22 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
                     </div>
                   )}
                 </div>
+
+                {/* Call button overlay that appears on hover */}
+                {hoveredPersonaId === persona.id && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-[#111827]/80 transition-opacity animate-fade-in">
+                    <Button 
+                      className="bg-green-500 hover:bg-green-600 text-white shadow-lg"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelectPersona(persona);
+                      }}
+                    >
+                      <PhoneCall className="h-5 w-5 mr-2" />
+                      Start Call
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
