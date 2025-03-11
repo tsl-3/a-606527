@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter, AlertDialogDescription } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, PhoneOff, Volume, Volume2, User, Bot, ArrowLeft } from "lucide-react";
+import { Mic, MicOff, PhoneOff, Volume, Volume2, User, Bot } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -41,9 +41,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   persona,
   onCallComplete
 }) => {
-  // View state to control which screen is shown in the dialog
-  const [view, setView] = useState<"call" | "summary" | "closed">("call");
-  
   const [callStatus, setCallStatus] = useState<"connecting" | "active" | "ended">("connecting");
   const [isMuted, setIsMuted] = useState(false);
   const [isAudioMuted, setIsAudioMuted] = useState(false);
@@ -75,7 +72,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         setTranscriptions([]);
         setIsMuted(false);
         setIsAudioMuted(false);
-        setView("call");
       };
       
       // Small delay to ensure DOM is updated before state reset
@@ -91,7 +87,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   }, []);
 
   useEffect(() => {
-    if (open && callStatus === "connecting" && view === "call") {
+    if (open && callStatus === "connecting") {
       const timer = setTimeout(() => {
         setCallStatus("active");
         callStartTimeRef.current = new Date();
@@ -104,7 +100,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       
       return () => clearTimeout(timer);
     }
-  }, [open, callStatus, persona, view]);
+  }, [open, callStatus, persona]);
 
   useEffect(() => {
     const getDevices = async () => {
@@ -139,12 +135,12 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       }
     };
     
-    if (open && view === "call") {
+    if (open) {
       getDevices();
     }
     
     const deviceChangeHandler = () => {
-      if (open && view === "call") {
+      if (open) {
         getDevices();
       }
     };
@@ -154,10 +150,10 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     return () => {
       navigator.mediaDevices.removeEventListener('devicechange', deviceChangeHandler);
     };
-  }, [open, view]);
+  }, [open]);
 
   useEffect(() => {
-    if (open && callStatus === "active" && view === "call") {
+    if (open && callStatus === "active") {
       timerRef.current = window.setInterval(() => {
         setCallDuration(prev => prev + 1);
       }, 1000);
@@ -169,7 +165,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         timerRef.current = null;
       }
     };
-  }, [open, callStatus, view]);
+  }, [open, callStatus]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -205,11 +201,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       timerRef.current = null;
     }
     
-    // Instead of closing the dialog, switch to summary view
-    setView("summary");
-  };
-
-  const handleCompleteCall = () => {
     if (onCallComplete && persona) {
       const now = new Date();
       const date = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -228,7 +219,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       onCallComplete(recordingData);
     }
     
-    // Close the dialog after recording data is saved
+    // Close the dialog directly
     onOpenChange(false);
   };
 
@@ -260,11 +251,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     }, 3000);
   };
 
-  // Go back to call view
-  const handleBackToCall = () => {
-    setView("call");
-  };
-
   if (!persona) return null;
 
   return (
@@ -289,252 +275,171 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
           Call interface with {persona.name}. You can communicate and train with this persona.
         </AlertDialogDescription>
         
-        {view === "call" && (
-          <>
-            <AlertDialogHeader className="space-y-2 border-b border-gray-800 pb-4">
-              <AlertDialogTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {persona.type === "customer" ? (
-                    <User className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Bot className="h-5 w-5 text-primary" />
-                  )}
-                  <span>{persona.name}</span>
-                  <Badge variant="outline" className="ml-2">
-                    {persona.type === "customer" ? "Customer" : "Training Bot"}
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2 text-sm font-normal">
-                  {callStatus === "connecting" ? (
-                    <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20">
-                      Connecting...
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">
-                      <span className="flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                        {formatDuration(callDuration)}
-                      </span>
-                    </Badge>
-                  )}
-                </div>
-              </AlertDialogTitle>
-              
-              {callStatus === "connecting" && (
-                <div className="py-10 flex flex-col items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mb-4 relative">
-                    {persona.type === "customer" ? (
-                      <User className="h-8 w-8 text-gray-400" />
-                    ) : (
-                      <Bot className="h-8 w-8 text-primary" />
-                    )}
-                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-amber-500 rounded-full animate-pulse"></div>
-                  </div>
-                  <h3 className="text-lg font-medium mb-2">Connecting to {persona.name}...</h3>
-                  <Progress value={45} className="w-48 h-1" />
-                </div>
+        <AlertDialogHeader className="space-y-2 border-b border-gray-800 pb-4">
+          <AlertDialogTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {persona.type === "customer" ? (
+                <User className="h-5 w-5 text-gray-400" />
+              ) : (
+                <Bot className="h-5 w-5 text-primary" />
               )}
-            </AlertDialogHeader>
-
-            {callStatus === "active" && (
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-4 my-4 h-[350px]">
-                <div className="space-y-4 h-full flex flex-col">
-                  <div className="rounded-lg border border-gray-800 p-3 bg-gray-900/50 text-sm flex-shrink-0">
-                    <h4 className="font-medium text-sm mb-1.5">About {persona.name}</h4>
-                    <p className="text-gray-400 mb-2">{persona.description}</p>
-                    {persona.scenario && (
-                      <div className="bg-gray-800 rounded p-2 text-xs">
-                        <span className="font-medium">Scenario:</span> {persona.scenario}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="rounded-lg border border-gray-800 p-3 space-y-3 flex-grow overflow-auto">
-                    <h4 className="font-medium text-sm">Audio Devices</h4>
-                    <div className="space-y-2">
-                      <Label htmlFor="mic-select" className="text-xs">Microphone</Label>
-                      <Select 
-                        value={selectedMic} 
-                        onValueChange={setSelectedMic}
-                      >
-                        <SelectTrigger id="mic-select" className="h-8 text-xs border-gray-800 bg-gray-900">
-                          <SelectValue placeholder="Select microphone" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableMics.map((mic) => (
-                            <SelectItem key={mic.deviceId} value={mic.deviceId}>
-                              {mic.label || `Microphone ${mic.deviceId.slice(0, 5)}`}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="speaker-select" className="text-xs">Speaker</Label>
-                      <Select 
-                        value={selectedSpeaker} 
-                        onValueChange={setSelectedSpeaker}
-                      >
-                        <SelectTrigger id="speaker-select" className="h-8 text-xs border-gray-800 bg-gray-900">
-                          <SelectValue placeholder="Select speaker" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableSpeakers.map((speaker) => (
-                            <SelectItem key={speaker.deviceId} value={speaker.deviceId}>
-                              {speaker.label || `Speaker ${speaker.deviceId.slice(0, 5)}`}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-lg border border-gray-800 p-4 flex flex-col h-full overflow-hidden">
-                  <h4 className="font-medium text-sm mb-3">Live Transcription</h4>
-                  <ScrollArea className="flex-1 pr-2">
-                    <div className="space-y-4">
-                      {transcriptions.map((text, index) => {
-                        const [speaker, ...messageParts] = text.split(": ");
-                        const message = messageParts.join(": ");
-                        
-                        return (
-                          <div key={index} className="pb-3 border-b border-gray-800 last:border-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <Badge variant="outline" className="text-xs py-0 px-2">
-                                {speaker}
-                              </Badge>
-                              <span className="text-xs text-gray-500">
-                                {formatTimestamp(new Date(Date.now() - (transcriptions.length - 1 - index) * 3000))}
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-300 break-words overflow-hidden">{message}</p>
-                          </div>
-                        );
-                      })}
-                      <div ref={messagesEndRef} />
-                    </div>
-                  </ScrollArea>
-                </div>
-              </div>
-            )}
-
-            <AlertDialogFooter className="flex justify-center space-x-2 border-t border-gray-800 pt-4">
-              <Button
-                variant={isMuted ? "destructive" : "outline"}
-                size="icon"
-                onClick={handleToggleMute}
-                className={isMuted ? "bg-red-500/90" : "border-gray-700"}
-              >
-                {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handleToggleAudio}
-                className={isAudioMuted ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/30" : "border-gray-700"}
-              >
-                {isAudioMuted ? <Volume className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-              </Button>
-              
-              <Button
-                variant="default"
-                onClick={handleSendMessage}
-                disabled={callStatus !== "active" || isMuted}
-                className="bg-white text-black hover:bg-gray-200"
-              >
-                Speak
-              </Button>
-              
-              <Button
-                variant="destructive"
-                size="icon"
-                onClick={handleEndCall}
-              >
-                <PhoneOff className="h-4 w-4" />
-              </Button>
-            </AlertDialogFooter>
-          </>
-        )}
-        
-        {view === "summary" && (
-          <>
-            <AlertDialogHeader className="border-b border-gray-800 pb-4">
-              <AlertDialogTitle className="flex items-center">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={handleBackToCall} 
-                  className="mr-2 hover:bg-gray-800"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                </Button>
-                Call Summary
-              </AlertDialogTitle>
-            </AlertDialogHeader>
-            
-            <div className="py-6 space-y-4">
-              <div className="flex items-center justify-between border border-gray-800 rounded-lg p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center">
-                    {persona.type === "customer" ? (
-                      <User className="h-6 w-6 text-gray-400" />
-                    ) : (
-                      <Bot className="h-6 w-6 text-primary" />
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="font-medium">{persona.name}</h3>
-                    <p className="text-sm text-gray-400">{persona.type === "customer" ? "Customer" : "Training Bot"}</p>
-                  </div>
-                </div>
-                <Badge className="bg-green-500/10 text-green-500 border-green-500/20">
-                  {formatDuration(callDuration)}
+              <span>{persona.name}</span>
+              <Badge variant="outline" className="ml-2">
+                {persona.type === "customer" ? "Customer" : "Training Bot"}
+              </Badge>
+            </div>
+            <div className="flex items-center gap-2 text-sm font-normal">
+              {callStatus === "connecting" ? (
+                <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20">
+                  Connecting...
                 </Badge>
+              ) : (
+                <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                    {formatDuration(callDuration)}
+                  </span>
+                </Badge>
+              )}
+            </div>
+          </AlertDialogTitle>
+          
+          {callStatus === "connecting" && (
+            <div className="py-10 flex flex-col items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mb-4 relative">
+                {persona.type === "customer" ? (
+                  <User className="h-8 w-8 text-gray-400" />
+                ) : (
+                  <Bot className="h-8 w-8 text-primary" />
+                )}
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-amber-500 rounded-full animate-pulse"></div>
               </div>
-              
-              <div className="border border-gray-800 rounded-lg p-4">
-                <h4 className="font-medium mb-2">Call Transcript</h4>
-                <ScrollArea className="h-[200px]">
-                  <div className="space-y-4">
-                    {transcriptions.map((text, index) => {
-                      const [speaker, ...messageParts] = text.split(": ");
-                      const message = messageParts.join(": ");
-                      
-                      return (
-                        <div key={index} className="pb-3 border-b border-gray-800 last:border-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Badge variant="outline" className="text-xs py-0 px-2">
-                              {speaker}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-gray-300">{message}</p>
-                        </div>
-                      );
-                    })}
+              <h3 className="text-lg font-medium mb-2">Connecting to {persona.name}...</h3>
+              <Progress value={45} className="w-48 h-1" />
+            </div>
+          )}
+        </AlertDialogHeader>
+
+        {callStatus === "active" && (
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-4 my-4 h-[350px]">
+            <div className="space-y-4 h-full flex flex-col">
+              <div className="rounded-lg border border-gray-800 p-3 bg-gray-900/50 text-sm flex-shrink-0">
+                <h4 className="font-medium text-sm mb-1.5">About {persona.name}</h4>
+                <p className="text-gray-400 mb-2">{persona.description}</p>
+                {persona.scenario && (
+                  <div className="bg-gray-800 rounded p-2 text-xs">
+                    <span className="font-medium">Scenario:</span> {persona.scenario}
                   </div>
-                </ScrollArea>
+                )}
+              </div>
+
+              <div className="rounded-lg border border-gray-800 p-3 space-y-3 flex-grow overflow-auto">
+                <h4 className="font-medium text-sm">Audio Devices</h4>
+                <div className="space-y-2">
+                  <Label htmlFor="mic-select" className="text-xs">Microphone</Label>
+                  <Select 
+                    value={selectedMic} 
+                    onValueChange={setSelectedMic}
+                  >
+                    <SelectTrigger id="mic-select" className="h-8 text-xs border-gray-800 bg-gray-900">
+                      <SelectValue placeholder="Select microphone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableMics.map((mic) => (
+                        <SelectItem key={mic.deviceId} value={mic.deviceId}>
+                          {mic.label || `Microphone ${mic.deviceId.slice(0, 5)}`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="speaker-select" className="text-xs">Speaker</Label>
+                  <Select 
+                    value={selectedSpeaker} 
+                    onValueChange={setSelectedSpeaker}
+                  >
+                    <SelectTrigger id="speaker-select" className="h-8 text-xs border-gray-800 bg-gray-900">
+                      <SelectValue placeholder="Select speaker" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableSpeakers.map((speaker) => (
+                        <SelectItem key={speaker.deviceId} value={speaker.deviceId}>
+                          {speaker.label || `Speaker ${speaker.deviceId.slice(0, 5)}`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
-            
-            <AlertDialogFooter className="flex justify-end space-x-2 border-t border-gray-800 pt-4">
-              <Button 
-                variant="outline"
-                onClick={handleBackToCall}
-              >
-                Return to Call
-              </Button>
-              <Button 
-                onClick={handleCompleteCall} 
-                variant="default"
-              >
-                Complete Call
-              </Button>
-            </AlertDialogFooter>
-          </>
+
+            <div className="rounded-lg border border-gray-800 p-4 flex flex-col h-full overflow-hidden">
+              <h4 className="font-medium text-sm mb-3">Live Transcription</h4>
+              <ScrollArea className="flex-1 pr-2">
+                <div className="space-y-4">
+                  {transcriptions.map((text, index) => {
+                    const [speaker, ...messageParts] = text.split(": ");
+                    const message = messageParts.join(": ");
+                    
+                    return (
+                      <div key={index} className="pb-3 border-b border-gray-800 last:border-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge variant="outline" className="text-xs py-0 px-2">
+                            {speaker}
+                          </Badge>
+                          <span className="text-xs text-gray-500">
+                            {formatTimestamp(new Date(Date.now() - (transcriptions.length - 1 - index) * 3000))}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-300 break-words overflow-hidden">{message}</p>
+                      </div>
+                    );
+                  })}
+                  <div ref={messagesEndRef} />
+                </div>
+              </ScrollArea>
+            </div>
+          </div>
         )}
+
+        <AlertDialogFooter className="flex justify-center space-x-2 border-t border-gray-800 pt-4">
+          <Button
+            variant={isMuted ? "destructive" : "outline"}
+            size="icon"
+            onClick={handleToggleMute}
+            className={isMuted ? "bg-red-500/90" : "border-gray-700"}
+          >
+            {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleToggleAudio}
+            className={isAudioMuted ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/30" : "border-gray-700"}
+          >
+            {isAudioMuted ? <Volume className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+          </Button>
+          
+          <Button
+            variant="default"
+            onClick={handleSendMessage}
+            disabled={callStatus !== "active" || isMuted}
+            className="bg-white text-black hover:bg-gray-200"
+          >
+            Speak
+          </Button>
+          
+          <Button
+            variant="destructive"
+            size="icon"
+            onClick={handleEndCall}
+          >
+            <PhoneOff className="h-4 w-4" />
+          </Button>
+        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
