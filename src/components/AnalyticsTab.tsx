@@ -1,8 +1,10 @@
+
 import { useState } from "react";
-import { CalendarDays, Filter, Download, BarChart2, TestTube, Heart, MessageSquare, LayoutGrid, ExternalLink } from "lucide-react";
+import { CalendarDays, Filter, Download, BarChart2, TestTube, Heart, MessageSquare, LayoutGrid, ExternalLink, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AgentType } from "@/types/agent";
 import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
