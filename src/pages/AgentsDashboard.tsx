@@ -77,7 +77,7 @@ const AgentsDashboard = () => {
     description: "This agent was just created and needs configuration to be fully operational.",
     purpose: "Help users with customer inquiries and provide assistance with common questions.",
     status: "inactive",
-    type: "customer-support",
+    type: "Customer Service",
     createdAt: "Just now",
     interactions: 0,
     channelConfigs: {
@@ -341,15 +341,22 @@ const AgentsDashboard = () => {
 
         <div className="flex flex-wrap gap-2 items-center">
           <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Agent Type" />
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Bot Function" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="customer-support">Customer Support</SelectItem>
-              <SelectItem value="sales">Sales</SelectItem>
-              <SelectItem value="technical-support">Technical Support</SelectItem>
-              <SelectItem value="custom">Custom</SelectItem>
+              <SelectItem value="all">All Functions</SelectItem>
+              <SelectItem value="Customer Service">Customer Service</SelectItem>
+              <SelectItem value="Sales & Marketing">Sales & Marketing</SelectItem>
+              <SelectItem value="Technical Support">Technical Support</SelectItem>
+              <SelectItem value="IT Helpdesk">IT Helpdesk</SelectItem>
+              <SelectItem value="Lead Generation">Lead Generation</SelectItem>
+              <SelectItem value="Appointment Booking">Appointment Booking</SelectItem>
+              <SelectItem value="FAQ & Knowledge Base">FAQ & Knowledge Base</SelectItem>
+              <SelectItem value="Customer Onboarding">Customer Onboarding</SelectItem>
+              <SelectItem value="Billing & Payments">Billing & Payments</SelectItem>
+              <SelectItem value="Feedback Collection">Feedback Collection</SelectItem>
+              <SelectItem value="Other Function">Other Function</SelectItem>
             </SelectContent>
           </Select>
 
@@ -548,3 +555,4 @@ const AgentsDashboard = () => {
 };
 
 export default AgentsDashboard;
+

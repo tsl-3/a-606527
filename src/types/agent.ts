@@ -1,6 +1,17 @@
 
 export type AgentStatus = "active" | "inactive" | "draft";
-export type AgentTypeCategory = "customer-support" | "sales" | "technical-support" | "personal-assistant" | "custom";
+export type AgentTypeCategory = 
+  | "Customer Service" 
+  | "Sales & Marketing" 
+  | "Technical Support" 
+  | "IT Helpdesk" 
+  | "Lead Generation" 
+  | "Appointment Booking" 
+  | "FAQ & Knowledge Base" 
+  | "Customer Onboarding" 
+  | "Billing & Payments" 
+  | "Feedback Collection" 
+  | "Other Function";
 
 export interface AgentChannelConfig {
   enabled: boolean;
