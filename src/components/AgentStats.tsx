@@ -63,7 +63,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
   
   return (
     <div className="flex flex-col gap-3 w-full">
-      {/* Interactions Card - Only shown when not hidden */}
+      {/* Interactions Card - Hidden by default now */}
       {!hideInteractions && (
         <div className="flex gap-2 w-full">
           <Card className="flex-1 overflow-hidden shadow-sm">

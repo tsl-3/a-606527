@@ -942,7 +942,6 @@ const AgentDetails = () => {
           </div>
           
           <div className="mt-8">
-            <h3 className="text-lg font-medium text-foreground mb-4">Performance Stats</h3>
             <AgentStats 
               avmScore={agent.avmScore} 
               interactionCount={agent.interactions || 0} 
@@ -950,6 +949,7 @@ const AgentDetails = () => {
               performance={agent.performance}
               isNewAgent={isNewAgent} 
               showZeroValues={false}
+              hideInteractions={true}
             />
           </div>
         </CardContent>
