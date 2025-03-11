@@ -30,6 +30,9 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
     workflow: false,
     simulation: false
   });
+  
+  // Track training records
+  const [trainingRecords, setTrainingRecords] = useState<any[]>([]);
 
   const toggleExpanded = (stepName: keyof typeof steps) => {
     setExpanded(prev => ({
@@ -127,6 +130,9 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       tokens: "18.6k"
     }
   ];
+  
+  // Combine default training records with any new ones
+  const combinedTrainingRecords = [...sampleTrainingRecords, ...trainingRecords];
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -164,7 +170,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             voiceSamples={3}
             voiceConfidence={65}
             talkTime="45s"
-            trainingRecords={sampleTrainingRecords}
+            trainingRecords={combinedTrainingRecords}
             isActive={steps.training.active}
             onComplete={() => handleStepComplete('training')}
             isExpanded={expanded.training}
@@ -180,7 +186,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             totalSamples={10}
             voiceConfidence={95}
             talkTime="120s"
-            trainingRecords={sampleTrainingRecords}
+            trainingRecords={combinedTrainingRecords}
             isActive={steps.training.active}
             isExpanded={expanded.training}
             onToggleExpand={() => toggleExpanded('training')}

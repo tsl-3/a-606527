@@ -22,12 +22,24 @@ interface CallInterfaceProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   persona: UserPersona | null;
+  onCallComplete?: (recordingData: RecordingData) => void;
+}
+
+export interface RecordingData {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  duration: string;
+  type: 'call' | 'roleplay';
+  transcriptions?: string[];
 }
 
 export const CallInterface: React.FC<CallInterfaceProps> = ({
   open,
   onOpenChange,
-  persona
+  persona,
+  onCallComplete
 }) => {
   const [callStatus, setCallStatus] = useState<"connecting" | "active" | "ended">("connecting");
   const [isMuted, setIsMuted] = useState(false);
@@ -41,11 +53,13 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
 
   const timerRef = useRef<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const callStartTimeRef = useRef<Date | null>(null);
 
   useEffect(() => {
     if (open && callStatus === "connecting") {
       const timer = setTimeout(() => {
         setCallStatus("active");
+        callStartTimeRef.current = new Date();
         
         if (persona) {
           const initialMessage = getInitialMessage(persona);
@@ -141,6 +155,29 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
 
   const handleEndCall = () => {
     setCallStatus("ended");
+    
+    // Create recording data to pass back
+    if (onCallComplete && persona) {
+      const now = new Date();
+      const date = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      
+      const recordingData: RecordingData = {
+        id: Math.random().toString(36).substring(2, 9),
+        title: `Call with ${persona.name}`,
+        date,
+        time,
+        duration: formatDuration(callDuration),
+        type: 'roleplay',
+        transcriptions: [...transcriptions]
+      };
+      
+      // Delay to allow for the ending animation
+      setTimeout(() => {
+        onCallComplete(recordingData);
+      }, 500);
+    }
+    
     setTimeout(() => {
       onOpenChange(false);
       setTimeout(() => {
