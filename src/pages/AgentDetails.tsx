@@ -531,6 +531,8 @@ const AgentDetails = () => {
   const voicePhoneNumber = agent.channelConfigs?.voice?.details || null;
   const emailAddress = agent.channelConfigs?.email?.details || null;
   const activeChannels = Object.entries(agent.channelConfigs || {}).filter(([_, config]) => config.enabled).map(([channel]) => channel);
+  
+  const isNewAgent = agent.id === "new123";
 
   return <div className="max-w-6xl mx-auto animate-fade-in">
       <div className="mb-6">
@@ -940,7 +942,13 @@ const AgentDetails = () => {
           
           <div className="mt-8">
             <h3 className="text-lg font-medium text-foreground mb-4">Performance Stats</h3>
-            <AgentStats avmScore={agent.avmScore || 7.8} interactionCount={agent.interactions || 0} csat={agent.csat || 92} performance={agent.performance || 88} />
+            <AgentStats 
+              avmScore={agent.avmScore} 
+              interactionCount={agent.interactions || 0} 
+              csat={agent.csat} 
+              performance={agent.performance}
+              isNewAgent={isNewAgent} 
+            />
           </div>
         </CardContent>
       </Card>
