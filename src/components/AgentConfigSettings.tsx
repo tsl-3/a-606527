@@ -465,18 +465,9 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                 className="w-full justify-between"
                 onClick={() => setVoiceModalOpen(true)}
               >
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage 
-                      src={currentVoiceDetails.avatar || `https://api.dicebear.com/7.x/personas/svg?seed=${currentVoiceDetails.id}`} 
-                      alt={currentVoiceDetails.name} 
-                    />
-                    <AvatarFallback><Volume2 className="h-4 w-4" /></AvatarFallback>
-                  </Avatar>
-                  <div className="text-left">
-                    <div className="font-medium">{currentVoiceDetails.name}</div>
-                    <div className="text-xs text-muted-foreground">{currentVoiceDetails.provider}</div>
-                  </div>
+                <div className="flex items-center">
+                  <span className="font-medium">{currentVoiceDetails.name}</span>
+                  <span className="text-xs text-muted-foreground ml-2">- {currentVoiceDetails.provider}</span>
                 </div>
                 <ChevronDown className="h-4 w-4 opacity-50" />
               </Button>
