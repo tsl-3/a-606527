@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause, Phone, Copy, PhoneOutgoing, PhoneIncoming, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog } from "lucide-react";
@@ -560,25 +561,28 @@ const AgentDetails = () => {
                   <h1 className="text-2xl font-bold">
                     {agent.name}
                   </h1>
-                  <Badge variant="outline" className={`${isActive ? "border-green-500/30 text-green-500 bg-green-500/10" : "border-gray-500/30 text-gray-400 bg-gray-500/10"}`}>
-                    <span className="flex items-center gap-1.5">
-                      {isActive ? <>
-                          <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                          Active
-                        </> : <>
-                          <span className="h-1.5 w-1.5 rounded-full bg-gray-500"></span>
-                          Inactive
-                        </>}
-                    </span>
-                  </Badge>
+                  {isActive ? (
+                    <Badge variant="outline" className="border-green-500/30 text-green-500 bg-green-500/10">
+                      <span className="flex items-center gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        Active
+                      </span>
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="border-border">
+                      {agent.type}
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-muted-foreground mt-1.5 max-w-2xl">{agent.description}</p>
                 
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3">
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Bot className="h-3.5 w-3.5 text-agent-primary" />
-                    <span className="font-medium capitalize">{agent.type}</span>
-                  </div>
+                  {!isActive && (
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Bot className="h-3.5 w-3.5 text-agent-primary" />
+                      <span className="font-medium capitalize">Inactive</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Calendar className="h-3.5 w-3.5 text-agent-primary" />
                     <span>Created: {agent.createdAt}</span>
