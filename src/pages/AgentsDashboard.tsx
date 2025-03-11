@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy, Sparkles, PlusCircle, ArrowUpDown } from "lucide-react";
+import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Calendar, Phone, Mail, Copy, Sparkles, PlusCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -500,43 +500,31 @@ const AgentsDashboard = () => {
                     <div className="flex flex-wrap gap-2 mt-2">
                       {filterType !== "all" && (
                         <Badge variant="muted" className="w-fit">
-                          <span className="flex items-center gap-1">
-                            Type: {agent.type}
-                          </span>
+                          Type: {agent.type}
                         </Badge>
                       )}
                       
                       {filterChannel !== "all" && agent.channels && (
                         <Badge variant="muted" className="w-fit">
-                          <span className="flex items-center gap-1">
-                            Channel: {filterChannel}
-                          </span>
+                          Channel: {filterChannel}
                         </Badge>
                       )}
                       
                       {filterStatus !== "all" && (
                         <Badge variant="muted" className="w-fit">
-                          <span className="flex items-center gap-1">
-                            Status: {agent.status}
-                          </span>
+                          Status: {agent.status}
                         </Badge>
                       )}
                       
                       {(sortBy === "recent" || sortBy === "oldest") && (
                         <Badge variant="muted" className="w-fit">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3.5 w-3.5 mr-1" />
-                            {formatCreatedAt(agent.createdAt)}
-                          </span>
+                          {formatCreatedAt(agent.createdAt)}
                         </Badge>
                       )}
                       
                       {(sortBy === "most-used" || sortBy === "less-used") && (
                         <Badge variant="muted" className="w-fit">
-                          <span className="flex items-center gap-1">
-                            <MessageCircle className="h-3.5 w-3.5 mr-1" />
-                            {agent.interactions} interactions
-                          </span>
+                          {agent.interactions} interactions
                         </Badge>
                       )}
                     </div>
