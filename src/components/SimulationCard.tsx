@@ -24,7 +24,7 @@ interface SimulationCardProps {
     coverage: number;
     performance: number;
     scenarios: number;
-    tokens: string;
+    tokens: string | number;
   }>;
 }
 
@@ -56,7 +56,7 @@ export const SimulationCard = ({
         );
       case 'in-progress':
         return (
-          <Badge variant="outline" className="bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 border-blue-200 dark:border-blue-800/30">
+          <Badge variant="outline" className="bg-amber-50 text-amber-500 dark:bg-amber-900/20 dark:text-amber-400 border-amber-200 dark:border-amber-800/30">
             In Progress
           </Badge>
         );
