@@ -9,11 +9,19 @@ interface AgentSetupStepperProps {
   agent: any;
 }
 
+// Define the status type for better TypeScript support
+type StepStatus = 'not-started' | 'in-progress' | 'completed';
+
+interface StepState {
+  status: StepStatus;
+  active: boolean;
+}
+
 export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) => {
   const [steps, setSteps] = useState({
-    training: { status: 'not-started' as const, active: true },
-    workflow: { status: 'not-started' as const, active: false },
-    simulation: { status: 'not-started' as const, active: false }
+    training: { status: 'not-started' as StepStatus, active: true },
+    workflow: { status: 'not-started' as StepStatus, active: false },
+    simulation: { status: 'not-started' as StepStatus, active: false }
   });
 
   const totalSteps = Object.keys(steps).length;
@@ -25,7 +33,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       const newSteps = { ...prevSteps };
       
       // Mark current step as completed
-      newSteps[stepName].status = 'completed';
+      newSteps[stepName].status = 'completed' as StepStatus;
       newSteps[stepName].active = false;
 
       // Find next incomplete step
@@ -34,7 +42,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       const nextStep = stepKeys[currentIndex + 1];
 
       if (nextStep) {
-        newSteps[nextStep].status = 'in-progress';
+        newSteps[nextStep].status = 'in-progress' as StepStatus;
         newSteps[nextStep].active = true;
       }
 
@@ -47,7 +55,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       ...prevSteps,
       [stepName]: {
         ...prevSteps[stepName],
-        status: 'in-progress'
+        status: 'in-progress' as StepStatus
       }
     }));
   };
@@ -156,7 +164,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           <WorkflowCard 
             status="not-started"
             stepNumber={2}
-            isActive={steps.workflow.active}
             onStart={() => handleStepStart('workflow')}
             onComplete={() => handleStepComplete('workflow')}
           />
@@ -166,7 +173,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           <WorkflowCard 
             status="in-progress"
             stepNumber={2}
-            isActive={steps.workflow.active}
             onComplete={() => handleStepComplete('workflow')}
           />
         )}
@@ -175,15 +181,12 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           <WorkflowCard 
             status="completed"
             stepNumber={2}
-            isActive={steps.workflow.active}
           />
         )}
 
         {steps.simulation.status === 'not-started' && (
           <SimulationCard 
             status="not-started"
-            stepNumber={3}
-            isActive={steps.simulation.active}
             onStart={() => handleStepStart('simulation')}
             onComplete={() => handleStepComplete('simulation')}
           />
@@ -192,12 +195,10 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
         {steps.simulation.status === 'in-progress' && (
           <SimulationCard 
             status="in-progress"
-            stepNumber={3}
             coverage={52}
             performance={68}
             scenarios={sampleScenarios}
             simulations={sampleSimulations}
-            isActive={steps.simulation.active}
             onComplete={() => handleStepComplete('simulation')}
           />
         )}
@@ -205,8 +206,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
         {steps.simulation.status === 'completed' && (
           <SimulationCard 
             status="completed"
-            stepNumber={3}
-            isActive={steps.simulation.active}
           />
         )}
       </div>

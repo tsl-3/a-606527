@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { 
   ArrowRight, Play, MessageSquare, Database, Mail, Calendar, Trash2, 
@@ -39,6 +38,8 @@ interface WorkflowCardProps {
   processedCount?: number;
   totalCount?: number;
   stepNumber?: number;
+  onStart?: () => void;
+  onComplete?: () => void;
 }
 
 export const WorkflowCard: React.FC<WorkflowCardProps> = ({ 
@@ -46,7 +47,9 @@ export const WorkflowCard: React.FC<WorkflowCardProps> = ({
   workflows = [],
   processedCount = 0,
   totalCount = 0,
-  stepNumber = 4
+  stepNumber = 4,
+  onStart,
+  onComplete
 }) => {
   const [isExpanded, setIsExpanded] = useState(status !== 'completed');
 
@@ -128,7 +131,10 @@ export const WorkflowCard: React.FC<WorkflowCardProps> = ({
                   Create your first workflow to automate your agent's conversation flow and integrations.
                 </p>
                 <div className="flex justify-center gap-4">
-                  <Button className="gap-2 bg-gradient-to-r from-purple-500 to-indigo-500">
+                  <Button 
+                    className="gap-2 bg-gradient-to-r from-purple-500 to-indigo-500"
+                    onClick={onStart}
+                  >
                     <PlusCircle className="h-4 w-4" />
                     Create Workflow
                   </Button>
@@ -267,6 +273,16 @@ export const WorkflowCard: React.FC<WorkflowCardProps> = ({
                       </div>
                     </div>
                   </div>
+                </div>
+                
+                <div className="flex justify-end mb-6">
+                  <Button 
+                    onClick={onComplete}
+                    className="gap-2 bg-gradient-to-r from-green-500 to-emerald-500"
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    Complete Setup
+                  </Button>
                 </div>
               </>
             )}

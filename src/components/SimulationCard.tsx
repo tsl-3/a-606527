@@ -26,6 +26,8 @@ interface SimulationCardProps {
     scenarios: number;
     tokens: string | number;
   }>;
+  onStart?: () => void;
+  onComplete?: () => void;
 }
 
 export const SimulationCard = ({
@@ -33,7 +35,9 @@ export const SimulationCard = ({
   coverage,
   performance,
   scenarios,
-  simulations
+  simulations,
+  onStart,
+  onComplete
 }: SimulationCardProps) => {
   const { toast } = useToast();
   const [isExpanded, setIsExpanded] = useState(status !== 'completed');
@@ -44,6 +48,9 @@ export const SimulationCard = ({
       description: "Your simulations are being processed...",
     });
     console.log("Simulation data:", data);
+    if (onComplete) {
+      onComplete();
+    }
   };
 
   const getStatusBadge = () => {
@@ -103,7 +110,7 @@ export const SimulationCard = ({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-8 h-8 text-gray-900 dark:text-white">
-              5
+              3
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Simulations</h3>
             {getStatusBadge()}
@@ -144,6 +151,7 @@ export const SimulationCard = ({
               scenarios={scenarios}
               simulations={simulations}
               hideProgressBar={true}
+              onStart={onStart}
             />
           </CardContent>
         )}
