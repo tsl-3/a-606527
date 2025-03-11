@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -224,13 +223,11 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                         key={voiceObj.id} 
                         className={`flex items-start gap-4 p-3 rounded-lg cursor-pointer hover:bg-muted transition-colors ${selectedVoice === voiceObj.id ? 'bg-muted border border-agent-primary/30' : ''}`}
                         onClick={() => onVoiceSelect(voiceObj.id)}
+                        onMouseEnter={() => setHoveredVoice(voiceObj.id)}
+                        onMouseLeave={() => setHoveredVoice(null)}
                       >
-                        <div 
-                          className="relative"
-                          onMouseEnter={() => setHoveredVoice(voiceObj.id)}
-                          onMouseLeave={() => setHoveredVoice(null)}
-                        >
-                          <Avatar className="h-14 w-14 rounded-lg overflow-hidden">
+                        <div className="relative">
+                          <Avatar className="h-14 w-14 rounded-full overflow-hidden">
                             <AvatarImage 
                               src={voiceObj.avatar} 
                               alt={voiceObj.name} 
@@ -244,7 +241,7 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                             <Button
                               variant="play"
                               size="play"
-                              className="absolute top-1 right-1 shadow-md bg-black/40 hover:bg-primary"
+                              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-md bg-black/40 hover:bg-primary"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handlePlaySample(voiceObj.id, provider as keyof typeof VOICE_PROVIDERS, voiceName);
