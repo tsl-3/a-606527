@@ -577,20 +577,20 @@ const AgentDetails = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="hover:bg-secondary">
-                    <MoreVertical className="h-4 w-4" />
+                    <MoreVertical className="h-4 w-4 text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={handleEditClick} className="cursor-pointer flex items-center gap-2">
-                    <PenSquare className="h-4 w-4 text-agent-primary" />
+                    <PenSquare className="h-4 w-4 text-muted-foreground" />
                     <span>Edit Agent</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleDeactivateAgent} className="cursor-pointer flex items-center gap-2">
-                    <UserMinus className="h-4 w-4 text-yellow-500" />
+                    <UserMinus className="h-4 w-4 text-muted-foreground" />
                     <span>Deactivate Agent</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleArchiveAgent} className="cursor-pointer flex items-center gap-2">
-                    <Archive className="h-4 w-4 text-blue-500" />
+                    <Archive className="h-4 w-4 text-muted-foreground" />
                     <span>Archive Agent</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleDelete} className="cursor-pointer flex items-center gap-2 text-red-400">
@@ -625,7 +625,7 @@ const AgentDetails = () => {
                 {voicePhoneNumber && (
                   <div className="inline-flex items-center">
                     <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2 w-auto">
-                      <Phone className="h-3.5 w-3.5 text-blue-500 flex-shrink-0" />
+                      <Phone className="h-3.5 w-3.5 text-white flex-shrink-0" />
                       <span className="text-xs">
                         {voicePhoneNumber}
                       </span>
@@ -634,12 +634,12 @@ const AgentDetails = () => {
                           <Copy className="h-3 w-3 text-muted-foreground" />
                         </Button>
                         <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestCall} title="Test agent call">
-                          <PhoneOutgoing className="h-3 w-3 text-green-400" />
+                          <PhoneOutgoing className="h-3 w-3 text-muted-foreground" />
                         </Button>
                         
                         <CustomTooltip trigger={
                             <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-blue-700/50" title="Call me back">
-                              <PhoneIncoming className="h-3 w-3 text-blue-400" />
+                              <PhoneIncoming className="h-3 w-3 text-muted-foreground" />
                             </Button>
                           } 
                           content={
@@ -663,7 +663,7 @@ const AgentDetails = () => {
                 {emailAddress && (
                   <div className="inline-flex items-center">
                     <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2 w-auto">
-                      <Mail className="h-3.5 w-3.5 text-red-500 flex-shrink-0" />
+                      <Mail className="h-3.5 w-3.5 text-white flex-shrink-0" />
                       <span className="text-xs">
                         {emailAddress}
                       </span>
@@ -672,7 +672,7 @@ const AgentDetails = () => {
                           <Copy className="h-3 w-3 text-muted-foreground" />
                         </Button>
                         <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestEmail} title="Test agent email">
-                          <Send className="h-3 w-3 text-green-400" />
+                          <Send className="h-3 w-3 text-muted-foreground" />
                         </Button>
                       </div>
                     </div>
@@ -687,11 +687,11 @@ const AgentDetails = () => {
               <div className="flex justify-end text-xs text-muted-foreground mt-4">
                 <div className="flex flex-wrap gap-4">
                   <div className="flex items-center gap-1">
-                    <Calendar className="h-3.5 w-3.5 text-agent-primary" />
+                    <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                     <span>Created: {agent.createdAt}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <History className="h-3.5 w-3.5 text-agent-primary" />
+                    <History className="h-3.5 w-3.5 text-muted-foreground" />
                     <span>Updated: {lastUpdated.split(',')[0]}</span>
                   </div>
                 </div>
