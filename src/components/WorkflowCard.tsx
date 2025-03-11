@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { 
   ArrowRight, Play, MessageSquare, Database, Mail, Calendar, Trash2, 
@@ -40,6 +41,8 @@ interface WorkflowCardProps {
   stepNumber?: number;
   onStart?: () => void;
   onComplete?: () => void;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
 }
 
 export const WorkflowCard: React.FC<WorkflowCardProps> = ({ 
@@ -49,9 +52,23 @@ export const WorkflowCard: React.FC<WorkflowCardProps> = ({
   totalCount = 0,
   stepNumber = 4,
   onStart,
-  onComplete
+  onComplete,
+  isExpanded: controlledExpanded,
+  onToggleExpand
 }) => {
-  const [isExpanded, setIsExpanded] = useState(status !== 'completed');
+  // Let parent component control expanded state if provided
+  const [localExpanded, setLocalExpanded] = useState(status !== 'completed');
+  
+  // Use either controlled or uncontrolled state
+  const isExpanded = onToggleExpand ? controlledExpanded : localExpanded;
+  
+  const handleToggleExpand = () => {
+    if (onToggleExpand) {
+      onToggleExpand();
+    } else {
+      setLocalExpanded(!localExpanded);
+    }
+  };
 
   // Sample workflow icons mapping
   const getIconForApp = (appName: string) => {
@@ -102,7 +119,7 @@ export const WorkflowCard: React.FC<WorkflowCardProps> = ({
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={handleToggleExpand}
               className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
             >
               <ChevronUp className={`h-5 w-5 ${!isExpanded ? 'transform rotate-180' : ''}`} />

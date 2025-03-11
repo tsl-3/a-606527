@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { 
   Mic, Upload, CircleDashed, ArrowRight, Clock, BarChart, 
@@ -28,6 +29,8 @@ interface AgentTrainingCardProps {
   trainingRecords?: TrainingRecord[];
   onStart?: () => void;
   onComplete?: () => void;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
 }
 
 export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
@@ -40,9 +43,24 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   talkTime = '0s',
   trainingRecords = [],
   onStart,
-  onComplete
+  onComplete,
+  isExpanded: controlledExpanded,
+  onToggleExpand
 }) => {
-  const [isExpanded, setIsExpanded] = useState(status !== 'completed');
+  // Let parent component control expanded state if provided
+  const [localExpanded, setLocalExpanded] = useState(status !== 'completed');
+  
+  // Use either controlled or uncontrolled state
+  const isExpanded = onToggleExpand ? controlledExpanded : localExpanded;
+
+  const handleToggleExpand = () => {
+    if (onToggleExpand) {
+      onToggleExpand();
+    } else {
+      setLocalExpanded(!localExpanded);
+    }
+  };
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [openRolePlayDialog, setOpenRolePlayDialog] = useState(false);
 
@@ -96,7 +114,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={handleToggleExpand}
               className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
             >
               <ChevronUp className={`h-5 w-5 ${!isExpanded ? 'transform rotate-180' : ''}`} />
