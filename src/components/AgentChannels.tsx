@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Mic, MessageSquare, Smartphone, Mail, MessageCircle, Search, DollarSign, Phone, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +24,7 @@ interface AgentChannelsProps {
   readonly?: boolean;
   compact?: boolean;
   showDetails?: boolean;
+  className?: string;
 }
 
 interface ChannelInfo {
@@ -108,7 +108,8 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
   onUpdateChannel,
   readonly = false,
   compact = false,
-  showDetails = false
+  showDetails = false,
+  className = ""
 }) => {
   const [activeDialogChannel, setActiveDialogChannel] = useState<string | null>(null);
   const [channelDetails, setChannelDetails] = useState<string>("");
@@ -131,7 +132,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
     if (!enabledChannels.length) return null;
     
     return (
-      <div className={`flex flex-wrap gap-2 ${compact ? "mt-0" : "mt-2"}`}>
+      <div className={`flex flex-wrap gap-2 ${compact ? "mt-0" : "mt-1"} ${className}`}>
         {enabledChannels.map((channel) => {
           const info = CHANNEL_INFO[channel];
           const details = normalizedChannels[channel]?.details;
