@@ -24,7 +24,7 @@ interface SimulationCardProps {
     coverage: number;
     performance: number;
     scenarios: number;
-    tokens: string | number;
+    tokens: string | number; // Updated this type to accept both string and number
   }>;
 }
 
@@ -132,7 +132,7 @@ export const SimulationCard = ({
               performance={performance}
               scenarios={scenarios}
               simulations={simulations}
-              hideProgressBar={true} // Add this prop to hide the progress bar in SimulationSteps
+              hideProgressBar={true} // Hide the progress bar in SimulationSteps
             />
           </CardContent>
         )}
