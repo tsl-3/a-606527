@@ -20,6 +20,8 @@ const badgeVariants = cva(
           "border-transparent bg-agent-primary text-white hover:bg-agent-primary/80 flex items-center",
         muted:
           "border-transparent bg-muted text-muted-foreground hover:bg-muted/80 flex items-center",
+        channel:
+          "bg-transparent border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 flex items-center",
       },
     },
     defaultVariants: {
