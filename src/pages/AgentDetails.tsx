@@ -26,7 +26,7 @@ import { updateAgent } from "@/services/agentService";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import AgentConfigSettings from "@/components/AgentConfigSettings";
 import { RolePlayDialog } from "@/components/RolePlayDialog";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { CustomTooltip } from "@/components/CustomTooltip";
 
 const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
 
@@ -633,20 +633,20 @@ const AgentDetails = () => {
                         <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestCall} title="Test agent call">
                           <PhoneOutgoing className="h-3 w-3 text-green-400" />
                         </Button>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
+                        
+                        <CustomTooltip 
+                          trigger={
                             <Button 
                               variant="ghost" 
                               size="icon" 
-                              className="h-6 w-6 rounded-full hover:bg-blue-700/50" 
+                              className="h-6 w-6 rounded-full hover:bg-blue-700/50"
                               title="Call me back"
-                              onClick={() => setIsCallTooltipOpen(true)}
                             >
                               <PhoneIncoming className="h-3 w-3 text-blue-400" />
                             </Button>
-                          </TooltipTrigger>
-                          <TooltipContent side="bottom" align="end" className="w-64 p-4">
-                            <div className="space-y-3">
+                          }
+                          content={
+                            <div className="space-y-3 w-64 p-2">
                               <h4 className="font-medium text-sm">Get a call from this agent</h4>
                               <Input 
                                 type="tel" 
@@ -663,8 +663,11 @@ const AgentDetails = () => {
                                 Call me
                               </Button>
                             </div>
-                          </TooltipContent>
-                        </Tooltip>
+                          }
+                          side="bottom"
+                          align="end"
+                          className="w-64 p-0"
+                        />
                       </div>
                     </div>
                   </div>}
