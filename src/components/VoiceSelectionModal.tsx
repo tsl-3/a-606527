@@ -30,7 +30,7 @@ const VOICE_PROVIDERS = {
         name: "Friendly",
         color: "bg-pink-100 text-pink-800"
       }],
-      avatar: "/voices/avatars/aria.jpg",
+      avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
       audioSample: "/voices/eleven-aria.mp3"
     },
     "Roger": {
@@ -43,7 +43,7 @@ const VOICE_PROVIDERS = {
         name: "Casual",
         color: "bg-green-100 text-green-800"
       }],
-      avatar: "/voices/avatars/roger.jpg",
+      avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
       audioSample: "/voices/eleven-roger.mp3"
     },
     "Sarah": {
@@ -56,7 +56,7 @@ const VOICE_PROVIDERS = {
         name: "Professional",
         color: "bg-purple-100 text-purple-800"
       }],
-      avatar: "/voices/avatars/sarah.jpg",
+      avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
       audioSample: "/voices/eleven-sarah.mp3"
     },
     "Charlie": {
@@ -69,7 +69,7 @@ const VOICE_PROVIDERS = {
         name: "Energetic",
         color: "bg-orange-100 text-orange-800"
       }],
-      avatar: "/voices/avatars/charlie.jpg",
+      avatar: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9",
       audioSample: "/voices/eleven-charlie.mp3"
     }
   },
@@ -84,7 +84,7 @@ const VOICE_PROVIDERS = {
         name: "Professional",
         color: "bg-purple-100 text-purple-800"
       }],
-      avatar: "/voices/avatars/joanna.jpg",
+      avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
       audioSample: "/voices/polly-joanna.mp3"
     },
     "Matthew": {
@@ -97,7 +97,7 @@ const VOICE_PROVIDERS = {
         name: "Deep",
         color: "bg-blue-100 text-blue-800"
       }],
-      avatar: "/voices/avatars/matthew.jpg",
+      avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
       audioSample: "/voices/polly-matthew.mp3"
     }
   },
@@ -112,7 +112,7 @@ const VOICE_PROVIDERS = {
         name: "Neutral",
         color: "bg-gray-100 text-gray-800"
       }],
-      avatar: "/voices/avatars/wavenet-a.jpg",
+      avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
       audioSample: "/voices/google-wavenet-a.mp3"
     },
     "Wavenet B": {
@@ -125,7 +125,7 @@ const VOICE_PROVIDERS = {
         name: "Formal",
         color: "bg-indigo-100 text-indigo-800"
       }],
-      avatar: "/voices/avatars/wavenet-b.jpg",
+      avatar: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9",
       audioSample: "/voices/google-wavenet-b.mp3"
     }
   }
@@ -140,6 +140,7 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
   onVoiceProviderChange
 }) => {
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
+  const [hoveredVoice, setHoveredVoice] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
   const getCurrentVoiceDetails = () => {
@@ -224,28 +225,38 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                         className={`flex items-start gap-4 p-3 rounded-lg cursor-pointer hover:bg-muted transition-colors ${selectedVoice === voiceObj.id ? 'bg-muted border border-agent-primary/30' : ''}`}
                         onClick={() => onVoiceSelect(voiceObj.id)}
                       >
-                        <div className="relative">
-                          <Avatar className="h-14 w-14">
-                            <AvatarImage src={voiceObj.avatar || `https://api.dicebear.com/7.x/personas/svg?seed=${voiceObj.id}`} alt={voiceObj.name} />
+                        <div 
+                          className="relative"
+                          onMouseEnter={() => setHoveredVoice(voiceObj.id)}
+                          onMouseLeave={() => setHoveredVoice(null)}
+                        >
+                          <Avatar className="h-14 w-14 rounded-lg overflow-hidden">
+                            <AvatarImage 
+                              src={voiceObj.avatar} 
+                              alt={voiceObj.name} 
+                              className="object-cover aspect-square"
+                            />
                             <AvatarFallback>
                               <Volume2 className="h-6 w-6" />
                             </AvatarFallback>
                           </Avatar>
-                          <Button
-                            variant="play"
-                            size="play"
-                            className="absolute -bottom-1 -right-1 shadow-md"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handlePlaySample(voiceObj.id, provider as keyof typeof VOICE_PROVIDERS, voiceName);
-                            }}
-                          >
-                            {currentlyPlaying === voiceObj.id ? (
-                              <Pause className="h-3.5 w-3.5" />
-                            ) : (
-                              <Play className="h-3.5 w-3.5 ml-0.5" />
-                            )}
-                          </Button>
+                          {(hoveredVoice === voiceObj.id || currentlyPlaying === voiceObj.id) && (
+                            <Button
+                              variant="play"
+                              size="play"
+                              className="absolute top-1 right-1 shadow-md bg-black/40 hover:bg-primary"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePlaySample(voiceObj.id, provider as keyof typeof VOICE_PROVIDERS, voiceName);
+                              }}
+                            >
+                              {currentlyPlaying === voiceObj.id ? (
+                                <Pause className="h-3.5 w-3.5" />
+                              ) : (
+                                <Play className="h-3.5 w-3.5 ml-0.5" />
+                              )}
+                            </Button>
+                          )}
                         </div>
                         
                         <div className="flex-1">
