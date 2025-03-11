@@ -37,6 +37,8 @@ import { useAgents } from "@/hooks/useAgents";
 import { AgentToggle } from "@/components/AgentToggle";
 import { AgentChannels } from "@/components/AgentChannels";
 import { AgentStats } from "@/components/AgentStats";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "@/hooks/useTheme";
 
 const randomNames = ["Aria", "Mike", "Yuki", "Misty", "Nova", "Zephyr", "Echo", "Luna", "Orion", "Iris"];
 
@@ -317,13 +319,16 @@ const AgentsDashboard = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div>
-        <h1 className="text-3xl font-semibold text-foreground dark:text-white tracking-tight">
-          {getFilterTitle()}
-        </h1>
-        <p className="text-muted-foreground dark:text-gray-300 mt-1">
-          Manage and monitor your intelligent agents
-        </p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-semibold text-foreground dark:text-white tracking-tight">
+            {getFilterTitle()}
+          </h1>
+          <p className="text-muted-foreground dark:text-gray-300 mt-1">
+            Manage and monitor your intelligent agents
+          </p>
+        </div>
+        <ThemeToggle />
       </div>
       
       <Separator />
