@@ -45,6 +45,7 @@ interface SimulationStepsProps {
     tokens: string | number;
   }>;
   hideProgressBar?: boolean;
+  onStart?: () => void;
 }
 
 const STEPS: SimulationStep[] = [
@@ -139,7 +140,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
   },
   {
     id: "5",
-    title: "Order Status",
+3 title: "Order Status",
     description: "Provide updates on order processing and delivery",
     scenarios: [
       "Check order status",
@@ -247,7 +248,8 @@ export const SimulationSteps = ({
   performance: initialPerformance,
   scenarios: initialScenarios,
   simulations: initialSimulations,
-  hideProgressBar
+  hideProgressBar,
+  onStart
 }: SimulationStepsProps) => {
   const [currentStep, setCurrentStep] = useState(initialStatus === 'not-started' ? 0 : initialStatus === 'in-progress' ? 0 : 1);
   const [selectedSimulations, setSelectedSimulations] = useState<string[]>([]);
