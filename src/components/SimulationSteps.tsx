@@ -315,10 +315,11 @@ export const SimulationSteps = ({
       .filter(sim => selectedSimulations.includes(sim.id))
       .reduce((acc, sim) => {
         const count = simulationCounts[sim.id] || 1;
+        const tokenValue = typeof sim.tokens === 'string' ? parseInt(sim.tokens) : sim.tokens;
         return {
           coverage: acc.coverage + sim.coverage,
           performance: acc.performance + sim.performance,
-          tokens: acc.tokens + (sim.tokens * count)
+          tokens: acc.tokens + (tokenValue * count)
         };
       }, { coverage: 0, performance: 0, tokens: 0 });
   };
