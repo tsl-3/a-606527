@@ -101,12 +101,10 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
-  /* Add smooth scrolling */
   html {
     scroll-behavior: smooth;
   }
   
-  /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -124,24 +122,20 @@
     @apply bg-primary/50;
   }
   
-  /* Base transitions for elements */
   button, a, input, select, textarea {
     @apply transition-all duration-200;
   }
   
-  /* Focus ring styles */
   *:focus-visible {
     @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-background;
   }
   
-  /* Dark mode background */
   .dark body {
     background: hsl(var(--background));
     background-attachment: fixed;
     background-size: cover;
   }
   
-  /* Make sure the min-h-screen class doesn't override the background */
   .dark .min-h-screen {
     background: transparent;
   }
@@ -153,7 +147,7 @@
   }
   
   .agent-button {
-    @apply px-4 py-2 rounded-md bg-agent-primary text-white shadow-sm hover:bg-agent-primary/90 focus:ring-2 focus:ring-primary/50 transition-all duration-200;
+    @apply px-4 py-2 rounded-md bg-agent-primary text-white shadow-sm hover:bg-agent-primary/90 focus:ring-2 focus:ring-primary/50 transition-all duration-200 dark:bg-agent-primary dark:text-slate-800 dark:hover:bg-agent-light/90;
   }
   
   .agent-button-secondary {
@@ -180,7 +174,6 @@
     @apply backdrop-blur-2xl bg-white/10 dark:bg-card border border-white/10 dark:border-white/5;
   }
   
-  /* Custom toggle switch styling */
   .agent-toggle-switch {
     @apply relative inline-flex items-center h-8 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-agent-primary/50 focus:ring-offset-2;
   }
@@ -201,7 +194,6 @@
     @apply text-xs font-semibold w-full text-center transition-opacity duration-300;
   }
   
-  /* Dark mode specific card and input styles with the new color */
   .dark .card,
   .dark [class*="Card"] {
     @apply bg-card border-border;
