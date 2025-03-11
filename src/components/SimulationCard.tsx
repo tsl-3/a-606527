@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SimulationSteps } from "./SimulationSteps";
@@ -83,6 +84,19 @@ export const SimulationCard = ({
     }
   };
 
+  const getProgressColorClass = () => {
+    switch (status) {
+      case 'not-started':
+        return "bg-gray-400 dark:bg-gray-600";
+      case 'in-progress':
+        return "bg-amber-500 dark:bg-amber-400";
+      case 'completed':
+        return "bg-green-500 dark:bg-green-400";
+      default:
+        return "bg-gray-400 dark:bg-gray-600";
+    }
+  };
+
   return (
     <div className="rounded-lg overflow-hidden mb-6 border border-gray-200 dark:border-gray-800">
       <div className="p-6 pb-0">
@@ -117,7 +131,7 @@ export const SimulationCard = ({
         
         <Progress 
           value={getProgressValue()} 
-          className="h-1.5 mb-6" 
+          className={`h-1.5 mb-6 [&>div]:${getProgressColorClass()}`}
         />
         
         {isExpanded && (
