@@ -32,7 +32,7 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
   status, 
   documents = [], 
   processedCount = 0,
-  totalCount = 10
+  totalCount = 1
 }) => {
   const [isExpanded, setIsExpanded] = useState(status !== 'completed');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,6 +41,8 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
   const [webUrl, setWebUrl] = useState("");
   const [webUrls, setWebUrls] = useState<string[]>([]);
   const [knowledgeText, setKnowledgeText] = useState("");
+
+  const progress = documents.length > 0 ? 100 : 0;
 
   const handleUploadClick = () => {
     if (fileInputRef.current) {
@@ -72,6 +74,37 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
     }
   };
 
+  const getStatusBadge = () => {
+    switch (status) {
+      case 'not-started':
+        return (
+          <Badge variant="outline" className="bg-gray-500/20 text-gray-500 dark:text-gray-400 border-gray-500/30 ml-2">
+            Not Started
+          </Badge>
+        );
+      case 'in-progress':
+        return (
+          <Badge variant="outline" className="bg-amber-500/20 text-amber-500 dark:text-amber-400 border-amber-500/30 ml-2">
+            In Progress
+          </Badge>
+        );
+      case 'completed':
+        return (
+          <Badge variant="outline" className="bg-green-500/20 text-green-500 dark:text-green-400 border-green-500/30 ml-2">
+            Completed
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const getProgressColorClass = () => {
+    return documents.length > 0 
+      ? "bg-green-500 dark:bg-green-400" 
+      : "bg-gray-400 dark:bg-gray-600";
+  };
+
   return (
     <div className="rounded-lg overflow-hidden mb-6 border border-gray-200 dark:border-gray-800">
       <div className="p-6 pb-0">
@@ -81,25 +114,10 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
               1
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Knowledge Base</h3>
-            {status === 'in-progress' && (
-              <Badge variant="outline" className="bg-amber-500/20 text-amber-500 dark:text-amber-400 border-amber-500/30 ml-2">
-                In Progress
-              </Badge>
-            )}
-            {status === 'completed' && (
-              <Badge variant="outline" className="bg-green-500/20 text-green-500 dark:text-green-400 border-green-500/30 ml-2">
-                Completed
-              </Badge>
-            )}
-            {status === 'not-started' && (
-              <Badge variant="outline" className="bg-gray-500/20 text-gray-500 dark:text-gray-400 border-gray-500/30 ml-2">
-                Not Started
-              </Badge>
-            )}
+            {getStatusBadge()}
           </div>
           <div className="flex items-center gap-2">
-            {status === 'in-progress' && <span className="text-sm text-gray-500 dark:text-gray-400">{Math.round((processedCount / totalCount) * 100)}%</span>}
-            {status === 'completed' && <span className="text-sm text-gray-500 dark:text-gray-400">100%</span>}
+            {documents.length > 0 && <span className="text-sm text-gray-500 dark:text-gray-400">100%</span>}
             <Button 
               variant="ghost" 
               size="icon" 
@@ -117,8 +135,8 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
         
         {status !== 'not-started' && (
           <Progress 
-            value={status === 'completed' ? 100 : Math.round((processedCount / totalCount) * 100)} 
-            className="h-1.5 mb-6" 
+            value={progress}
+            className={`h-1.5 mb-6 [&>div]:${getProgressColorClass()}`}
           />
         )}
         
@@ -186,8 +204,8 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
                       <span className="text-xs font-medium">Processing</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{processedCount}/{totalCount}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Files processed</div>
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{documents.length > 0 ? "Done" : "Pending"}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-500">Status</div>
                     </div>
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
@@ -196,52 +214,71 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
                       <span className="text-xs font-medium">Progress</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{Math.round((processedCount / totalCount) * 100)}%</div>
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{documents.length > 0 ? "100%" : "0%"}</div>
                       <div className="text-xs text-gray-500 dark:text-gray-500">Completion rate</div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30 rounded-lg p-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <div className="bg-amber-100 dark:bg-amber-900/20 p-2 rounded-full">
-                      <ArrowRight className="h-4 w-4 text-amber-500" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Processing: {processedCount} of {totalCount} documents</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Your documents are being processed. This may take a few minutes.</p>
+                {documents.length > 0 ? (
+                  <div className="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800/30 rounded-lg p-4 mb-6">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-full">
+                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Complete: {documents.length} document(s) processed</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Your knowledge base is ready. You can add more documents at any time.</p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30 rounded-lg p-4 mb-6">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-amber-100 dark:bg-amber-900/20 p-2 rounded-full">
+                        <ArrowRight className="h-4 w-4 text-amber-500" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Add at least one document</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Upload a document, add a web page, or provide text to complete this step.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="mb-6">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Uploaded Documents</h4>
-                  <div className="space-y-2">
-                    {documents.map((doc) => (
-                      <div key={doc.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
-                            <FileText className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                  {documents.length > 0 ? (
+                    <div className="space-y-2">
+                      {documents.map((doc) => (
+                        <div key={doc.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
+                              <FileText className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                            </div>
+                            <div>
+                              <h5 className="font-medium text-gray-900 dark:text-white">{doc.title}</h5>
+                              <p className="text-xs text-gray-500 dark:text-gray-500">{doc.format} • {doc.size} • {doc.date}</p>
+                            </div>
                           </div>
-                          <div>
-                            <h5 className="font-medium text-gray-900 dark:text-white">{doc.title}</h5>
-                            <p className="text-xs text-gray-500 dark:text-gray-500">{doc.format} • {doc.size} • {doc.date}</p>
+                          <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
+                              <Download className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4 text-center">
+                      <p className="text-gray-500 dark:text-gray-400">No documents uploaded yet</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -370,7 +407,6 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
         )}
       </div>
 
-      {/* Add Web Page Dialog */}
       <Dialog open={webUrlDialogOpen} onOpenChange={setWebUrlDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -437,7 +473,6 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
         </DialogContent>
       </Dialog>
 
-      {/* Add Text Dialog */}
       <Dialog open={textDialogOpen} onOpenChange={setTextDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
