@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Smile, Zap, Info } from "lucide-react";
@@ -49,9 +50,9 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
 
   // Color indicator for AVM score based on the value range
   const getScoreColor = (score: number): string => {
-    if (score >= 8) return "bg-green-500"; // High score: green
-    if (score >= 6) return "bg-yellow-500"; // Medium score: yellow
-    return "bg-red-500"; // Low score: red
+    if (score >= 8) return "bg-green-500"; // High score (8-10): green
+    if (score >= 6) return "bg-yellow-500"; // Medium score (6-7): yellow
+    return "bg-orange-500"; // Low score (1-5): orange
   };
   
   // Get tier label and color for interaction count
