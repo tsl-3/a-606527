@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { User, Bot, X, ArrowLeft, PhoneCall, Info } from "lucide-react";
@@ -172,8 +173,10 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
       console.error("Direct call handler is not defined");
       toast({
         title: "Function Error",
-        description: "Unable to start direct call, handler not available"
+        description: "Direct call functionality is not available in this context.",
+        variant: "destructive"
       });
+      // Don't close the sidebar if we can't start a call
     }
   };
 

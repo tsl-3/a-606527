@@ -9,6 +9,11 @@ export const useAgentDetails = (agentId: string | undefined) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRolePlayOpen, setIsRolePlayOpen] = useState(false);
+  const [isDirectCallActive, setIsDirectCallActive] = useState(false);
+  const [directCallInfo, setDirectCallInfo] = useState<{
+    phoneNumber: string;
+    deviceSettings: { mic: string; speaker: string };
+  } | null>(null);
 
   useEffect(() => {
     if (!agentId) {
@@ -125,6 +130,20 @@ export const useAgentDetails = (agentId: string | undefined) => {
     setIsRolePlayOpen(false);
   };
 
+  // Start a direct call with a specific phone number
+  const startDirectCall = (phoneNumber: string, deviceSettings: { mic: string; speaker: string }) => {
+    setDirectCallInfo({ phoneNumber, deviceSettings });
+    setIsDirectCallActive(true);
+    // Close the role play dialog if it's open
+    setIsRolePlayOpen(false);
+  };
+
+  // End the active direct call
+  const endDirectCall = () => {
+    setIsDirectCallActive(false);
+    setDirectCallInfo(null);
+  };
+
   // Function to show success toast
   const showSuccessToast = (title: string, description: string) => {
     toast({
@@ -140,6 +159,11 @@ export const useAgentDetails = (agentId: string | undefined) => {
     isRolePlayOpen,
     openRolePlay,
     closeRolePlay,
-    showSuccessToast
+    showSuccessToast,
+    // Add direct call related functions and state
+    isDirectCallActive,
+    directCallInfo,
+    startDirectCall,
+    endDirectCall
   };
 };
