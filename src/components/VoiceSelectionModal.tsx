@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -142,6 +142,15 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
   const [hoveredVoice, setHoveredVoice] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+  
   const getCurrentVoiceDetails = () => {
     for (const provider in VOICE_PROVIDERS) {
       for (const voiceName in VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]) {
@@ -152,7 +161,6 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
       }
     }
     
-    // Default to first voice if not found
     const firstProvider = Object.keys(VOICE_PROVIDERS)[0] as keyof typeof VOICE_PROVIDERS;
     const firstVoiceName = Object.keys(VOICE_PROVIDERS[firstProvider])[0];
     return VOICE_PROVIDERS[firstProvider][firstVoiceName];
@@ -178,7 +186,9 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
     audioRef.current = audio;
     
     audio.onended = () => {
-      setCurrentlyPlaying(null);
+      setTimeout(() => {
+        setCurrentlyPlaying(null);
+      }, 15000);
     };
     
     audio.onplay = () => {
@@ -190,7 +200,14 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
       setCurrentlyPlaying(null);
     };
     
-    audio.play().catch(err => {
+    audio.play().then(() => {
+      audio.pause();
+      setCurrentlyPlaying(voiceId);
+      
+      setTimeout(() => {
+        setCurrentlyPlaying(null);
+      }, 15000);
+    }).catch(err => {
       console.error("Error playing audio:", err);
       setCurrentlyPlaying(null);
     });
