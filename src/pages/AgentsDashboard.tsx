@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Calendar, Phone, Mail, Copy, Sparkles, PlusCircle } from "lucide-react";
+import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Calendar, Phone, Mail, Copy, PlusCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -485,13 +485,21 @@ const AgentsDashboard = () => {
                     </CardDescription>
                     
                     {agent.channelConfigs ? (
-                      <AgentChannels channels={agent.channelConfigs} readonly={true} compact={true} className="mt-0" />
+                      <AgentChannels 
+                        agent={{...agent, channelConfigs: agent.channelConfigs}} 
+                        readonly={true} 
+                        compact={true} 
+                        className="mt-0" 
+                      />
                     ) : agent.channels && agent.channels.length > 0 ? (
                       <AgentChannels 
-                        channels={agent.channels.reduce((obj, channel) => {
-                          obj[channel] = { enabled: true };
-                          return obj;
-                        }, {} as Record<string, AgentChannelConfig>)} 
+                        agent={{
+                          ...agent, 
+                          channelConfigs: agent.channels.reduce((obj, channel) => {
+                            obj[channel] = { enabled: true };
+                            return obj;
+                          }, {} as Record<string, AgentChannelConfig>)
+                        }}
                         readonly={true} 
                         compact={true}
                         className="mt-0"
@@ -503,6 +511,7 @@ const AgentsDashboard = () => {
                 <CardContent>
                   <div className="flex flex-col space-y-4">
                     <AgentStats 
+                      agent={agent} 
                       avmScore={getAgentAVMScore(agent.id)} 
                       interactionCount={agent.interactions}
                       compact={true}
@@ -560,4 +569,3 @@ const AgentsDashboard = () => {
 };
 
 export default AgentsDashboard;
-

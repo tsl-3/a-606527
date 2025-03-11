@@ -1,11 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause, Phone, Copy, PhoneOutgoing, PhoneIncoming, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog } from "lucide-react";
+import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, History, Cpu, Calendar, Mic, Volume2, MessageSquare, Play, Pause, Phone, Copy, PhoneOutgoing, PhoneIncoming, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -995,7 +994,7 @@ const AgentDetails = () => {
                   
                   <TabsContent value="setup" className="space-y-6">
                     <AgentSetupStepper agent={agent} onUpdate={handleAgentUpdate} />
-                    <AgentConfigSettings />
+                    <AgentConfigSettings agent={agent} onAgentUpdate={handleAgentUpdate} />
                   </TabsContent>
                   
                   <TabsContent value="channels">
@@ -1013,11 +1012,15 @@ const AgentDetails = () => {
       </Card>
       
       {isActive && (
-        <RolePlayDialog agentId={agent.id} agentName={agent.name} />
+        <RolePlayDialog 
+          agentId={agent.id} 
+          agentName={agent.name} 
+          open={isRolePlayOpen}
+          onOpenChange={setIsRolePlayOpen}
+        />
       )}
     </div>
   );
 };
 
 export default AgentDetails;
-

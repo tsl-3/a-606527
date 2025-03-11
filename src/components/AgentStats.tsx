@@ -1,10 +1,13 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Info } from "lucide-react";
 import { AgentType } from "@/types/agent";
 
-interface AgentStatsProps {
-  agent: AgentType;
+export interface AgentStatsProps {
+  agent?: AgentType;
+  avmScore?: number;
+  interactionCount?: number;
   compact?: boolean;
   isNewAgent?: boolean;
   showZeroValues?: boolean;
@@ -13,11 +16,16 @@ interface AgentStatsProps {
 
 export const AgentStats: React.FC<AgentStatsProps> = ({ 
   agent,
+  avmScore: propAvmScore,
+  interactionCount: propInteractionCount,
   isNewAgent = false,
   showZeroValues = false,
-  hideInteractions = false
+  hideInteractions = false,
+  compact = false
 }) => {
-  const { avmScore, interactions } = agent;
+  // Use either direct props or extract from agent object
+  const avmScore = propAvmScore !== undefined ? propAvmScore : agent?.avmScore;
+  const interactions = propInteractionCount !== undefined ? propInteractionCount : agent?.interactions;
 
   // For new agents, show a different UI
   if (isNewAgent && !showZeroValues) {
