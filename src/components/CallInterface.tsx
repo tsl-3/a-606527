@@ -285,10 +285,10 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
               </div>
             </div>
 
-            <div className="rounded-lg border border-gray-800 p-4 flex flex-col h-full min-h-[280px]">
+            <div className="rounded-lg border border-gray-800 p-4 flex flex-col h-[350px] min-h-[280px] overflow-hidden">
               <h4 className="font-medium text-sm mb-3">Live Transcription</h4>
-              <ScrollArea className="flex-1">
-                <div className="space-y-4 max-w-full">
+              <ScrollArea className="flex-1 pr-2">
+                <div className="space-y-4">
                   {transcriptions.map((text, index) => {
                     const [speaker, ...messageParts] = text.split(": ");
                     const message = messageParts.join(": ");
@@ -354,4 +354,3 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     </AlertDialog>
   );
 };
-
