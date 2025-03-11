@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { User, Bot, X, ArrowLeft, PhoneCall, Info } from "lucide-react";
@@ -76,10 +75,8 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
     }
   ];
 
-  // Track which persona is being hovered
   const [hoveredPersonaId, setHoveredPersonaId] = useState<string | null>(null);
   
-  // For direct call feature
   const [showDirectCall, setShowDirectCall] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumberError, setPhoneNumberError] = useState('');
@@ -164,12 +161,19 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
     }
 
     setPhoneNumberError('');
+    
     if (onStartDirectCall) {
       onStartDirectCall(phoneNumber, {
         mic: selectedMic,
         speaker: selectedSpeaker
       });
       onOpenChange(false); // Close sidebar when starting call
+    } else {
+      console.error("Direct call handler is not defined");
+      toast({
+        title: "Function Error",
+        description: "Unable to start direct call, handler not available"
+      });
     }
   };
 
@@ -177,18 +181,15 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex">
-      {/* Backdrop overlay */}
       <div 
         className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
         onClick={() => onOpenChange(false)}
       />
       
-      {/* Sidebar */}
       <div className={cn(
         "fixed top-0 bottom-0 right-0 z-50 w-full max-w-md bg-[#0F172A] border-l border-[#1E293B] shadow-xl transition-transform duration-300 ease-in-out overflow-hidden flex flex-col",
         open ? "translate-x-0" : "translate-x-full"
       )}>
-        {/* Header */}
         <div className="p-4 border-b border-[#1E293B] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Button 
@@ -216,11 +217,9 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
           </Button>
         </div>
         
-        {/* Content */}
         <ScrollArea className="flex-1 overflow-auto">
           {!showDirectCall ? (
             <div className="p-4 space-y-4">
-              {/* Option for direct call */}
               <div 
                 className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden cursor-pointer hover:bg-[#141e33] transition-colors p-4"
                 onClick={() => setShowDirectCall(true)}
@@ -255,7 +254,6 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
                 </div>
               </div>
               
-              {/* Personas list */}
               {personas.map((persona) => (
                 <div
                   key={persona.id}
@@ -297,7 +295,6 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
                     )}
                   </div>
 
-                  {/* Call button overlay that appears on hover */}
                   {hoveredPersonaId === persona.id && (
                     <div className="absolute inset-0 flex items-center justify-center bg-[#111827]/80 transition-opacity animate-fade-in">
                       <Button 
@@ -392,6 +389,7 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
                 <Button 
                   onClick={handleStartDirectCall} 
                   className="w-full mt-6 bg-green-500 hover:bg-green-600 text-white"
+                  type="button"
                 >
                   <PhoneCall className="mr-2 h-5 w-5" />
                   Start Call

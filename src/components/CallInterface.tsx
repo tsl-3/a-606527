@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter, AlertDialogDescription } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, PhoneOff, Volume, Volume2, User, Bot } from "lucide-react";
+import { Mic, MicOff, PhoneOff, Volume, Volume2, User, Bot, Phone } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -23,6 +22,13 @@ interface CallInterfaceProps {
   onOpenChange: (open: boolean) => void;
   persona: UserPersona | null;
   onCallComplete?: (recordingData: RecordingData) => void;
+  directCallInfo?: {
+    phoneNumber: string;
+    deviceSettings: {
+      mic: string;
+      speaker: string;
+    };
+  };
 }
 
 export interface RecordingData {
@@ -39,7 +45,8 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   open,
   onOpenChange,
   persona,
-  onCallComplete
+  onCallComplete,
+  directCallInfo
 }) => {
   const [callStatus, setCallStatus] = useState<"connecting" | "active" | "ended">("connecting");
   const [isMuted, setIsMuted] = useState(false);
@@ -50,12 +57,24 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   const [availableMics, setAvailableMics] = useState<MediaDeviceInfo[]>([]);
   const [availableSpeakers, setAvailableSpeakers] = useState<MediaDeviceInfo[]>([]);
   const [transcriptions, setTranscriptions] = useState<string[]>([]);
+  const [isDirectCall, setIsDirectCall] = useState(false);
 
   const timerRef = useRef<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const callStartTimeRef = useRef<Date | null>(null);
   
-  // Clear all timers for clean shutdown
+  useEffect(() => {
+    if (directCallInfo) {
+      setIsDirectCall(true);
+      if (directCallInfo.deviceSettings) {
+        setSelectedMic(directCallInfo.deviceSettings.mic);
+        setSelectedSpeaker(directCallInfo.deviceSettings.speaker);
+      }
+    } else {
+      setIsDirectCall(false);
+    }
+  }, [directCallInfo]);
+  
   const clearAllTimers = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -63,7 +82,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     }
   };
 
-  // Reset component state when dialog is closed
   useEffect(() => {
     if (!open) {
       const resetState = () => {
@@ -72,14 +90,13 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         setTranscriptions([]);
         setIsMuted(false);
         setIsAudioMuted(false);
+        setIsDirectCall(Boolean(directCallInfo));
       };
       
-      // Small delay to ensure DOM is updated before state reset
       setTimeout(resetState, 100);
     }
-  }, [open]);
+  }, [open, directCallInfo]);
 
-  // Clean up on component unmount
   useEffect(() => {
     return () => {
       clearAllTimers();
@@ -92,7 +109,9 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         setCallStatus("active");
         callStartTimeRef.current = new Date();
         
-        if (persona) {
+        if (isDirectCall) {
+          setTranscriptions([`System: Connected to ${directCallInfo?.phoneNumber}. You are now speaking with a real person.`]);
+        } else if (persona) {
           const initialMessage = getInitialMessage(persona);
           setTranscriptions([`${persona.name}: ${initialMessage}`]);
         }
@@ -100,7 +119,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       
       return () => clearTimeout(timer);
     }
-  }, [open, callStatus, persona]);
+  }, [open, callStatus, persona, isDirectCall, directCallInfo]);
 
   useEffect(() => {
     const getDevices = async () => {
@@ -201,25 +220,26 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       timerRef.current = null;
     }
     
-    if (onCallComplete && persona) {
+    if (onCallComplete) {
       const now = new Date();
       const date = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
       
       const recordingData: RecordingData = {
         id: Math.random().toString(36).substring(2, 9),
-        title: `Call with ${persona.name}`,
+        title: isDirectCall 
+          ? `Call with ${directCallInfo?.phoneNumber}`
+          : `Call with ${persona?.name || 'Unknown'}`,
         date,
         time,
         duration: formatDuration(callDuration),
-        type: 'roleplay',
+        type: isDirectCall ? 'call' : 'roleplay',
         transcriptions: [...transcriptions]
       };
       
       onCallComplete(recordingData);
     }
     
-    // Close the dialog directly
     onOpenChange(false);
   };
 
@@ -251,17 +271,14 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     }, 3000);
   };
 
-  if (!persona) return null;
+  if (!persona && !isDirectCall) return null;
 
   return (
     <AlertDialog 
       open={open}
       onOpenChange={(newOpen) => {
         if (!newOpen) {
-          // If the dialog is being closed, clean up first
           clearAllTimers();
-          
-          // Small delay to allow animations to complete
           setTimeout(() => {
             onOpenChange(false);
           }, 50);
@@ -272,20 +289,30 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     >
       <AlertDialogContent className="max-w-md sm:max-w-2xl bg-[#0F172A] border-gray-800">
         <AlertDialogDescription className="sr-only">
-          Call interface with {persona.name}. You can communicate and train with this persona.
+          {isDirectCall 
+            ? `Direct call to ${directCallInfo?.phoneNumber}` 
+            : `Call interface with ${persona?.name}. You can communicate and train with this persona.`}
         </AlertDialogDescription>
         
         <AlertDialogHeader className="space-y-2 border-b border-gray-800 pb-4">
           <AlertDialogTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {persona.type === "customer" ? (
+              {isDirectCall ? (
+                <Phone className="h-5 w-5 text-green-400" />
+              ) : persona?.type === "customer" ? (
                 <User className="h-5 w-5 text-gray-400" />
               ) : (
                 <Bot className="h-5 w-5 text-primary" />
               )}
-              <span>{persona.name}</span>
+              <span>
+                {isDirectCall 
+                  ? `Direct Call: ${directCallInfo?.phoneNumber}`
+                  : persona?.name}
+              </span>
               <Badge variant="outline" className="ml-2">
-                {persona.type === "customer" ? "Customer" : "Training Bot"}
+                {isDirectCall 
+                  ? "Live Call" 
+                  : persona?.type === "customer" ? "Customer" : "Training Bot"}
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-sm font-normal">
@@ -307,14 +334,20 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
           {callStatus === "connecting" && (
             <div className="py-10 flex flex-col items-center justify-center">
               <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mb-4 relative">
-                {persona.type === "customer" ? (
+                {isDirectCall ? (
+                  <Phone className="h-8 w-8 text-green-400" />
+                ) : persona?.type === "customer" ? (
                   <User className="h-8 w-8 text-gray-400" />
                 ) : (
                   <Bot className="h-8 w-8 text-primary" />
                 )}
                 <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-amber-500 rounded-full animate-pulse"></div>
               </div>
-              <h3 className="text-lg font-medium mb-2">Connecting to {persona.name}...</h3>
+              <h3 className="text-lg font-medium mb-2">
+                {isDirectCall
+                  ? `Connecting to ${directCallInfo?.phoneNumber}...`
+                  : `Connecting to ${persona?.name}...`}
+              </h3>
               <Progress value={45} className="w-48 h-1" />
             </div>
           )}
@@ -324,12 +357,22 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-4 my-4 h-[350px]">
             <div className="space-y-4 h-full flex flex-col">
               <div className="rounded-lg border border-gray-800 p-3 bg-gray-900/50 text-sm flex-shrink-0">
-                <h4 className="font-medium text-sm mb-1.5">About {persona.name}</h4>
-                <p className="text-gray-400 mb-2">{persona.description}</p>
-                {persona.scenario && (
-                  <div className="bg-gray-800 rounded p-2 text-xs">
-                    <span className="font-medium">Scenario:</span> {persona.scenario}
-                  </div>
+                <h4 className="font-medium text-sm mb-1.5">
+                  {isDirectCall ? "Direct Call Info" : `About ${persona?.name}`}
+                </h4>
+                {isDirectCall ? (
+                  <p className="text-gray-400 mb-2">
+                    Live call with {directCallInfo?.phoneNumber}. The person on the other end will roleplay as a customer.
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-gray-400 mb-2">{persona?.description}</p>
+                    {persona?.scenario && (
+                      <div className="bg-gray-800 rounded p-2 text-xs">
+                        <span className="font-medium">Scenario:</span> {persona?.scenario}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
@@ -340,6 +383,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                   <Select 
                     value={selectedMic} 
                     onValueChange={setSelectedMic}
+                    disabled={isDirectCall}
                   >
                     <SelectTrigger id="mic-select" className="h-8 text-xs border-gray-800 bg-gray-900">
                       <SelectValue placeholder="Select microphone" />
@@ -359,6 +403,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                   <Select 
                     value={selectedSpeaker} 
                     onValueChange={setSelectedSpeaker}
+                    disabled={isDirectCall}
                   >
                     <SelectTrigger id="speaker-select" className="h-8 text-xs border-gray-800 bg-gray-900">
                       <SelectValue placeholder="Select speaker" />
