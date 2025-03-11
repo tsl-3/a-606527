@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 const TooltipProvider = TooltipPrimitive.Provider
 
 const Tooltip = ({ ...props }) => (
-  <TooltipPrimitive.Root delayDuration={200} {...props} />
+  <TooltipPrimitive.Root trigger="click" {...props} />
 )
 
 const TooltipTrigger = TooltipPrimitive.Trigger
