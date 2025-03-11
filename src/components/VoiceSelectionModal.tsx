@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -167,6 +168,7 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
   };
   
   const handlePlaySample = (voiceId: string, providerKey: keyof typeof VOICE_PROVIDERS, voiceName: string) => {
+    // If currently playing this voice, stop it
     if (currentlyPlaying === voiceId) {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -175,8 +177,18 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
       return;
     }
     
+    // Set as playing immediately for UI feedback
+    setCurrentlyPlaying(voiceId);
+    
+    // Try to play the actual audio if available
     const voicePath = VOICE_PROVIDERS[providerKey][voiceName]?.audioSample;
-    if (!voicePath) return;
+    if (!voicePath) {
+      // Simulate playback for 15 seconds if no audio file
+      setTimeout(() => {
+        setCurrentlyPlaying(null);
+      }, 15000);
+      return;
+    }
     
     if (audioRef.current) {
       audioRef.current.pause();
@@ -186,30 +198,24 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
     audioRef.current = audio;
     
     audio.onended = () => {
-      setTimeout(() => {
-        setCurrentlyPlaying(null);
-      }, 15000);
-    };
-    
-    audio.onplay = () => {
-      setCurrentlyPlaying(voiceId);
+      setCurrentlyPlaying(null);
     };
     
     audio.onerror = () => {
       console.error("Error playing audio sample");
-      setCurrentlyPlaying(null);
-    };
-    
-    audio.play().then(() => {
-      audio.pause();
-      setCurrentlyPlaying(voiceId);
-      
+      // Don't reset currentlyPlaying here to simulate playback
       setTimeout(() => {
         setCurrentlyPlaying(null);
       }, 15000);
-    }).catch(err => {
+    };
+    
+    // Try to play the audio, but don't reset currentlyPlaying on error
+    audio.play().catch(err => {
       console.error("Error playing audio:", err);
-      setCurrentlyPlaying(null);
+      // Still simulate playback for 15 seconds even if audio fails
+      setTimeout(() => {
+        setCurrentlyPlaying(null);
+      }, 15000);
     });
   };
   
@@ -235,6 +241,8 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                 <div className="p-4 space-y-4">
                   {Object.keys(VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]).map((voiceName) => {
                     const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
+                    const isPlaying = currentlyPlaying === voiceObj.id;
+                    
                     return (
                       <div 
                         key={voiceObj.id} 
@@ -254,12 +262,12 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                               <Volume2 className="h-6 w-6" />
                             </AvatarFallback>
                           </Avatar>
-                          {(hoveredVoice === voiceObj.id || currentlyPlaying === voiceObj.id) && (
+                          {(hoveredVoice === voiceObj.id || isPlaying) && (
                             <Button
                               variant="play"
                               size="play"
                               className={`absolute top-0 left-0 w-full h-full rounded-full shadow-md flex items-center justify-center ${
-                                currentlyPlaying === voiceObj.id 
+                                isPlaying 
                                   ? 'bg-primary text-white'
                                   : 'bg-black/60 hover:bg-primary/90'
                               }`}
@@ -268,7 +276,7 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                                 handlePlaySample(voiceObj.id, provider as keyof typeof VOICE_PROVIDERS, voiceName);
                               }}
                             >
-                              {currentlyPlaying === voiceObj.id ? (
+                              {isPlaying ? (
                                 <Pause className="h-5 w-5 text-white" />
                               ) : (
                                 <Play className="h-5 w-5 text-white ml-0.5" />
