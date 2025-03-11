@@ -11,7 +11,7 @@ import {
   Bot, Copy, Target, User, FileText, Code, Building, Briefcase, 
   Headphones, ShoppingCart, Wrench, CircuitBoard, GraduationCap, Plane, 
   Factory, ShieldCheck, Phone, Home, Plus, MessageSquare,
-  HeartPulse, Landmark, Wallet, BarChart4, Calendar, Mic, Brain, Play, Pause, Volume2
+  HeartPulse, Landmark, Wallet, BarChart4, Calendar, Mic, Brain, Play, Volume2, ChevronDown
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import debounce from 'lodash/debounce';
@@ -21,12 +21,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { isEqual } from 'lodash';
-
-interface AgentConfigSettingsProps {
-  agent: AgentType;
-  onAgentUpdate: (updatedAgent: AgentType) => void;
-  showSuccessToast?: (title: string, description: string) => void;
-}
+import VoiceSelectionModal from './VoiceSelectionModal';
 
 const VOICE_PROVIDERS = {
   "Eleven Labs": {
@@ -179,6 +174,12 @@ const AI_MODELS = [
   { id: "Llama-3", name: "Llama 3" }
 ];
 
+interface AgentConfigSettingsProps {
+  agent: AgentType;
+  onAgentUpdate: (updatedAgent: AgentType) => void;
+  showSuccessToast?: (title: string, description: string) => void;
+}
+
 const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgentUpdate, showSuccessToast }) => {
   const { toast } = useToast();
   const [name, setName] = useState(agent.name);
@@ -198,6 +199,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   const [selectedVoiceTraits, setSelectedVoiceTraits] = useState<VoiceTrait[]>([]);
   const [customVoiceId, setCustomVoiceId] = useState('');
   const [isCustomVoice, setIsCustomVoice] = useState(false);
+  const [voiceModalOpen, setVoiceModalOpen] = useState(false);
   
   const prevValuesRef = useRef({
     name: agent.name,
@@ -424,6 +426,30 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
     }
   };
 
+  const getCurrentVoiceDetails = () => {
+    for (const provider in VOICE_PROVIDERS) {
+      for (const voiceName in VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]) {
+        const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
+        if (voiceObj.id === voice) {
+          return {
+            ...voiceObj,
+            provider
+          };
+        }
+      }
+    }
+    
+    // Default to first voice if not found
+    const firstProvider = Object.keys(VOICE_PROVIDERS)[0] as keyof typeof VOICE_PROVIDERS;
+    const firstVoiceName = Object.keys(VOICE_PROVIDERS[firstProvider])[0];
+    return {
+      ...VOICE_PROVIDERS[firstProvider][firstVoiceName],
+      provider: firstProvider
+    };
+  };
+
+  const currentVoiceDetails = getCurrentVoiceDetails();
+
   return (
     <div className="space-y-8">
       <Card>
@@ -533,76 +559,34 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                 <Label htmlFor="agent-voice">Voice</Label>
               </div>
 
-              <Tabs defaultValue={voiceProvider} onValueChange={handleVoiceProviderChange} className="w-full">
-                <TabsList className="w-full grid grid-cols-3">
-                  {Object.keys(VOICE_PROVIDERS).map((provider) => (
-                    <TabsTrigger key={provider} value={provider}>
-                      {provider}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-
-                {Object.keys(VOICE_PROVIDERS).map((provider) => (
-                  <TabsContent key={provider} value={provider} className="mt-4">
-                    <ScrollArea className="h-52 w-full rounded-md border">
-                      <div className="p-4 space-y-4">
-                        {Object.keys(VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]).map((voiceName) => {
-                          const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
-                          return (
-                            <div 
-                              key={voiceObj.id} 
-                              className={`flex items-start gap-4 p-3 rounded-lg cursor-pointer hover:bg-muted transition-colors ${voice === voiceObj.id ? 'bg-muted border border-agent-primary/30' : ''}`}
-                              onClick={() => handleVoiceChange(voiceObj.id)}
-                            >
-                              <div className="relative">
-                                <Avatar className="h-14 w-14">
-                                  <AvatarImage src={voiceObj.avatar || `https://api.dicebear.com/7.x/personas/svg?seed=${voiceObj.id}`} alt={voiceObj.name} />
-                                  <AvatarFallback>
-                                    <Volume2 className="h-6 w-6" />
-                                  </AvatarFallback>
-                                </Avatar>
-                                <Button
-                                  variant="play"
-                                  size="play"
-                                  className="absolute -bottom-1 -right-1 shadow-md"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handlePlaySample(voiceObj.id, provider as keyof typeof VOICE_PROVIDERS, voiceName);
-                                  }}
-                                >
-                                  {currentlyPlaying === voiceObj.id ? (
-                                    <Pause className="h-3.5 w-3.5" />
-                                  ) : (
-                                    <Play className="h-3.5 w-3.5 ml-0.5" />
-                                  )}
-                                </Button>
-                              </div>
-                              
-                              <div className="flex-1">
-                                <div className="flex items-center justify-between">
-                                  <h4 className="font-medium text-sm">{voiceObj.name}</h4>
-                                  {voice === voiceObj.id && (
-                                    <Badge variant="outline" className="bg-agent-primary/10 text-xs">
-                                      Selected
-                                    </Badge>
-                                  )}
-                                </div>
-                                <div className="flex gap-1 mt-2 flex-wrap">
-                                  {voiceObj.traits?.map((trait, idx) => (
-                                    <Badge key={idx} className={trait.color}>
-                                      {trait.name}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </ScrollArea>
-                  </TabsContent>
+              <Button 
+                variant="outline" 
+                className="w-full justify-between"
+                onClick={() => setVoiceModalOpen(true)}
+              >
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage 
+                      src={currentVoiceDetails.avatar || `https://api.dicebear.com/7.x/personas/svg?seed=${currentVoiceDetails.id}`} 
+                      alt={currentVoiceDetails.name} 
+                    />
+                    <AvatarFallback><Volume2 className="h-4 w-4" /></AvatarFallback>
+                  </Avatar>
+                  <div className="text-left">
+                    <div className="font-medium">{currentVoiceDetails.name}</div>
+                    <div className="text-xs text-muted-foreground">{currentVoiceDetails.provider}</div>
+                  </div>
+                </div>
+                <ChevronDown className="h-4 w-4 opacity-50" />
+              </Button>
+              
+              <div className="flex gap-1 flex-wrap mt-1">
+                {selectedVoiceTraits.map((trait, idx) => (
+                  <Badge key={idx} className={trait.color}>
+                    {trait.name}
+                  </Badge>
                 ))}
-              </Tabs>
+              </div>
               
               <p className="text-xs text-muted-foreground">
                 The voice your agent will use when speaking to users
@@ -754,6 +738,15 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
           Saving changes...
         </div>
       )}
+      
+      <VoiceSelectionModal
+        open={voiceModalOpen}
+        onOpenChange={setVoiceModalOpen}
+        selectedVoice={voice}
+        onVoiceSelect={handleVoiceChange}
+        voiceProvider={voiceProvider}
+        onVoiceProviderChange={handleVoiceProviderChange}
+      />
     </div>
   );
 };

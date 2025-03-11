@@ -23,7 +23,7 @@ export const useAgentDetails = (agentId: string | undefined) => {
         id: "new123",
         name: "New Agent",
         description: "This agent was just created and needs configuration.",
-        type: "Other Function", // Changed from "custom" to a valid AgentTypeCategory
+        type: "Other Function",
         status: "inactive",
         createdAt: new Date().toISOString().split('T')[0],
         interactions: 0,
@@ -39,6 +39,7 @@ export const useAgentDetails = (agentId: string | undefined) => {
         customIndustry: "",
         customFunction: "",
         voice: "9BWtsMINqrJLrRacOk9x", // Default voice ID for Aria
+        voiceProvider: "Eleven Labs", // Add default voice provider
         // Add explicit zeros for stats to make it clear they don't exist yet
         avmScore: 0,
         csat: 0,
@@ -99,7 +100,8 @@ export const useAgentDetails = (agentId: string | undefined) => {
           botFunction: data.botFunction || "",
           customIndustry: data.customIndustry || "",
           customFunction: data.customFunction || "",
-          voice: data.voice || "9BWtsMINqrJLrRacOk9x" // Default voice ID for Aria
+          voice: data.voice || "9BWtsMINqrJLrRacOk9x", // Default voice ID for Aria
+          voiceProvider: data.voiceProvider || "Eleven Labs" // Default voice provider
         };
         
         setAgent(enhancedData);
