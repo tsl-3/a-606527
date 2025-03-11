@@ -132,6 +132,7 @@ export const SimulationCard = ({
               performance={performance}
               scenarios={scenarios}
               simulations={simulations}
+              hideProgressBar={true} // Add this prop to hide the progress bar in SimulationSteps
             />
           </CardContent>
         )}
