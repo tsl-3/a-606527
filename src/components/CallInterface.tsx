@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface UserPersona {
@@ -54,6 +54,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   const timerRef = useRef<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const callStartTimeRef = useRef<Date | null>(null);
+  const endCallTimeoutRef = useRef<number | null>(null);
 
   // Reset state when dialog opens or closes
   useEffect(() => {
@@ -69,6 +70,12 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
+      }
+      
+      // Clear any pending timeouts
+      if (endCallTimeoutRef.current) {
+        clearTimeout(endCallTimeoutRef.current);
+        endCallTimeoutRef.current = null;
       }
     }
   }, [open]);
@@ -199,16 +206,28 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         transcriptions: [...transcriptions]
       };
       
-      // Delay to allow for the ending animation
-      setTimeout(() => {
+      // Make sure any previous timeout is cleared
+      if (endCallTimeoutRef.current) {
+        clearTimeout(endCallTimeoutRef.current);
+        endCallTimeoutRef.current = null;
+      }
+      
+      // Delay to allow for the ending animation, then close dialog and pass data
+      endCallTimeoutRef.current = window.setTimeout(() => {
         onCallComplete(recordingData);
-        // Make sure to properly close the dialog to prevent overlay issues
         onOpenChange(false);
+        endCallTimeoutRef.current = null;
       }, 500);
     } else {
       // If there's no onCallComplete handler, ensure the dialog closes
-      setTimeout(() => {
+      if (endCallTimeoutRef.current) {
+        clearTimeout(endCallTimeoutRef.current);
+        endCallTimeoutRef.current = null;
+      }
+      
+      endCallTimeoutRef.current = window.setTimeout(() => {
         onOpenChange(false);
+        endCallTimeoutRef.current = null;
       }, 500);
     }
   };
@@ -249,6 +268,17 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       onOpenChange={(newOpen) => {
         // Only allow closing through the proper channels to avoid UI blocking
         if (!newOpen && callStatus === "ended") {
+          // Clear all timers before closing
+          if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+          }
+          
+          if (endCallTimeoutRef.current) {
+            clearTimeout(endCallTimeoutRef.current);
+            endCallTimeoutRef.current = null;
+          }
+          
           onOpenChange(newOpen);
         } else if (!newOpen) {
           // If trying to close while call is active, end the call first
