@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { RolePlayDialog } from "./RolePlayDialog";
-import { UserPersonasModal } from "./UserPersonasModal";
+import { UserPersonasSidebar } from "./UserPersonasSidebar";
 import { CallInterface, RecordingData } from "./CallInterface";
 import { toast } from "@/components/ui/use-toast";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -71,7 +71,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   const [openRolePlayDialog, setOpenRolePlayDialog] = useState(false);
   const [callRolePlayDialog, setCallRolePlayDialog] = useState(false);
   
-  const [userPersonasModalOpen, setUserPersonasModalOpen] = useState(false);
+  const [userPersonasSidebarOpen, setUserPersonasSidebarOpen] = useState(false);
   const [callInterfaceOpen, setCallInterfaceOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState<any>(null);
 
@@ -116,7 +116,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   
   const handleSelectPersona = (persona: any) => {
     setSelectedPersona(persona);
-    setUserPersonasModalOpen(false);
+    setUserPersonasSidebarOpen(false);
     setCallInterfaceOpen(true);
   };
   
@@ -257,7 +257,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                   </div>
                   
                   <div 
-                    onClick={() => setUserPersonasModalOpen(true)} 
+                    onClick={() => setUserPersonasSidebarOpen(true)} 
                     className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
                   >
                     <Bot className="h-12 w-12 text-primary dark:text-primary mb-3" />
@@ -440,7 +440,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     </div>
                     
                     <div 
-                      onClick={() => setUserPersonasModalOpen(true)} 
+                      onClick={() => setUserPersonasSidebarOpen(true)} 
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
                     >
                       <Bot className="h-12 w-12 text-primary dark:text-primary mb-3" />
@@ -635,7 +635,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     </div>
                     
                     <div 
-                      onClick={() => setUserPersonasModalOpen(true)} 
+                      onClick={() => setUserPersonasSidebarOpen(true)} 
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
                     >
                       <Bot className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
@@ -655,14 +655,9 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
         onOpenChange={setOpenRolePlayDialog} 
       />
       
-      <RolePlayDialog 
-        open={callRolePlayDialog} 
-        onOpenChange={setCallRolePlayDialog} 
-      />
-      
-      <UserPersonasModal
-        open={userPersonasModalOpen}
-        onOpenChange={setUserPersonasModalOpen}
+      <UserPersonasSidebar
+        open={userPersonasSidebarOpen}
+        onOpenChange={setUserPersonasSidebarOpen}
         onSelectPersona={handleSelectPersona}
       />
       
