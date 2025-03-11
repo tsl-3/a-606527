@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter, AlertDialogDescription } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -50,12 +51,14 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   const [availableSpeakers, setAvailableSpeakers] = useState<MediaDeviceInfo[]>([]);
   const [transcriptions, setTranscriptions] = useState<string[]>([]);
   const [forceClose, setForceClose] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   const timerRef = useRef<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const callStartTimeRef = useRef<Date | null>(null);
   const endCallTimeoutRef = useRef<number | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const cleanupRef = useRef<boolean>(false);
 
   const clearAllTimers = () => {
     if (timerRef.current) {
@@ -69,40 +72,51 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     }
   };
 
+  // Reset component state when dialog is closed
   useEffect(() => {
-    if (!open) {
-      setCallStatus("connecting");
-      setCallDuration(0);
-      setTranscriptions([]);
-      setIsMuted(false);
-      setIsAudioMuted(false);
-      setForceClose(false);
+    if (!open && !isClosing) {
+      const resetState = () => {
+        setCallStatus("connecting");
+        setCallDuration(0);
+        setTranscriptions([]);
+        setIsMuted(false);
+        setIsAudioMuted(false);
+        setForceClose(false);
+        setIsClosing(false);
+        clearAllTimers();
+        cleanupRef.current = false;
+      };
       
-      clearAllTimers();
+      // Small delay to ensure DOM is updated before state reset
+      setTimeout(resetState, 100);
     }
-  }, [open]);
+  }, [open, isClosing]);
 
+  // Clean up on component unmount
   useEffect(() => {
     return () => {
       clearAllTimers();
+      cleanupRef.current = true;
     };
   }, []);
 
   useEffect(() => {
-    if (open && callStatus === "connecting") {
+    if (open && callStatus === "connecting" && !isClosing) {
       const timer = setTimeout(() => {
-        setCallStatus("active");
-        callStartTimeRef.current = new Date();
-        
-        if (persona) {
-          const initialMessage = getInitialMessage(persona);
-          setTranscriptions([`${persona.name}: ${initialMessage}`]);
+        if (!cleanupRef.current) {
+          setCallStatus("active");
+          callStartTimeRef.current = new Date();
+          
+          if (persona) {
+            const initialMessage = getInitialMessage(persona);
+            setTranscriptions([`${persona.name}: ${initialMessage}`]);
+          }
         }
       }, 1500);
       
       return () => clearTimeout(timer);
     }
-  }, [open, callStatus, persona]);
+  }, [open, callStatus, persona, isClosing]);
 
   useEffect(() => {
     const getDevices = async () => {
@@ -137,19 +151,25 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       }
     };
     
-    if (open) {
+    if (open && !isClosing) {
       getDevices();
     }
     
-    navigator.mediaDevices.addEventListener('devicechange', getDevices);
+    const deviceChangeHandler = () => {
+      if (open && !isClosing) {
+        getDevices();
+      }
+    };
+    
+    navigator.mediaDevices.addEventListener('devicechange', deviceChangeHandler);
     
     return () => {
-      navigator.mediaDevices.removeEventListener('devicechange', getDevices);
+      navigator.mediaDevices.removeEventListener('devicechange', deviceChangeHandler);
     };
-  }, [open]);
+  }, [open, isClosing]);
 
   useEffect(() => {
-    if (open && callStatus === "active") {
+    if (open && callStatus === "active" && !isClosing) {
       timerRef.current = window.setInterval(() => {
         setCallDuration(prev => prev + 1);
       }, 1000);
@@ -161,11 +181,13 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         timerRef.current = null;
       }
     };
-  }, [open, callStatus]);
+  }, [open, callStatus, isClosing]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [transcriptions]);
+    if (!isClosing) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [transcriptions, isClosing]);
 
   const getInitialMessage = (persona: UserPersona): string => {
     switch (persona.id) {
@@ -190,6 +212,9 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   };
 
   const handleEndCall = () => {
+    if (isClosing) return;
+    
+    setIsClosing(true);
     setCallStatus("ended");
     
     if (timerRef.current) {
@@ -214,26 +239,30 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       
       if (endCallTimeoutRef.current) {
         clearTimeout(endCallTimeoutRef.current);
-        endCallTimeoutRef.current = null;
       }
       
+      // Use a short timeout to ensure the UI has time to update
       endCallTimeoutRef.current = window.setTimeout(() => {
-        onCallComplete(recordingData);
-        setForceClose(true);
-        onOpenChange(false);
-        endCallTimeoutRef.current = null;
-      }, 300);
+        if (!cleanupRef.current) {
+          onCallComplete(recordingData);
+          setForceClose(true);
+          onOpenChange(false);
+          endCallTimeoutRef.current = null;
+        }
+      }, 150);
     } else {
       if (endCallTimeoutRef.current) {
         clearTimeout(endCallTimeoutRef.current);
-        endCallTimeoutRef.current = null;
       }
       
+      // Use a short timeout to ensure the UI has time to update
       endCallTimeoutRef.current = window.setTimeout(() => {
-        setForceClose(true);
-        onOpenChange(false);
-        endCallTimeoutRef.current = null;
-      }, 300);
+        if (!cleanupRef.current) {
+          setForceClose(true);
+          onOpenChange(false);
+          endCallTimeoutRef.current = null;
+        }
+      }, 150);
     }
   };
 
@@ -254,11 +283,13 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   };
 
   const handleSendMessage = () => {
+    if (isClosing) return;
+    
     const userMessage = "I understand. Let me help you with that...";
     setTranscriptions(prev => [...prev, `You: ${userMessage}`]);
     
     setTimeout(() => {
-      if (persona) {
+      if (persona && !isClosing && !cleanupRef.current) {
         const responseText = "Thank you for your help. Can you tell me more about the pricing options?";
         setTranscriptions(prev => [...prev, `${persona.name}: ${responseText}`]);
       }
@@ -271,14 +302,10 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     <AlertDialog 
       open={open && !forceClose}
       onOpenChange={(newOpen) => {
+        if (isClosing) return;
+        
         if (!newOpen) {
-          clearAllTimers();
-          
-          if (callStatus === "ended") {
-            onOpenChange(false);
-          } else {
-            handleEndCall();
-          }
+          handleEndCall();
         } else {
           onOpenChange(newOpen);
         }
@@ -427,6 +454,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
             size="icon"
             onClick={handleToggleMute}
             className={isMuted ? "bg-red-500/90" : "border-gray-700"}
+            disabled={isClosing}
           >
             {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
           </Button>
@@ -436,6 +464,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
             size="icon"
             onClick={handleToggleAudio}
             className={isAudioMuted ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/30" : "border-gray-700"}
+            disabled={isClosing}
           >
             {isAudioMuted ? <Volume className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </Button>
@@ -443,7 +472,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
           <Button
             variant="default"
             onClick={handleSendMessage}
-            disabled={callStatus !== "active" || isMuted}
+            disabled={callStatus !== "active" || isMuted || isClosing}
             className="bg-white text-black hover:bg-gray-200"
           >
             Speak
@@ -453,6 +482,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
             variant="destructive"
             size="icon"
             onClick={handleEndCall}
+            disabled={isClosing}
           >
             <PhoneOff className="h-4 w-4" />
           </Button>
