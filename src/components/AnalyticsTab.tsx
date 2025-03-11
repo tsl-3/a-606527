@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { CalendarDays, Filter, Download, BarChart2, TestTube, Heart, MessageSquare, LayoutGrid, ExternalLink, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -88,9 +87,10 @@ const numberFormatter = (value: number) => value.toLocaleString();
 
 interface AnalyticsTabProps {
   agent: AgentType;
+  isNewAgent?: boolean;
 }
 
-const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
+const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent, isNewAgent = false }) => {
   const [dateRange, setDateRange] = useState("30days");
   const [channelFilter, setChannelFilter] = useState("all");
 
@@ -114,6 +114,16 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ agent }) => {
 
   return (
     <div className="max-w-7xl mx-auto animate-in space-y-6">
+      {isNewAgent && (
+        <Alert className="mb-6 border-agent-primary/30 bg-agent-primary/10">
+          <AlertCircle className="h-4 w-4 text-agent-primary" />
+          <AlertTitle>New Agent</AlertTitle>
+          <AlertDescription>
+            This is a newly created agent. Analytics data will be displayed as it becomes available.
+          </AlertDescription>
+        </Alert>
+      )}
+      
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-bold">Analytics</h1>
