@@ -574,6 +574,21 @@ const AgentDetails = () => {
                 </div>
                 <p className="text-muted-foreground mt-1.5 max-w-2xl">{agent.description}</p>
                 
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Bot className="h-3.5 w-3.5 text-agent-primary" />
+                    <span className="font-medium capitalize">{agent.type}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Calendar className="h-3.5 w-3.5 text-agent-primary" />
+                    <span>Created: {agent.createdAt}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <History className="h-3.5 w-3.5 text-agent-primary" />
+                    <span>Updated: {lastUpdated.split(',')[0]}</span>
+                  </div>
+                </div>
+                
                 {activeChannels.length > 0 && <div className="mt-4 flex flex-wrap gap-2">
                     {activeChannels.includes('voice') && <Badge className="bg-blue-500 text-white px-2 py-0.5 flex items-center gap-1">
                         <Mic className="h-3 w-3" />
@@ -700,37 +715,7 @@ const AgentDetails = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 gap-6">
               <div className="grid grid-cols-1 gap-4">
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  <div className="bg-secondary/30 dark:bg-secondary/10 px-4 py-3 rounded-lg border border-border">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Bot className="h-3.5 w-3.5 text-agent-primary" />
-                      <span className="text-xs text-muted-foreground">Type</span>
-                    </div>
-                    <p className="text-sm font-medium capitalize text-foreground">
-                      {agent.type}
-                    </p>
-                  </div>
-                
-                  <div className="bg-secondary/30 dark:bg-secondary/10 px-4 py-3 rounded-lg border border-border">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Calendar className="h-3.5 w-3.5 text-agent-primary" />
-                      <span className="text-xs text-muted-foreground">Created On</span>
-                    </div>
-                    <p className="text-sm font-medium text-foreground">
-                      {agent.createdAt}
-                    </p>
-                  </div>
-                  
-                  <div className="bg-secondary/30 dark:bg-secondary/10 px-4 py-3 rounded-lg border border-border">
-                    <div className="flex items-center gap-2 mb-1">
-                      <History className="h-3.5 w-3.5 text-agent-primary" />
-                      <span className="text-xs text-muted-foreground">Updated</span>
-                    </div>
-                    <p className="text-sm font-medium text-foreground">
-                      {lastUpdated.split(',')[0]}
-                    </p>
-                  </div>
-
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                   <div className="bg-secondary/30 dark:bg-secondary/10 px-4 py-3 rounded-lg border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <Cpu className="h-3.5 w-3.5 text-agent-primary" />
