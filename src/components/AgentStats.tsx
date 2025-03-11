@@ -1,7 +1,7 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Smile, Zap, Info } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 interface AgentStatsProps {
   avmScore?: number;  // 1-10 score
@@ -86,11 +86,13 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
         <Card className="flex-1 overflow-hidden shadow-sm">
           <div className="px-2 py-1 flex items-center justify-between border-b border-border">
             <span className="text-xs font-medium text-muted-foreground">AVM</span>
-            <div className={`w-2 h-2 rounded-full ${displayAvmScore ? getScoreColor(displayAvmScore) : "bg-gray-400"}`}></div>
+            <span className="text-xs font-medium">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
           </div>
-          <CardContent className="p-2 text-center">
-            <span className="text-xl font-semibold">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
-            <span className="text-xs text-muted-foreground ml-1">/10</span>
+          <CardContent className="p-2">
+            <Progress 
+              value={displayAvmScore ? (displayAvmScore * 10) : 0} 
+              className={`h-2 ${displayAvmScore ? getScoreColor(displayAvmScore) : "bg-gray-400"}`}
+            />
           </CardContent>
         </Card>
       )}
