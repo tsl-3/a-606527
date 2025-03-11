@@ -1,7 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -10,11 +9,14 @@ import { useToast } from "@/components/ui/use-toast";
 import { updateAgent } from '@/services/agentService';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
-  Bot, Copy, Save, Target, User, FileText, Code, Building, Briefcase, 
+  Bot, Copy, Target, User, FileText, Code, Building, Briefcase, 
   Headphones, ShoppingCart, Wrench, CircuitBoard, GraduationCap, Plane, 
-  Factory, ShieldCheck, Phone, Home, Plus, CirclePlus, MessageSquare,
-  HeartPulse, Landmark, Wallet, HelpCircle, BarChart4, Pen, Calendar
+  Factory, ShieldCheck, Phone, Home, Plus, MessageSquare,
+  HeartPulse, Landmark, Wallet, BarChart4, Calendar
 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import debounce from 'lodash/debounce';
 
 interface AgentConfigSettingsProps {
   agent: AgentType;
@@ -61,13 +63,45 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   const [customFunction, setCustomFunction] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = async () => {
-    try {
-      setIsSaving(true);
-      const finalIndustry = industry === 'other' ? customIndustry : industry;
-      const finalBotFunction = botFunction === 'other' ? customFunction : botFunction;
+  // Create debounced save function
+  const debouncedSave = React.useCallback(
+    debounce(async (updatedData) => {
+      try {
+        setIsSaving(true);
+        const updatedAgent = await updateAgent(agent.id, updatedData);
+        onAgentUpdate(updatedAgent);
+        
+        toast({
+          title: "Changes saved",
+          description: "Agent configuration has been updated automatically."
+        });
+      } catch (error) {
+        console.error("Error saving agent settings:", error);
+        toast({
+          title: "Failed to save changes",
+          description: "There was an error updating the agent configuration.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsSaving(false);
+      }
+    }, 1000),
+    [agent.id, onAgentUpdate, toast]
+  );
+
+  // Effect to trigger save when values change
+  useEffect(() => {
+    const finalIndustry = industry === 'other' ? customIndustry : industry;
+    const finalBotFunction = botFunction === 'other' ? customFunction : botFunction;
+    
+    if (name !== agent.name || 
+        avatar !== agent.avatar || 
+        purpose !== agent.purpose || 
+        prompt !== agent.prompt ||
+        finalIndustry !== agent.industry ||
+        finalBotFunction !== agent.botFunction) {
       
-      const updatedAgent = await updateAgent(agent.id, {
+      debouncedSave({
         name,
         avatar,
         purpose,
@@ -75,24 +109,8 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
         industry: finalIndustry,
         botFunction: finalBotFunction
       });
-      
-      onAgentUpdate(updatedAgent);
-      
-      toast({
-        title: "Settings saved",
-        description: "Agent configuration has been updated successfully."
-      });
-    } catch (error) {
-      console.error("Error saving agent settings:", error);
-      toast({
-        title: "Failed to save settings",
-        description: "There was an error saving the agent configuration.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSaving(false);
     }
-  };
+  }, [name, avatar, purpose, prompt, industry, botFunction, customIndustry, customFunction, agent, debouncedSave]);
 
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText(prompt);
@@ -112,200 +130,215 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   };
 
   return (
-    <Card className="border-0 shadow-none">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-2xl font-bold">Agent Configuration</CardTitle>
-        <CardDescription>
-          Configure your agent's basic information and behavior
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="flex flex-col items-center space-y-4">
-            <div className="bg-muted/30 rounded-lg p-6 flex flex-col items-center space-y-4 w-full">
-              <Avatar className="h-32 w-32 border-2 border-agent-primary/30">
-                <AvatarImage src={avatar} alt={name} />
-                <AvatarFallback>
-                  <Bot className="h-16 w-16" />
-                </AvatarFallback>
-              </Avatar>
-              
-              <div className="w-full space-y-3">
+    <div className="space-y-8">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl">Agent Identity</CardTitle>
+          <CardDescription>
+            Configure how your agent appears to users
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="bg-muted/30 rounded-lg p-6 flex flex-col items-center space-y-4 w-full">
+                <Avatar className="h-32 w-32 border-2 border-agent-primary/30">
+                  <AvatarImage src={avatar} alt={name} />
+                  <AvatarFallback>
+                    <Bot className="h-16 w-16" />
+                  </AvatarFallback>
+                </Avatar>
+                
+                <div className="w-full space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Bot className="h-4 w-4 text-agent-primary" />
+                    <Label htmlFor="agent-avatar">Agent Avatar URL</Label>
+                  </div>
+                  <Input
+                    id="agent-avatar"
+                    value={avatar}
+                    onChange={handleAvatarChange}
+                    placeholder="Enter avatar URL"
+                  />
+                  <Button 
+                    variant="outline" 
+                    onClick={generateRandomAvatar} 
+                    className="w-full mt-2"
+                    size="sm"
+                  >
+                    Generate Random Avatar
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <Bot className="h-4 w-4 text-agent-primary" />
-                  <Label htmlFor="agent-avatar">Agent Avatar URL</Label>
+                  <User className="h-4 w-4 text-agent-primary" />
+                  <Label htmlFor="agent-name">Agent Name</Label>
                 </div>
                 <Input
-                  id="agent-avatar"
-                  value={avatar}
-                  onChange={handleAvatarChange}
-                  placeholder="Enter avatar URL"
+                  id="agent-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter agent name"
+                  className="w-full"
                 />
-                <Button 
-                  variant="outline" 
-                  onClick={generateRandomAvatar} 
-                  className="w-full mt-2"
-                  size="sm"
-                >
-                  Generate Random Avatar
-                </Button>
+                <p className="text-xs text-muted-foreground">
+                  This name will be displayed to users when they interact with your agent
+                </p>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Target className="h-4 w-4 text-agent-primary" />
+                  <Label htmlFor="agent-purpose">Agent Purpose</Label>
+                </div>
+                <Textarea
+                  id="agent-purpose"
+                  value={purpose}
+                  onChange={(e) => setPurpose(e.target.value)}
+                  placeholder="Describe what this agent is designed to do"
+                  className="min-h-[100px] w-full"
+                />
+                <p className="text-xs text-muted-foreground">
+                  A clear description of your agent's role and primary responsibilities
+                </p>
               </div>
             </div>
           </div>
-          
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl">Agent Classification</CardTitle>
+          <CardDescription>
+            Define the industry and function of your agent
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
           <div className="space-y-6">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-agent-primary" />
-                <Label htmlFor="agent-name">Agent Name</Label>
+                <Building className="h-4 w-4 text-agent-primary" />
+                <Label>Industry</Label>
               </div>
-              <Input
-                id="agent-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter agent name"
-                className="w-full"
-              />
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                {INDUSTRIES.map((ind) => (
+                  <Button
+                    key={ind.id}
+                    type="button"
+                    variant={industry === ind.id ? "default" : "outline"}
+                    className={`justify-start gap-2 ${industry === ind.id ? "border-agent-primary bg-agent-primary text-white" : ""}`}
+                    onClick={() => setIndustry(ind.id)}
+                  >
+                    {ind.icon}
+                    <span className="truncate">{ind.name}</span>
+                  </Button>
+                ))}
+              </div>
+              
+              {industry === 'other' && (
+                <div className="mt-2">
+                  <Input
+                    value={customIndustry}
+                    onChange={(e) => setCustomIndustry(e.target.value)}
+                    placeholder="Enter custom industry"
+                    className="w-full"
+                  />
+                </div>
+              )}
               <p className="text-xs text-muted-foreground">
-                This name will be displayed to users when they interact with your agent
+                The industry context your agent operates in
               </p>
             </div>
-            
+
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Target className="h-4 w-4 text-agent-primary" />
-                <Label htmlFor="agent-purpose">Agent Purpose</Label>
+                <Briefcase className="h-4 w-4 text-agent-primary" />
+                <Label>Bot Function</Label>
               </div>
-              <Textarea
-                id="agent-purpose"
-                value={purpose}
-                onChange={(e) => setPurpose(e.target.value)}
-                placeholder="Describe what this agent is designed to do"
-                className="min-h-[100px] w-full"
-              />
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {BOT_FUNCTIONS.map((func) => (
+                  <Button
+                    key={func.id}
+                    type="button"
+                    variant={botFunction === func.id ? "default" : "outline"}
+                    className={`justify-start gap-2 ${botFunction === func.id ? "border-agent-primary bg-agent-primary text-white" : ""}`}
+                    onClick={() => setBotFunction(func.id)}
+                  >
+                    {func.icon}
+                    <span className="truncate">{func.name}</span>
+                  </Button>
+                ))}
+              </div>
+              
+              {botFunction === 'other' && (
+                <div className="mt-2">
+                  <Input
+                    value={customFunction}
+                    onChange={(e) => setCustomFunction(e.target.value)}
+                    placeholder="Enter custom function"
+                    className="w-full"
+                  />
+                </div>
+              )}
               <p className="text-xs text-muted-foreground">
-                A clear description of your agent's role and primary responsibilities
+                The primary function your agent serves
               </p>
             </div>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        <div className="space-y-4 pt-6 border-t">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Building className="h-4 w-4 text-agent-primary" />
-              <Label>Industry</Label>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {INDUSTRIES.map((ind) => (
-                <Button
-                  key={ind.id}
-                  type="button"
-                  variant={industry === ind.id ? "default" : "outline"}
-                  className={`justify-start gap-2 ${industry === ind.id ? "border-agent-primary bg-agent-primary text-white" : ""}`}
-                  onClick={() => setIndustry(ind.id)}
-                >
-                  {ind.icon}
-                  <span className="truncate">{ind.name}</span>
-                </Button>
-              ))}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl">Agent Instructions</CardTitle>
+          <CardDescription>
+            Define how your agent behaves and responds
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Code className="h-4 w-4 text-agent-primary" />
+              <Label htmlFor="agent-prompt" className="text-base font-medium">Prompt Instructions</Label>
             </div>
             
-            {industry === 'other' && (
-              <div className="mt-2">
-                <Input
-                  value={customIndustry}
-                  onChange={(e) => setCustomIndustry(e.target.value)}
-                  placeholder="Enter custom industry"
-                  className="w-full"
-                />
-              </div>
-            )}
-            <p className="text-xs text-muted-foreground">
-              The industry context your agent operates in
+            <div className="relative">
+              <Textarea
+                id="agent-prompt"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Enter the prompt or instructions for this agent"
+                className="min-h-[250px] font-mono text-sm pr-10"
+              />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="absolute top-2 right-2 h-8 w-8 opacity-70 hover:opacity-100 bg-muted/50 hover:bg-muted" 
+                onClick={handleCopyPrompt}
+                title="Copy to clipboard"
+              >
+                <Copy className="h-4 w-4 text-muted-foreground" />
+                <span className="sr-only">Copy</span>
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              These instructions tell the AI how to behave, what knowledge to use, and what tone to adopt
             </p>
           </div>
-
-          <div className="space-y-3 pt-4">
-            <div className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4 text-agent-primary" />
-              <Label>Bot Function</Label>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {BOT_FUNCTIONS.map((func) => (
-                <Button
-                  key={func.id}
-                  type="button"
-                  variant={botFunction === func.id ? "default" : "outline"}
-                  className={`justify-start gap-2 ${botFunction === func.id ? "border-agent-primary bg-agent-primary text-white" : ""}`}
-                  onClick={() => setBotFunction(func.id)}
-                >
-                  {func.icon}
-                  <span className="truncate">{func.name}</span>
-                </Button>
-              ))}
-            </div>
-            
-            {botFunction === 'other' && (
-              <div className="mt-2">
-                <Input
-                  value={customFunction}
-                  onChange={(e) => setCustomFunction(e.target.value)}
-                  placeholder="Enter custom function"
-                  className="w-full"
-                />
-              </div>
-            )}
-            <p className="text-xs text-muted-foreground">
-              The primary function your agent serves
-            </p>
-          </div>
+        </CardContent>
+      </Card>
+      
+      {isSaving && (
+        <div className="fixed bottom-4 right-4 bg-secondary/80 text-foreground px-4 py-2 rounded-md text-sm animate-in fade-in slide-in-from-bottom-4">
+          Saving changes...
         </div>
-
-        <div className="pt-4 border-t">
-          <div className="flex items-center gap-2 mb-4">
-            <Code className="h-4 w-4 text-agent-primary" />
-            <Label htmlFor="agent-prompt" className="text-lg font-medium">Agent Prompt Instructions</Label>
-          </div>
-          
-          <div className="relative">
-            <Textarea
-              id="agent-prompt"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Enter the prompt or instructions for this agent"
-              className="min-h-[250px] font-mono text-sm pr-10"
-            />
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute top-2 right-2 h-8 w-8 opacity-70 hover:opacity-100 bg-muted/50 hover:bg-muted" 
-              onClick={handleCopyPrompt}
-              title="Copy to clipboard"
-            >
-              <Copy className="h-4 w-4" />
-              <span className="sr-only">Copy</span>
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            These instructions tell the AI how to behave, what knowledge to use, and what tone to adopt
-          </p>
-        </div>
-        
-        <div className="flex justify-end pt-4 border-t">
-          <Button onClick={handleSave} disabled={isSaving} className="px-6">
-            {isSaving ? (
-              <>Loading...</>
-            ) : (
-              <>
-                <Save className="h-4 w-4 mr-2" />
-                Save Changes
-              </>
-            )}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 };
 
