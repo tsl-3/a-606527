@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause, Phone, Copy, PhoneOutgoing, PhoneIncoming, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog } from "lucide-react";
@@ -812,4 +813,108 @@ const AgentDetails = () => {
                         </DialogHeader>
                         
                         <Tabs defaultValue={voiceProvider} className="w-full" onValueChange={handleProviderChange}>
-                          <TabsList className="w-
+                          <TabsList className="w-full">
+                            <TabsTrigger value="Eleven Labs">Eleven Labs</TabsTrigger>
+                            <TabsTrigger value="Amazon Polly">Amazon Polly</TabsTrigger>
+                            <TabsTrigger value="Google TTS">Google TTS</TabsTrigger>
+                            <TabsTrigger value="Custom">Custom</TabsTrigger>
+                          </TabsList>
+                          
+                          <TabsContent value="Custom" className="mt-4">
+                            <div className="space-y-4">
+                              <div>
+                                <Label htmlFor="customVoiceId">Custom Voice ID</Label>
+                                <Input
+                                  id="customVoiceId"
+                                  value={customVoiceId}
+                                  onChange={handleCustomVoiceIdChange}
+                                  placeholder="Enter custom voice ID"
+                                  className="mt-1"
+                                />
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                Enter a custom voice ID provided by your voice service provider.
+                              </div>
+                            </div>
+                          </TabsContent>
+                          
+                          {["Eleven Labs", "Amazon Polly", "Google TTS"].map((provider) => (
+                            <TabsContent key={provider} value={provider} className="mt-4">
+                              <ScrollArea className="h-[300px] pr-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {Object.entries(voiceSamples[provider] || {}).map(([voiceName, voiceDef]) => (
+                                    <div
+                                      key={voiceName}
+                                      className={`border rounded-lg p-3 cursor-pointer transition-colors hover:bg-accent ${voice === voiceName ? 'border-primary bg-accent/50' : 'border-border'}`}
+                                      onClick={() => handleVoiceChange(voiceName)}
+                                    >
+                                      <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                          <Avatar className="h-10 w-10">
+                                            <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                            <AvatarFallback className="bg-secondary text-primary">
+                                              {voiceName.substring(0, 2)}
+                                            </AvatarFallback>
+                                          </Avatar>
+                                          <div>
+                                            <h4 className="font-medium">{voiceName}</h4>
+                                            <div className="flex items-center gap-1 mt-1">
+                                              {voiceDef.traits.map((trait) => (
+                                                <Badge key={trait.name} className={trait.color}>
+                                                  {trait.name}
+                                                </Badge>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handlePlaySample(voiceName);
+                                          }}
+                                          className="h-8 w-8"
+                                        >
+                                          {currentlyPlaying === voiceName ? (
+                                            <Pause className="h-4 w-4" />
+                                          ) : (
+                                            <Play className="h-4 w-4" />
+                                          )}
+                                          <span className="sr-only">
+                                            {currentlyPlaying === voiceName ? "Pause" : "Play"} sample
+                                          </span>
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </ScrollArea>
+                            </TabsContent>
+                          ))}
+                        </Tabs>
+                        
+                        <div className="flex justify-end mt-4 gap-3">
+                          <Button variant="outline" onClick={() => setIsVoiceDialogOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button onClick={handleVoiceSelectionSave}>
+                            Save
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <AgentConfigSettings agent={agent} onUpdate={handleAgentUpdate} />
+          </TabsContent>
+        </div>
+      </Tabs>
+    </div>
+  );
+};
+
+export default AgentDetails;
