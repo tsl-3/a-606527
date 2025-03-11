@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy, Sparkles, PlusCircle, ArrowUpDown } from "lucide-react";
@@ -467,7 +468,14 @@ const AgentsDashboard = () => {
                 
                 <CardContent>
                   <div className="flex flex-col space-y-4">
-                    {/* Show filtered attributes */}
+                    <AgentStats 
+                      avmScore={getAgentAVMScore(agent.id)} 
+                      interactionCount={agent.interactions}
+                      compact={true}
+                      hideInteractions={true}
+                    />
+                    
+                    {/* Show filtered attributes - moved after the AVM progress bar */}
                     {filterType !== "all" && (
                       <Badge variant="secondary" className="w-fit">
                         Type: {agent.type}
@@ -483,13 +491,6 @@ const AgentsDashboard = () => {
                         Status: {agent.status}
                       </Badge>
                     )}
-                    
-                    <AgentStats 
-                      avmScore={getAgentAVMScore(agent.id)} 
-                      interactionCount={agent.interactions}
-                      compact={true}
-                      hideInteractions={true}
-                    />
                   </div>
                 </CardContent>
                 
