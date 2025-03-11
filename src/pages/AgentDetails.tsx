@@ -27,9 +27,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import AgentConfigSettings from "@/components/AgentConfigSettings";
 import { RolePlayDialog } from "@/components/RolePlayDialog";
 import { CustomTooltip } from "@/components/CustomTooltip";
-
 const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
-
 interface VoiceDefinition {
   id: string;
   name: string;
@@ -37,7 +35,6 @@ interface VoiceDefinition {
   avatar?: string;
   audioSample: string;
 }
-
 const voiceSamples: Record<string, Record<string, VoiceDefinition>> = {
   "Eleven Labs": {
     "Emma": {
@@ -150,7 +147,6 @@ const voiceSamples: Record<string, Record<string, VoiceDefinition>> = {
     }
   }
 };
-
 const AgentDetails = () => {
   const {
     agentId
@@ -180,7 +176,6 @@ const AgentDetails = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isCallTooltipOpen, setIsCallTooltipOpen] = useState(false);
   const [customCallNumber, setCustomCallNumber] = useState<string>("");
-
   useEffect(() => {
     if (agent) {
       setIsActive(agent.status === "active");
@@ -198,7 +193,6 @@ const AgentDetails = () => {
       }
     }
   }, [agent]);
-
   useEffect(() => {
     return () => {
       if (audioRef.current) {
@@ -207,7 +201,6 @@ const AgentDetails = () => {
       }
     };
   }, []);
-
   const handleStatusToggle = () => {
     setIsActive(!isActive);
     toast({
@@ -216,7 +209,6 @@ const AgentDetails = () => {
       variant: !isActive ? "default" : "destructive"
     });
   };
-
   const handleModelChange = async (value: string) => {
     setModel(value);
     if (agent && agentId) {
@@ -238,7 +230,6 @@ const AgentDetails = () => {
       }
     }
   };
-
   const handleVoiceChange = async (voiceName: string) => {
     setVoice(voiceName);
     setIsCustomVoice(voiceName === "Custom");
@@ -256,7 +247,6 @@ const AgentDetails = () => {
       setSelectedVoiceId(customVoiceId);
     }
   };
-
   const handleProviderChange = async (value: string) => {
     setVoiceProvider(value);
     const voices = Object.keys(voiceSamples[value as keyof typeof voiceSamples] || {});
@@ -274,12 +264,10 @@ const AgentDetails = () => {
       setCurrentlyPlaying(null);
     }
   };
-
   const handleCustomVoiceIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomVoiceId(e.target.value);
     setSelectedVoiceId(e.target.value);
   };
-
   const handlePlaySample = (voiceName: string) => {
     if (currentlyPlaying === voiceName) {
       if (audioRef.current) {
@@ -314,7 +302,6 @@ const AgentDetails = () => {
       setCurrentlyPlaying(null);
     });
   };
-
   const handleVoiceSelectionSave = async () => {
     if (agent && agentId) {
       try {
@@ -340,7 +327,6 @@ const AgentDetails = () => {
       }
     }
   };
-
   const handleDelete = () => {
     toast({
       title: "Agent deleted",
@@ -349,7 +335,6 @@ const AgentDetails = () => {
     });
     navigate("/agents");
   };
-
   const handleUpdateChannel = async (channel: string, config: {
     enabled: boolean;
     details?: string;
@@ -385,7 +370,6 @@ const AgentDetails = () => {
       });
     }
   };
-
   const handleCopyPhoneNumber = () => {
     if (voicePhoneNumber) {
       navigator.clipboard.writeText(voicePhoneNumber);
@@ -395,7 +379,6 @@ const AgentDetails = () => {
       });
     }
   };
-
   const handleTestCall = () => {
     if (voicePhoneNumber) {
       window.location.href = `tel:${voicePhoneNumber}`;
@@ -411,7 +394,6 @@ const AgentDetails = () => {
       });
     }
   };
-
   const handleCopyEmail = () => {
     if (emailAddress) {
       navigator.clipboard.writeText(emailAddress);
@@ -421,7 +403,6 @@ const AgentDetails = () => {
       });
     }
   };
-
   const handleTestEmail = () => {
     if (emailAddress) {
       window.location.href = `mailto:${emailAddress}?subject=Test Email for ${agent?.name || 'Agent'}&body=This is a test email for your AI agent.`;
@@ -437,7 +418,6 @@ const AgentDetails = () => {
       });
     }
   };
-
   const handleCallMe = () => {
     if (customCallNumber && customCallNumber.trim() !== "") {
       toast({
@@ -453,7 +433,6 @@ const AgentDetails = () => {
       });
     }
   };
-
   const handleDeactivateAgent = () => {
     setIsActive(false);
     toast({
@@ -462,7 +441,6 @@ const AgentDetails = () => {
       variant: "destructive"
     });
   };
-
   const handleArchiveAgent = () => {
     toast({
       title: "Agent Archived",
@@ -470,7 +448,6 @@ const AgentDetails = () => {
     });
     navigate("/agents");
   };
-
   const handleEditClick = () => {
     toast({
       title: "Edit Mode",
@@ -478,7 +455,6 @@ const AgentDetails = () => {
     });
     // In a real app, you might navigate to an edit page or enable edit mode
   };
-
   const handleCopyAvatar = () => {
     const avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${agent?.id}`;
     if (avatarUrl) {
@@ -489,7 +465,6 @@ const AgentDetails = () => {
       });
     }
   };
-
   const handleAgentUpdate = (updatedAgent: AgentType) => {
     setIsActive(updatedAgent.status === "active");
     if (updatedAgent.name !== agent?.name) {
@@ -499,13 +474,11 @@ const AgentDetails = () => {
       });
     }
   };
-
   if (isLoading) {
     return <div className="flex justify-center items-center h-[80vh]">
         <Loader2 className="h-8 w-8 text-agent-primary animate-spin" />
       </div>;
   }
-
   if (error || !agent) {
     return <div className="max-w-4xl mx-auto">
         <div className="mb-8">
@@ -526,16 +499,12 @@ const AgentDetails = () => {
         <Button onClick={() => navigate("/agents")}>Return to Dashboard</Button>
       </div>;
   }
-
   const lastUpdated = new Date().toLocaleString();
   const voicePhoneNumber = agent.channelConfigs?.voice?.details || null;
   const emailAddress = agent.channelConfigs?.email?.details || null;
   const activeChannels = Object.entries(agent.channelConfigs || {}).filter(([_, config]) => config.enabled).map(([channel]) => channel);
-  
   const isNewAgent = agent.id === "new123";
-
-  return (
-    <div className="max-w-6xl mx-auto animate-fade-in">
+  return <div className="max-w-6xl mx-auto animate-fade-in">
       <div className="mb-6">
         <Link to="/agents" className="flex items-center text-gray-500 hover:text-agent-primary transition-colors duration-200">
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -560,18 +529,14 @@ const AgentDetails = () => {
                 <h1 className="text-2xl font-bold">
                   {agent.name}
                 </h1>
-                {isActive ? (
-                  <Badge variant="outline" className="border-green-500/30 text-green-500 bg-green-500/10">
+                {isActive ? <Badge variant="outline" className="border-green-500/30 text-green-500 bg-green-500/10">
                     <span className="flex items-center gap-1.5">
                       <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
                       Active
                     </span>
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="border-border">
+                  </Badge> : <Badge variant="outline" className="border-border">
                     {agent.type}
-                  </Badge>
-                )}
+                  </Badge>}
               </div>
               <p className="text-muted-foreground mt-1.5 max-w-2xl">{agent.description}</p>
             </div>
@@ -611,12 +576,7 @@ const AgentDetails = () => {
         <CardContent>
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              {!isActive && (
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Bot className="h-3.5 w-3.5 text-agent-primary" />
-                  <span className="font-medium capitalize">{agent.type}</span>
-                </div>
-              )}
+              {!isActive}
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Calendar className="h-3.5 w-3.5 text-agent-primary" />
                 <span>Created: {agent.createdAt}</span>
@@ -629,32 +589,23 @@ const AgentDetails = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
               <div className="space-y-3">
-                {activeChannels.length > 0 && 
-                  <div className="flex flex-wrap gap-2">
-                    {activeChannels.includes('voice') && 
-                      <Badge variant="channel">
+                {activeChannels.length > 0 && <div className="flex flex-wrap gap-2">
+                    {activeChannels.includes('voice') && <Badge variant="channel">
                         <Mic className="h-3 w-3 mr-1" />
                         <span className="text-xs">Voice</span>
-                      </Badge>
-                    }
-                    {activeChannels.includes('chat') && 
-                      <Badge variant="channel">
+                      </Badge>}
+                    {activeChannels.includes('chat') && <Badge variant="channel">
                         <MessageSquare className="h-3 w-3 mr-1" />
                         <span className="text-xs">Chat</span>
-                      </Badge>
-                    }
-                    {activeChannels.includes('email') && 
-                      <Badge variant="channel">
+                      </Badge>}
+                    {activeChannels.includes('email') && <Badge variant="channel">
                         <Mail className="h-3 w-3 mr-1" />
                         <span className="text-xs">Email</span>
-                      </Badge>
-                    }
-                  </div>
-                }
+                      </Badge>}
+                  </div>}
                 
                 <div className="flex flex-col gap-2">
-                  {voicePhoneNumber && 
-                    <div className="flex items-center">
+                  {voicePhoneNumber && <div className="flex items-center">
                       <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
                         <Phone className="h-3.5 w-3.5 text-blue-500" />
                         <span className="text-xs">
@@ -668,47 +619,20 @@ const AgentDetails = () => {
                             <PhoneOutgoing className="h-3 w-3 text-green-400" />
                           </Button>
                           
-                          <CustomTooltip 
-                            trigger={
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-6 w-6 rounded-full hover:bg-blue-700/50"
-                                title="Call me back"
-                              >
+                          <CustomTooltip trigger={<Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-blue-700/50" title="Call me back">
                                 <PhoneIncoming className="h-3 w-3 text-blue-400" />
-                              </Button>
-                            }
-                            content={
-                              <div className="space-y-3 w-64 p-2">
+                              </Button>} content={<div className="space-y-3 w-64 p-2">
                                 <h4 className="font-medium text-sm">Get a call from this agent</h4>
-                                <Input 
-                                  type="tel" 
-                                  placeholder="Enter your phone number" 
-                                  value={customCallNumber} 
-                                  onChange={(e) => setCustomCallNumber(e.target.value)}
-                                  className="h-8 text-xs"
-                                />
-                                <Button 
-                                  size="sm" 
-                                  className="w-full h-8 text-xs" 
-                                  onClick={handleCallMe}
-                                >
+                                <Input type="tel" placeholder="Enter your phone number" value={customCallNumber} onChange={e => setCustomCallNumber(e.target.value)} className="h-8 text-xs" />
+                                <Button size="sm" className="w-full h-8 text-xs" onClick={handleCallMe}>
                                   Call me
                                 </Button>
-                              </div>
-                            }
-                            side="bottom"
-                            align="end"
-                            className="w-64 p-0"
-                          />
+                              </div>} side="bottom" align="end" className="w-64 p-0" />
                         </div>
                       </div>
-                    </div>
-                  }
+                    </div>}
                   
-                  {emailAddress && 
-                    <div className="flex items-center">
+                  {emailAddress && <div className="flex items-center">
                       <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
                         <Mail className="h-3.5 w-3.5 text-red-500" />
                         <span className="text-xs">
@@ -723,21 +647,12 @@ const AgentDetails = () => {
                           </Button>
                         </div>
                       </div>
-                    </div>
-                  }
+                    </div>}
                 </div>
               </div>
               
               <div className="mt-2">
-                <AgentStats 
-                  avmScore={agent.avmScore} 
-                  interactionCount={agent.interactions || 0} 
-                  csat={agent.csat} 
-                  performance={agent.performance}
-                  isNewAgent={isNewAgent} 
-                  showZeroValues={false}
-                  hideInteractions={true}
-                />
+                <AgentStats avmScore={agent.avmScore} interactionCount={agent.interactions || 0} csat={agent.csat} performance={agent.performance} isNewAgent={isNewAgent} showZeroValues={false} hideInteractions={true} />
               </div>
             </div>
           </div>
@@ -838,13 +753,7 @@ const AgentDetails = () => {
                             <div className="space-y-4">
                               <div>
                                 <Label htmlFor="customVoiceId">Custom Voice ID</Label>
-                                <Input
-                                  id="customVoiceId"
-                                  value={customVoiceId}
-                                  onChange={handleCustomVoiceIdChange}
-                                  placeholder="Enter custom voice ID"
-                                  className="mt-1"
-                                />
+                                <Input id="customVoiceId" value={customVoiceId} onChange={handleCustomVoiceIdChange} placeholder="Enter custom voice ID" className="mt-1" />
                               </div>
                               <div className="text-sm text-muted-foreground">
                                 Enter a custom voice ID provided by your voice service provider.
@@ -852,16 +761,10 @@ const AgentDetails = () => {
                             </div>
                           </TabsContent>
                           
-                          {["Eleven Labs", "Amazon Polly", "Google TTS"].map((provider) => (
-                            <TabsContent key={provider} value={provider} className="mt-4">
+                          {["Eleven Labs", "Amazon Polly", "Google TTS"].map(provider => <TabsContent key={provider} value={provider} className="mt-4">
                               <ScrollArea className="h-[300px] pr-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                  {Object.entries(voiceSamples[provider] || {}).map(([voiceName, voiceDef]) => (
-                                    <div
-                                      key={voiceName}
-                                      className={`border rounded-lg p-3 cursor-pointer transition-colors hover:bg-accent ${voice === voiceName ? 'border-primary bg-accent/50' : 'border-border'}`}
-                                      onClick={() => handleVoiceChange(voiceName)}
-                                    >
+                                  {Object.entries(voiceSamples[provider] || {}).map(([voiceName, voiceDef]) => <div key={voiceName} className={`border rounded-lg p-3 cursor-pointer transition-colors hover:bg-accent ${voice === voiceName ? 'border-primary bg-accent/50' : 'border-border'}`} onClick={() => handleVoiceChange(voiceName)}>
                                       <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
                                           <Avatar className="h-10 w-10">
@@ -873,39 +776,26 @@ const AgentDetails = () => {
                                           <div>
                                             <h4 className="font-medium">{voiceName}</h4>
                                             <div className="flex items-center gap-1 mt-1">
-                                              {voiceDef.traits.map((trait) => (
-                                                <Badge key={trait.name} className={trait.color}>
+                                              {voiceDef.traits.map(trait => <Badge key={trait.name} className={trait.color}>
                                                   {trait.name}
-                                                </Badge>
-                                              ))}
+                                                </Badge>)}
                                             </div>
                                           </div>
                                         </div>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            handlePlaySample(voiceName);
-                                          }}
-                                          className="h-8 w-8"
-                                        >
-                                          {currentlyPlaying === voiceName ? (
-                                            <Pause className="h-4 w-4" />
-                                          ) : (
-                                            <Play className="h-4 w-4" />
-                                          )}
+                                        <Button variant="ghost" size="icon" onClick={e => {
+                                    e.stopPropagation();
+                                    handlePlaySample(voiceName);
+                                  }} className="h-8 w-8">
+                                          {currentlyPlaying === voiceName ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                                           <span className="sr-only">
                                             {currentlyPlaying === voiceName ? "Pause" : "Play"} sample
                                           </span>
                                         </Button>
                                       </div>
-                                    </div>
-                                  ))}
+                                    </div>)}
                                 </div>
                               </ScrollArea>
-                            </TabsContent>
-                          ))}
+                            </TabsContent>)}
                         </Tabs>
                         
                         <div className="flex justify-end mt-4 gap-3">
@@ -927,8 +817,6 @@ const AgentDetails = () => {
           </TabsContent>
         </div>
       </Tabs>
-    </div>
-  );
+    </div>;
 };
-
 export default AgentDetails;
