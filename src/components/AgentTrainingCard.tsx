@@ -272,10 +272,10 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
         {isExpanded && (
           <>
             {localStatus === 'not-started' && (
-              <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-8 mb-8">
+              <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-8 mb-8 text-center">
                 <Mic className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-                <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">No voice samples yet</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2 text-center">No voice samples yet</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto text-center">
                   Upload call recordings or start a role-playing session to begin training your agent.
                 </p>
                 
@@ -301,7 +301,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     onClick={() => setUserPersonasSidebarOpen(true)} 
                     className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
                   >
-                    <Bot className="h-12 w-12 text-primary dark:text-primary mb-3" />
+                    <PhoneCall className="h-12 w-12 text-primary dark:text-primary mb-3" />
                     <span className="text-sm font-medium text-primary dark:text-primary">Call to Role Play</span>
                     <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Call to generate training recordings</span>
                   </div>
@@ -450,8 +450,8 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                 </div>
 
                 <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg mb-6 border border-gray-200 dark:border-gray-800">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-3">Get Started with Training</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Choose one of the following options to begin training your AI agent:</p>
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-3 text-center">Get Started with Training</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center">Choose one of the following options to begin training your AI agent:</p>
                   
                   <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
                     <div 
@@ -475,7 +475,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       onClick={() => setUserPersonasSidebarOpen(true)} 
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
                     >
-                      <Bot className="h-12 w-12 text-primary dark:text-primary mb-3" />
+                      <PhoneCall className="h-12 w-12 text-primary dark:text-primary mb-3" />
                       <span className="text-sm font-medium text-primary dark:text-primary">Call to Role Play</span>
                       <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Call to generate training recordings</span>
                     </div>
@@ -636,8 +636,8 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                 </div>
 
                 <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg mb-6 border border-gray-200 dark:border-gray-800">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-3">Continue Training</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Add more voice samples to further improve your AI agent's voice quality and recognition capabilities.</p>
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-3 text-center">Continue Training</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center">Add more voice samples to further improve your AI agent's voice quality and recognition capabilities.</p>
                   
                   <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
                     <div 
@@ -661,7 +661,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       onClick={() => setUserPersonasSidebarOpen(true)}
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
                     >
-                      <Bot className="h-12 w-12 text-primary dark:text-primary mb-3" />
+                      <PhoneCall className="h-12 w-12 text-primary dark:text-primary mb-3" />
                       <span className="text-sm font-medium text-primary dark:text-primary">Call to Role Play</span>
                       <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Call to generate training recordings</span>
                     </div>
