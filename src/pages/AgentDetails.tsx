@@ -27,6 +27,7 @@ import AgentConfigSettings from "@/components/AgentConfigSettings";
 import { RolePlayDialog } from "@/components/RolePlayDialog";
 import { CustomTooltip } from "@/components/CustomTooltip";
 import { UserPersonasSidebar } from "@/components/UserPersonasSidebar";
+import { CallInterface } from "@/components/CallInterface";
 
 const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
 
@@ -164,7 +165,14 @@ const AgentDetails = () => {
   const {
     agent,
     isLoading,
-    error
+    error,
+    isRolePlayOpen,
+    openRolePlay,
+    closeRolePlay,
+    isDirectCallActive,
+    directCallInfo,
+    startDirectCall,
+    endDirectCall
   } = useAgentDetails(agentId);
   const [isActive, setIsActive] = useState(false);
   const [model, setModel] = useState<string>("GPT-4");
@@ -181,6 +189,7 @@ const AgentDetails = () => {
   const [isCallTooltipOpen, setIsCallTooltipOpen] = useState(false);
   const [customCallNumber, setCustomCallNumber] = useState<string>("");
   const [isPersonasSidebarOpen, setIsPersonasSidebarOpen] = useState(false);
+  const [selectedPersona, setSelectedPersona] = useState<any>(null);
   
   useEffect(() => {
     if (agent) {
@@ -501,6 +510,10 @@ const AgentDetails = () => {
     }
   };
   
+  const handleOpenPersonasSidebar = () => {
+    setIsPersonasSidebarOpen(true);
+  };
+  
   if (isLoading) {
     return <div className="flex justify-center items-center h-[80vh]">
         <Loader2 className="h-8 w-8 text-agent-primary animate-spin" />
@@ -728,16 +741,40 @@ const AgentDetails = () => {
         </div>
       </Tabs>
 
+      <CallInterface
+        open={isDirectCallActive}
+        onOpenChange={(open) => {
+          if (!open) endDirectCall();
+        }}
+        persona={selectedPersona}
+        directCallInfo={directCallInfo}
+        onCallComplete={(recordingData) => {
+          toast({
+            title: "Call completed",
+            description: `Call with ${recordingData.title} has been recorded.`
+          });
+        }}
+      />
+
       <UserPersonasSidebar
         open={isPersonasSidebarOpen}
         onOpenChange={setIsPersonasSidebarOpen}
         onSelectPersona={(persona) => {
-          console.log("Selected persona:", persona);
+          setSelectedPersona(persona);
           // If you have a RolePlayDialog component that should be shown after selection:
           // setIsRolePlayDialogOpen(true);
-          // setSelectedPersona(persona);
         }}
+        onStartDirectCall={startDirectCall}
       />
+      
+      <div className="fixed bottom-6 right-6">
+        <Button 
+          onClick={handleOpenPersonasSidebar}
+          className="rounded-full h-14 w-14 bg-green-500 hover:bg-green-600 text-white shadow-lg"
+        >
+          <PhoneCall className="h-6 w-6" />
+        </Button>
+      </div>
     </div>;
 };
 
