@@ -499,7 +499,7 @@ const AgentsDashboard = () => {
                     
                     <div className="flex flex-wrap gap-2 mt-2">
                       {filterType !== "all" && (
-                        <Badge variant="agent" className="w-fit">
+                        <Badge variant="muted" className="w-fit">
                           <span className="flex items-center gap-1">
                             Type: {agent.type}
                           </span>
@@ -507,7 +507,7 @@ const AgentsDashboard = () => {
                       )}
                       
                       {filterChannel !== "all" && agent.channels && (
-                        <Badge variant="agent" className="w-fit">
+                        <Badge variant="muted" className="w-fit">
                           <span className="flex items-center gap-1">
                             Channel: {filterChannel}
                           </span>
@@ -515,7 +515,7 @@ const AgentsDashboard = () => {
                       )}
                       
                       {filterStatus !== "all" && (
-                        <Badge variant="agent" className="w-fit">
+                        <Badge variant="muted" className="w-fit">
                           <span className="flex items-center gap-1">
                             Status: {agent.status}
                           </span>
@@ -523,7 +523,7 @@ const AgentsDashboard = () => {
                       )}
                       
                       {(sortBy === "recent" || sortBy === "oldest") && (
-                        <Badge variant="agent" className="w-fit">
+                        <Badge variant="muted" className="w-fit">
                           <span className="flex items-center gap-1">
                             <Calendar className="h-3.5 w-3.5 mr-1" />
                             {formatCreatedAt(agent.createdAt)}
@@ -532,7 +532,7 @@ const AgentsDashboard = () => {
                       )}
                       
                       {(sortBy === "most-used" || sortBy === "less-used") && (
-                        <Badge variant="agent" className="w-fit">
+                        <Badge variant="muted" className="w-fit">
                           <span className="flex items-center gap-1">
                             <MessageCircle className="h-3.5 w-3.5 mr-1" />
                             {agent.interactions} interactions
