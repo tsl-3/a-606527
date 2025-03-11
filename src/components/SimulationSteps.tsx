@@ -87,7 +87,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 35,
     performance: 40,
-    tokens: 2500,
+    tokens: "2500",
     count: 1
   },
   {
@@ -102,7 +102,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 25,
     performance: 30,
-    tokens: 2000,
+    tokens: "2000",
     count: 1
   },
   {
@@ -117,7 +117,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 20,
     performance: 25,
-    tokens: 1800,
+    tokens: "1800",
     count: 1
   },
   {
@@ -133,7 +133,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 15,
     performance: 20,
-    tokens: 1700,
+    tokens: "1700",
     count: 1
   },
   {
@@ -148,7 +148,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 18,
     performance: 22,
-    tokens: 1900,
+    tokens: "1900",
     count: 1
   },
   {
@@ -163,7 +163,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 12,
     performance: 18,
-    tokens: 1600,
+    tokens: "1600",
     count: 1
   },
   {
@@ -178,7 +178,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 10,
     performance: 15,
-    tokens: 1500,
+    tokens: "1500",
     count: 1
   },
   {
@@ -193,7 +193,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 22,
     performance: 28,
-    tokens: 2100,
+    tokens: "2100",
     count: 1
   },
   {
@@ -208,7 +208,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 30,
     performance: 35,
-    tokens: 2300,
+    tokens: "2300",
     count: 1
   },
   {
@@ -223,7 +223,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
     ],
     coverage: 28,
     performance: 33,
-    tokens: 2200,
+    tokens: "2200",
     count: 1
   }
 ];
@@ -727,6 +727,8 @@ export const SimulationSteps = ({
             </CardContent>
           </Card>
         </div>
+
+        <Progress value={100} className="h-2 mb-6" />
 
         <div className="mb-6">
           <h4 className="font-medium text-gray-900 dark:text-white mb-4">Completed Simulations</h4>
