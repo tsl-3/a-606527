@@ -26,6 +26,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import AgentConfigSettings from "@/components/AgentConfigSettings";
 import { RolePlayDialog } from "@/components/RolePlayDialog";
 import { CustomTooltip } from "@/components/CustomTooltip";
+import { UserPersonasSidebar } from "@/components/UserPersonasSidebar";
 
 const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
 
@@ -179,6 +180,7 @@ const AgentDetails = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isCallTooltipOpen, setIsCallTooltipOpen] = useState(false);
   const [customCallNumber, setCustomCallNumber] = useState<string>("");
+  const [isPersonasSidebarOpen, setIsPersonasSidebarOpen] = useState(false);
   
   useEffect(() => {
     if (agent) {
@@ -725,8 +727,18 @@ const AgentDetails = () => {
           </TabsContent>
         </div>
       </Tabs>
+
+      <UserPersonasSidebar
+        open={isPersonasSidebarOpen}
+        onOpenChange={setIsPersonasSidebarOpen}
+        onSelectPersona={(persona) => {
+          console.log("Selected persona:", persona);
+          // If you have a RolePlayDialog component that should be shown after selection:
+          // setIsRolePlayDialogOpen(true);
+          // setSelectedPersona(persona);
+        }}
+      />
     </div>;
 };
 
 export default AgentDetails;
-
