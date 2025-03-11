@@ -84,22 +84,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
   
   return (
     <div className="flex flex-col gap-3 w-full">
-      {/* AVM Score outside of card */}
-      {displayAvmScore !== undefined && (
-        <div className="w-full">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs font-medium text-muted-foreground">AVM</span>
-            <span className="text-xs font-medium">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
-          </div>
-          <div className="relative w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800 h-2">
-            <div 
-              className={`absolute h-full transition-all duration-300 ease-in-out ${scoreColorClass}`}
-              style={{ width: `${displayAvmScore ? (displayAvmScore * 10) : 0}%` }}
-            />
-          </div>
-        </div>
-      )}
-
+      {/* Interactions, CSAT and Performance Cards - Now above AVM */}
       <div className="flex gap-2 w-full">
         {/* Interactions Card - Only shown when not hidden */}
         {!hideInteractions && (
@@ -144,6 +129,22 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
           </Card>
         )}
       </div>
+
+      {/* AVM Score outside of card - Now below the cards */}
+      {displayAvmScore !== undefined && (
+        <div className="w-full">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground">AVM</span>
+            <span className="text-xs font-medium">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
+          </div>
+          <div className="relative w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800 h-2">
+            <div 
+              className={`absolute h-full transition-all duration-300 ease-in-out ${scoreColorClass}`}
+              style={{ width: `${displayAvmScore ? (displayAvmScore * 10) : 0}%` }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
