@@ -1,7 +1,6 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause, Phone, Copy, PhoneOutgoing, PhoneIncoming, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog } from "lucide-react";
+import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, History, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause, Phone, Copy, PhoneOutgoing, PhoneIncoming, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,7 +17,6 @@ import { AgentSetupStepper } from "@/components/AgentSetupStepper";
 import { AgentToggle } from "@/components/AgentToggle";
 import { AgentChannels } from "@/components/AgentChannels";
 import { AgentStats } from "@/components/AgentStats";
-import AnalyticsTab from "@/components/AnalyticsTab";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -702,17 +700,11 @@ const AgentDetails = () => {
       </Card>
       
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="mt-8">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="setup" className="text-sm">
             <span className="flex items-center gap-2">
               <Cog className="h-4 w-4" />
               Setup
-            </span>
-          </TabsTrigger>
-          <TabsTrigger value="analytics" className="text-sm">
-            <span className="flex items-center gap-2">
-              <BarChart2 className="h-4 w-4" />
-              Analytics
             </span>
           </TabsTrigger>
           <TabsTrigger value="settings" className="text-sm">
@@ -726,10 +718,6 @@ const AgentDetails = () => {
         <div className="mt-6">
           <TabsContent value="setup" className="space-y-6">
             <AgentSetupStepper agent={agent} />
-          </TabsContent>
-          
-          <TabsContent value="analytics" className="space-y-6">
-            {agent && <AnalyticsTab agent={agent} isNewAgent={isNewAgent} />}
           </TabsContent>
           
           <TabsContent value="settings" className="space-y-6">
