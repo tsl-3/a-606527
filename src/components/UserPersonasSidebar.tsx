@@ -169,7 +169,7 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
         mic: selectedMic,
         speaker: selectedSpeaker
       });
-      onOpenChange(false);
+      onOpenChange(false); // Close sidebar when starting call
     }
   };
 
