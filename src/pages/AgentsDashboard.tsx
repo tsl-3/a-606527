@@ -1,12 +1,19 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy, Sparkles, PlusCircle } from "lucide-react";
+import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy, Sparkles, PlusCircle, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -80,18 +87,48 @@ const AgentsDashboard = () => {
     }
   };
   
+  const [sortBy, setSortBy] = useState<string>("recent");
+  const [filterType, setFilterType] = useState<string>("all");
+  const [filterChannel, setFilterChannel] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+
   useEffect(() => {
     if (initialAgents) {
-      const allAgents = [newlyCreatedAgent, ...initialAgents];
-      setAgents(allAgents);
-      setFilteredAgents(
-        allAgents.filter(agent => 
-          agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          agent.description.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
+      let sorted = [newlyCreatedAgent, ...initialAgents];
+      
+      // Apply sorting
+      sorted = [...sorted].sort((a, b) => {
+        switch (sortBy) {
+          case "oldest":
+            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          case "most-used":
+            return (b.interactions || 0) - (a.interactions || 0);
+          case "less-used":
+            return (a.interactions || 0) - (b.interactions || 0);
+          case "recent":
+          default:
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        }
+      });
+
+      // Apply filters
+      let filtered = sorted.filter(agent => {
+        const nameMatch = agent.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const purposeMatch = agent.purpose?.toLowerCase().includes(searchTerm.toLowerCase()) || false;
+        const searchMatches = nameMatch || purposeMatch;
+
+        const typeMatches = filterType === "all" || agent.type === filterType;
+        const statusMatches = filterStatus === "all" || agent.status === filterStatus;
+        const channelMatches = filterChannel === "all" || 
+          (agent.channels && agent.channels.includes(filterChannel)) ||
+          (agent.channelConfigs && agent.channelConfigs[filterChannel]?.enabled);
+
+        return searchMatches && typeMatches && statusMatches && channelMatches;
+      });
+
+      setFilteredAgents(filtered);
     }
-  }, [initialAgents, searchTerm]);
+  }, [initialAgents, searchTerm, sortBy, filterType, filterChannel, filterStatus]);
 
   const getFilterTitle = () => {
     switch (filter) {
@@ -257,25 +294,81 @@ const AgentsDashboard = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold text-foreground dark:text-white tracking-tight">{getFilterTitle()}</h1>
-          <p className="text-muted-foreground dark:text-gray-300 mt-1">Manage and monitor your intelligent agents</p>
-        </div>
-        
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Search agents..."
-            className="pl-10 w-full md:w-64 dark:bg-[#000313]/70"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+      <div>
+        <h1 className="text-3xl font-semibold text-foreground dark:text-white tracking-tight">
+          {getFilterTitle()}
+        </h1>
+        <p className="text-muted-foreground dark:text-gray-300 mt-1">
+          Manage and monitor your intelligent agents
+        </p>
       </div>
       
       <Separator />
       
+      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Search by name or purpose..."
+            className="pl-10 w-full dark:bg-[#000313]/70"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-2 items-center">
+          <Select value={filterType} onValueChange={setFilterType}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Agent Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="customer-support">Customer Support</SelectItem>
+              <SelectItem value="sales">Sales</SelectItem>
+              <SelectItem value="technical-support">Technical Support</SelectItem>
+              <SelectItem value="custom">Custom</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={filterChannel} onValueChange={setFilterChannel}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Channel" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Channels</SelectItem>
+              <SelectItem value="voice">Voice</SelectItem>
+              <SelectItem value="chat">Chat</SelectItem>
+              <SelectItem value="email">Email</SelectItem>
+              <SelectItem value="whatsapp">WhatsApp</SelectItem>
+              <SelectItem value="sms">SMS</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="recent">Most Recent</SelectItem>
+              <SelectItem value="oldest">Oldest First</SelectItem>
+              <SelectItem value="most-used">Most Used</SelectItem>
+              <SelectItem value="less-used">Less Used</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <Loader2 className="h-8 w-8 text-agent-primary animate-spin" />
@@ -308,71 +401,7 @@ const AgentsDashboard = () => {
               </div>
             </Card>
           </Link>
-          
-          <Link to={`/agents/${newlyCreatedAgent.id}?tab=setup`} key={newlyCreatedAgent.id} className="block">
-            <Card className="h-full card-hover border-agent-primary/10">
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-12 w-12 border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800">
-                      <AvatarFallback><Bot className="h-6 w-6 text-gray-400" /></AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-foreground dark:text-white">{newlyCreatedAgent.name}</h3>
-                        <Badge variant="outline" className="bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30 ml-2 text-xs py-0 h-5">
-                          New
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground dark:text-gray-400">{newlyCreatedAgent.phone}</p>
-                    </div>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48 bg-white dark:bg-gray-900 z-50">
-                      <DropdownMenuItem onClick={(e) => handleEditAgent(e, newlyCreatedAgent.id)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Configure Agent
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => handleViewDetails(e, newlyCreatedAgent.id)}>
-                        <Eye className="mr-2 h-4 w-4" />
-                        View Details
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                
-                <div className="mt-3">
-                  <CardDescription className="line-clamp-2 text-muted-foreground dark:text-gray-300">
-                    {newlyCreatedAgent.purpose}
-                  </CardDescription>
-                </div>
-              </CardHeader>
-              
-              <CardContent>
-                <div className="flex flex-col space-y-4">
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-4 rounded-lg text-center">
-                    <Sparkles className="h-5 w-5 mx-auto mb-2 text-amber-500" />
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Finish configuring your agent</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Add more details to display agent stats</p>
-                  </div>
-                </div>
-              </CardContent>
-              
-              <CardFooter className="border-t pt-4 flex justify-between items-center">
-                <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  <span>Newly created</span>
-                </div>
-                <div className="text-sm text-agent-primary font-medium">Configure &rarr;</div>
-              </CardFooter>
-            </Card>
-          </Link>
-          
+        
           {filteredAgents.slice(1).map((agent) => (
             <Link to={`/agents/${agent.id}`} key={agent.id} className="block">
               <Card className="h-full card-hover">
@@ -438,6 +467,23 @@ const AgentsDashboard = () => {
                 
                 <CardContent>
                   <div className="flex flex-col space-y-4">
+                    {/* Show filtered attributes */}
+                    {filterType !== "all" && (
+                      <Badge variant="secondary" className="w-fit">
+                        Type: {agent.type}
+                      </Badge>
+                    )}
+                    {filterChannel !== "all" && agent.channels && (
+                      <Badge variant="secondary" className="w-fit">
+                        Channel: {filterChannel}
+                      </Badge>
+                    )}
+                    {filterStatus !== "all" && (
+                      <Badge variant="secondary" className="w-fit">
+                        Status: {agent.status}
+                      </Badge>
+                    )}
+                    
                     <AgentStats 
                       avmScore={getAgentAVMScore(agent.id)} 
                       interactionCount={agent.interactions}
