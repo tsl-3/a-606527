@@ -792,8 +792,8 @@ const AgentDetails = () => {
                                 <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
                                   {Object.keys(voiceSamples["Eleven Labs"]).map(voiceName => {
                                   const voiceDef = voiceSamples["Eleven Labs"][voiceName];
-                                  return <div key={voiceName} className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
-                                        <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} />
+                                  return <div key={voiceName} className={`flex items-center space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
+                                        <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} className="mt-0" />
                                         <div className="flex w-full justify-between items-center">
                                           <div className="flex gap-3">
                                             {voiceDef.avatar && <Avatar className="h-10 w-10 rounded-full">
@@ -846,8 +846,8 @@ const AgentDetails = () => {
                                 <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
                                   {Object.keys(voiceSamples["Amazon Polly"]).map(voiceName => {
                                   const voiceDef = voiceSamples["Amazon Polly"][voiceName];
-                                  return <div key={voiceName} className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
-                                        <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} />
+                                  return <div key={voiceName} className={`flex items-center space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
+                                        <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} className="mt-0" />
                                         <div className="flex w-full justify-between items-center">
                                           <div className="flex gap-3">
                                             {voiceDef.avatar && <Avatar className="h-10 w-10 rounded-full">
@@ -886,8 +886,8 @@ const AgentDetails = () => {
                                 <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
                                   {Object.keys(voiceSamples["Google TTS"]).map(voiceName => {
                                   const voiceDef = voiceSamples["Google TTS"][voiceName];
-                                  return <div key={voiceName} className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
-                                        <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} />
+                                  return <div key={voiceName} className={`flex items-center space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
+                                        <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} className="mt-0" />
                                         <div className="flex w-full justify-between items-center">
                                           <div className="flex gap-3">
                                             {voiceDef.avatar && <Avatar className="h-10 w-10 rounded-full">
