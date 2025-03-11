@@ -166,7 +166,6 @@ const AgentsDashboard = () => {
     e.preventDefault();
     e.stopPropagation();
     
-    // For newly created agent, go directly to setup tab
     if (agentId === "new123") {
       navigate(`/agents/${agentId}?tab=setup`);
     } else {
@@ -190,7 +189,6 @@ const AgentsDashboard = () => {
     e.preventDefault();
     e.stopPropagation();
     
-    // For newly created agent, go directly to setup tab
     if (agentId === "new123") {
       navigate(`/agents/${agentId}?tab=setup`);
     } else {
@@ -459,23 +457,11 @@ const AgentsDashboard = () => {
                     </div>
                     
                     {agent.phone && (
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center">
                         <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
                           <Phone className="h-3.5 w-3.5" />
                           <span>{agent.phone}</span>
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-7 w-7 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleCopyToClipboard(agent.phone || '', 'Phone');
-                          }}
-                        >
-                          <Copy className="h-3.5 w-3.5 text-gray-500 dark:text-gray-400" />
-                        </Button>
                       </div>
                     )}
                     
