@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy, Sparkles, PlusCircle, ArrowUpDown } from "lucide-react";
@@ -97,7 +96,6 @@ const AgentsDashboard = () => {
     if (initialAgents) {
       let sorted = [newlyCreatedAgent, ...initialAgents];
       
-      // Apply sorting
       sorted = [...sorted].sort((a, b) => {
         switch (sortBy) {
           case "oldest":
@@ -112,7 +110,6 @@ const AgentsDashboard = () => {
         }
       });
 
-      // Apply filters
       let filtered = sorted.filter(agent => {
         const nameMatch = agent.name.toLowerCase().includes(searchTerm.toLowerCase());
         const purposeMatch = agent.purpose?.toLowerCase().includes(searchTerm.toLowerCase()) || false;
@@ -248,6 +245,31 @@ const AgentsDashboard = () => {
       title: "Calling Agent",
       description: `Initiating call to ${phone}`,
     });
+  };
+
+  const formatCreatedAt = (dateStr: string): string => {
+    if (dateStr === "Just now") return dateStr;
+    
+    try {
+      const date = new Date(dateStr);
+      const now = new Date();
+      const diffTime = Math.abs(now.getTime() - date.getTime());
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 0) {
+        return "Today";
+      } else if (diffDays === 1) {
+        return "Yesterday";
+      } else if (diffDays < 7) {
+        return `${diffDays} days ago`;
+      } else if (diffDays < 30) {
+        return `${Math.floor(diffDays / 7)} weeks ago`;
+      } else {
+        return date.toLocaleDateString();
+      }
+    } catch (e) {
+      return dateStr;
+    }
   };
 
   if (error) {
@@ -475,7 +497,6 @@ const AgentsDashboard = () => {
                       hideInteractions={true}
                     />
                     
-                    {/* Show filtered attributes - moved after the AVM progress bar */}
                     {filterType !== "all" && (
                       <Badge variant="secondary" className="w-fit">
                         Type: {agent.type}
@@ -491,6 +512,22 @@ const AgentsDashboard = () => {
                         Status: {agent.status}
                       </Badge>
                     )}
+                    
+                    <div className="flex items-center text-xs text-muted-foreground mt-1">
+                      {(sortBy === "recent" || sortBy === "oldest") && (
+                        <div className="flex items-center">
+                          <Calendar className="h-3.5 w-3.5 mr-1" />
+                          <span>Created: {formatCreatedAt(agent.createdAt)}</span>
+                        </div>
+                      )}
+                      
+                      {(sortBy === "most-used" || sortBy === "less-used") && (
+                        <div className="flex items-center">
+                          <MessageCircle className="h-3.5 w-3.5 mr-1" />
+                          <span>Interactions: {agent.interactions}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
                 
@@ -511,3 +548,4 @@ const AgentsDashboard = () => {
 };
 
 export default AgentsDashboard;
+
