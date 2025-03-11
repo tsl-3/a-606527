@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Smile, Zap, Info } from "lucide-react";
+import { Info } from "lucide-react";
 
 interface AgentStatsProps {
   avmScore?: number;  // 1-10 score
@@ -17,9 +17,6 @@ interface AgentStatsProps {
 export const AgentStats: React.FC<AgentStatsProps> = ({ 
   avmScore, 
   interactionCount, 
-  csat = 85, 
-  performance = 92,
-  compact = false,
   isNewAgent = false,
   showZeroValues = false,
   hideInteractions = false
@@ -44,8 +41,6 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
   // For analytics tab or when showZeroValues is true, show zeros instead of default values
   const displayAvmScore = isNewAgent && showZeroValues ? 0 : avmScore;
   const displayInteractionCount = isNewAgent ? 0 : interactionCount;
-  const displayCsat = isNewAgent && showZeroValues ? 0 : csat;
-  const displayPerformance = isNewAgent && showZeroValues ? 0 : performance;
 
   // Color indicator for AVM score based on the value range
   const getScoreColor = (score: number): string => {
@@ -61,33 +56,16 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
     return { label: "Bronze", color: "text-amber-600" };
   };
   
-  // Get color for CSAT score
-  const getCsatColor = (score: number): string => {
-    if (score >= 90) return "text-green-500";
-    if (score >= 75) return "text-yellow-500";
-    return "text-red-500";
-  };
-  
-  // Get color for performance score
-  const getPerformanceColor = (score: number): string => {
-    if (score >= 90) return "text-green-500";
-    if (score >= 70) return "text-yellow-500";
-    return "text-red-500";
-  };
-  
   const interactionTier = getInteractionTier(displayInteractionCount);
-  const csatColor = displayCsat ? getCsatColor(displayCsat) : "text-muted-foreground";
-  const performanceColor = displayPerformance ? getPerformanceColor(displayPerformance) : "text-muted-foreground";
   
   // Get the appropriate color class for the AVM score bar
   const scoreColorClass = displayAvmScore !== undefined ? getScoreColor(displayAvmScore) : "bg-gray-400";
   
   return (
     <div className="flex flex-col gap-3 w-full">
-      {/* Interactions, CSAT and Performance Cards - Now above AVM */}
-      <div className="flex gap-2 w-full">
-        {/* Interactions Card - Only shown when not hidden */}
-        {!hideInteractions && (
+      {/* Interactions Card - Only shown when not hidden */}
+      {!hideInteractions && (
+        <div className="flex gap-2 w-full">
           <Card className="flex-1 overflow-hidden shadow-sm">
             <div className="px-2 py-1 flex items-center justify-between">
               <span className="text-xs font-medium text-muted-foreground">Interactions</span>
@@ -101,36 +79,10 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
               </span>
             </CardContent>
           </Card>
-        )}
-        
-        {/* CSAT Card - Only shown when not in compact mode and CSAT exists */}
-        {!compact && (
-          <Card className="flex-1 overflow-hidden shadow-sm">
-            <div className="px-2 py-1 flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">CSAT</span>
-              <Smile className={`w-3.5 h-3.5 ${csatColor}`} />
-            </div>
-            <CardContent className="p-2 text-center">
-              <span className={`text-xl font-semibold ${csatColor}`}>{displayCsat !== undefined ? displayCsat : 0}%</span>
-            </CardContent>
-          </Card>
-        )}
-        
-        {/* Performance Card - Only shown when not in compact mode and performance exists */}
-        {!compact && (
-          <Card className="flex-1 overflow-hidden shadow-sm">
-            <div className="px-2 py-1 flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Performance</span>
-              <Zap className={`w-3.5 h-3.5 ${performanceColor}`} />
-            </div>
-            <CardContent className="p-2 text-center">
-              <span className={`text-xl font-semibold ${performanceColor}`}>{displayPerformance !== undefined ? displayPerformance : 0}%</span>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* AVM Score outside of card - Now below the cards */}
+      {/* AVM Score outside of card */}
       {displayAvmScore !== undefined && (
         <div className="w-full">
           <div className="flex items-center justify-between mb-1">
