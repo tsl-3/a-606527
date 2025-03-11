@@ -175,18 +175,24 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       // Delay to allow for the ending animation
       setTimeout(() => {
         onCallComplete(recordingData);
+        // Make sure to properly close the dialog to prevent overlay issues
+        onOpenChange(false);
+      }, 500);
+    } else {
+      // If there's no onCallComplete handler, ensure the dialog closes
+      setTimeout(() => {
+        onOpenChange(false);
       }, 500);
     }
     
+    // Clear state when the dialog is fully closed
     setTimeout(() => {
-      onOpenChange(false);
-      setTimeout(() => {
-        setCallStatus("connecting");
-        setCallDuration(0);
-        setTranscriptions([]);
-        setIsMuted(false);
-        setIsAudioMuted(false);
-      }, 300);
+      // Reset component state so it's fresh for the next opening
+      setCallStatus("connecting");
+      setCallDuration(0);
+      setTranscriptions([]);
+      setIsMuted(false);
+      setIsAudioMuted(false);
     }, 1000);
   };
 
@@ -221,7 +227,20 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   if (!persona) return null;
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog 
+      open={open} 
+      onOpenChange={(newOpen) => {
+        // Only allow closing through the proper channels to avoid UI blocking
+        if (!newOpen && callStatus === "ended") {
+          onOpenChange(newOpen);
+        } else if (!newOpen) {
+          // If trying to close while call is active, end the call first
+          handleEndCall();
+        } else {
+          onOpenChange(newOpen);
+        }
+      }}
+    >
       <AlertDialogContent className="max-w-md sm:max-w-2xl bg-[#0F172A] border-gray-800">
         <AlertDialogHeader className="space-y-2 border-b border-gray-800 pb-4">
           <AlertDialogTitle className="flex items-center justify-between">
