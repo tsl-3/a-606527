@@ -1,10 +1,14 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { User, Bot, X, ArrowLeft, PhoneCall } from "lucide-react";
+import { User, Bot, X, ArrowLeft, PhoneCall, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "@/hooks/use-toast";
 
 interface UserPersona {
   id: string;
@@ -18,12 +22,14 @@ interface UserPersonasSidebarProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelectPersona: (persona: UserPersona) => void;
+  onStartDirectCall?: (phoneNumber: string, deviceSettings: {mic: string, speaker: string}) => void;
 }
 
 export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
   open,
   onOpenChange,
   onSelectPersona,
+  onStartDirectCall
 }) => {
   const personas: UserPersona[] = [
     {
@@ -72,10 +78,99 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
 
   // Track which persona is being hovered
   const [hoveredPersonaId, setHoveredPersonaId] = useState<string | null>(null);
+  
+  // For direct call feature
+  const [showDirectCall, setShowDirectCall] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumberError, setPhoneNumberError] = useState('');
+  const [selectedMic, setSelectedMic] = useState<string>("");
+  const [selectedSpeaker, setSelectedSpeaker] = useState<string>("");
+  const [availableMics, setAvailableMics] = useState<MediaDeviceInfo[]>([]);
+  const [availableSpeakers, setAvailableSpeakers] = useState<MediaDeviceInfo[]>([]);
+
+  useEffect(() => {
+    if (open && showDirectCall) {
+      const getDevices = async () => {
+        try {
+          await navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+              stream.getTracks().forEach(track => track.stop());
+            })
+            .catch(error => {
+              console.error('Permission denied for audio:', error);
+              toast({
+                title: "Permission Error",
+                description: "Please allow microphone access to use audio features"
+              });
+              return;
+            });
+
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const mics = devices.filter(device => device.kind === 'audioinput' && device.deviceId);
+          const speakers = devices.filter(device => device.kind === 'audiooutput' && device.deviceId);
+          
+          setAvailableMics(mics);
+          setAvailableSpeakers(speakers);
+          
+          if (mics.length > 0) setSelectedMic(mics[0].deviceId);
+          if (speakers.length > 0) setSelectedSpeaker(speakers[0].deviceId);
+
+        } catch (error) {
+          console.error('Error accessing media devices:', error);
+          toast({
+            title: "Device Error",
+            description: "Unable to access audio devices. Please check your browser permissions."
+          });
+        }
+      };
+
+      getDevices();
+
+      navigator.mediaDevices.addEventListener('devicechange', getDevices);
+      
+      return () => {
+        navigator.mediaDevices.removeEventListener('devicechange', getDevices);
+      };
+    }
+  }, [open, showDirectCall]);
 
   const handleSelectPersona = (persona: UserPersona) => {
     onSelectPersona(persona);
     onOpenChange(false);
+  };
+
+  const validatePhoneNumber = (number: string) => {
+    const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+    return phoneRegex.test(number);
+  };
+
+  const handleStartDirectCall = () => {
+    if (!phoneNumber) {
+      setPhoneNumberError('Please enter a phone number');
+      return;
+    }
+
+    if (!validatePhoneNumber(phoneNumber)) {
+      setPhoneNumberError('Please enter a valid phone number');
+      return;
+    }
+
+    if (!selectedMic || !selectedSpeaker) {
+      toast({
+        title: "Device Error",
+        description: "Please select both microphone and speaker devices"
+      });
+      return;
+    }
+
+    setPhoneNumberError('');
+    if (onStartDirectCall) {
+      onStartDirectCall(phoneNumber, {
+        mic: selectedMic,
+        speaker: selectedSpeaker
+      });
+      onOpenChange(false);
+    }
   };
 
   if (!open) return null;
@@ -105,9 +200,9 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
               <ArrowLeft className="h-5 w-5 text-white" />
             </Button>
             <div>
-              <h2 className="text-xl font-bold text-white">Select a User Persona</h2>
+              <h2 className="text-xl font-bold text-white">Role-Play Options</h2>
               <p className="text-sm text-gray-400">
-                Choose a persona to role-play with
+                Choose a persona or call someone directly
               </p>
             </div>
           </div>
@@ -123,66 +218,187 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
         
         {/* Content */}
         <ScrollArea className="flex-1 overflow-auto">
-          <div className="p-4 space-y-4">
-            {personas.map((persona) => (
-              <div
-                key={persona.id}
-                className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden cursor-pointer hover:bg-[#141e33] transition-colors relative"
-                onClick={() => handleSelectPersona(persona)}
-                onMouseEnter={() => setHoveredPersonaId(persona.id)}
-                onMouseLeave={() => setHoveredPersonaId(null)}
+          {!showDirectCall ? (
+            <div className="p-4 space-y-4">
+              {/* Option for direct call */}
+              <div 
+                className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden cursor-pointer hover:bg-[#141e33] transition-colors p-4"
+                onClick={() => setShowDirectCall(true)}
               >
-                <div className="p-4">
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="bg-[#1E293B] rounded-full p-2">
-                      {persona.type === "customer" ? (
-                        <User className="h-5 w-5 text-gray-300" />
-                      ) : (
-                        <Bot className="h-5 w-5 text-gray-300" />
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-white">{persona.name}</h3>
-                      <Badge 
-                        className={cn(
-                          "mt-1 px-3 py-0.5 rounded-full text-xs font-normal",
-                          persona.type === "bot" ? "bg-[#1E293B] text-gray-300" : "bg-[#1E293B] text-gray-300"
-                        )}
-                      >
-                        {persona.type === "bot" ? "Training Bot" : "Customer"}
-                      </Badge>
-                    </div>
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="bg-[#1E293B] rounded-full p-2">
+                    <PhoneCall className="h-5 w-5 text-green-400" />
                   </div>
-                  
-                  <p className="text-sm text-gray-400 mb-3">
-                    {persona.description}
-                  </p>
-                  
-                  {persona.scenario && (
-                    <div className="bg-[#1E293B] rounded p-3 text-xs text-gray-300 mb-2">
-                      <span className="text-gray-400">Scenario:</span> {persona.scenario}
+                  <div>
+                    <h3 className="font-medium text-white">Direct Call</h3>
+                    <Badge className="mt-1 px-3 py-0.5 rounded-full text-xs font-normal bg-[#1E293B] text-gray-300">
+                      Role-Play with a Colleague
+                    </Badge>
+                  </div>
+                </div>
+                
+                <p className="text-sm text-gray-400 mb-3">
+                  Call a colleague or a real customer directly to practice your agent skills
+                </p>
+                
+                <div className="bg-[#1E293B] rounded p-3 text-xs text-gray-300 mb-2">
+                  <span className="text-gray-400">Instructions:</span> You will pretend to be the agent while your colleague or customer plays the user role.
+                </div>
+              </div>
+
+              <div className="relative py-2">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-[#1E293B]"></div>
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="bg-[#0F172A] px-4 text-sm text-gray-400">Or choose a persona</span>
+                </div>
+              </div>
+              
+              {/* Personas list */}
+              {personas.map((persona) => (
+                <div
+                  key={persona.id}
+                  className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden cursor-pointer hover:bg-[#141e33] transition-colors relative"
+                  onClick={() => handleSelectPersona(persona)}
+                  onMouseEnter={() => setHoveredPersonaId(persona.id)}
+                  onMouseLeave={() => setHoveredPersonaId(null)}
+                >
+                  <div className="p-4">
+                    <div className="flex items-center gap-4 mb-3">
+                      <div className="bg-[#1E293B] rounded-full p-2">
+                        {persona.type === "customer" ? (
+                          <User className="h-5 w-5 text-gray-300" />
+                        ) : (
+                          <Bot className="h-5 w-5 text-gray-300" />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-white">{persona.name}</h3>
+                        <Badge 
+                          className={cn(
+                            "mt-1 px-3 py-0.5 rounded-full text-xs font-normal",
+                            persona.type === "bot" ? "bg-[#1E293B] text-gray-300" : "bg-[#1E293B] text-gray-300"
+                          )}
+                        >
+                          {persona.type === "bot" ? "Training Bot" : "Customer"}
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-sm text-gray-400 mb-3">
+                      {persona.description}
+                    </p>
+                    
+                    {persona.scenario && (
+                      <div className="bg-[#1E293B] rounded p-3 text-xs text-gray-300 mb-2">
+                        <span className="text-gray-400">Scenario:</span> {persona.scenario}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Call button overlay that appears on hover */}
+                  {hoveredPersonaId === persona.id && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-[#111827]/80 transition-opacity animate-fade-in">
+                      <Button 
+                        className="bg-green-500 hover:bg-green-600 text-white shadow-lg"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectPersona(persona);
+                        }}
+                      >
+                        <PhoneCall className="h-5 w-5 mr-2" />
+                        Start Call
+                      </Button>
                     </div>
                   )}
                 </div>
-
-                {/* Call button overlay that appears on hover */}
-                {hoveredPersonaId === persona.id && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-[#111827]/80 transition-opacity animate-fade-in">
-                    <Button 
-                      className="bg-green-500 hover:bg-green-600 text-white shadow-lg"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSelectPersona(persona);
-                      }}
-                    >
-                      <PhoneCall className="h-5 w-5 mr-2" />
-                      Start Call
-                    </Button>
-                  </div>
-                )}
+              ))}
+            </div>
+          ) : (
+            <div className="p-4 space-y-5">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="mb-2 text-gray-400"
+                onClick={() => setShowDirectCall(false)}
+              >
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back to options
+              </Button>
+              
+              <div className="bg-[#1E293B]/50 rounded-lg p-4 mb-4">
+                <div className="flex items-start gap-2 text-gray-300">
+                  <Info className="h-5 w-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm">
+                    Call a colleague or customer and ask them to pretend to be a user while you play the role of the agent. This will help you practice real customer interactions.
+                  </p>
+                </div>
               </div>
-            ))}
-          </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber" className="text-gray-300">Phone Number</Label>
+                  <Input
+                    id="phoneNumber"
+                    type="tel"
+                    placeholder="+1234567890"
+                    value={phoneNumber}
+                    onChange={(e) => {
+                      setPhoneNumber(e.target.value);
+                      setPhoneNumberError('');
+                    }}
+                    className={`bg-[#111827] border-[#1E293B] text-white ${phoneNumberError ? 'border-red-500' : ''}`}
+                  />
+                  {phoneNumberError && (
+                    <p className="text-sm text-red-500">{phoneNumberError}</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-gray-300">Microphone</Label>
+                    <Select value={selectedMic} onValueChange={setSelectedMic}>
+                      <SelectTrigger className="bg-[#111827] border-[#1E293B] text-white">
+                        <SelectValue placeholder="Select microphone" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#111827] border-[#1E293B]">
+                        {availableMics.map((device) => (
+                          <SelectItem key={device.deviceId} value={device.deviceId}>
+                            {device.label || `Microphone ${device.deviceId.slice(0, 5)}`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-gray-300">Speaker</Label>
+                    <Select value={selectedSpeaker} onValueChange={setSelectedSpeaker}>
+                      <SelectTrigger className="bg-[#111827] border-[#1E293B] text-white">
+                        <SelectValue placeholder="Select speaker" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#111827] border-[#1E293B]">
+                        {availableSpeakers.map((device) => (
+                          <SelectItem key={device.deviceId} value={device.deviceId}>
+                            {device.label || `Speaker ${device.deviceId.slice(0, 5)}`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={handleStartDirectCall} 
+                  className="w-full mt-6 bg-green-500 hover:bg-green-600 text-white"
+                >
+                  <PhoneCall className="mr-2 h-5 w-5" />
+                  Start Call
+                </Button>
+              </div>
+            </div>
+          )}
         </ScrollArea>
       </div>
     </div>
