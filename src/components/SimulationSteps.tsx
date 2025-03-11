@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Check, ChevronRight, Target, PlayCircle, Percent, Zap, Bot, BrainCircuit, PenLine, Users2, Phone, Building, FileText, Database, Lightbulb, BarChart } from 'lucide-react';
+import { Check, ChevronRight, Target, PlayCircle, Percent, Zap, Bot, BrainCircuit, PenLine, Users2, Phone, Building, FileText, Database, Lightbulb, BarChart, File, CheckCircle } from 'lucide-react';
 
 interface SimulationStep {
   title: string;
@@ -138,7 +138,7 @@ const EXPANDED_SIMULATIONS: Simulation[] = [
   },
   {
     id: "5",
-0 title: "Order Status",
+    title: "Order Status",
     description: "Provide updates on order processing and delivery",
     scenarios: [
       "Check order status",
@@ -465,7 +465,7 @@ export const SimulationSteps = ({
         return (
           <div className="space-y-4 animate-fade-in">
             {simulationsGenerated && (
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900/30 rounded-lg p-4 mb-6 flex items-center gap-3">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900 rounded-lg p-4 mb-6 flex items-center gap-3">
                 <div className="bg-green-100 dark:bg-green-800/30 p-2 rounded-full">
                   <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
