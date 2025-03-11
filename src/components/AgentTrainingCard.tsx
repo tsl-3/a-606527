@@ -302,8 +302,8 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
                   >
                     <Bot className="h-12 w-12 text-primary dark:text-primary mb-3" />
-                    <span className="text-sm font-medium text-primary dark:text-primary">Role Play with AI</span>
-                    <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Practice with AI</span>
+                    <span className="text-sm font-medium text-primary dark:text-primary">Call to Role Play</span>
+                    <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Call to generate training recordings</span>
                   </div>
                 </div>
               </div>
@@ -476,8 +476,8 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
                     >
                       <Bot className="h-12 w-12 text-primary dark:text-primary mb-3" />
-                      <span className="text-sm font-medium text-primary dark:text-primary">Role Play with AI</span>
-                      <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Practice with AI</span>
+                      <span className="text-sm font-medium text-primary dark:text-primary">Call to Role Play</span>
+                      <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Call to generate training recordings</span>
                     </div>
                   </div>
                 </div>
@@ -662,8 +662,8 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
                     >
                       <Bot className="h-12 w-12 text-primary dark:text-primary mb-3" />
-                      <span className="text-sm font-medium text-primary dark:text-primary">Role Play with AI</span>
-                      <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Practice with AI</span>
+                      <span className="text-sm font-medium text-primary dark:text-primary">Call to Role Play</span>
+                      <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Call to generate training recordings</span>
                     </div>
                   </div>
                 </div>
