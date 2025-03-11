@@ -1,9 +1,13 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, PhoneOff, MessageCircle, User, Bot } from "lucide-react";
+import { Mic, MicOff, PhoneOff, Volume, Volume2, Phone, User, Bot } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
 
 interface UserPersona {
   id: string;
@@ -26,8 +30,17 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
 }) => {
   const [callStatus, setCallStatus] = useState<"connecting" | "active" | "ended">("connecting");
   const [isMuted, setIsMuted] = useState(false);
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [messages, setMessages] = useState<Array<{ sender: "agent" | "user"; text: string; timestamp: string }>>([]);
+  const [selectedMic, setSelectedMic] = useState<string>("");
+  const [selectedSpeaker, setSelectedSpeaker] = useState<string>("");
+  const [availableMics, setAvailableMics] = useState<MediaDeviceInfo[]>([]);
+  const [availableSpeakers, setAvailableSpeakers] = useState<MediaDeviceInfo[]>([]);
+  const [transcriptions, setTranscriptions] = useState<string[]>([]);
+
+  const timerRef = useRef<number | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Simulate connection delay
   useEffect(() => {
@@ -43,6 +56,9 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
             text: initialMessage,
             timestamp: formatTimestamp(new Date())
           }]);
+          
+          // Add to transcriptions
+          setTranscriptions([`${persona.name}: ${initialMessage}`]);
         }
       }, 1500);
       
@@ -50,20 +66,75 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     }
   }, [open, callStatus, persona]);
 
+  // Initialize audio devices
+  useEffect(() => {
+    const getDevices = async () => {
+      try {
+        // Request microphone permission first
+        await navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            // Stop the stream after permission is granted
+            stream.getTracks().forEach(track => track.stop());
+          })
+          .catch(error => {
+            console.error("Microphone permission denied:", error);
+            toast({
+              title: "Microphone Access Denied",
+              description: "Please allow microphone access to use the call feature",
+            });
+          });
+
+        // Get all available devices
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        
+        // Filter audio devices
+        const mics = devices.filter(device => device.kind === "audioinput");
+        const speakers = devices.filter(device => device.kind === "audiooutput");
+        
+        setAvailableMics(mics);
+        setAvailableSpeakers(speakers);
+        
+        // Set defaults if available
+        if (mics.length > 0) setSelectedMic(mics[0].deviceId);
+        if (speakers.length > 0) setSelectedSpeaker(speakers[0].deviceId);
+      } catch (error) {
+        console.error("Error accessing media devices:", error);
+        toast({
+          title: "Device Error",
+          description: "Unable to access audio devices",
+        });
+      }
+    };
+    
+    if (open) {
+      getDevices();
+    }
+    
+    // Listen for device changes
+    navigator.mediaDevices.addEventListener('devicechange', getDevices);
+    
+    return () => {
+      navigator.mediaDevices.removeEventListener('devicechange', getDevices);
+    };
+  }, [open]);
+
   // Simulate call duration timer
   useEffect(() => {
-    let interval: number | null = null;
-    
     if (open && callStatus === "active") {
-      interval = window.setInterval(() => {
+      timerRef.current = window.setInterval(() => {
         setCallDuration(prev => prev + 1);
       }, 1000);
     }
     
     return () => {
-      if (interval) clearInterval(interval);
+      if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [open, callStatus]);
+
+  // Auto scroll to latest message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const getInitialMessage = (persona: UserPersona): string => {
     switch (persona.id) {
@@ -96,28 +167,53 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         setCallStatus("connecting");
         setCallDuration(0);
         setMessages([]);
+        setTranscriptions([]);
+        setIsMuted(false);
+        setIsAudioMuted(false);
       }, 300);
     }, 1000);
   };
 
+  const handleToggleMute = () => {
+    setIsMuted(!isMuted);
+    toast({
+      title: isMuted ? "Microphone Unmuted" : "Microphone Muted",
+      description: isMuted ? "Your microphone is now active" : "Your microphone has been muted",
+    });
+  };
+
+  const handleToggleAudio = () => {
+    setIsAudioMuted(!isAudioMuted);
+    toast({
+      title: isAudioMuted ? "Audio Unmuted" : "Audio Muted",
+      description: isAudioMuted ? "You can now hear the call" : "Call audio has been muted",
+    });
+  };
+
   const handleSendMessage = () => {
-    // Simple demo - in a real app, you would integrate with a voice/chat API
-    const newMessage = {
+    // Simulate sending a message
+    const agentMessage = {
       sender: "agent" as const,
-      text: "I understand your concerns. Let me help you with that issue...",
+      text: "I understand. Let me help you with that...",
       timestamp: formatTimestamp(new Date())
     };
     
-    setMessages(prev => [...prev, newMessage]);
+    setMessages(prev => [...prev, agentMessage]);
+    setTranscriptions(prev => [...prev, `You: ${agentMessage.text}`]);
     
     // Simulate response from persona
     setTimeout(() => {
-      const response = {
-        sender: "user" as const,
-        text: "That sounds great. Can you provide more details?",
-        timestamp: formatTimestamp(new Date())
-      };
-      setMessages(prev => [...prev, response]);
+      if (persona) {
+        const responseText = "Thank you for your help. Can you tell me more about the pricing options?";
+        const personaResponse = {
+          sender: "user" as const,
+          text: responseText,
+          timestamp: formatTimestamp(new Date())
+        };
+        
+        setMessages(prev => [...prev, personaResponse]);
+        setTranscriptions(prev => [...prev, `${persona.name}: ${responseText}`]);
+      }
     }, 3000);
   };
 
@@ -125,8 +221,8 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-md sm:max-w-xl">
-        <AlertDialogHeader>
+      <AlertDialogContent className="max-w-md sm:max-w-2xl">
+        <AlertDialogHeader className="space-y-2 border-b pb-4">
           <AlertDialogTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {persona.type === "customer" ? (
@@ -135,14 +231,22 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                 <Bot className="h-5 w-5 text-primary" />
               )}
               <span>{persona.name}</span>
+              <Badge variant="outline" className="ml-2">
+                {persona.type === "customer" ? "Customer" : "Training Bot"}
+              </Badge>
             </div>
-            <div className="flex items-center gap-2 text-sm font-normal text-gray-500">
+            <div className="flex items-center gap-2 text-sm font-normal">
               {callStatus === "connecting" ? (
-                "Connecting..."
+                <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20">
+                  Connecting...
+                </Badge>
               ) : (
-                <span className="text-green-500 dark:text-green-400">
-                  {formatDuration(callDuration)}
-                </span>
+                <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                    {formatDuration(callDuration)}
+                  </span>
+                </Badge>
               )}
             </div>
           </AlertDialogTitle>
@@ -157,7 +261,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                 )}
                 <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-amber-500 rounded-full animate-pulse"></div>
               </div>
-              <h3 className="text-lg font-medium mb-2">Connecting...</h3>
+              <h3 className="text-lg font-medium mb-2">Connecting to {persona.name}...</h3>
               <Progress value={45} className="w-48 h-1" />
             </div>
           )}
@@ -165,7 +269,78 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
 
         {callStatus === "active" && (
           <>
-            <div className="max-h-60 overflow-y-auto border rounded-md p-3 mb-4">
+            <div className="py-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                {/* Persona Info */}
+                <div className="rounded-lg border p-3 bg-secondary/10 text-sm">
+                  <h4 className="font-medium text-sm mb-1.5">About {persona.name}</h4>
+                  <p className="text-gray-600 dark:text-gray-400 mb-2">{persona.description}</p>
+                  {persona.scenario && (
+                    <div className="bg-secondary/20 dark:bg-secondary/30 rounded p-2 text-xs">
+                      <span className="font-medium">Scenario:</span> {persona.scenario}
+                    </div>
+                  )}
+                </div>
+
+                {/* Device Controls */}
+                <div className="rounded-lg border p-3 space-y-3">
+                  <h4 className="font-medium text-sm">Audio Devices</h4>
+                  <div className="space-y-2">
+                    <Label htmlFor="mic-select" className="text-xs">Microphone</Label>
+                    <Select 
+                      value={selectedMic} 
+                      onValueChange={setSelectedMic}
+                    >
+                      <SelectTrigger id="mic-select" className="h-8 text-xs">
+                        <SelectValue placeholder="Select microphone" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableMics.map((mic) => (
+                          <SelectItem key={mic.deviceId} value={mic.deviceId}>
+                            {mic.label || `Microphone ${mic.deviceId.slice(0, 5)}`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="speaker-select" className="text-xs">Speaker</Label>
+                    <Select 
+                      value={selectedSpeaker} 
+                      onValueChange={setSelectedSpeaker}
+                    >
+                      <SelectTrigger id="speaker-select" className="h-8 text-xs">
+                        <SelectValue placeholder="Select speaker" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableSpeakers.map((speaker) => (
+                          <SelectItem key={speaker.deviceId} value={speaker.deviceId}>
+                            {speaker.label || `Speaker ${speaker.deviceId.slice(0, 5)}`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Transcription */}
+              <div className="rounded-lg border p-3 flex flex-col max-h-[250px]">
+                <h4 className="font-medium text-sm mb-2">Live Transcription</h4>
+                <div className="overflow-y-auto flex-1 space-y-3 text-sm">
+                  {transcriptions.map((text, index) => (
+                    <div key={index} className="border-b border-gray-100 dark:border-gray-800 pb-2 last:border-0">
+                      {text}
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+              </div>
+            </div>
+
+            {/* Messages view */}
+            <div className="max-h-40 overflow-y-auto border rounded-md p-3 mb-4">
               {messages.map((message, index) => (
                 <div 
                   key={index}
@@ -183,45 +358,45 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                   <div className="text-xs text-gray-500 mt-1">{message.timestamp}</div>
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
-
-            <AlertDialogDescription>
-              <div className="text-xs text-gray-500 mb-2">
-                {persona.scenario && (
-                  <span>Scenario: {persona.scenario}</span>
-                )}
-              </div>
-            </AlertDialogDescription>
           </>
         )}
 
-        <AlertDialogFooter className="gap-2 sm:gap-0">
-          <div className="flex items-center gap-2 w-full justify-center">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setIsMuted(!isMuted)}
-              className={isMuted ? "bg-red-100 dark:bg-red-900/20 border-red-200 dark:border-red-800/30" : ""}
-            >
-              {isMuted ? <MicOff className="h-4 w-4 text-red-500" /> : <Mic className="h-4 w-4" />}
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleSendMessage}
-            >
-              <MessageCircle className="h-4 w-4" />
-            </Button>
-            
-            <Button
-              variant="destructive"
-              size="icon"
-              onClick={handleEndCall}
-            >
-              <PhoneOff className="h-4 w-4" />
-            </Button>
-          </div>
+        <AlertDialogFooter className="flex justify-center space-x-2 border-t pt-4">
+          <Button
+            variant={isMuted ? "destructive" : "outline"}
+            size="icon"
+            onClick={handleToggleMute}
+            className={isMuted ? "bg-red-500/90" : ""}
+          >
+            {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleToggleAudio}
+            className={isAudioMuted ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/30" : ""}
+          >
+            {isAudioMuted ? <Volume className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+          </Button>
+          
+          <Button
+            variant="default"
+            onClick={handleSendMessage}
+            disabled={callStatus !== "active" || isMuted}
+          >
+            Speak
+          </Button>
+          
+          <Button
+            variant="destructive"
+            size="icon"
+            onClick={handleEndCall}
+          >
+            <PhoneOff className="h-4 w-4" />
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
