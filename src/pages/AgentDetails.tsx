@@ -633,13 +633,14 @@ const AgentDetails = () => {
                         <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestCall} title="Test agent call">
                           <PhoneOutgoing className="h-3 w-3 text-green-400" />
                         </Button>
-                        <Tooltip open={isCallTooltipOpen} onOpenChange={setIsCallTooltipOpen}>
+                        <Tooltip>
                           <TooltipTrigger asChild>
                             <Button 
                               variant="ghost" 
                               size="icon" 
                               className="h-6 w-6 rounded-full hover:bg-blue-700/50" 
                               title="Call me back"
+                              onClick={() => setIsCallTooltipOpen(true)}
                             >
                               <PhoneIncoming className="h-3 w-3 text-blue-400" />
                             </Button>
@@ -784,4 +785,212 @@ const AgentDetails = () => {
                               <TabsContent value="Eleven Labs" className="border-none p-0">
                                 <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
                                   {Object.keys(voiceSamples["Eleven Labs"]).map(voiceName => {
-                                  const voiceDef = voiceSamples["Eleven Labs"][voice
+                                  const voiceDef = voiceSamples["Eleven Labs"][voiceName];
+                                  return <div key={voiceName} className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
+                                        <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} />
+                                        <div className="flex w-full justify-between items-center">
+                                          <div className="flex gap-3">
+                                            {voiceDef.avatar && <Avatar className="h-10 w-10 rounded-full">
+                                                <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                                <AvatarFallback>
+                                                  {voiceName.substring(0, 2)}
+                                                </AvatarFallback>
+                                              </Avatar>}
+                                            <div>
+                                              <Label htmlFor={`voice-${voiceName}`} className="text-base font-medium cursor-pointer">
+                                                {voiceName}
+                                              </Label>
+                                              <div className="flex items-center gap-1.5 mt-1.5">
+                                                {voiceDef.traits.map((trait, i) => <span key={i} className={`text-xs px-2 py-0.5 rounded-full ${trait.color}`}>
+                                                    {trait.name}
+                                                  </span>)}
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <Button size="sm" variant={currentlyPlaying === voiceName ? "destructive" : "secondary"} onClick={() => handlePlaySample(voiceName)} className="min-w-20">
+                                            {currentlyPlaying === voiceName ? <>
+                                                <Pause className="h-3.5 w-3.5 mr-1" />
+                                                Stop
+                                              </> : <>
+                                                <Play className="h-3.5 w-3.5 mr-1" />
+                                                Play
+                                              </>}
+                                          </Button>
+                                        </div>
+                                      </div>;
+                                })}
+                                  <div className="mt-4 pt-4 border-t">
+                                    <div className="flex items-start space-x-3 rounded-lg border p-3">
+                                      <RadioGroupItem value="Custom" id="voice-custom" />
+                                      <div className="flex-1">
+                                        <Label htmlFor="voice-custom" className="text-base font-medium cursor-pointer block mb-2">
+                                          Custom Voice ID
+                                        </Label>
+                                        <Input placeholder="Enter custom voice ID" value={customVoiceId} onChange={handleCustomVoiceIdChange} disabled={!isCustomVoice} className="max-w-md" />
+                                        <p className="text-xs text-muted-foreground mt-2">
+                                          Enter your custom voice ID from your provider.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </RadioGroup>
+                              </TabsContent>
+                              
+                              <TabsContent value="Amazon Polly" className="border-none p-0">
+                                <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
+                                  {Object.keys(voiceSamples["Amazon Polly"]).map(voiceName => {
+                                  const voiceDef = voiceSamples["Amazon Polly"][voiceName];
+                                  return <div key={voiceName} className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
+                                        <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} />
+                                        <div className="flex w-full justify-between items-center">
+                                          <div className="flex gap-3">
+                                            {voiceDef.avatar && <Avatar className="h-10 w-10 rounded-full">
+                                                <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                                <AvatarFallback>
+                                                  {voiceName.substring(0, 2)}
+                                                </AvatarFallback>
+                                              </Avatar>}
+                                            <div>
+                                              <Label htmlFor={`voice-${voiceName}`} className="text-base font-medium cursor-pointer">
+                                                {voiceName}
+                                              </Label>
+                                              <div className="flex items-center gap-1.5 mt-1.5">
+                                                {voiceDef.traits.map((trait, i) => <span key={i} className={`text-xs px-2 py-0.5 rounded-full ${trait.color}`}>
+                                                    {trait.name}
+                                                  </span>)}
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <Button size="sm" variant={currentlyPlaying === voiceName ? "destructive" : "secondary"} onClick={() => handlePlaySample(voiceName)} className="min-w-20">
+                                            {currentlyPlaying === voiceName ? <>
+                                                <Pause className="h-3.5 w-3.5 mr-1" />
+                                                Stop
+                                              </> : <>
+                                                <Play className="h-3.5 w-3.5 mr-1" />
+                                                Play
+                                              </>}
+                                          </Button>
+                                        </div>
+                                      </div>;
+                                })}
+                                </RadioGroup>
+                              </TabsContent>
+                              
+                              <TabsContent value="Google TTS" className="border-none p-0">
+                                <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
+                                  {Object.keys(voiceSamples["Google TTS"]).map(voiceName => {
+                                  const voiceDef = voiceSamples["Google TTS"][voiceName];
+                                  return <div key={voiceName} className={`flex items-start space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
+                                        <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} />
+                                        <div className="flex w-full justify-between items-center">
+                                          <div className="flex gap-3">
+                                            {voiceDef.avatar && <Avatar className="h-10 w-10 rounded-full">
+                                                <AvatarImage src={voiceDef.avatar} alt={voiceName} />
+                                                <AvatarFallback>
+                                                  {voiceName.substring(0, 2)}
+                                                </AvatarFallback>
+                                              </Avatar>}
+                                            <div>
+                                              <Label htmlFor={`voice-${voiceName}`} className="text-base font-medium cursor-pointer">
+                                                {voiceName}
+                                              </Label>
+                                              <div className="flex items-center gap-1.5 mt-1.5">
+                                                {voiceDef.traits.map((trait, i) => <span key={i} className={`text-xs px-2 py-0.5 rounded-full ${trait.color}`}>
+                                                    {trait.name}
+                                                  </span>)}
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <Button size="sm" variant={currentlyPlaying === voiceName ? "destructive" : "secondary"} onClick={() => handlePlaySample(voiceName)} className="min-w-20">
+                                            {currentlyPlaying === voiceName ? <>
+                                                <Pause className="h-3.5 w-3.5 mr-1" />
+                                                Stop
+                                              </> : <>
+                                                <Play className="h-3.5 w-3.5 mr-1" />
+                                                Play
+                                              </>}
+                                          </Button>
+                                        </div>
+                                      </div>;
+                                })}
+                                </RadioGroup>
+                              </TabsContent>
+                            </ScrollArea>
+                          </div>
+                        </Tabs>
+                        
+                        <div className="flex justify-end gap-3 mt-6">
+                          <Button variant="outline" onClick={() => setIsVoiceDialogOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button onClick={handleVoiceSelectionSave}>
+                            Save Voice Settings
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-8">
+            <h3 className="text-lg font-medium text-foreground mb-4">Performance Stats</h3>
+            <AgentStats avmScore={agent.avmScore || 7.8} interactionCount={agent.interactions || 0} csat={agent.csat || 92} performance={agent.performance || 88} />
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="mt-8">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="setup" className="text-sm">
+            <span className="flex items-center gap-2">
+              <Cog className="h-4 w-4" />
+              Setup
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="text-sm">
+            <span className="flex items-center gap-2">
+              <BarChart2 className="h-4 w-4" />
+              Analytics
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="text-sm">
+            <span className="flex items-center gap-2">
+              <Cpu className="h-4 w-4" />
+              Settings
+            </span>
+          </TabsTrigger>
+        </TabsList>
+        
+        <div className="mt-6">
+          <TabsContent value="setup" className="space-y-6">
+            <AgentSetupStepper agent={agent} />
+          </TabsContent>
+          
+          <TabsContent value="analytics" className="space-y-6">
+            {agent && <AnalyticsTab agent={agent} />}
+          </TabsContent>
+          
+          <TabsContent value="settings" className="space-y-6">
+            {agent && <AgentConfigSettings agent={agent} onAgentUpdate={handleAgentUpdate} />}
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Integration Channels</CardTitle>
+                <CardDescription>
+                  Configure how users can communicate with your agent.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AgentChannels channels={agent.channelConfigs || {}} onUpdateChannel={handleUpdateChannel} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </div>
+      </Tabs>
+    </div>;
+};
+
+export default AgentDetails;
