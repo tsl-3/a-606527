@@ -16,6 +16,7 @@ import { PersonasCard } from "./PersonasCard";
 import { WorkflowCard } from "./WorkflowCard";
 import { SimulationCard } from "./SimulationCard";
 import { RolePlayDialog } from "./RolePlayDialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface TrainingRecord {
   id: string;
@@ -113,15 +114,19 @@ const AgentTrainingCard: React.FC<{
   voiceConfidence?: number;
   talkTime?: string;
   trainingRecords?: TrainingRecord[];
+  isActive?: boolean;
+  onComplete?: () => void;
 }> = ({ 
   status, 
   voiceSamples = 0, 
   totalSamples = 10, 
   voiceConfidence = 0,
   talkTime = '0s',
-  trainingRecords = []
+  trainingRecords = [],
+  isActive = false,
+  onComplete
 }) => {
-  const [isExpanded, setIsExpanded] = useState(status !== 'completed');
+  const [isExpanded, setIsExpanded] = useState(status !== 'completed' || isActive);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [openRolePlayDialog, setOpenRolePlayDialog] = useState(false);
 
@@ -137,15 +142,25 @@ const AgentTrainingCard: React.FC<{
       console.log('Files selected:', files);
       const fileNames = Array.from(files).map(file => file.name);
       console.log('File names:', fileNames);
+      if (onComplete) onComplete();
     }
   };
 
+  const handleRolePlayComplete = () => {
+    setOpenRolePlayDialog(false);
+    if (onComplete) onComplete();
+  };
+
   return (
-    <div className="rounded-lg overflow-hidden mb-6 border border-gray-200 dark:border-gray-800">
+    <div className={`rounded-lg overflow-hidden mb-6 border ${
+      isActive ? 'border-primary/50 shadow-md ring-2 ring-primary/30 bg-primary/5' : 'border-gray-200 dark:border-gray-800'
+    } transition-all duration-300`}>
       <div className="p-6 pb-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-8 h-8 text-gray-900 dark:text-white">
+            <div className={`flex items-center justify-center rounded-full w-8 h-8 text-gray-900 dark:text-white ${
+              isActive ? 'bg-primary/20' : 'bg-gray-100 dark:bg-gray-800'
+            }`}>
               3
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Agent Training</h3>
@@ -186,7 +201,8 @@ const AgentTrainingCard: React.FC<{
         {status !== 'not-started' && (
           <Progress 
             value={status === 'completed' ? 100 : 30} 
-            className="h-1.5 mb-6" 
+            className="h-1.5 mb-6"
+            indicatorColor={status === 'completed' ? "bg-green-500 dark:bg-green-400" : "bg-amber-500 dark:bg-amber-400"} 
           />
         )}
         
@@ -479,7 +495,8 @@ const AgentTrainingCard: React.FC<{
       
       <RolePlayDialog 
         open={openRolePlayDialog} 
-        onOpenChange={setOpenRolePlayDialog} 
+        onOpenChange={setOpenRolePlayDialog}
+        onComplete={handleRolePlayComplete}
       />
     </div>
   );
@@ -490,26 +507,27 @@ interface AgentSetupStepperProps {
 }
 
 export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) => {
-  const steps = {
-    knowledge: { completed: false, progress: 15, active: true },
-    personas: { completed: false, progress: 0, active: false },
-    training: { completed: false, progress: 30, active: false },
-    workflow: { completed: false, progress: 0, active: false },
-    simulation: { completed: false, progress: 0, active: false }
-  };
+  const { toast } = useToast();
   
-  const totalSteps = Object.keys(steps).length;
-  const completedSteps = Object.values(steps).filter(step => step.completed).length;
-  const overallProgress = Math.round((completedSteps / totalSteps) * 100);
-
-  const sampleTrainingRecords: TrainingRecord[] = [
+  const stepOrder = ['knowledge', 'personas', 'training', 'workflow', 'simulation'];
+  const [activeStepIndex, setActiveStepIndex] = useState(0);
+  
+  const [stepStatuses, setStepStatuses] = useState({
+    knowledge: 'not-started' as 'not-started' | 'in-progress' | 'completed',
+    personas: 'not-started' as 'not-started' | 'in-progress' | 'completed',
+    training: 'not-started' as 'not-started' | 'in-progress' | 'completed',
+    workflow: 'not-started' as 'not-started' | 'in-progress' | 'completed',
+    simulation: 'not-started' as 'not-started' | 'in-progress' | 'completed'
+  });
+  
+  const sampleTrainingRecords = [
     {
       id: '1',
       title: 'Customer Support Call #1',
       date: 'Feb 20, 2024',
       time: '8:30 AM',
       duration: '5:30',
-      type: 'call'
+      type: 'call' as 'call' | 'roleplay'
     },
     {
       id: '2',
@@ -517,11 +535,11 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       date: 'Feb 21, 2024',
       time: '3:15 PM',
       duration: '3:45',
-      type: 'roleplay'
+      type: 'roleplay' as 'call' | 'roleplay'
     }
   ];
 
-  const sampleDocuments: Document[] = [
+  const sampleDocuments = [
     {
       id: '1',
       title: 'Company Guidelines.pdf',
@@ -540,7 +558,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
     }
   ];
 
-  const samplePersonas: Persona[] = [
+  const samplePersonas = [
     {
       id: '1',
       name: 'Sarah Johnson',
@@ -558,24 +576,6 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       description: "Michael is a full-stack developer who works remotely. He values technical documentation and efficient problem-solving approaches.",
       pain_points: ['Legacy code', 'Unclear requirements', 'Technical debt'],
       goals: ['Write clean code', 'Learn new technologies', 'Build scalable systems']
-    },
-    {
-      id: '3',
-      name: 'Emma Rodriguez',
-      role: 'Customer Support Lead',
-      age: '35',
-      description: "Emma manages a team of support representatives. She's focused on improving customer satisfaction and reducing resolution times.",
-      pain_points: ['High ticket volume', 'Training new staff', 'Complex issues'],
-      goals: ['Improve CSAT scores', 'Reduce response time', 'Develop knowledge base']
-    },
-    {
-      id: '4',
-      name: 'David Washington',
-      role: 'Finance Director',
-      age: '45',
-      description: "David oversees financial operations and needs accurate data for forecasting and reporting to stakeholders.",
-      pain_points: ['Data accuracy', 'Manual processes', 'Compliance'],
-      goals: ['Automate reporting', 'Improve forecasting', 'Reduce costs']
     }
   ];
   
@@ -595,18 +595,135 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       performance: 68,
       scenarios: 4,
       tokens: "25.3k"
-    },
-    {
-      id: "2",
-      name: "Technical Support Basics",
-      date: "Feb 24, 2024",
-      coverage: 48,
-      performance: 65,
-      scenarios: 3,
-      tokens: "18.6k"
     }
   ];
+
+  const totalSteps = stepOrder.length;
+  const completedSteps = Object.values(stepStatuses).filter(status => status === 'completed').length;
+  const overallProgress = Math.round((completedSteps / totalSteps) * 100);
+
+  const handleStepStarted = (stepName: keyof typeof stepStatuses) => {
+    setStepStatuses(prev => ({
+      ...prev,
+      [stepName]: 'in-progress'
+    }));
+    
+    toast({
+      title: "Step Started",
+      description: `You've started the ${stepName} step.`,
+    });
+  };
+
+  const handleStepCompleted = (stepName: keyof typeof stepStatuses) => {
+    setStepStatuses(prev => ({
+      ...prev,
+      [stepName]: 'completed'
+    }));
+    
+    const currentIndex = stepOrder.indexOf(stepName);
+    const nextIndex = currentIndex + 1;
+    
+    if (nextIndex < stepOrder.length) {
+      const nextStep = stepOrder[nextIndex];
+      setActiveStepIndex(nextIndex);
+      setStepStatuses(prev => ({
+        ...prev,
+        [nextStep]: 'in-progress'
+      }));
+      
+      toast({
+        title: "Step Completed",
+        description: `You've completed the ${stepName} step. Moving to ${nextStep}.`,
+      });
+    } else {
+      toast({
+        title: "All Steps Completed",
+        description: "You've successfully completed all the setup steps!",
+      });
+    }
+  };
   
+  const renderKnowledgeBaseCard = () => {
+    if (activeStepIndex === 0 || stepStatuses.knowledge !== 'not-started') {
+      return (
+        <KnowledgeBaseCard 
+          status={stepStatuses.knowledge} 
+          documents={stepStatuses.knowledge === 'not-started' ? [] : sampleDocuments}
+          processedCount={stepStatuses.knowledge === 'completed' ? 1 : 0}
+          totalCount={1}
+          isActive={activeStepIndex === 0}
+          onComplete={() => handleStepCompleted('knowledge')}
+        />
+      );
+    }
+    return null;
+  };
+
+  const renderPersonasCard = () => {
+    if (activeStepIndex === 1 || stepStatuses.personas !== 'not-started') {
+      return (
+        <PersonasCard 
+          status={stepStatuses.personas}
+          personas={stepStatuses.personas === 'not-started' ? [] : samplePersonas}
+          generatedCount={stepStatuses.personas === 'completed' ? 2 : 0}
+          totalCount={2}
+          isActive={activeStepIndex === 1}
+          onComplete={() => handleStepCompleted('personas')}
+        />
+      );
+    }
+    return null;
+  };
+
+  const renderTrainingCard = () => {
+    if (activeStepIndex === 2 || stepStatuses.training !== 'not-started') {
+      return (
+        <AgentTrainingCard 
+          status={stepStatuses.training}
+          voiceSamples={stepStatuses.training === 'completed' ? 1 : 0}
+          totalSamples={1}
+          voiceConfidence={stepStatuses.training === 'completed' ? 95 : 0}
+          talkTime={stepStatuses.training === 'completed' ? '120s' : '0s'}
+          trainingRecords={stepStatuses.training === 'not-started' ? [] : sampleTrainingRecords}
+          isActive={activeStepIndex === 2}
+          onComplete={() => handleStepCompleted('training')}
+        />
+      );
+    }
+    return null;
+  };
+
+  const renderWorkflowCard = () => {
+    if (activeStepIndex === 3 || stepStatuses.workflow !== 'not-started') {
+      return (
+        <WorkflowCard 
+          status={stepStatuses.workflow}
+          stepNumber={4}
+          isActive={activeStepIndex === 3}
+          onComplete={() => handleStepCompleted('workflow')}
+        />
+      );
+    }
+    return null;
+  };
+
+  const renderSimulationCard = () => {
+    if (activeStepIndex === 4 || stepStatuses.simulation !== 'not-started') {
+      return (
+        <SimulationCard 
+          status={stepStatuses.simulation}
+          coverage={stepStatuses.simulation === 'not-started' ? undefined : 52}
+          performance={stepStatuses.simulation === 'not-started' ? undefined : 68}
+          scenarios={stepStatuses.simulation === 'not-started' ? undefined : sampleScenarios}
+          simulations={stepStatuses.simulation === 'not-started' ? undefined : sampleSimulations}
+          isActive={activeStepIndex === 4}
+          onComplete={() => handleStepCompleted('simulation')}
+        />
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="mb-8">
@@ -614,7 +731,17 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Agent Setup</h2>
           <div className="flex items-center">
             <span className="text-sm font-medium mr-2 text-gray-700 dark:text-gray-300">{overallProgress}% Complete</span>
-            <Progress value={overallProgress} className="w-24 h-2" />
+            <Progress 
+              value={overallProgress} 
+              className="w-24 h-2"
+              indicatorColor={
+                overallProgress === 100 
+                  ? "bg-green-500 dark:bg-green-400" 
+                  : overallProgress > 0 
+                    ? "bg-amber-500 dark:bg-amber-400" 
+                    : "bg-gray-400 dark:bg-gray-600"
+              }
+            />
           </div>
         </div>
         
@@ -624,164 +751,13 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
       </div>
       
       <div className="space-y-4 mt-8">
-        <KnowledgeBaseCard 
-          status="not-started" 
-        />
-        
-        <KnowledgeBaseCard 
-          status="in-progress" 
-          documents={sampleDocuments}
-          processedCount={2}
-          totalCount={10}
-        />
-        
-        <KnowledgeBaseCard 
-          status="completed" 
-          documents={[...sampleDocuments, 
-            {
-              id: '3',
-              title: 'FAQ Documentation.pdf',
-              type: 'pdf',
-              format: 'PDF',
-              size: '4.2 MB',
-              date: '2024-02-22'
-            },
-            {
-              id: '4',
-              title: 'Training Materials.pptx',
-              type: 'pptx',
-              format: 'PPTX',
-              size: '8.5 MB',
-              date: '2024-02-23'
-            }
-          ]}
-          processedCount={10}
-          totalCount={10}
-        />
-
-        <PersonasCard 
-          status="not-started" 
-        />
-        
-        <PersonasCard 
-          status="in-progress" 
-          personas={samplePersonas}
-          generatedCount={4}
-          totalCount={10}
-        />
-        
-        <PersonasCard 
-          status="completed" 
-          personas={[...samplePersonas, 
-            {
-              id: '5',
-              name: 'Jennifer Lee',
-              role: 'Product Manager',
-              age: '36',
-              description: "Jennifer oversees product development and works closely with engineering and design teams to deliver solutions that meet customer needs.",
-              pain_points: ['Feature prioritization', 'Stakeholder management', 'Market fit'],
-              goals: ['Increase user adoption', 'Improve retention', 'Drive innovation']
-            },
-            {
-              id: '6',
-              name: 'Robert Taylor',
-              role: 'Sales Director',
-              age: '42',
-              description: "Robert leads the sales team and is focused on expanding the customer base while maintaining strong relationships with existing clients.",
-              pain_points: ['Long sales cycles', 'Competitive market', 'CRM management'],
-              goals: ['Exceed quota', 'Expand territories', 'Improve forecasting']
-            },
-            {
-              id: '7',
-              name: 'Lisa Morgan',
-              role: 'HR Specialist',
-              age: '39',
-              description: "Lisa handles employee relations, recruitment, and policy implementation across the organization.",
-              pain_points: ['Talent retention', 'Policy compliance', 'Employee engagement'],
-              goals: ['Streamline hiring', 'Improve culture', 'Reduce turnover']
-            },
-            {
-              id: '8',
-              name: 'James Wilson',
-              role: 'Operations Manager',
-              age: '47',
-              description: "James ensures business processes run efficiently and is always looking for ways to improve operational effectiveness.",
-              pain_points: ['Process bottlenecks', 'Resource allocation', 'Quality control'],
-              goals: ['Optimize processes', 'Reduce costs', 'Improve scalability']
-            },
-            {
-              id: '9',
-              name: 'Sophia Garcia',
-              role: 'UX Designer',
-              age: '31',
-              description: "Sophia creates user-centered designs and conducts research to ensure products meet user needs and expectations.",
-              pain_points: ['Usability testing', 'Design constraints', 'Developer handoff'],
-              goals: ['Improve usability', 'Create design systems', 'User advocacy']
-            },
-            {
-              id: '10',
-              name: 'Thomas Brown',
-              role: 'IT Administrator',
-              age: '38',
-              description: "Thomas manages the IT infrastructure and ensures systems are secure, up-to-date, and functioning properly.",
-              pain_points: ['Security threats', 'Legacy systems', 'User support'],
-              goals: ['Enhance security', 'System reliability', 'Automate maintenance']
-            }
-          ]}
-          generatedCount={10}
-          totalCount={10}
-        />
-      
-        <AgentTrainingCard status="not-started" />
-        
-        <AgentTrainingCard 
-          status="in-progress" 
-          voiceSamples={3} 
-          voiceConfidence={65} 
-          talkTime="45s" 
-          trainingRecords={sampleTrainingRecords}
-        />
-        
-        <AgentTrainingCard 
-          status="completed" 
-          voiceSamples={10} 
-          totalSamples={10}
-          voiceConfidence={95} 
-          talkTime="120s" 
-          trainingRecords={sampleTrainingRecords}
-        />
-        
-        <WorkflowCard 
-          status="not-started" 
-          stepNumber={4}
-        />
-        
-        <WorkflowCard 
-          status="in-progress"
-          stepNumber={4}
-        />
-        
-        <WorkflowCard 
-          status="completed"
-          stepNumber={4}
-        />
-        
-        <SimulationCard 
-          status="not-started" 
-        />
-        
-        <SimulationCard 
-          status="in-progress"
-          coverage={52}
-          performance={68}
-          scenarios={sampleScenarios}
-          simulations={sampleSimulations}
-        />
-        
-        <SimulationCard 
-          status="completed"
-        />
+        {renderKnowledgeBaseCard()}
+        {renderPersonasCard()}
+        {renderTrainingCard()}
+        {renderWorkflowCard()}
+        {renderSimulationCard()}
       </div>
     </div>
   );
 };
+

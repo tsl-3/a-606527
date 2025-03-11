@@ -26,15 +26,19 @@ interface KnowledgeBaseCardProps {
   documents?: Document[];
   processedCount?: number;
   totalCount?: number;
+  isActive?: boolean;
+  onComplete?: () => void;
 }
 
 export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({ 
   status, 
   documents = [], 
   processedCount = 0,
-  totalCount = 1
+  totalCount = 1,
+  isActive = false,
+  onComplete
 }) => {
-  const [isExpanded, setIsExpanded] = useState(status !== 'completed');
+  const [isExpanded, setIsExpanded] = useState(status !== 'completed' || isActive);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [webUrlDialogOpen, setWebUrlDialogOpen] = useState(false);
   const [textDialogOpen, setTextDialogOpen] = useState(false);
@@ -42,6 +46,7 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
   const [webUrls, setWebUrls] = useState<string[]>([]);
   const [knowledgeText, setKnowledgeText] = useState("");
 
+  // If there's at least one document, consider it complete
   const progress = documents.length > 0 ? 100 : 0;
 
   const handleUploadClick = () => {
@@ -55,6 +60,7 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
     if (files && files.length > 0) {
       console.log('Files selected:', files);
       // Here you would handle file upload logic in a real app
+      if (onComplete) onComplete();
     }
   };
 
@@ -71,6 +77,7 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
       // Here you would handle saving the text in a real app
       setTextDialogOpen(false);
       setKnowledgeText("");
+      if (onComplete) onComplete();
     }
   };
 
@@ -99,18 +106,34 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
     }
   };
 
-  const getProgressColorClass = () => {
-    return documents.length > 0 
-      ? "bg-green-500 dark:bg-green-400" 
-      : "bg-gray-400 dark:bg-gray-600";
+  const getProgressIndicatorColor = () => {
+    if (documents.length > 0) {
+      return "bg-green-500 dark:bg-green-400";
+    } else {
+      return "bg-gray-400 dark:bg-gray-600";
+    }
+  };
+
+  const completeWebUrlAdd = () => {
+    if (webUrls.length > 0) {
+      console.log('Web URLs added:', webUrls);
+      setWebUrlDialogOpen(false);
+      setWebUrl("");
+      // Keep the list for demonstration, in a real app you'd process them
+      if (onComplete) onComplete();
+    }
   };
 
   return (
-    <div className="rounded-lg overflow-hidden mb-6 border border-gray-200 dark:border-gray-800">
+    <div className={`rounded-lg overflow-hidden mb-6 border ${
+      isActive ? 'border-primary/50 shadow-md ring-2 ring-primary/30 bg-primary/5' : 'border-gray-200 dark:border-gray-800'
+    } transition-all duration-300`}>
       <div className="p-6 pb-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-8 h-8 text-gray-900 dark:text-white">
+            <div className={`flex items-center justify-center rounded-full w-8 h-8 text-gray-900 dark:text-white ${
+              isActive ? 'bg-primary/20' : 'bg-gray-100 dark:bg-gray-800'
+            }`}>
               1
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Knowledge Base</h3>
@@ -136,7 +159,8 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
         {status !== 'not-started' && (
           <Progress 
             value={progress}
-            className={`h-1.5 mb-6 [&>div]:${getProgressColorClass()}`}
+            className="h-1.5 mb-6"
+            indicatorColor={getProgressIndicatorColor()}
           />
         )}
         
@@ -459,12 +483,7 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
             </Button>
             <Button 
               type="submit" 
-              onClick={() => {
-                console.log('Web URLs added:', webUrls);
-                setWebUrlDialogOpen(false);
-                setWebUrl("");
-                // Keep the list for demonstration, in a real app you'd process them
-              }}
+              onClick={completeWebUrlAdd}
               disabled={webUrls.length === 0}
             >
               Add Web Pages
@@ -509,3 +528,4 @@ export const KnowledgeBaseCard: React.FC<KnowledgeBaseCardProps> = ({
     </div>
   );
 };
+

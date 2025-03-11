@@ -26,6 +26,8 @@ interface SimulationCardProps {
     scenarios: number;
     tokens: string | number;
   }>;
+  isActive?: boolean;
+  onComplete?: () => void;
 }
 
 export const SimulationCard = ({
@@ -33,10 +35,12 @@ export const SimulationCard = ({
   coverage,
   performance,
   scenarios,
-  simulations
+  simulations,
+  isActive = false,
+  onComplete
 }: SimulationCardProps) => {
   const { toast } = useToast();
-  const [isExpanded, setIsExpanded] = useState(status !== 'completed');
+  const [isExpanded, setIsExpanded] = useState(status !== 'completed' || isActive);
 
   const handleSimulationComplete = (data: any) => {
     toast({
@@ -44,6 +48,7 @@ export const SimulationCard = ({
       description: "Your simulations are being processed...",
     });
     console.log("Simulation data:", data);
+    if (onComplete) onComplete();
   };
 
   const getStatusBadge = () => {
@@ -84,7 +89,7 @@ export const SimulationCard = ({
     }
   };
 
-  const getProgressColorClass = () => {
+  const getProgressIndicatorColor = () => {
     switch (status) {
       case 'not-started':
         return "bg-gray-400 dark:bg-gray-600";
@@ -98,11 +103,15 @@ export const SimulationCard = ({
   };
 
   return (
-    <div className="rounded-lg overflow-hidden mb-6 border border-gray-200 dark:border-gray-800">
+    <div className={`rounded-lg overflow-hidden mb-6 border ${
+      isActive ? 'border-primary/50 shadow-md ring-2 ring-primary/30 bg-primary/5' : 'border-gray-200 dark:border-gray-800'
+    } transition-all duration-300`}>
       <div className="p-6 pb-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-8 h-8 text-gray-900 dark:text-white">
+            <div className={`flex items-center justify-center rounded-full w-8 h-8 text-gray-900 dark:text-white ${
+              isActive ? 'bg-primary/20' : 'bg-gray-100 dark:bg-gray-800'
+            }`}>
               5
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Simulations</h3>
@@ -131,7 +140,8 @@ export const SimulationCard = ({
         
         <Progress 
           value={getProgressValue()} 
-          className={`h-1.5 mb-6 [&>div]:${getProgressColorClass()}`}
+          className="h-1.5 mb-6"
+          indicatorColor={getProgressIndicatorColor()}
         />
         
         {isExpanded && (
