@@ -11,7 +11,19 @@ import AgentDetails from "./pages/AgentDetails";
 import AgentCreate from "./pages/AgentCreate";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: (failureCount, error: any) => {
+        // Don't retry if we get a 404 for new123 agent
+        if (error?.message?.includes("Agent with id new123 not found")) {
+          return false;
+        }
+        return failureCount < 3;
+      }
+    }
+  }
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

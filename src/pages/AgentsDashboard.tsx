@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Bot, Search, CircleSlash, Loader2, UserCircle2, MoreVertical, Power, Edit, Eye, Archive, AlertCircle, Star, MessageCircle, Calendar, Phone, Mail, Copy, Sparkles, PlusCircle } from "lucide-react";
@@ -165,7 +166,13 @@ const AgentsDashboard = () => {
   const handleEditAgent = (e: React.MouseEvent, agentId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    navigate(`/agents/${agentId}?tab=settings`);
+    
+    // For newly created agent, go directly to setup tab
+    if (agentId === "new123") {
+      navigate(`/agents/${agentId}?tab=setup`);
+    } else {
+      navigate(`/agents/${agentId}?tab=settings`);
+    }
   };
 
   const handleArchiveAgent = (e: React.MouseEvent, agentId: string) => {
@@ -183,7 +190,13 @@ const AgentsDashboard = () => {
   const handleViewDetails = (e: React.MouseEvent, agentId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    navigate(`/agents/${agentId}`);
+    
+    // For newly created agent, go directly to setup tab
+    if (agentId === "new123") {
+      navigate(`/agents/${agentId}?tab=setup`);
+    } else {
+      navigate(`/agents/${agentId}`);
+    }
   };
 
   const handleCopyToClipboard = (text: string, type: string) => {
@@ -304,7 +317,7 @@ const AgentsDashboard = () => {
             </Card>
           </Link>
           
-          <Link to={`/agents/${newlyCreatedAgent.id}`} key={newlyCreatedAgent.id} className="block">
+          <Link to={`/agents/${newlyCreatedAgent.id}?tab=setup`} key={newlyCreatedAgent.id} className="block">
             <Card className="h-full card-hover border-agent-primary/10">
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-start">
