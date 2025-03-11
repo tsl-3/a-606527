@@ -640,6 +640,7 @@ const AgentDetails = () => {
                               size="icon" 
                               className="h-6 w-6 rounded-full hover:bg-blue-700/50" 
                               title="Call me back"
+                              onClick={() => setIsCallTooltipOpen(true)}
                             >
                               <PhoneIncoming className="h-3 w-3 text-blue-400" />
                             </Button>
