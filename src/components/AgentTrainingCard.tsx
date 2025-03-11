@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { 
   Mic, Upload, CircleDashed, ArrowRight, Clock, BarChart, 
@@ -58,6 +59,8 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   const [localTrainingRecords, setLocalTrainingRecords] = useState<TrainingRecord[]>(trainingRecords);
   const [localVoiceSamples, setLocalVoiceSamples] = useState(voiceSamples);
   const [localVoiceConfidence, setLocalVoiceConfidence] = useState(voiceConfidence);
+  const [totalRecordingMinutes, setTotalRecordingMinutes] = useState(0);
+  const targetMinutes = 10; // Set target to 10 minutes
 
   const handleToggleExpand = () => {
     if (onToggleExpand) {
@@ -74,6 +77,24 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   const [userPersonasSidebarOpen, setUserPersonasSidebarOpen] = useState(false);
   const [callInterfaceOpen, setCallInterfaceOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState<any>(null);
+
+  // Convert duration string (mm:ss) to minutes
+  const durationToMinutes = (duration: string): number => {
+    const [minutes, seconds] = duration.split(':').map(Number);
+    return minutes + seconds / 60;
+  };
+
+  // Calculate total recording minutes from all records
+  const calculateTotalMinutes = (records: TrainingRecord[]): number => {
+    return records.reduce((total, record) => {
+      return total + durationToMinutes(record.duration);
+    }, 0);
+  };
+
+  // Format minutes to display (2 decimal places)
+  const formatMinutes = (minutes: number): string => {
+    return minutes.toFixed(1);
+  };
 
   const handleUploadClick = () => {
     if (fileInputRef.current) {
@@ -94,23 +115,40 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       }
       
       const now = new Date();
-      const newRecordings = Array.from(files).map((file, index) => ({
-        id: Math.random().toString(36).substring(2, 9),
-        title: `Uploaded Recording ${localTrainingRecords.length + index + 1}`,
-        date: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        time: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
-        duration: '3:45',
-        type: 'call' as const
-      }));
+      // Generate random durations between 30s and 2m for uploaded files
+      const newRecordings = Array.from(files).map((file, index) => {
+        const minutes = Math.floor(Math.random() * 2) + 1;
+        const seconds = Math.floor(Math.random() * 60);
+        const duration = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        return {
+          id: Math.random().toString(36).substring(2, 9),
+          title: `Uploaded Recording ${localTrainingRecords.length + index + 1}`,
+          date: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          time: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+          duration,
+          type: 'call' as const
+        };
+      });
       
-      setLocalTrainingRecords(prev => [...prev, ...newRecordings]);
-      setLocalVoiceSamples(prev => Math.min(prev + files.length, totalSamples));
+      const updatedRecords = [...localTrainingRecords, ...newRecordings];
+      setLocalTrainingRecords(updatedRecords);
+      
+      const newTotalMinutes = calculateTotalMinutes(updatedRecords);
+      setTotalRecordingMinutes(newTotalMinutes);
+      setLocalVoiceSamples(prev => prev + files.length);
       setLocalVoiceConfidence(prev => Math.min(prev + 10, 95));
       
       toast({
         title: "Files uploaded successfully",
         description: `${files.length} recording${files.length > 1 ? 's' : ''} added to training data.`
       });
+      
+      // Check if we've reached the target minutes
+      if (newTotalMinutes >= targetMinutes && localStatus !== 'completed') {
+        setLocalStatus('completed');
+        if (onComplete) onComplete();
+      }
     }
   };
   
@@ -126,9 +164,12 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       if (onStart) onStart();
     }
     
-    setLocalTrainingRecords(prev => [...prev, recordingData]);
+    const updatedRecords = [...localTrainingRecords, recordingData];
+    setLocalTrainingRecords(updatedRecords);
     
-    setLocalVoiceSamples(prev => Math.min(prev + 1, totalSamples));
+    const newTotalMinutes = calculateTotalMinutes(updatedRecords);
+    setTotalRecordingMinutes(newTotalMinutes);
+    setLocalVoiceSamples(prev => prev + 1);
     setLocalVoiceConfidence(prev => Math.min(prev + 15, 95));
     
     toast({
@@ -136,15 +177,25 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       description: "The role-play session has been added to your training data."
     });
     
-    if (localVoiceSamples + 1 >= totalSamples) {
+    // Check if we've reached the target minutes
+    if (newTotalMinutes >= targetMinutes && localStatus !== 'completed') {
       setLocalStatus('completed');
       if (onComplete) onComplete();
     }
   };
   
   const handleRemoveRecording = (id: string) => {
-    setLocalTrainingRecords(prev => prev.filter(record => record.id !== id));
+    const updatedRecords = localTrainingRecords.filter(record => record.id !== id);
+    setLocalTrainingRecords(updatedRecords);
+    
+    const newTotalMinutes = calculateTotalMinutes(updatedRecords);
+    setTotalRecordingMinutes(newTotalMinutes);
     setLocalVoiceSamples(prev => Math.max(prev - 1, 0));
+    
+    // If we drop below target minutes, go back to in-progress
+    if (newTotalMinutes < targetMinutes && localStatus === 'completed') {
+      setLocalStatus('in-progress');
+    }
     
     toast({
       title: "Recording removed",
@@ -160,6 +211,14 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
     
     console.log("Playing recording:", record);
   };
+
+  // Initialize total minutes when component mounts or records change
+  React.useEffect(() => {
+    const minutes = calculateTotalMinutes(localTrainingRecords);
+    setTotalRecordingMinutes(minutes);
+  }, []);
+
+  const progressPercentage = Math.min(Math.round((totalRecordingMinutes / targetMinutes) * 100), 100);
 
   return (
     <div className={`rounded-lg overflow-hidden mb-6 border transition-colors ${
@@ -193,7 +252,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
           <div className="flex items-center gap-2">
             {localStatus === 'in-progress' && (
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                {Math.round((localVoiceSamples / totalSamples) * 100)}%
+                {progressPercentage}%
               </span>
             )}
             {localStatus === 'completed' && <span className="text-sm text-gray-500 dark:text-gray-400">100%</span>}
@@ -214,7 +273,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
         
         {localStatus !== 'not-started' && (
           <Progress 
-            value={localStatus === 'completed' ? 100 : Math.round((localVoiceSamples / totalSamples) * 100)} 
+            value={progressPercentage} 
             className="h-1.5 mb-6" 
           />
         )}
@@ -274,11 +333,11 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                   <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
                     <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
                       <Clock className="h-4 w-4" />
-                      <span className="text-xs font-medium">Voice Samples</span>
+                      <span className="text-xs font-medium">Recording Duration</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{localVoiceSamples}/{totalSamples}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Recommended samples</div>
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{formatMinutes(totalRecordingMinutes)}/{targetMinutes}m</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-500">Target minutes</div>
                     </div>
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
@@ -293,12 +352,12 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
                     <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
-                      <Clock className="h-4 w-4" />
-                      <span className="text-xs font-medium">Average Talk Time</span>
+                      <Mic className="h-4 w-4" />
+                      <span className="text-xs font-medium">Voice Samples</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">45s</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Average duration</div>
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{localVoiceSamples}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-500">Total recordings</div>
                     </div>
                   </div>
                 </div>
@@ -310,17 +369,17 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     </div>
                     <div>
                       <h4 className="font-medium mb-1 text-gray-900 dark:text-white">
-                        Progress: {localVoiceSamples} of {totalSamples} voice samples uploaded
+                        Progress: {formatMinutes(totalRecordingMinutes)} of {targetMinutes} minutes recorded
                       </h4>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Upload {totalSamples - localVoiceSamples} more voice samples to complete this step.
+                        Upload or record {formatMinutes(Math.max(targetMinutes - totalRecordingMinutes, 0))} more minutes to complete this step.
                       </p>
                     </div>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Training Recordings</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Training Recordings ({formatMinutes(totalRecordingMinutes)} minutes total)</h4>
                   <div className="space-y-3">
                     {localTrainingRecords.map((record) => (
                       <div key={record.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
@@ -450,7 +509,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                   </div>
                 </div>
                 
-                {localVoiceSamples >= totalSamples && onComplete && (
+                {totalRecordingMinutes >= targetMinutes && onComplete && (
                   <Button onClick={onComplete} className="mb-4">Complete Training</Button>
                 )}
               </>
@@ -465,7 +524,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     </div>
                     <div>
                       <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Completed: Voice training finished</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">All required voice samples have been collected and processed.</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">The required {targetMinutes} minutes of voice recordings have been collected and processed.</p>
                     </div>
                   </div>
                 </div>
@@ -474,11 +533,11 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                   <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
                     <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
                       <Clock className="h-4 w-4" />
-                      <span className="text-xs font-medium">Voice Samples</span>
+                      <span className="text-xs font-medium">Recording Duration</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">10/10</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Recommended samples</div>
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{formatMinutes(Math.max(totalRecordingMinutes, targetMinutes))}/{targetMinutes}m</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-500">Goal achieved</div>
                     </div>
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
@@ -493,18 +552,18 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
                     <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
-                      <Clock className="h-4 w-4" />
-                      <span className="text-xs font-medium">Average Talk Time</span>
+                      <Mic className="h-4 w-4" />
+                      <span className="text-xs font-medium">Voice Samples</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">120s</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Average duration</div>
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{localTrainingRecords.length}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-500">Total recordings</div>
                     </div>
                   </div>
                 </div>
                 
                 <div className="mb-6">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Training Recordings</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Training Recordings ({formatMinutes(totalRecordingMinutes)} minutes total)</h4>
                   <div className="space-y-3">
                     {[...trainingRecords, 
                       {

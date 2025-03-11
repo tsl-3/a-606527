@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { AgentTrainingCard } from "./AgentTrainingCard";
 import { WorkflowCard } from "./WorkflowCard";
@@ -192,7 +191,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             onToggleExpand={() => toggleExpanded('training')}
           />
         )}
-
+        
         {steps.workflow.status === 'not-started' && (
           <WorkflowCard 
             status="not-started"
@@ -222,7 +221,7 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
             onToggleExpand={() => toggleExpanded('workflow')}
           />
         )}
-
+        
         {steps.simulation.status === 'not-started' && (
           <SimulationCard 
             status="not-started"
