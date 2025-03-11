@@ -47,10 +47,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   isExpanded: controlledExpanded,
   onToggleExpand
 }) => {
-  // Let parent component control expanded state if provided
   const [localExpanded, setLocalExpanded] = useState(status !== 'completed');
-  
-  // Use either controlled or uncontrolled state
   const isExpanded = onToggleExpand ? controlledExpanded : localExpanded;
 
   const handleToggleExpand = () => {
@@ -137,14 +134,14 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
         {isExpanded && (
           <>
             {status === 'not-started' && (
-              <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-8 mb-8 text-center">
+              <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-8 mb-8">
                 <Mic className="h-12 w-12 text-gray-500 mx-auto mb-4" />
                 <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">No voice samples yet</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
                   Upload call recordings or start a role-playing session to begin training your agent.
                 </p>
                 
-                <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-6">
+                <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
                   {/* Option 1: Upload Recordings */}
                   <div 
                     onClick={handleUploadClick} 
@@ -173,20 +170,16 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Practice with humans</span>
                   </div>
                   
-                  {/* Option 3: Role Play with AI */}
+                  {/* Option 3: Role Play with AI - Now with primary button styling */}
                   <div 
                     onClick={() => setOpenRolePlayDialog(true)} 
-                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
+                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
                   >
-                    <Bot className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Role Play with AI</span>
-                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Practice with AI</span>
+                    <Bot className="h-12 w-12 text-primary dark:text-primary mb-3" />
+                    <span className="text-sm font-medium text-primary dark:text-primary">Role Play with AI</span>
+                    <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Practice with AI</span>
                   </div>
                 </div>
-                
-                {onStart && (
-                  <Button onClick={onStart}>Start Training</Button>
-                )}
               </div>
             )}
 
@@ -474,7 +467,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
         onOpenChange={setOpenRolePlayDialog} 
       />
       
-      {/* We'd need a Call Role Play dialog component for the second option */}
       <RolePlayDialog 
         open={callRolePlayDialog} 
         onOpenChange={setCallRolePlayDialog} 
