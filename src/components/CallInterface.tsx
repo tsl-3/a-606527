@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -231,9 +232,9 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         </AlertDialogHeader>
 
         {callStatus === "active" && (
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-4 my-4">
-            <div className="space-y-4">
-              <div className="rounded-lg border border-gray-800 p-3 bg-gray-900/50 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-4 my-4 h-[350px]">
+            <div className="space-y-4 h-full flex flex-col">
+              <div className="rounded-lg border border-gray-800 p-3 bg-gray-900/50 text-sm flex-shrink-0">
                 <h4 className="font-medium text-sm mb-1.5">About {persona.name}</h4>
                 <p className="text-gray-400 mb-2">{persona.description}</p>
                 {persona.scenario && (
@@ -243,7 +244,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                 )}
               </div>
 
-              <div className="rounded-lg border border-gray-800 p-3 space-y-3">
+              <div className="rounded-lg border border-gray-800 p-3 space-y-3 flex-grow overflow-auto">
                 <h4 className="font-medium text-sm">Audio Devices</h4>
                 <div className="space-y-2">
                   <Label htmlFor="mic-select" className="text-xs">Microphone</Label>
@@ -285,7 +286,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
               </div>
             </div>
 
-            <div className="rounded-lg border border-gray-800 p-4 flex flex-col h-[350px] min-h-[280px] overflow-hidden">
+            <div className="rounded-lg border border-gray-800 p-4 flex flex-col h-full overflow-hidden">
               <h4 className="font-medium text-sm mb-3">Live Transcription</h4>
               <ScrollArea className="flex-1 pr-2">
                 <div className="space-y-4">
