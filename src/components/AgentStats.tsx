@@ -30,7 +30,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
     return (
       <div className="flex gap-2 w-full">
         <Card className="flex-1 overflow-hidden shadow-sm">
-          <div className="px-2 py-1 flex items-center justify-between border-b border-border">
+          <div className="px-2 py-1 flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground">Agent Status</span>
             <Info className="w-3.5 h-3.5 text-muted-foreground" />
           </div>
@@ -80,6 +80,9 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
   const csatColor = displayCsat ? getCsatColor(displayCsat) : "text-muted-foreground";
   const performanceColor = displayPerformance ? getPerformanceColor(displayPerformance) : "text-muted-foreground";
   
+  // Get the appropriate color class for the AVM score bar
+  const scoreColorClass = displayAvmScore !== undefined ? getScoreColor(displayAvmScore) : "bg-gray-400";
+  
   return (
     <div className="flex gap-2 w-full">
       {/* AVM Score Card */}
@@ -90,10 +93,12 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
             <span className="text-xs font-medium">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
           </div>
           <CardContent className="p-2">
-            <Progress 
-              value={displayAvmScore ? (displayAvmScore * 10) : 0} 
-              className={`h-2 ${displayAvmScore ? getScoreColor(displayAvmScore) : "bg-gray-400"}`}
-            />
+            <div className="relative w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800 h-2">
+              <div 
+                className={`absolute h-full transition-all duration-300 ease-in-out ${scoreColorClass}`}
+                style={{ width: `${displayAvmScore ? (displayAvmScore * 10) : 0}%` }}
+              />
+            </div>
           </CardContent>
         </Card>
       )}
@@ -101,7 +106,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       {/* Interactions Card - Only shown when not hidden */}
       {!hideInteractions && (
         <Card className="flex-1 overflow-hidden shadow-sm">
-          <div className="px-2 py-1 flex items-center justify-between border-b border-border">
+          <div className="px-2 py-1 flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground">Interactions</span>
             <span className={`text-xs font-medium ${interactionTier.color}`}>{interactionTier.label}</span>
           </div>
@@ -118,7 +123,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       {/* CSAT Card - Only shown when not in compact mode and CSAT exists */}
       {!compact && (
         <Card className="flex-1 overflow-hidden shadow-sm">
-          <div className="px-2 py-1 flex items-center justify-between border-b border-border">
+          <div className="px-2 py-1 flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground">CSAT</span>
             <Smile className={`w-3.5 h-3.5 ${csatColor}`} />
           </div>
@@ -131,7 +136,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       {/* Performance Card - Only shown when not in compact mode and performance exists */}
       {!compact && (
         <Card className="flex-1 overflow-hidden shadow-sm">
-          <div className="px-2 py-1 flex items-center justify-between border-b border-border">
+          <div className="px-2 py-1 flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground">Performance</span>
             <Zap className={`w-3.5 h-3.5 ${performanceColor}`} />
           </div>
