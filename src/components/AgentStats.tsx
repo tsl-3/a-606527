@@ -2,31 +2,25 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Info } from "lucide-react";
-import { AgentType } from "@/types/agent";
 
-export interface AgentStatsProps {
-  agent?: AgentType;
-  avmScore?: number;
-  interactionCount?: number;
-  compact?: boolean;
-  isNewAgent?: boolean;
-  showZeroValues?: boolean;
-  hideInteractions?: boolean;
+interface AgentStatsProps {
+  avmScore?: number;  // 1-10 score
+  interactionCount: number;
+  csat?: number;  // 0-100 percentage
+  performance?: number; // 0-100 percentage
+  compact?: boolean; // If true, only show first 2 stats
+  isNewAgent?: boolean; // New flag to indicate a newly created agent
+  showZeroValues?: boolean; // If true, show 0 values instead of "No stats yet"
+  hideInteractions?: boolean; // New prop to hide interaction count
 }
 
 export const AgentStats: React.FC<AgentStatsProps> = ({ 
-  agent,
-  avmScore: propAvmScore,
-  interactionCount: propInteractionCount,
+  avmScore, 
+  interactionCount, 
   isNewAgent = false,
   showZeroValues = false,
-  hideInteractions = false,
-  compact = false
+  hideInteractions = false
 }) => {
-  // Use either direct props or extract from agent object
-  const avmScore = propAvmScore !== undefined ? propAvmScore : agent?.avmScore;
-  const interactions = propInteractionCount !== undefined ? propInteractionCount : agent?.interactions;
-
   // For new agents, show a different UI
   if (isNewAgent && !showZeroValues) {
     return (
@@ -46,7 +40,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
 
   // For analytics tab or when showZeroValues is true, show zeros instead of default values
   const displayAvmScore = isNewAgent && showZeroValues ? 0 : avmScore;
-  const displayInteractionCount = isNewAgent ? 0 : interactions;
+  const displayInteractionCount = isNewAgent ? 0 : interactionCount;
 
   // Color indicator for AVM score based on the value range
   const getScoreColor = (score: number): string => {
@@ -62,7 +56,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
     return { label: "Bronze", color: "text-amber-600" };
   };
   
-  const interactionTier = getInteractionTier(displayInteractionCount || 0);
+  const interactionTier = getInteractionTier(displayInteractionCount);
   
   // Get the appropriate color class for the AVM score bar
   const scoreColorClass = displayAvmScore !== undefined ? getScoreColor(displayAvmScore) : "bg-gray-400";

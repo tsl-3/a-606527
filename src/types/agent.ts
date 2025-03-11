@@ -53,20 +53,4 @@ export interface AgentType {
   customIndustry?: string;
   botFunction?: string;
   customFunction?: string;
-  config?: {
-    performance?: {
-      responseSpeed?: 'fast' | 'standard';
-      streamingEnabled?: boolean;
-      memoryAllocation?: 'standard' | 'high';
-      cachingEnabled?: boolean;
-    };
-    security?: {
-      contentFiltering?: 'medium' | 'high' | 'low';
-      piiDetection?: boolean;
-    };
-    monitoring?: {
-      analyticsLevel?: 'basic' | 'advanced';
-      healthMonitoring?: boolean;
-    };
-  };
 }

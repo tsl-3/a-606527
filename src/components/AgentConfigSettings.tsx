@@ -1,300 +1,309 @@
-import React from "react";
+
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Cpu, Zap, Shield, Gauge, Clock, BarChart, Activity, AlertTriangle } from "lucide-react";
-import { AgentType } from "@/types/agent";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { AgentType } from '@/types/agent';
+import { useToast } from "@/components/ui/use-toast";
+import { updateAgent } from '@/services/agentService';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
+  Bot, Copy, Save, Target, User, FileText, Code, Building, Briefcase, 
+  Headphones, ShoppingCart, Wrench, CircuitBoard, GraduationCap, Plane, 
+  Factory, ShieldCheck, Phone, Home, Plus, CirclePlus, MessageSquare,
+  HeartPulse, Landmark, Wallet, HelpCircle, BarChart4, Pen, Calendar
+} from 'lucide-react';
 
-export interface AgentConfigSettingsProps {
+interface AgentConfigSettingsProps {
   agent: AgentType;
   onAgentUpdate: (updatedAgent: AgentType) => void;
 }
 
+const INDUSTRIES = [
+  { id: "healthcare", name: "Healthcare", icon: <HeartPulse className="h-4 w-4" /> },
+  { id: "finance", name: "Finance & Banking", icon: <Landmark className="h-4 w-4" /> },
+  { id: "retail", name: "Retail & E-commerce", icon: <ShoppingCart className="h-4 w-4" /> },
+  { id: "technology", name: "Technology & Software", icon: <CircuitBoard className="h-4 w-4" /> },
+  { id: "education", name: "Education", icon: <GraduationCap className="h-4 w-4" /> },
+  { id: "hospitality", name: "Hospitality & Travel", icon: <Plane className="h-4 w-4" /> },
+  { id: "manufacturing", name: "Manufacturing", icon: <Factory className="h-4 w-4" /> },
+  { id: "insurance", name: "Insurance", icon: <ShieldCheck className="h-4 w-4" /> },
+  { id: "telecommunications", name: "Telecommunications", icon: <Phone className="h-4 w-4" /> },
+  { id: "real-estate", name: "Real Estate", icon: <Home className="h-4 w-4" /> },
+  { id: "other", name: "Other Industry", icon: <Plus className="h-4 w-4" /> }
+];
+
+const BOT_FUNCTIONS = [
+  { id: "customer-service", name: "Customer Service", icon: <Headphones className="h-4 w-4" /> },
+  { id: "sales", name: "Sales & Marketing", icon: <BarChart4 className="h-4 w-4" /> },
+  { id: "support", name: "Technical Support", icon: <Wrench className="h-4 w-4" /> },
+  { id: "it-helpdesk", name: "IT Helpdesk", icon: <CircuitBoard className="h-4 w-4" /> },
+  { id: "lead-generation", name: "Lead Generation", icon: <Target className="h-4 w-4" /> },
+  { id: "booking", name: "Appointment Booking", icon: <Calendar className="h-4 w-4" /> },
+  { id: "faq", name: "FAQ & Knowledge Base", icon: <FileText className="h-4 w-4" /> },
+  { id: "onboarding", name: "Customer Onboarding", icon: <User className="h-4 w-4" /> },
+  { id: "billing", name: "Billing & Payments", icon: <Wallet className="h-4 w-4" /> },
+  { id: "feedback", name: "Feedback Collection", icon: <MessageSquare className="h-4 w-4" /> },
+  { id: "other", name: "Other Function", icon: <Plus className="h-4 w-4" /> }
+];
+
 const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgentUpdate }) => {
-  const handlePerformanceUpdate = (key: string, value: any) => {
-    const updatedAgent = {
-      ...agent,
-      config: {
-        ...agent.config,
-        performance: {
-          ...agent.config?.performance,
-          [key]: value
-        }
-      }
-    };
-    onAgentUpdate(updatedAgent);
+  const { toast } = useToast();
+  const [name, setName] = useState(agent.name);
+  const [avatar, setAvatar] = useState(agent.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${agent.id}`);
+  const [purpose, setPurpose] = useState(agent.purpose || '');
+  const [prompt, setPrompt] = useState(agent.prompt || '');
+  const [industry, setIndustry] = useState(agent.industry || '');
+  const [botFunction, setBotFunction] = useState(agent.botFunction || '');
+  const [customIndustry, setCustomIndustry] = useState('');
+  const [customFunction, setCustomFunction] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      const finalIndustry = industry === 'other' ? customIndustry : industry;
+      const finalBotFunction = botFunction === 'other' ? customFunction : botFunction;
+      
+      const updatedAgent = await updateAgent(agent.id, {
+        name,
+        avatar,
+        purpose,
+        prompt,
+        industry: finalIndustry,
+        botFunction: finalBotFunction
+      });
+      
+      onAgentUpdate(updatedAgent);
+      
+      toast({
+        title: "Settings saved",
+        description: "Agent configuration has been updated successfully."
+      });
+    } catch (error) {
+      console.error("Error saving agent settings:", error);
+      toast({
+        title: "Failed to save settings",
+        description: "There was an error saving the agent configuration.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleSecurityUpdate = (key: string, value: any) => {
-    const updatedAgent = {
-      ...agent,
-      config: {
-        ...agent.config,
-        security: {
-          ...agent.config?.security,
-          [key]: value
-        }
-      }
-    };
-    onAgentUpdate(updatedAgent);
+  const handleCopyPrompt = () => {
+    navigator.clipboard.writeText(prompt);
+    toast({
+      title: "Prompt copied",
+      description: "The agent's prompt has been copied to clipboard."
+    });
   };
 
-  const handleMonitoringUpdate = (key: string, value: any) => {
-    const updatedAgent = {
-      ...agent,
-      config: {
-        ...agent.config,
-        monitoring: {
-          ...agent.config?.monitoring,
-          [key]: value
-        }
-      }
-    };
-    onAgentUpdate(updatedAgent);
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAvatar(e.target.value);
   };
 
-  const handleResetToDefault = (section: 'performance' | 'security' | 'monitoring') => {
-    const defaultConfigs = {
-      performance: {
-        responseSpeed: 'fast',
-        streamingEnabled: true,
-        memoryAllocation: 'standard',
-        cachingEnabled: true
-      },
-      security: {
-        contentFiltering: 'medium',
-        piiDetection: true
-      },
-      monitoring: {
-        analyticsLevel: 'advanced',
-        healthMonitoring: true
-      }
-    };
-
-    const updatedAgent = {
-      ...agent,
-      config: {
-        ...agent.config,
-        [section]: defaultConfigs[section]
-      }
-    };
-    onAgentUpdate(updatedAgent);
+  const generateRandomAvatar = () => {
+    const seed = Math.random().toString(36).substring(2, 10);
+    setAvatar(`https://api.dicebear.com/7.x/bottts/svg?seed=${seed}`);
   };
 
   return (
-    <Card className="border-gray-200 dark:border-gray-800">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-medium">Agent Configuration</CardTitle>
-        <CardDescription>Advanced settings for agent behavior and performance</CardDescription>
+    <Card className="border-0 shadow-none">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-2xl font-bold">Agent Configuration</CardTitle>
+        <CardDescription>
+          Configure your agent's basic information and behavior
+        </CardDescription>
       </CardHeader>
-      
-      <CardContent className="space-y-6">
-        <Tabs defaultValue="performance">
-          <TabsList className="mb-4">
-            <TabsTrigger value="performance">Performance</TabsTrigger>
-            <TabsTrigger value="security">Security</TabsTrigger>
-            <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
-          </TabsList>
+      <CardContent className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="bg-muted/30 rounded-lg p-6 flex flex-col items-center space-y-4 w-full">
+              <Avatar className="h-32 w-32 border-2 border-agent-primary/30">
+                <AvatarImage src={avatar} alt={name} />
+                <AvatarFallback>
+                  <Bot className="h-16 w-16" />
+                </AvatarFallback>
+              </Avatar>
+              
+              <div className="w-full space-y-3">
+                <div className="flex items-center gap-2">
+                  <Bot className="h-4 w-4 text-agent-primary" />
+                  <Label htmlFor="agent-avatar">Agent Avatar URL</Label>
+                </div>
+                <Input
+                  id="agent-avatar"
+                  value={avatar}
+                  onChange={handleAvatarChange}
+                  placeholder="Enter avatar URL"
+                />
+                <Button 
+                  variant="outline" 
+                  onClick={generateRandomAvatar} 
+                  className="w-full mt-2"
+                  size="sm"
+                >
+                  Generate Random Avatar
+                </Button>
+              </div>
+            </div>
+          </div>
           
-          <TabsContent value="performance" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Cpu className="h-4 w-4 text-agent-primary" />
-                    <span className="text-sm font-medium">Response Speed</span>
-                  </div>
-                  <Badge 
-                    variant="outline" 
-                    className="bg-green-50 text-green-700 border-green-200"
-                    onClick={() => handlePerformanceUpdate('responseSpeed', 
-                      agent.config?.performance?.responseSpeed === 'fast' ? 'standard' : 'fast'
-                    )}
-                  >
-                    {agent.config?.performance?.responseSpeed || 'Fast'}
-                  </Badge>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Optimize for faster agent response times
-                </p>
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-agent-primary" />
+                <Label htmlFor="agent-name">Agent Name</Label>
               </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Zap className="h-4 w-4 text-agent-primary" />
-                    <span className="text-sm font-medium">Streaming Responses</span>
-                  </div>
-                  <Switch 
-                    checked={agent.config?.performance?.streamingEnabled ?? true}
-                    onCheckedChange={(checked) => handlePerformanceUpdate('streamingEnabled', checked)}
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Show responses as they're being generated
-                </p>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Gauge className="h-4 w-4 text-agent-primary" />
-                    <span className="text-sm font-medium">Memory Allocation</span>
-                  </div>
-                  <Badge 
-                    variant="outline" 
-                    className="bg-blue-50 text-blue-700 border-blue-200"
-                    onClick={() => handlePerformanceUpdate('memoryAllocation',
-                      agent.config?.performance?.memoryAllocation === 'high' ? 'standard' : 'high'
-                    )}
-                  >
-                    {agent.config?.performance?.memoryAllocation || 'Standard'}
-                  </Badge>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Amount of context history retained between interactions
-                </p>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-agent-primary" />
-                    <span className="text-sm font-medium">Caching</span>
-                  </div>
-                  <Switch 
-                    checked={agent.config?.performance?.cachingEnabled ?? true}
-                    onCheckedChange={(checked) => handlePerformanceUpdate('cachingEnabled', checked)}
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Cache frequent responses for faster interactions
-                </p>
-              </div>
+              <Input
+                id="agent-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter agent name"
+                className="w-full"
+              />
+              <p className="text-xs text-muted-foreground">
+                This name will be displayed to users when they interact with your agent
+              </p>
             </div>
             
-            <Separator />
-            
-            <div className="flex justify-end gap-2">
-              <Button 
-                variant="outline"
-                onClick={() => handleResetToDefault('performance')}
-              >
-                Reset to Default
-              </Button>
-              <Button>Save Changes</Button>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Target className="h-4 w-4 text-agent-primary" />
+                <Label htmlFor="agent-purpose">Agent Purpose</Label>
+              </div>
+              <Textarea
+                id="agent-purpose"
+                value={purpose}
+                onChange={(e) => setPurpose(e.target.value)}
+                placeholder="Describe what this agent is designed to do"
+                className="min-h-[100px] w-full"
+              />
+              <p className="text-xs text-muted-foreground">
+                A clear description of your agent's role and primary responsibilities
+              </p>
             </div>
-          </TabsContent>
+          </div>
+        </div>
+
+        <div className="space-y-4 pt-6 border-t">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Building className="h-4 w-4 text-agent-primary" />
+              <Label>Industry</Label>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {INDUSTRIES.map((ind) => (
+                <Button
+                  key={ind.id}
+                  type="button"
+                  variant={industry === ind.id ? "default" : "outline"}
+                  className={`justify-start gap-2 ${industry === ind.id ? "border-agent-primary bg-agent-primary text-white" : ""}`}
+                  onClick={() => setIndustry(ind.id)}
+                >
+                  {ind.icon}
+                  <span className="truncate">{ind.name}</span>
+                </Button>
+              ))}
+            </div>
+            
+            {industry === 'other' && (
+              <div className="mt-2">
+                <Input
+                  value={customIndustry}
+                  onChange={(e) => setCustomIndustry(e.target.value)}
+                  placeholder="Enter custom industry"
+                  className="w-full"
+                />
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">
+              The industry context your agent operates in
+            </p>
+          </div>
+
+          <div className="space-y-3 pt-4">
+            <div className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4 text-agent-primary" />
+              <Label>Bot Function</Label>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {BOT_FUNCTIONS.map((func) => (
+                <Button
+                  key={func.id}
+                  type="button"
+                  variant={botFunction === func.id ? "default" : "outline"}
+                  className={`justify-start gap-2 ${botFunction === func.id ? "border-agent-primary bg-agent-primary text-white" : ""}`}
+                  onClick={() => setBotFunction(func.id)}
+                >
+                  {func.icon}
+                  <span className="truncate">{func.name}</span>
+                </Button>
+              ))}
+            </div>
+            
+            {botFunction === 'other' && (
+              <div className="mt-2">
+                <Input
+                  value={customFunction}
+                  onChange={(e) => setCustomFunction(e.target.value)}
+                  placeholder="Enter custom function"
+                  className="w-full"
+                />
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">
+              The primary function your agent serves
+            </p>
+          </div>
+        </div>
+
+        <div className="pt-4 border-t">
+          <div className="flex items-center gap-2 mb-4">
+            <Code className="h-4 w-4 text-agent-primary" />
+            <Label htmlFor="agent-prompt" className="text-lg font-medium">Agent Prompt Instructions</Label>
+          </div>
           
-          <TabsContent value="security" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-agent-primary" />
-                    <span className="text-sm font-medium">Content Filtering</span>
-                  </div>
-                  <Badge 
-                    variant="outline" 
-                    className="bg-blue-50 text-blue-700 border-blue-200"
-                    onClick={() => handleSecurityUpdate('contentFiltering',
-                      agent.config?.security?.contentFiltering === 'high' ? 'medium' : 'high'
-                    )}
-                  >
-                    {agent.config?.security?.contentFiltering || 'Medium'}
-                  </Badge>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Filter level for harmful or inappropriate content
-                </p>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 text-agent-primary" />
-                    <span className="text-sm font-medium">PII Detection</span>
-                  </div>
-                  <Switch 
-                    checked={agent.config?.security?.piiDetection ?? true}
-                    onCheckedChange={(checked) => handleSecurityUpdate('piiDetection', checked)}
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Detect and redact personally identifiable information
-                </p>
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div className="flex justify-end gap-2">
-              <Button 
-                variant="outline"
-                onClick={() => handleResetToDefault('security')}
-              >
-                Reset to Default
-              </Button>
-              <Button>Save Changes</Button>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="monitoring" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <BarChart className="h-4 w-4 text-agent-primary" />
-                    <span className="text-sm font-medium">Analytics Level</span>
-                  </div>
-                  <Badge 
-                    variant="outline" 
-                    className="bg-purple-50 text-purple-700 border-purple-200"
-                    onClick={() => handleMonitoringUpdate('analyticsLevel',
-                      agent.config?.monitoring?.analyticsLevel === 'basic' ? 'advanced' : 'basic'
-                    )}
-                  >
-                    {agent.config?.monitoring?.analyticsLevel || 'Advanced'}
-                  </Badge>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Detail level of usage analytics collected
-                </p>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Activity className="h-4 w-4 text-agent-primary" />
-                    <span className="text-sm font-medium">Health Monitoring</span>
-                  </div>
-                  <Switch 
-                    checked={agent.config?.monitoring?.healthMonitoring ?? true}
-                    onCheckedChange={(checked) => handleMonitoringUpdate('healthMonitoring', checked)}
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Monitor agent health and performance metrics
-                </p>
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div className="flex justify-end gap-2">
-              <Button 
-                variant="outline"
-                onClick={() => handleResetToDefault('monitoring')}
-              >
-                Reset to Default
-              </Button>
-              <Button>Save Changes</Button>
-            </div>
-          </TabsContent>
-        </Tabs>
+          <div className="relative">
+            <Textarea
+              id="agent-prompt"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Enter the prompt or instructions for this agent"
+              className="min-h-[250px] font-mono text-sm pr-10"
+            />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="absolute top-2 right-2 h-8 w-8 opacity-70 hover:opacity-100 bg-muted/50 hover:bg-muted" 
+              onClick={handleCopyPrompt}
+              title="Copy to clipboard"
+            >
+              <Copy className="h-4 w-4" />
+              <span className="sr-only">Copy</span>
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            These instructions tell the AI how to behave, what knowledge to use, and what tone to adopt
+          </p>
+        </div>
+        
+        <div className="flex justify-end pt-4 border-t">
+          <Button onClick={handleSave} disabled={isSaving} className="px-6">
+            {isSaving ? (
+              <>Loading...</>
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Save Changes
+              </>
+            )}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

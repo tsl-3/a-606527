@@ -1,11 +1,11 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, History, Cpu, Calendar, Mic, Volume2, MessageSquare, Play, Pause, Phone, Copy, PhoneOutgoing, PhoneIncoming, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare } from "lucide-react";
+import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause, Phone, Copy, PhoneOutgoing, PhoneIncoming, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -164,10 +164,7 @@ const AgentDetails = () => {
   const {
     agent,
     isLoading,
-    error,
-    isRolePlayOpen,
-    openRolePlay,
-    closeRolePlay
+    error
   } = useAgentDetails(agentId);
   const [isActive, setIsActive] = useState(false);
   const [model, setModel] = useState<string>("GPT-4");
@@ -200,7 +197,7 @@ const AgentDetails = () => {
         }
       }
     }
-  }, [agent, isCustomVoice]);
+  }, [agent]);
 
   useEffect(() => {
     return () => {
@@ -592,28 +589,20 @@ const AgentDetails = () => {
                   </div>
                 </div>
                 
-                {activeChannels.length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {activeChannels.includes('voice') && (
-                      <Badge variant="channel" className="text-blue-500">
+                {activeChannels.length > 0 && <div className="mt-4 flex flex-wrap gap-2">
+                    {activeChannels.includes('voice') && <Badge variant="channel" className="text-blue-500">
                         <Mic className="h-3 w-3 mr-1" />
                         <span className="text-xs">Voice</span>
-                      </Badge>
-                    )}
-                    {activeChannels.includes('chat') && (
-                      <Badge variant="channel" className="text-purple-500">
+                      </Badge>}
+                    {activeChannels.includes('chat') && <Badge variant="channel" className="text-purple-500">
                         <MessageSquare className="h-3 w-3 mr-1" />
                         <span className="text-xs">Chat</span>
-                      </Badge>
-                    )}
-                    {activeChannels.includes('email') && (
-                      <Badge variant="channel" className="text-red-500">
+                      </Badge>}
+                    {activeChannels.includes('email') && <Badge variant="channel" className="text-red-500">
                         <Mail className="h-3 w-3 mr-1" />
                         <span className="text-xs">Email</span>
-                      </Badge>
-                    )}
-                  </div>
-                )}
+                      </Badge>}
+                  </div>}
               </div>
             </div>
             
@@ -649,8 +638,7 @@ const AgentDetails = () => {
               </div>
               
               <div className="mt-3 flex items-center gap-2 flex-wrap">
-                {voicePhoneNumber && (
-                  <div className="flex items-center">
+                {voicePhoneNumber && <div className="flex items-center">
                     <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
                       <Phone className="h-3.5 w-3.5 text-blue-500" />
                       <span className="text-xs">
@@ -700,11 +688,9 @@ const AgentDetails = () => {
                         />
                       </div>
                     </div>
-                  </div>
-                )}
+                  </div>}
                 
-                {emailAddress && (
-                  <div className="flex items-center">
+                {emailAddress && <div className="flex items-center">
                     <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
                       <Mail className="h-3.5 w-3.5 text-red-500" />
                       <span className="text-xs">
@@ -719,8 +705,7 @@ const AgentDetails = () => {
                         </Button>
                       </div>
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
             </div>
           </div>
@@ -791,243 +776,14 @@ const AgentDetails = () => {
                               <TabsContent value="Eleven Labs" className="border-none p-0">
                                 <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
                                   {Object.keys(voiceSamples["Eleven Labs"]).map(voiceName => {
-                                    const voiceDef = voiceSamples["Eleven Labs"][voiceName];
-                                    return (
-                                      <div key={voiceName} className={`flex items-center space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
+                                  const voiceDef = voiceSamples["Eleven Labs"][voiceName];
+                                  return <div key={voiceName} className={`flex items-center space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
                                         <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} className="mt-0" />
                                         <div className="flex w-full justify-between items-center">
                                           <div className="flex gap-3">
-                                            {voiceDef.avatar && (
-                                              <Avatar className="h-10 w-10 rounded-full">
+                                            {voiceDef.avatar && <Avatar className="h-10 w-10 rounded-full">
                                                 <AvatarImage src={voiceDef.avatar} alt={voiceName} />
                                                 <AvatarFallback>
                                                   {voiceName.substring(0, 2)}
                                                 </AvatarFallback>
-                                              </Avatar>
-                                            )}
-                                            <div>
-                                              <Label htmlFor={`voice-${voiceName}`} className="text-base font-medium">{voiceName}</Label>
-                                              <div className="flex flex-wrap gap-1 mt-1">
-                                                {voiceDef.traits.map(trait => (
-                                                  <span key={trait.name} className={`${trait.color} px-2 py-0.5 text-xs rounded-full`}>
-                                                    {trait.name}
-                                                  </span>
-                                                ))}
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <Button 
-                                            type="button"
-                                            variant="ghost" 
-                                            size="icon"
-                                            onClick={(e) => {
-                                              e.preventDefault();
-                                              e.stopPropagation();
-                                              handlePlaySample(voiceName);
-                                            }}
-                                            className="h-8 w-8 rounded-full"
-                                          >
-                                            {currentlyPlaying === voiceName ? (
-                                              <Pause className="h-4 w-4" />
-                                            ) : (
-                                              <Play className="h-4 w-4" />
-                                            )}
-                                          </Button>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                  
-                                  <div className={`flex items-center space-x-3 rounded-lg border p-3 ${voice === "Custom" ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
-                                    <RadioGroupItem value="Custom" id="voice-custom" className="mt-0" />
-                                    <div className="flex flex-col w-full gap-3">
-                                      <Label htmlFor="voice-custom" className="text-base font-medium">Custom Voice ID</Label>
-                                      <Input 
-                                        type="text" 
-                                        placeholder="Enter your custom voice ID" 
-                                        value={customVoiceId} 
-                                        onChange={handleCustomVoiceIdChange} 
-                                        disabled={voice !== "Custom"}
-                                        className="h-8 text-xs"
-                                      />
-                                    </div>
-                                  </div>
-                                </RadioGroup>
-                              </TabsContent>
-                              
-                              <TabsContent value="Amazon Polly" className="border-none p-0">
-                                <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
-                                  {Object.keys(voiceSamples["Amazon Polly"]).map(voiceName => {
-                                    const voiceDef = voiceSamples["Amazon Polly"][voiceName];
-                                    return (
-                                      <div key={voiceName} className={`flex items-center space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
-                                        <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} className="mt-0" />
-                                        <div className="flex w-full justify-between items-center">
-                                          <div className="flex gap-3">
-                                            {voiceDef.avatar && (
-                                              <Avatar className="h-10 w-10 rounded-full">
-                                                <AvatarImage src={voiceDef.avatar} alt={voiceName} />
-                                                <AvatarFallback>
-                                                  {voiceName.substring(0, 2)}
-                                                </AvatarFallback>
-                                              </Avatar>
-                                            )}
-                                            <div>
-                                              <Label htmlFor={`voice-${voiceName}`} className="text-base font-medium">{voiceName}</Label>
-                                              <div className="flex flex-wrap gap-1 mt-1">
-                                                {voiceDef.traits.map(trait => (
-                                                  <span key={trait.name} className={`${trait.color} px-2 py-0.5 text-xs rounded-full`}>
-                                                    {trait.name}
-                                                  </span>
-                                                ))}
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <Button 
-                                            type="button"
-                                            variant="ghost" 
-                                            size="icon"
-                                            onClick={(e) => {
-                                              e.preventDefault();
-                                              e.stopPropagation();
-                                              handlePlaySample(voiceName);
-                                            }}
-                                            className="h-8 w-8 rounded-full"
-                                          >
-                                            {currentlyPlaying === voiceName ? (
-                                              <Pause className="h-4 w-4" />
-                                            ) : (
-                                              <Play className="h-4 w-4" />
-                                            )}
-                                          </Button>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </RadioGroup>
-                              </TabsContent>
-                              
-                              <TabsContent value="Google TTS" className="border-none p-0">
-                                <RadioGroup value={voice} onValueChange={handleVoiceChange} className="space-y-3">
-                                  {Object.keys(voiceSamples["Google TTS"]).map(voiceName => {
-                                    const voiceDef = voiceSamples["Google TTS"][voiceName];
-                                    return (
-                                      <div key={voiceName} className={`flex items-center space-x-3 rounded-lg border p-3 ${voice === voiceName ? 'bg-secondary/50 border-agent-primary/30' : 'hover:bg-secondary/30'}`}>
-                                        <RadioGroupItem value={voiceName} id={`voice-${voiceName}`} className="mt-0" />
-                                        <div className="flex w-full justify-between items-center">
-                                          <div className="flex gap-3">
-                                            {voiceDef.avatar && (
-                                              <Avatar className="h-10 w-10 rounded-full">
-                                                <AvatarImage src={voiceDef.avatar} alt={voiceName} />
-                                                <AvatarFallback>
-                                                  {voiceName.substring(0, 2)}
-                                                </AvatarFallback>
-                                              </Avatar>
-                                            )}
-                                            <div>
-                                              <Label htmlFor={`voice-${voiceName}`} className="text-base font-medium">{voiceName}</Label>
-                                              <div className="flex flex-wrap gap-1 mt-1">
-                                                {voiceDef.traits.map(trait => (
-                                                  <span key={trait.name} className={`${trait.color} px-2 py-0.5 text-xs rounded-full`}>
-                                                    {trait.name}
-                                                  </span>
-                                                ))}
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <Button 
-                                            type="button"
-                                            variant="ghost" 
-                                            size="icon"
-                                            onClick={(e) => {
-                                              e.preventDefault();
-                                              e.stopPropagation();
-                                              handlePlaySample(voiceName);
-                                            }}
-                                            className="h-8 w-8 rounded-full"
-                                          >
-                                            {currentlyPlaying === voiceName ? (
-                                              <Pause className="h-4 w-4" />
-                                            ) : (
-                                              <Play className="h-4 w-4" />
-                                            )}
-                                          </Button>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </RadioGroup>
-                              </TabsContent>
-                            </ScrollArea>
-                          </div>
-                        </Tabs>
-                        
-                        <div className="mt-4 flex justify-end gap-3">
-                          <Button variant="outline" onClick={() => setIsVoiceDialogOpen(false)}>
-                            Cancel
-                          </Button>
-                          <Button onClick={handleVoiceSelectionSave}>
-                            Save
-                          </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                </div>
-                
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-6">
-                  <TabsList className="w-full grid grid-cols-3">
-                    <TabsTrigger value="setup">Setup</TabsTrigger>
-                    <TabsTrigger value="config">Configuration</TabsTrigger>
-                    <TabsTrigger value="channels">Channels</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="setup" className="space-y-8 mt-6">
-                    <AgentStats agent={agent} />
-                    
-                    <div className="space-y-4">
-                      <AgentSetupStepper agent={agent} onUpdate={handleAgentUpdate} />
-                      <AgentConfigSettings agent={agent} onAgentUpdate={handleAgentUpdate} />
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="config" className="mt-6">
-                    <AnalyticsTab agent={agent} />
-                  </TabsContent>
-                  
-                  <TabsContent value="channels" className="mt-6">
-                    <AgentChannels agent={agent} onUpdateChannel={handleUpdateChannel} />
-                  </TabsContent>
-                </Tabs>
-                
-                <div className="mt-8 flex items-center justify-end gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate("/agents")}
-                  >
-                    Back
-                  </Button>
-                  <Button
-                    variant="agent"
-                    onClick={openRolePlay}
-                  >
-                    Test Agent
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <RolePlayDialog 
-        open={isRolePlayOpen}
-        onOpenChange={closeRolePlay}
-        agentId={agentId || ''}
-        agentName={agent.name}
-      />
-    </div>
-  );
-};
-
-export default AgentDetails;
+                                              </
