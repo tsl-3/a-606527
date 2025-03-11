@@ -1,9 +1,11 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { User, PhoneCall, Bot } from "lucide-react";
+import { User, Bot } from "lucide-react";
+import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface UserPersona {
   id: string;
@@ -24,8 +26,6 @@ export const UserPersonasModal: React.FC<UserPersonasModalProps> = ({
   onOpenChange,
   onSelectPersona,
 }) => {
-  const [hoveredPersona, setHoveredPersona] = useState<string | null>(null);
-  
   const personas: UserPersona[] = [
     {
       id: "1",
@@ -71,12 +71,25 @@ export const UserPersonasModal: React.FC<UserPersonasModalProps> = ({
     }
   ];
 
+  const handleSelectPersona = (persona: UserPersona) => {
+    onSelectPersona(persona);
+    onOpenChange(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-4xl">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold mb-2">Select a User Persona</DialogTitle>
-          <p className="text-gray-500 dark:text-gray-400">
+      <DialogContent className="sm:max-w-4xl bg-[#0F172A] border-[#1E293B] text-white">
+        <button
+          onClick={() => onOpenChange(false)}
+          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+        >
+          <X className="h-5 w-5 text-white" />
+          <span className="sr-only">Close</span>
+        </button>
+        
+        <DialogHeader className="pb-4">
+          <DialogTitle className="text-2xl font-bold text-white">Select a User Persona</DialogTitle>
+          <p className="text-gray-400">
             Choose a persona to role-play with and practice your agent responses
           </p>
         </DialogHeader>
@@ -85,51 +98,41 @@ export const UserPersonasModal: React.FC<UserPersonasModalProps> = ({
           {personas.map((persona) => (
             <div
               key={persona.id}
-              className="relative rounded-lg border border-gray-200 dark:border-gray-800 p-5 hover:border-primary dark:hover:border-primary transition-all"
-              onMouseEnter={() => setHoveredPersona(persona.id)}
-              onMouseLeave={() => setHoveredPersona(null)}
+              className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden cursor-pointer hover:bg-[#141e33] transition-colors"
+              onClick={() => handleSelectPersona(persona)}
             >
-              <div className="flex items-start gap-3 mb-2">
-                <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
-                  {persona.type === "customer" ? (
-                    <User className="h-6 w-6 text-gray-600 dark:text-gray-400" />
-                  ) : (
-                    <Bot className="h-6 w-6 text-primary dark:text-primary" />
-                  )}
+              <div className="p-4">
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="bg-[#1E293B] rounded-full p-2">
+                    {persona.type === "customer" ? (
+                      <User className="h-5 w-5 text-gray-300" />
+                    ) : (
+                      <Bot className="h-5 w-5 text-gray-300" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-white">{persona.name}</h3>
+                    <Badge 
+                      className={cn(
+                        "mt-1 px-3 py-0.5 rounded-full text-xs font-normal",
+                        persona.type === "bot" ? "bg-[#1E293B] text-gray-300" : "bg-[#1E293B] text-gray-300"
+                      )}
+                    >
+                      {persona.type === "bot" ? "Training Bot" : "Customer"}
+                    </Badge>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-white">{persona.name}</h3>
-                  <Badge variant="outline" className="mt-1 text-xs">
-                    {persona.type === "customer" ? "Customer" : "Training Bot"}
-                  </Badge>
-                </div>
+                
+                <p className="text-sm text-gray-400 mb-3">
+                  {persona.description}
+                </p>
+                
+                {persona.scenario && (
+                  <div className="bg-[#1E293B] rounded p-3 text-xs text-gray-300 mb-2">
+                    <span className="text-gray-400">Scenario:</span> {persona.scenario}
+                  </div>
+                )}
               </div>
-
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                {persona.description}
-              </p>
-
-              {persona.scenario && (
-                <div className="bg-gray-50 dark:bg-gray-800/50 rounded p-2 text-xs text-gray-600 dark:text-gray-400 mb-2">
-                  <span className="font-medium">Scenario:</span> {persona.scenario}
-                </div>
-              )}
-
-              {hoveredPersona === persona.id && (
-                <div className="absolute inset-0 bg-black/5 dark:bg-black/30 rounded-lg flex items-center justify-center">
-                  <Button
-                    onClick={() => {
-                      onSelectPersona(persona);
-                      onOpenChange(false);
-                    }}
-                    variant="contrast"
-                    className="gap-2"
-                  >
-                    <PhoneCall className="h-4 w-4" />
-                    Call
-                  </Button>
-                </div>
-              )}
             </div>
           ))}
         </div>
