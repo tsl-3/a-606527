@@ -38,13 +38,15 @@ interface WorkflowCardProps {
   workflows?: Workflow[];
   processedCount?: number;
   totalCount?: number;
+  stepNumber?: number;
 }
 
 export const WorkflowCard: React.FC<WorkflowCardProps> = ({ 
   status = 'not-started',
   workflows = [],
   processedCount = 0,
-  totalCount = 0
+  totalCount = 0,
+  stepNumber = 4
 }) => {
   const [isExpanded, setIsExpanded] = useState(status !== 'completed');
 
@@ -72,7 +74,7 @@ export const WorkflowCard: React.FC<WorkflowCardProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-8 h-8 text-gray-900 dark:text-white">
-              3
+              {stepNumber}
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Workflow</h3>
             {status === 'in-progress' && (
