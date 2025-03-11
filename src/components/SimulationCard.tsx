@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SimulationSteps } from "./SimulationSteps";
@@ -24,7 +23,7 @@ interface SimulationCardProps {
     coverage: number;
     performance: number;
     scenarios: number;
-    tokens: string | number; // Updated this type to accept both string and number
+    tokens: string | number;
   }>;
 }
 
@@ -116,12 +115,10 @@ export const SimulationCard = ({
           Generate and run scenarios to test your agent's performance
         </p>
         
-        {status !== 'not-started' && (
-          <Progress 
-            value={getProgressValue()} 
-            className="h-1.5 mb-6" 
-          />
-        )}
+        <Progress 
+          value={getProgressValue()} 
+          className="h-1.5 mb-6" 
+        />
         
         {isExpanded && (
           <CardContent className="p-0 pb-6">
@@ -132,7 +129,7 @@ export const SimulationCard = ({
               performance={performance}
               scenarios={scenarios}
               simulations={simulations}
-              hideProgressBar={true} // Hide the progress bar in SimulationSteps
+              hideProgressBar={true}
             />
           </CardContent>
         )}
