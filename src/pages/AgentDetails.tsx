@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause, Phone, Copy, PhoneOutgoing, PhoneIncoming, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog } from "lucide-react";
@@ -580,7 +579,7 @@ const AgentDetails = () => {
                   {!isActive && (
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Bot className="h-3.5 w-3.5 text-agent-primary" />
-                      <span className="font-medium capitalize">Inactive</span>
+                      <span className="font-medium capitalize">{agent.type}</span>
                     </div>
                   )}
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -997,3 +996,4 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
+
