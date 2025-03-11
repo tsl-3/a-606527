@@ -2,7 +2,6 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Smile, Zap, Info } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
 
 interface AgentStatsProps {
   avmScore?: number;  // 1-10 score
@@ -84,67 +83,67 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
   const scoreColorClass = displayAvmScore !== undefined ? getScoreColor(displayAvmScore) : "bg-gray-400";
   
   return (
-    <div className="flex gap-2 w-full">
-      {/* AVM Score Card */}
+    <div className="flex flex-col gap-3 w-full">
+      {/* AVM Score outside of card */}
       {displayAvmScore !== undefined && (
-        <Card className="flex-1 overflow-hidden shadow-sm">
-          <div className="px-2 py-1 flex items-center justify-between">
+        <div className="w-full">
+          <div className="flex items-center justify-between mb-1">
             <span className="text-xs font-medium text-muted-foreground">AVM</span>
             <span className="text-xs font-medium">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
           </div>
-          <CardContent className="p-2">
-            <div className="relative w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800 h-2">
-              <div 
-                className={`absolute h-full transition-all duration-300 ease-in-out ${scoreColorClass}`}
-                style={{ width: `${displayAvmScore ? (displayAvmScore * 10) : 0}%` }}
-              />
-            </div>
-          </CardContent>
-        </Card>
+          <div className="relative w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800 h-2">
+            <div 
+              className={`absolute h-full transition-all duration-300 ease-in-out ${scoreColorClass}`}
+              style={{ width: `${displayAvmScore ? (displayAvmScore * 10) : 0}%` }}
+            />
+          </div>
+        </div>
       )}
 
-      {/* Interactions Card - Only shown when not hidden */}
-      {!hideInteractions && (
-        <Card className="flex-1 overflow-hidden shadow-sm">
-          <div className="px-2 py-1 flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">Interactions</span>
-            <span className={`text-xs font-medium ${interactionTier.color}`}>{interactionTier.label}</span>
-          </div>
-          <CardContent className="p-2 text-center">
-            <span className="text-xl font-semibold">
-              {displayInteractionCount >= 1000 
-                ? `${(displayInteractionCount / 1000).toFixed(1)}k` 
-                : displayInteractionCount}
-            </span>
-          </CardContent>
-        </Card>
-      )}
-      
-      {/* CSAT Card - Only shown when not in compact mode and CSAT exists */}
-      {!compact && (
-        <Card className="flex-1 overflow-hidden shadow-sm">
-          <div className="px-2 py-1 flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">CSAT</span>
-            <Smile className={`w-3.5 h-3.5 ${csatColor}`} />
-          </div>
-          <CardContent className="p-2 text-center">
-            <span className={`text-xl font-semibold ${csatColor}`}>{displayCsat !== undefined ? displayCsat : 0}%</span>
-          </CardContent>
-        </Card>
-      )}
-      
-      {/* Performance Card - Only shown when not in compact mode and performance exists */}
-      {!compact && (
-        <Card className="flex-1 overflow-hidden shadow-sm">
-          <div className="px-2 py-1 flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">Performance</span>
-            <Zap className={`w-3.5 h-3.5 ${performanceColor}`} />
-          </div>
-          <CardContent className="p-2 text-center">
-            <span className={`text-xl font-semibold ${performanceColor}`}>{displayPerformance !== undefined ? displayPerformance : 0}%</span>
-          </CardContent>
-        </Card>
-      )}
+      <div className="flex gap-2 w-full">
+        {/* Interactions Card - Only shown when not hidden */}
+        {!hideInteractions && (
+          <Card className="flex-1 overflow-hidden shadow-sm">
+            <div className="px-2 py-1 flex items-center justify-between">
+              <span className="text-xs font-medium text-muted-foreground">Interactions</span>
+              <span className={`text-xs font-medium ${interactionTier.color}`}>{interactionTier.label}</span>
+            </div>
+            <CardContent className="p-2 text-center">
+              <span className="text-xl font-semibold">
+                {displayInteractionCount >= 1000 
+                  ? `${(displayInteractionCount / 1000).toFixed(1)}k` 
+                  : displayInteractionCount}
+              </span>
+            </CardContent>
+          </Card>
+        )}
+        
+        {/* CSAT Card - Only shown when not in compact mode and CSAT exists */}
+        {!compact && (
+          <Card className="flex-1 overflow-hidden shadow-sm">
+            <div className="px-2 py-1 flex items-center justify-between">
+              <span className="text-xs font-medium text-muted-foreground">CSAT</span>
+              <Smile className={`w-3.5 h-3.5 ${csatColor}`} />
+            </div>
+            <CardContent className="p-2 text-center">
+              <span className={`text-xl font-semibold ${csatColor}`}>{displayCsat !== undefined ? displayCsat : 0}%</span>
+            </CardContent>
+          </Card>
+        )}
+        
+        {/* Performance Card - Only shown when not in compact mode and performance exists */}
+        {!compact && (
+          <Card className="flex-1 overflow-hidden shadow-sm">
+            <div className="px-2 py-1 flex items-center justify-between">
+              <span className="text-xs font-medium text-muted-foreground">Performance</span>
+              <Zap className={`w-3.5 h-3.5 ${performanceColor}`} />
+            </div>
+            <CardContent className="p-2 text-center">
+              <span className={`text-xl font-semibold ${performanceColor}`}>{displayPerformance !== undefined ? displayPerformance : 0}%</span>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
