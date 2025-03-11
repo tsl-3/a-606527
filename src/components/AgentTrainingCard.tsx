@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { 
   Mic, Upload, CircleDashed, ArrowRight, Clock, BarChart, 
@@ -11,6 +12,7 @@ import { RolePlayDialog } from "./RolePlayDialog";
 import { UserPersonasModal } from "./UserPersonasModal";
 import { CallInterface, RecordingData } from "./CallInterface";
 import { toast } from "@/components/ui/use-toast";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface TrainingRecord {
   id: string;
@@ -332,45 +334,90 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
 
                 <div className="mb-6">
                   <h4 className="font-medium text-gray-900 dark:text-white mb-4">Training Recordings</h4>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {localTrainingRecords.map((record) => (
-                      <div key={record.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
-                            {record.type === 'call' ? (
-                              <Mic className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                            ) : (
-                              <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                            )}
+                      <div key={record.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
+                              {record.type === 'call' ? (
+                                <Mic className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                              ) : (
+                                <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                              )}
+                            </div>
+                            <div>
+                              <h5 className="font-medium text-gray-900 dark:text-white">{record.title}</h5>
+                              <p className="text-xs text-gray-500 dark:text-gray-500">{record.date}, {record.time} • {record.duration}</p>
+                            </div>
                           </div>
-                          <div>
-                            <h5 className="font-medium text-gray-900 dark:text-white">{record.title}</h5>
-                            <p className="text-xs text-gray-500 dark:text-gray-500">{record.date}, {record.time} • {record.duration}</p>
+                          
+                          <div className="flex items-center gap-2">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="gap-2 text-gray-700 dark:text-gray-300"
+                                    onClick={() => handlePlayRecording(record)}
+                                  >
+                                    <PlayCircle className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Play</span>
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Play recording</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    className="gap-2 text-gray-700 dark:text-gray-300"
+                                  >
+                                    <Download className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Download</span>
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Download recording</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30 border-red-200 dark:border-red-900/30"
+                                    onClick={() => handleRemoveRecording(record.id)}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Remove</span>
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Remove recording</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
-                            onClick={() => handlePlayRecording(record)}
-                          >
-                            <PlayCircle className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
-                            onClick={() => handleRemoveRecording(record.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
                         </div>
                       </div>
                     ))}
+                    
+                    {localTrainingRecords.length === 0 && (
+                      <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-6 text-center">
+                        <p className="text-gray-500 dark:text-gray-400">No recordings yet. Add recordings using one of the methods below.</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -412,9 +459,9 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       onClick={() => setUserPersonasModalOpen(true)} 
                       className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
                     >
-                      <Bot className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Role Play with AI</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Practice with AI</span>
+                      <Bot className="h-12 w-12 text-primary dark:text-primary mb-3" />
+                      <span className="text-sm font-medium text-primary dark:text-primary">Role Play with AI</span>
+                      <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Practice with AI</span>
                     </div>
                   </div>
                 </div>
@@ -426,7 +473,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
             )}
 
             {localStatus === 'completed' && (
-              <div className="mb-6">
+              <>
                 <div className="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800/30 rounded-lg p-4 mb-6">
                   <div className="flex items-start gap-3">
                     <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-full">
@@ -474,7 +521,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                 
                 <div className="mb-6">
                   <h4 className="font-medium text-gray-900 dark:text-white mb-4">Training Recordings</h4>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {[...trainingRecords, 
                       {
                         id: '3',
@@ -493,30 +540,79 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                         type: 'roleplay' as const
                       }
                     ].map((record) => (
-                      <div key={record.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
-                            {record.type === 'call' ? (
-                              <Mic className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                            ) : (
-                              <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                            )}
+                      <div key={record.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
+                              {record.type === 'call' ? (
+                                <Mic className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                              ) : (
+                                <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                              )}
+                            </div>
+                            <div>
+                              <h5 className="font-medium text-gray-900 dark:text-white">{record.title}</h5>
+                              <p className="text-xs text-gray-500 dark:text-gray-500">{record.date}, {record.time} • {record.duration}</p>
+                            </div>
                           </div>
-                          <div>
-                            <h5 className="font-medium text-gray-900 dark:text-white">{record.title}</h5>
-                            <p className="text-xs text-gray-500 dark:text-gray-500">{record.date}, {record.time} • {record.duration}</p>
+                          
+                          <div className="flex items-center gap-2">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="gap-2 text-gray-700 dark:text-gray-300"
+                                    onClick={() => handlePlayRecording(record)}
+                                  >
+                                    <PlayCircle className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Play</span>
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Play recording</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    className="gap-2 text-gray-700 dark:text-gray-300"
+                                  >
+                                    <Download className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Download</span>
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Download recording</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30 border-red-200 dark:border-red-900/30"
+                                    onClick={() => handleRemoveRecording(record.id)}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Remove</span>
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Remove recording</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                            <PlayCircle className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
                         </div>
                       </div>
                     ))}
@@ -567,7 +663,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     </div>
                   </div>
                 </div>
-              </div>
+              </>
             )}
           </>
         )}
