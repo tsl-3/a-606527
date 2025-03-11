@@ -10,6 +10,7 @@ interface AgentStatsProps {
   performance?: number; // 0-100 percentage
   compact?: boolean; // If true, only show first 2 stats
   isNewAgent?: boolean; // New flag to indicate a newly created agent
+  showZeroValues?: boolean; // If true, show 0 values instead of "No stats yet"
 }
 
 export const AgentStats: React.FC<AgentStatsProps> = ({ 
@@ -18,10 +19,11 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
   csat = 85, 
   performance = 92,
   compact = false,
-  isNewAgent = false
+  isNewAgent = false,
+  showZeroValues = false
 }) => {
   // For new agents, show a different UI
-  if (isNewAgent) {
+  if (isNewAgent && !showZeroValues) {
     return (
       <div className="flex gap-2 w-full">
         <Card className="flex-1 overflow-hidden shadow-sm">
@@ -36,6 +38,12 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       </div>
     );
   }
+
+  // For analytics tab or when showZeroValues is true, show zeros instead of default values
+  const displayAvmScore = isNewAgent && showZeroValues ? 0 : avmScore;
+  const displayInteractionCount = isNewAgent ? 0 : interactionCount;
+  const displayCsat = isNewAgent && showZeroValues ? 0 : csat;
+  const displayPerformance = isNewAgent && showZeroValues ? 0 : performance;
 
   // Color indicator for AVM score based on the value range
   const getScoreColor = (score: number): string => {
@@ -65,21 +73,21 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
     return "text-red-500";
   };
   
-  const interactionTier = getInteractionTier(interactionCount);
-  const csatColor = getCsatColor(csat);
-  const performanceColor = getPerformanceColor(performance);
+  const interactionTier = getInteractionTier(displayInteractionCount);
+  const csatColor = displayCsat ? getCsatColor(displayCsat) : "text-muted-foreground";
+  const performanceColor = displayPerformance ? getPerformanceColor(displayPerformance) : "text-muted-foreground";
   
   return (
     <div className="flex gap-2 w-full">
       {/* AVM Score Card */}
-      {avmScore !== undefined && (
+      {displayAvmScore !== undefined && (
         <Card className="flex-1 overflow-hidden shadow-sm">
           <div className="px-2 py-1 flex items-center justify-between border-b border-border">
             <span className="text-xs font-medium text-muted-foreground">AVM</span>
-            <div className={`w-2 h-2 rounded-full ${getScoreColor(avmScore)}`}></div>
+            <div className={`w-2 h-2 rounded-full ${displayAvmScore ? getScoreColor(displayAvmScore) : "bg-gray-400"}`}></div>
           </div>
           <CardContent className="p-2 text-center">
-            <span className="text-xl font-semibold">{avmScore.toFixed(1)}</span>
+            <span className="text-xl font-semibold">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
             <span className="text-xs text-muted-foreground ml-1">/10</span>
           </CardContent>
         </Card>
@@ -93,35 +101,35 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
         </div>
         <CardContent className="p-2 text-center">
           <span className="text-xl font-semibold">
-            {interactionCount >= 1000 
-              ? `${(interactionCount / 1000).toFixed(1)}k` 
-              : interactionCount}
+            {displayInteractionCount >= 1000 
+              ? `${(displayInteractionCount / 1000).toFixed(1)}k` 
+              : displayInteractionCount}
           </span>
         </CardContent>
       </Card>
       
       {/* CSAT Card - Only shown when not in compact mode and CSAT exists */}
-      {!compact && csat !== undefined && (
+      {!compact && (
         <Card className="flex-1 overflow-hidden shadow-sm">
           <div className="px-2 py-1 flex items-center justify-between border-b border-border">
             <span className="text-xs font-medium text-muted-foreground">CSAT</span>
             <Smile className={`w-3.5 h-3.5 ${csatColor}`} />
           </div>
           <CardContent className="p-2 text-center">
-            <span className={`text-xl font-semibold ${csatColor}`}>{csat}%</span>
+            <span className={`text-xl font-semibold ${csatColor}`}>{displayCsat !== undefined ? displayCsat : 0}%</span>
           </CardContent>
         </Card>
       )}
       
       {/* Performance Card - Only shown when not in compact mode and performance exists */}
-      {!compact && performance !== undefined && (
+      {!compact && (
         <Card className="flex-1 overflow-hidden shadow-sm">
           <div className="px-2 py-1 flex items-center justify-between border-b border-border">
             <span className="text-xs font-medium text-muted-foreground">Performance</span>
             <Zap className={`w-3.5 h-3.5 ${performanceColor}`} />
           </div>
           <CardContent className="p-2 text-center">
-            <span className={`text-xl font-semibold ${performanceColor}`}>{performance}%</span>
+            <span className={`text-xl font-semibold ${performanceColor}`}>{displayPerformance !== undefined ? displayPerformance : 0}%</span>
           </CardContent>
         </Card>
       )}

@@ -36,8 +36,11 @@ export const useAgentDetails = (agentId: string | undefined) => {
         industry: "",
         botFunction: "",
         customIndustry: "",
-        customFunction: ""
-        // Note: Not including avmScore, csat, or performance for new agent
+        customFunction: "",
+        // Add explicit zeros for stats to make it clear they don't exist yet
+        avmScore: 0,
+        csat: 0,
+        performance: 0
       };
       
       setAgent(newlyCreatedAgent);

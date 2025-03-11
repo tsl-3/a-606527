@@ -948,6 +948,7 @@ const AgentDetails = () => {
               csat={agent.csat} 
               performance={agent.performance}
               isNewAgent={isNewAgent} 
+              showZeroValues={false}
             />
           </div>
         </CardContent>
@@ -981,7 +982,7 @@ const AgentDetails = () => {
           </TabsContent>
           
           <TabsContent value="analytics" className="space-y-6">
-            {agent && <AnalyticsTab agent={agent} />}
+            {agent && <AnalyticsTab agent={{...agent, isNewAgent}} />}
           </TabsContent>
           
           <TabsContent value="settings" className="space-y-6">
