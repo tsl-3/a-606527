@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AgentType } from '@/types/agent';
 import { useToast } from "@/components/ui/use-toast";
 import { updateAgent } from '@/services/agentService';
@@ -12,10 +13,9 @@ import {
   Bot, Copy, Target, User, FileText, Code, Building, Briefcase, 
   Headphones, ShoppingCart, Wrench, CircuitBoard, GraduationCap, Plane, 
   Factory, ShieldCheck, Phone, Home, Plus, MessageSquare,
-  HeartPulse, Landmark, Wallet, BarChart4, Calendar
+  HeartPulse, Landmark, Wallet, BarChart4, Calendar, Mic, Brain
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import debounce from 'lodash/debounce';
 
 interface AgentConfigSettingsProps {
@@ -51,6 +51,29 @@ const BOT_FUNCTIONS = [
   { id: "other", name: "Other Function", icon: <Plus className="h-4 w-4" /> }
 ];
 
+const AI_MODELS = [
+  { id: "GPT-4", name: "GPT-4 Turbo" },
+  { id: "GPT-3.5", name: "GPT-3.5" },
+  { id: "Claude-3", name: "Claude 3 Opus" },
+  { id: "Claude-3-Sonnet", name: "Claude 3 Sonnet" },
+  { id: "Claude-3-Haiku", name: "Claude 3 Haiku" },
+  { id: "Gemini-Pro", name: "Gemini Pro" },
+  { id: "Llama-3", name: "Llama 3" }
+];
+
+const VOICE_OPTIONS = [
+  { id: "9BWtsMINqrJLrRacOk9x", name: "Aria" },
+  { id: "CwhRBWXzGAHq8TQ4Fs17", name: "Roger" },
+  { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah" },
+  { id: "FGY2WhTYpPnrIDTdsKH5", name: "Laura" },
+  { id: "IKne3meq5aSn9XLyUdCD", name: "Charlie" },
+  { id: "JBFqnCBsd6RMkjVDRZzb", name: "George" },
+  { id: "N2lVS1w4EtoT3dr4eOWO", name: "Callum" },
+  { id: "SAz9YHcvj6GT2YYXdXww", name: "River" },
+  { id: "TX3LPaxmHKxFdv7VOQHJ", name: "Liam" },
+  { id: "XB0fDUnXU5powFXDhCwa", name: "Charlotte" }
+];
+
 const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgentUpdate }) => {
   const { toast } = useToast();
   const [name, setName] = useState(agent.name);
@@ -61,6 +84,8 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
   const [botFunction, setBotFunction] = useState(agent.botFunction || '');
   const [customIndustry, setCustomIndustry] = useState('');
   const [customFunction, setCustomFunction] = useState('');
+  const [model, setModel] = useState(agent.model || 'GPT-4');
+  const [voice, setVoice] = useState(agent.voice || '9BWtsMINqrJLrRacOk9x');
   const [isSaving, setIsSaving] = useState(false);
 
   // Create debounced save function
@@ -99,7 +124,9 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
         purpose !== agent.purpose || 
         prompt !== agent.prompt ||
         finalIndustry !== agent.industry ||
-        finalBotFunction !== agent.botFunction) {
+        finalBotFunction !== agent.botFunction ||
+        model !== agent.model ||
+        voice !== agent.voice) {
       
       debouncedSave({
         name,
@@ -107,10 +134,12 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
         purpose,
         prompt,
         industry: finalIndustry,
-        botFunction: finalBotFunction
+        botFunction: finalBotFunction,
+        model,
+        voice
       });
     }
-  }, [name, avatar, purpose, prompt, industry, botFunction, customIndustry, customFunction, agent, debouncedSave]);
+  }, [name, avatar, purpose, prompt, industry, botFunction, customIndustry, customFunction, model, voice, agent, debouncedSave]);
 
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText(prompt);
@@ -206,6 +235,52 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                   A clear description of your agent's role and primary responsibilities
                 </p>
               </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Brain className="h-4 w-4 text-agent-primary" />
+                <Label htmlFor="agent-model">AI Model</Label>
+              </div>
+              <Select value={model} onValueChange={setModel}>
+                <SelectTrigger id="agent-model" className="w-full">
+                  <SelectValue placeholder="Select a model" />
+                </SelectTrigger>
+                <SelectContent>
+                  {AI_MODELS.map((aiModel) => (
+                    <SelectItem key={aiModel.id} value={aiModel.id}>
+                      {aiModel.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                The AI model that powers your agent's intelligence
+              </p>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Mic className="h-4 w-4 text-agent-primary" />
+                <Label htmlFor="agent-voice">Voice</Label>
+              </div>
+              <Select value={voice} onValueChange={setVoice}>
+                <SelectTrigger id="agent-voice" className="w-full">
+                  <SelectValue placeholder="Select a voice" />
+                </SelectTrigger>
+                <SelectContent>
+                  {VOICE_OPTIONS.map((voiceOption) => (
+                    <SelectItem key={voiceOption.id} value={voiceOption.id}>
+                      {voiceOption.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                The voice your agent will use when speaking to users
+              </p>
             </div>
           </div>
         </CardContent>

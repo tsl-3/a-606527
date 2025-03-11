@@ -37,6 +37,7 @@ export const useAgentDetails = (agentId: string | undefined) => {
         botFunction: "",
         customIndustry: "",
         customFunction: "",
+        voice: "9BWtsMINqrJLrRacOk9x", // Default voice ID for Aria
         // Add explicit zeros for stats to make it clear they don't exist yet
         avmScore: 0,
         csat: 0,
@@ -96,7 +97,8 @@ export const useAgentDetails = (agentId: string | undefined) => {
           industry: data.industry || "",
           botFunction: data.botFunction || "",
           customIndustry: data.customIndustry || "",
-          customFunction: data.customFunction || ""
+          customFunction: data.customFunction || "",
+          voice: data.voice || "9BWtsMINqrJLrRacOk9x" // Default voice ID for Aria
         };
         
         setAgent(enhancedData);
