@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, ExternalLink, History, BarChart2, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause, Phone, Copy, PhoneOutgoing, PhoneIncoming, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog } from "lucide-react";
@@ -604,17 +605,6 @@ const AgentDetails = () => {
         
         <CardContent>
           <div className="space-y-4">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Calendar className="h-3.5 w-3.5 text-agent-primary" />
-                <span>Created: {agent.createdAt}</span>
-              </div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <History className="h-3.5 w-3.5 text-agent-primary" />
-                <span>Updated: {lastUpdated.split(',')[0]}</span>
-              </div>
-            </div>
-            
             <div className="space-y-3">
               {activeChannels.length > 0 && <div className="flex flex-wrap gap-2">
                   {activeChannels.includes('voice') && <Badge variant="channel">
@@ -692,6 +682,19 @@ const AgentDetails = () => {
               
               <div className="mt-2">
                 <AgentStats avmScore={agent.avmScore} interactionCount={agent.interactions || 0} csat={agent.csat} performance={agent.performance} isNewAgent={isNewAgent} showZeroValues={false} hideInteractions={true} />
+              </div>
+              
+              <div className="flex justify-end text-xs text-muted-foreground mt-4">
+                <div className="flex flex-wrap gap-4">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3.5 w-3.5 text-agent-primary" />
+                    <span>Created: {agent.createdAt}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <History className="h-3.5 w-3.5 text-agent-primary" />
+                    <span>Updated: {lastUpdated.split(',')[0]}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -860,4 +863,3 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
-
