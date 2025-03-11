@@ -16,6 +16,35 @@ export const useAgentDetails = (agentId: string | undefined) => {
       return;
     }
 
+    // Special case for newly created agent (new123)
+    if (agentId === "new123") {
+      const newlyCreatedAgent: AgentType = {
+        id: "new123",
+        name: "New Agent",
+        description: "This agent was just created and needs configuration.",
+        type: "custom",
+        status: "inactive",
+        createdAt: new Date().toISOString().split('T')[0],
+        interactions: 0,
+        isPersonal: true,
+        model: "GPT-4",
+        channels: [],
+        channelConfigs: {},
+        avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=new123`,
+        purpose: "Your newly created agent needs configuration.",
+        prompt: "You are a new AI assistant. Your configuration is incomplete.",
+        industry: "",
+        botFunction: "",
+        customIndustry: "",
+        customFunction: ""
+      };
+      
+      setAgent(newlyCreatedAgent);
+      setError(null);
+      setIsLoading(false);
+      return;
+    }
+
     const loadAgentDetails = async () => {
       setIsLoading(true);
       try {
