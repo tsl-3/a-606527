@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter, AlertDialogDescription } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Mic, MicOff, PhoneOff, Volume, Volume2, User, Bot } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -54,6 +54,24 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   const timerRef = useRef<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const callStartTimeRef = useRef<Date | null>(null);
+
+  // Reset state when dialog opens or closes
+  useEffect(() => {
+    if (!open) {
+      // Ensure all state is reset when the dialog is closed
+      setCallStatus("connecting");
+      setCallDuration(0);
+      setTranscriptions([]);
+      setIsMuted(false);
+      setIsAudioMuted(false);
+      
+      // Clear any active timers
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+  }, [open]);
 
   useEffect(() => {
     if (open && callStatus === "connecting") {
@@ -123,7 +141,10 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     }
     
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     };
   }, [open, callStatus]);
 
@@ -156,6 +177,12 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
   const handleEndCall = () => {
     setCallStatus("ended");
     
+    // Clear active timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    
     // Create recording data to pass back
     if (onCallComplete && persona) {
       const now = new Date();
@@ -184,16 +211,6 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         onOpenChange(false);
       }, 500);
     }
-    
-    // Clear state when the dialog is fully closed
-    setTimeout(() => {
-      // Reset component state so it's fresh for the next opening
-      setCallStatus("connecting");
-      setCallDuration(0);
-      setTranscriptions([]);
-      setIsMuted(false);
-      setIsAudioMuted(false);
-    }, 1000);
   };
 
   const handleToggleMute = () => {
@@ -242,6 +259,11 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
       }}
     >
       <AlertDialogContent className="max-w-md sm:max-w-2xl bg-[#0F172A] border-gray-800">
+        {/* Adding a visually hidden description for accessibility */}
+        <AlertDialogDescription className="sr-only">
+          Call interface with {persona.name}. You can communicate and train with this persona.
+        </AlertDialogDescription>
+        
         <AlertDialogHeader className="space-y-2 border-b border-gray-800 pb-4">
           <AlertDialogTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
