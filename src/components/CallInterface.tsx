@@ -304,8 +304,8 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
               </div>
             </div>
 
-            {/* Right column: Live Transcription */}
-            <div className="rounded-lg border border-gray-800 p-4 flex flex-col h-[280px]">
+            {/* Right column: Live Transcription - Modified to fill the column */}
+            <div className="rounded-lg border border-gray-800 p-4 flex flex-col h-full min-h-[280px]">
               <h4 className="font-medium text-sm mb-3">Live Transcription</h4>
               <ScrollArea className="flex-1 pr-4">
                 <div className="space-y-4">
