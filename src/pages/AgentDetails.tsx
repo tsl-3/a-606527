@@ -605,7 +605,6 @@ const AgentDetails = () => {
         <CardContent>
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              {!isActive}
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Calendar className="h-3.5 w-3.5 text-agent-primary" />
                 <span>Created: {agent.createdAt}</span>
@@ -616,72 +615,83 @@ const AgentDetails = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 gap-4 mt-2">
-              <div className="space-y-3">
-                {activeChannels.length > 0 && <div className="flex flex-wrap gap-2">
-                    {activeChannels.includes('voice') && <Badge variant="channel">
-                        <Mic className="h-3 w-3 mr-1" />
-                        <span className="text-xs">Voice</span>
-                      </Badge>}
-                    {activeChannels.includes('chat') && <Badge variant="channel">
-                        <MessageSquare className="h-3 w-3 mr-1" />
-                        <span className="text-xs">Chat</span>
-                      </Badge>}
-                    {activeChannels.includes('email') && <Badge variant="channel">
-                        <Mail className="h-3 w-3 mr-1" />
-                        <span className="text-xs">Email</span>
-                      </Badge>}
-                  </div>}
-                
-                <div className="flex flex-col gap-2">
-                  {voicePhoneNumber && <div className="flex items-center">
-                      <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
-                        <Phone className="h-3.5 w-3.5 text-blue-500" />
-                        <span className="text-xs">
-                          {voicePhoneNumber}
-                        </span>
-                        <div className="flex gap-1 ml-2">
-                          <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-secondary" onClick={handleCopyPhoneNumber} title="Copy phone number">
-                            <Copy className="h-3 w-3 text-muted-foreground" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestCall} title="Test agent call">
-                            <PhoneOutgoing className="h-3 w-3 text-green-400" />
-                          </Button>
-                          
-                          <CustomTooltip trigger={<Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-blue-700/50" title="Call me back">
-                                <PhoneIncoming className="h-3 w-3 text-blue-400" />
-                              </Button>} content={<div className="space-y-3 w-64 p-2">
-                                <h4 className="font-medium text-sm">Get a call from this agent</h4>
-                                <Input type="tel" placeholder="Enter your phone number" value={customCallNumber} onChange={e => setCustomCallNumber(e.target.value)} className="h-8 text-xs" />
-                                <Button size="sm" className="w-full h-8 text-xs" onClick={handleCallMe}>
-                                  Call me
-                                </Button>
-                              </div>} side="bottom" align="end" className="w-64 p-0" />
-                        </div>
+            <div className="space-y-3">
+              {activeChannels.length > 0 && <div className="flex flex-wrap gap-2">
+                  {activeChannels.includes('voice') && <Badge variant="channel">
+                      <Mic className="h-3 w-3 mr-1" />
+                      <span className="text-xs">Voice</span>
+                    </Badge>}
+                  {activeChannels.includes('chat') && <Badge variant="channel">
+                      <MessageSquare className="h-3 w-3 mr-1" />
+                      <span className="text-xs">Chat</span>
+                    </Badge>}
+                  {activeChannels.includes('email') && <Badge variant="channel">
+                      <Mail className="h-3 w-3 mr-1" />
+                      <span className="text-xs">Email</span>
+                    </Badge>}
+                </div>}
+              
+              <div className="flex flex-wrap gap-3">
+                {voicePhoneNumber && (
+                  <div className="inline-flex items-center">
+                    <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2 w-auto">
+                      <Phone className="h-3.5 w-3.5 text-blue-500 flex-shrink-0" />
+                      <span className="text-xs">
+                        {voicePhoneNumber}
+                      </span>
+                      <div className="flex gap-1 ml-2">
+                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-secondary" onClick={handleCopyPhoneNumber} title="Copy phone number">
+                          <Copy className="h-3 w-3 text-muted-foreground" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestCall} title="Test agent call">
+                          <PhoneOutgoing className="h-3 w-3 text-green-400" />
+                        </Button>
+                        
+                        <CustomTooltip trigger={
+                            <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-blue-700/50" title="Call me back">
+                              <PhoneIncoming className="h-3 w-3 text-blue-400" />
+                            </Button>
+                          } 
+                          content={
+                            <div className="space-y-3 w-64 p-2">
+                              <h4 className="font-medium text-sm">Get a call from this agent</h4>
+                              <Input type="tel" placeholder="Enter your phone number" value={customCallNumber} onChange={e => setCustomCallNumber(e.target.value)} className="h-8 text-xs" />
+                              <Button size="sm" className="w-full h-8 text-xs" onClick={handleCallMe}>
+                                Call me
+                              </Button>
+                            </div>
+                          } 
+                          side="bottom" 
+                          align="end" 
+                          className="w-64 p-0" 
+                        />
                       </div>
-                    </div>}
-                  
-                  {emailAddress && <div className="flex items-center">
-                      <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2">
-                        <Mail className="h-3.5 w-3.5 text-red-500" />
-                        <span className="text-xs">
-                          {emailAddress}
-                        </span>
-                        <div className="flex gap-1 ml-2">
-                          <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-secondary" onClick={handleCopyEmail} title="Copy email address">
-                            <Copy className="h-3 w-3 text-muted-foreground" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestEmail} title="Test agent email">
-                            <Send className="h-3 w-3 text-green-400" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>}
-                </div>
+                    </div>
+                  </div>
+                )}
                 
-                <div className="mt-2">
-                  <AgentStats avmScore={agent.avmScore} interactionCount={agent.interactions || 0} csat={agent.csat} performance={agent.performance} isNewAgent={isNewAgent} showZeroValues={false} hideInteractions={true} />
-                </div>
+                {emailAddress && (
+                  <div className="inline-flex items-center">
+                    <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2 w-auto">
+                      <Mail className="h-3.5 w-3.5 text-red-500 flex-shrink-0" />
+                      <span className="text-xs">
+                        {emailAddress}
+                      </span>
+                      <div className="flex gap-1 ml-2">
+                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-secondary" onClick={handleCopyEmail} title="Copy email address">
+                          <Copy className="h-3 w-3 text-muted-foreground" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestEmail} title="Test agent email">
+                          <Send className="h-3 w-3 text-green-400" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div className="mt-2">
+                <AgentStats avmScore={agent.avmScore} interactionCount={agent.interactions || 0} csat={agent.csat} performance={agent.performance} isNewAgent={isNewAgent} showZeroValues={false} hideInteractions={true} />
               </div>
             </div>
           </div>
@@ -850,3 +860,4 @@ const AgentDetails = () => {
 };
 
 export default AgentDetails;
+
