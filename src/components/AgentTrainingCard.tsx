@@ -371,7 +371,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                   </div>
                 </div>
 
-                {/* Moved "Get Started with Training" section to be above the "Training Recordings" section */}
+                {/* Get Started with Training section */}
                 <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg mb-6 border border-gray-200 dark:border-gray-800">
                   <h4 className="font-medium text-gray-900 dark:text-white mb-3 text-center">Get Started with Training</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center">Choose one of the following options to begin training your AI agent:</p>
@@ -408,7 +408,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                 <div className="mb-6">
                   <h4 className="font-medium text-gray-900 dark:text-white mb-4">Training Recordings ({formatMinutes(totalRecordingMinutes)} minutes total)</h4>
                   <div className="space-y-3">
-                    {localTrainingRecords.map((record) => (
+                    {localTrainingRecords.map((record, index) => (
                       <div key={record.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -419,10 +419,13 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                 <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                               )}
                             </div>
-                            <div>
+                            <div className="flex items-center gap-2">
                               <h5 className="font-medium text-gray-900 dark:text-white">{record.title}</h5>
-                              <p className="text-xs text-gray-500 dark:text-gray-500">{record.date}, {record.time} • {record.duration}</p>
+                              {index === localTrainingRecords.length - 1 && (
+                                <Badge variant="new" className="ml-2">New</Badge>
+                              )}
                             </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-500">{record.date}, {record.time} • {record.duration}</p>
                           </div>
                           
                           <div className="flex items-center gap-2">
@@ -567,7 +570,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                         duration: '8:30',
                         type: 'roleplay' as const
                       }
-                    ].map((record) => (
+                    ].map((record, index, arr) => (
                       <div key={record.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -578,10 +581,13 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                 <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                               )}
                             </div>
-                            <div>
+                            <div className="flex items-center gap-2">
                               <h5 className="font-medium text-gray-900 dark:text-white">{record.title}</h5>
-                              <p className="text-xs text-gray-500 dark:text-gray-500">{record.date}, {record.time} • {record.duration}</p>
+                              {index === arr.length - 1 && (
+                                <Badge variant="new" className="ml-2">New</Badge>
+                              )}
                             </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-500">{record.date}, {record.time} • {record.duration}</p>
                           </div>
                           
                           <div className="flex items-center gap-2">
