@@ -27,10 +27,10 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       <div className="flex gap-2 w-full">
         <Card className="flex-1 overflow-hidden shadow-sm">
           <div className="px-2 py-1 flex items-center justify-between">
-            <span className="text-xs font-medium text-fgMuted">Agent Status</span>
-            <Info className="w-3.5 h-3.5 text-fgMuted" />
+            <span className="text-xs font-medium text-muted-foreground">Agent Status</span>
+            <Info className="w-3.5 h-3.5 text-muted-foreground" />
           </div>
-          <CardContent className="p-2 text-center text-sm text-fgMuted">
+          <CardContent className="p-2 text-center text-sm text-muted-foreground">
             New agent - no stats yet
           </CardContent>
         </Card>
@@ -52,14 +52,14 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
   // Get tier label and color for interaction count
   const getInteractionTier = (count: number): { label: string; color: string } => {
     if (count >= 1000) return { label: "Gold", color: "text-warning" };
-    if (count >= 100) return { label: "Silver", color: "text-fgMuted" };
+    if (count >= 100) return { label: "Silver", color: "text-muted-foreground" };
     return { label: "Bronze", color: "text-brandPink" };
   };
   
   const interactionTier = getInteractionTier(displayInteractionCount);
   
   // Get the appropriate color class for the AVM score bar
-  const scoreColorClass = displayAvmScore !== undefined ? getScoreColor(displayAvmScore) : "bg-bgMuted";
+  const scoreColorClass = displayAvmScore !== undefined ? getScoreColor(displayAvmScore) : "bg-muted";
   
   return (
     <div className="flex flex-col gap-3 w-full">
@@ -68,11 +68,11 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
         <div className="flex gap-2 w-full">
           <Card className="flex-1 overflow-hidden shadow-sm">
             <div className="px-2 py-1 flex items-center justify-between">
-              <span className="text-xs font-medium text-fgMuted">Interactions</span>
+              <span className="text-xs font-medium text-muted-foreground">Interactions</span>
               <span className={`text-xs font-medium ${interactionTier.color}`}>{interactionTier.label}</span>
             </div>
             <CardContent className="p-2 text-center">
-              <span className="text-xl font-semibold text-fg">
+              <span className="text-xl font-semibold text-foreground">
                 {displayInteractionCount >= 1000 
                   ? `${(displayInteractionCount / 1000).toFixed(1)}k` 
                   : displayInteractionCount}
@@ -89,7 +89,7 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
             <span className="text-xs font-medium text-muted-foreground">AVM</span>
             <span className="text-xs font-medium">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
           </div>
-          <div className="relative w-full overflow-hidden rounded-full bg-secondary dark:bg-muted h-2">
+          <div className="relative w-full overflow-hidden rounded-full bg-secondary dark:bg-bgMuted h-2">
             <div 
               className={`absolute h-full transition-all duration-300 ease-in-out ${scoreColorClass}`}
               style={{ width: `${displayAvmScore ? (displayAvmScore * 10) : 0}%` }}
