@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { 
   Mic, Upload, CircleDashed, ArrowRight, Clock, BarChart, 
@@ -224,7 +225,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   return (
     <div className={`rounded-lg overflow-hidden mb-6 border transition-colors ${
       isActive 
-        ? 'border-primary shadow-md border-2' 
+        ? 'border-purple-500 shadow-md border-2' 
         : 'border-gray-200 dark:border-gray-800'
     }`}>
       <div className="p-6 pb-0">

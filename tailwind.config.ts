@@ -25,6 +25,9 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				'agent-dark-bg': 'hsl(var(--agent-dark-bg))',
+				purple: {
+					500: '#8B5CF6',
+				},
 				agent: {
 					primary: 'hsl(var(--agent-primary))',
 					secondary: 'hsl(var(--agent-secondary))',
