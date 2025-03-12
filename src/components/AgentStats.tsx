@@ -86,10 +86,10 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       {displayAvmScore !== undefined && (
         <div className="w-full">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-xs font-medium text-fgMuted">AVM</span>
-            <span className="text-xs font-medium text-fg">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
+            <span className="text-xs font-medium text-muted-foreground">AVM</span>
+            <span className="text-xs font-medium">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
           </div>
-          <div className="relative w-full overflow-hidden rounded-full bg-bgMuted dark:bg-bg h-2">
+          <div className="relative w-full overflow-hidden rounded-full bg-secondary dark:bg-muted h-2">
             <div 
               className={`absolute h-full transition-all duration-300 ease-in-out ${scoreColorClass}`}
               style={{ width: `${displayAvmScore ? (displayAvmScore * 10) : 0}%` }}
