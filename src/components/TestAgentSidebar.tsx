@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -107,6 +108,7 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
         setIsProcessing(false);
       }, 1000);
       
+      // Just call onStartChat without showing a toast
       onStartChat();
     }
   };
