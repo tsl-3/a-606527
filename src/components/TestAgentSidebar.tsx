@@ -38,6 +38,7 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
   const [chatMessage, setChatMessage] = useState<string>("");
   const [chatMessages, setChatMessages] = useState<{role: "system" | "user"; text: string}[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [hasStartedChat, setHasStartedChat] = useState(false);
 
   React.useEffect(() => {
     if (open) {
@@ -108,8 +109,14 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
         setIsProcessing(false);
       }, 1000);
       
-      // Call onStartChat without showing any toast
-      onStartChat();
+      // Only call onStartChat once if it hasn't been called yet
+      if (!hasStartedChat) {
+        setHasStartedChat(true);
+        // Call onStartChat directly, with no toast notification
+        if (typeof onStartChat === 'function') {
+          onStartChat();
+        }
+      }
     }
   };
 
@@ -280,7 +287,7 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
                 <LiveTranscription 
                   messages={chatMessages}
                   isCallActive={isProcessing}
-                  className="flex-1 mb-4"
+                  className="flex-1 mb-4 overflow-y-auto"
                 />
                 
                 <div className="relative mt-auto">
