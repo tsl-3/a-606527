@@ -93,8 +93,8 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
 
   const handleSendMessage = () => {
     if (chatMessage.trim()) {
-      // Add user message to chat
-      const newMessages = [...chatMessages, { role: "user", text: chatMessage }];
+      // Add user message to chat with proper typing
+      const newMessages = [...chatMessages, { role: "user" as const, text: chatMessage }];
       setChatMessages(newMessages);
       
       // Clear input
