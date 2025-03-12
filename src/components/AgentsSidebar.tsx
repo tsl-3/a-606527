@@ -52,11 +52,11 @@ const AgentsSidebar: React.FC = () => {
   };
 
   return (
-    <Sidebar className="border-r border-gray-200">
+    <Sidebar className="border-r border-border">
       <SidebarHeader className="p-4">
         <div className="flex items-center space-x-2">
-          <Bot className="h-6 w-6 text-agent-primary" />
-          <h1 className="text-xl font-semibold text-agent-text">Agent Hub</h1>
+          <Bot className="h-6 w-6 text-brandPurple" />
+          <h1 className="text-xl font-semibold text-fg">Agent Hub</h1>
         </div>
         <SidebarTrigger className="absolute right-2 top-4" />
       </SidebarHeader>
@@ -69,7 +69,9 @@ const AgentsSidebar: React.FC = () => {
               {mainMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild className={cn(
-                    isActive(item) ? "bg-agent-accent text-agent-primary font-medium" : "text-gray-600 hover:bg-gray-100"
+                    isActive(item) 
+                      ? "bg-brandPurple/10 text-brandPurple font-medium" 
+                      : "text-fgMuted hover:bg-bgMuted"
                   )}>
                     <Link to={item.url} className="flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200">
                       <item.icon className="h-5 w-5" />
@@ -87,7 +89,7 @@ const AgentsSidebar: React.FC = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="bg-agent-primary text-white hover:bg-agent-primary/90">
+                <SidebarMenuButton asChild className="bg-brandPurple text-white hover:bg-brandPurple/90">
                   <Link to="/agents/create" className="flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200">
                     <PlusCircle className="h-5 w-5" />
                     <span>Create New Agent</span>
@@ -99,10 +101,10 @@ const AgentsSidebar: React.FC = () => {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="p-4 border-t border-gray-200">
+      <SidebarFooter className="p-4 border-t border-border">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="text-gray-600 hover:bg-gray-100">
+            <SidebarMenuButton asChild className="text-fgMuted hover:bg-bgMuted">
               <Link to="/agents/settings" className="flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200">
                 <Settings className="h-5 w-5" />
                 <span>Settings</span>
