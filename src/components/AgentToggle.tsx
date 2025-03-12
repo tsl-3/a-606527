@@ -16,7 +16,7 @@ export const AgentToggle: React.FC<AgentToggleProps> = ({ isActive, onToggle }) 
         onClick={onToggle}
         className="data-[state=checked]:bg-primary"
       />
-      <span className={`text-sm font-medium ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+      <span className={`text-sm font-medium ${isActive ? 'text-fg' : 'text-fgMuted'}`}>
         {isActive ? 'Active' : 'Inactive'}
       </span>
     </div>
