@@ -59,7 +59,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   const [localVoiceSamples, setLocalVoiceSamples] = useState(voiceSamples);
   const [localVoiceConfidence, setLocalVoiceConfidence] = useState(voiceConfidence);
   const [totalRecordingMinutes, setTotalRecordingMinutes] = useState(0);
-  const targetMinutes = 10;
+  const targetMinutes = 10; // Set target to 10 minutes
 
   const handleToggleExpand = () => {
     if (onToggleExpand) {
@@ -222,12 +222,12 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   const progressPercentage = Math.min(Math.round((totalRecordingMinutes / targetMinutes) * 100), 100);
 
   return (
-    <div className={`rounded-lg overflow-hidden mb-6 ${
+    <div className={`rounded-lg overflow-hidden mb-6 border transition-colors ${
       isActive 
-        ? 'relative before:absolute before:inset-0 before:rounded-lg before:p-[1px] before:bg-gradient-to-r before:from-gradientFrom before:to-gradientTo before:pointer-events-none' 
-        : 'border border-gray-200 dark:border-gray-800'
+        ? 'border-primary shadow-md border-2' 
+        : 'border-gray-200 dark:border-gray-800'
     }`}>
-      <div className={`${isActive ? 'relative z-10 bg-background rounded-lg' : ''} p-6 pb-0`}>
+      <div className="p-6 pb-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-8 h-8 text-gray-900 dark:text-white">
@@ -704,4 +704,3 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
     </div>
   );
 };
-

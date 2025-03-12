@@ -64,9 +64,7 @@ export default {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
-				},
-				gradientFrom: '#2563EB',
-				gradientTo: '#D946EF'
+				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
