@@ -26,6 +26,7 @@ interface AgentChannelsProps {
   compact?: boolean;
   showDetails?: boolean;
   className?: string;
+  hideContactInfo?: boolean;
 }
 
 interface ChannelInfo {
@@ -110,7 +111,8 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
   readonly = false,
   compact = false,
   showDetails = false,
-  className = ""
+  className = "",
+  hideContactInfo = false
 }) => {
   const [activeDialogChannel, setActiveDialogChannel] = useState<string | null>(null);
   const [channelDetails, setChannelDetails] = useState<string>("");
@@ -146,7 +148,7 @@ export const AgentChannels: React.FC<AgentChannelsProps> = ({
             >
               {info.icon}
               <span className="text-[0.6rem] capitalize">{channel}</span>
-              {showDetails && details && (
+              {showDetails && details && !hideContactInfo && (
                 <span className="text-[0.6rem] ml-1 opacity-80">{details}</span>
               )}
             </Badge>
