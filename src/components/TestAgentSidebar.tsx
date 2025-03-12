@@ -3,20 +3,18 @@ import React, { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AgentType } from "@/types/agent";
-import { Mic, Phone, PhoneOutgoing, PhoneIncoming, MessageSquare, Bot, Rocket, Cog } from "lucide-react";
+import { Mic, Phone, PhoneOutgoing, PhoneIncoming, MessageSquare, Bot, Rocket } from "lucide-react";
 
 interface TestAgentSidebarProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   agent: AgentType | null;
-  onStartRolePlay: () => void;
   onStartDirectCall: (phoneNumber: string, deviceSettings: { mic: string; speaker: string }) => void;
   onStartChat: () => void;
 }
@@ -25,7 +23,6 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
   open,
   onOpenChange,
   agent,
-  onStartRolePlay,
   onStartDirectCall,
   onStartChat
 }) => {
@@ -89,11 +86,6 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
     }
   };
 
-  const handleStartRolePlay = () => {
-    onStartRolePlay();
-    onOpenChange(false);
-  };
-
   const handleStartChat = () => {
     onStartChat();
     onOpenChange(false);
@@ -126,19 +118,6 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
           
           <TabsContent value="voice" className="space-y-4">
             <div className="grid gap-4 mb-4">
-              <Card className="p-4">
-                <div className="font-medium mb-2 flex items-center gap-2">
-                  <Bot className="h-4 w-4 text-primary" />
-                  RolePlay
-                </div>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Simulate a conversation with the agent using pre-defined personas and scenarios.
-                </p>
-                <Button onClick={handleStartRolePlay} size="sm" className="w-full">
-                  Start RolePlay
-                </Button>
-              </Card>
-
               {callType === "inbound" ? (
                 <Card className="p-4">
                   <div className="font-medium mb-2 flex items-center gap-2">
@@ -280,16 +259,6 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
                 Start Chat
               </Button>
             </Card>
-            
-            <div className="text-sm text-muted-foreground">
-              <p>In a chat interface you can:</p>
-              <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li>Test how your agent responds to different text queries</li>
-                <li>Evaluate the quality of the agent's responses</li>
-                <li>Test specific scenarios or edge cases</li>
-                <li>Refine your agent's knowledge and responses</li>
-              </ul>
-            </div>
           </TabsContent>
         </Tabs>
 

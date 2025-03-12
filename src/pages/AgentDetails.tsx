@@ -731,7 +731,6 @@ const AgentDetails = () => {
         open={isTestAgentSidebarOpen}
         onOpenChange={setIsTestAgentSidebarOpen}
         agent={agent}
-        onStartRolePlay={openRolePlay}
         onStartDirectCall={startDirectCall}
         onStartChat={() => {
           toast({
