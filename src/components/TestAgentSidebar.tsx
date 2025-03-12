@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -109,10 +108,8 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
         setIsProcessing(false);
       }, 1000);
       
-      // Initialize the chat only once without triggering any toast
       if (!hasStartedChat) {
         setHasStartedChat(true);
-        // Don't call onStartChat at all - we're handling the chat within this component
       }
     }
   };
@@ -156,10 +153,10 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
                   <Card className="p-4">
                     <div className="font-medium mb-2 flex items-center gap-2">
                       <PhoneIncoming className="h-4 w-4 text-green-500" />
-                      Inbound Call
+                      Call Your Agent
                     </div>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Simulate as if you're calling the agent. The agent will answer your call.
+                      Try your agent by calling them directly. Your agent will answer your call.
                     </p>
                     
                     <div className="space-y-3 mb-4">
@@ -204,10 +201,10 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
                   <Card className="p-4">
                     <div className="font-medium mb-2 flex items-center gap-2">
                       <PhoneOutgoing className="h-4 w-4 text-blue-500" />
-                      Outbound Call
+                      Get a Call from Your Agent
                     </div>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Simulate the agent calling a specific phone number (you).
+                      Try your agent by having them call you at your preferred number.
                     </p>
                     
                     <div className="space-y-3 mb-4">
