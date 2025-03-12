@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, History, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause, Phone, Copy, PhoneOutgoing, PhoneIncoming, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog, PhoneCall } from "lucide-react";
+import { ArrowLeft, Bot, Trash2, AlertCircle, Loader2, History, Cpu, Calendar, Mic, Volume2, MessageSquare, Plus, Play, Pause, Phone, Copy, PhoneOutgoing, PhoneIncoming, Mail, Send, MoreVertical, Archive, UserMinus, PenSquare, Cog } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -766,15 +766,6 @@ const AgentDetails = () => {
         }}
         onStartDirectCall={startDirectCall}
       />
-      
-      <div className="fixed bottom-6 right-6">
-        <Button 
-          onClick={handleOpenPersonasSidebar}
-          className="rounded-full h-14 w-14 bg-green-500 hover:bg-green-600 text-white shadow-lg"
-        >
-          <PhoneCall className="h-6 w-6" />
-        </Button>
-      </div>
     </div>;
 };
 
