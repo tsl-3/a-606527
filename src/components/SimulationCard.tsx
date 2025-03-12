@@ -73,19 +73,19 @@ export const SimulationCard = ({
     switch (status) {
       case 'not-started':
         return (
-          <Badge variant="outline" className="bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 border-gray-200 dark:border-gray-700">
+          <Badge variant="outline" className="bg-bgMuted text-fgMuted border-border">
             Not Started
           </Badge>
         );
       case 'in-progress':
         return (
-          <Badge variant="outline" className="bg-amber-50 text-amber-500 dark:bg-amber-900/20 dark:text-amber-400 border-amber-200 dark:border-amber-800/30">
+          <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30">
             In Progress
           </Badge>
         );
       case 'completed':
         return (
-          <Badge variant="outline" className="bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400 border-green-200 dark:border-green-800/30">
+          <Badge variant="outline" className="bg-success/10 text-success border-success/30">
             Completed
           </Badge>
         );
@@ -110,30 +110,30 @@ export const SimulationCard = ({
   const getProgressColorClass = () => {
     switch (status) {
       case 'not-started':
-        return "bg-gray-400 dark:bg-gray-600";
+        return "bg-fgMuted";
       case 'in-progress':
-        return "bg-amber-500 dark:bg-amber-400";
+        return "bg-warning";
       case 'completed':
-        return "bg-green-500 dark:bg-green-400";
+        return "bg-success";
       default:
-        return "bg-gray-400 dark:bg-gray-600";
+        return "bg-fgMuted";
     }
   };
 
   return (
-    <div className="rounded-lg overflow-hidden mb-6 border border-gray-200 dark:border-gray-800">
+    <div className="rounded-lg overflow-hidden mb-6 border border-border">
       <div className="p-6 pb-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-8 h-8 text-gray-900 dark:text-white">
+            <div className="flex items-center justify-center rounded-full bg-bgMuted w-8 h-8 text-fg">
               3
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Simulations</h3>
+            <h3 className="text-xl font-semibold text-fg">Simulations</h3>
             {getStatusBadge()}
           </div>
           <div className="flex items-center gap-2">
             {status !== 'not-started' && (
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-fgMuted">
                 {status === 'completed' ? '100' : '50'}%
               </span>
             )}
@@ -141,14 +141,14 @@ export const SimulationCard = ({
               variant="ghost" 
               size="icon" 
               onClick={handleToggleExpand}
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+              className="text-fgMuted hover:text-fg"
             >
               <ChevronUp className={`h-5 w-5 ${!expanded ? 'transform rotate-180' : ''}`} />
             </Button>
           </div>
         </div>
         
-        <p className="text-gray-700 dark:text-gray-300 mb-4">
+        <p className="text-fgMuted mb-4">
           Generate and run scenarios to test your agent's performance
         </p>
         

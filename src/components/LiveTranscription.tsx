@@ -30,10 +30,10 @@ export const LiveTranscription: React.FC<LiveTranscriptionProps> = ({
   }, [messages]);
 
   return (
-    <div className={cn("border rounded-md p-4 overflow-y-auto bg-muted/10 flex-1 h-full flex flex-col", className)}>
+    <div className={cn("border border-border rounded-md p-4 overflow-y-auto bg-bgMuted/10 flex-1 h-full flex flex-col", className)}>
       {messages.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground my-auto">
-          <Bot className="h-12 w-12 mb-4 text-muted-foreground/50" />
+        <div className="flex flex-col items-center justify-center h-full text-center text-fgMuted my-auto">
+          <Bot className="h-12 w-12 mb-4 text-fgMuted/50" />
           <p className="text-lg">Your conversation will appear here</p>
           <p className="text-sm">The AI will guide you through creating your agent</p>
         </div>
@@ -60,8 +60,8 @@ export const LiveTranscription: React.FC<LiveTranscriptionProps> = ({
                 className={cn(
                   "rounded-lg py-2 px-3 max-w-[80%]",
                   message.role === "system" 
-                    ? "bg-muted text-muted-foreground" 
-                    : "bg-primary text-primary-foreground dark:bg-slate-600 dark:text-white"
+                    ? "bg-bgMuted text-fgMuted" 
+                    : "bg-brandPurple text-white"
                 )}
               >
                 <p>{message.text}</p>
@@ -69,7 +69,7 @@ export const LiveTranscription: React.FC<LiveTranscriptionProps> = ({
               
               {message.role === "user" && (
                 <Avatar className="h-8 w-8 flex-shrink-0">
-                  <AvatarFallback className="bg-blue-600 text-white">
+                  <AvatarFallback className="bg-brandBlue text-white">
                     <User className="h-4 w-4" />
                   </AvatarFallback>
                 </Avatar>
@@ -85,10 +85,10 @@ export const LiveTranscription: React.FC<LiveTranscriptionProps> = ({
                   <Bot className="h-4 w-4" />
                 </AvatarFallback>
               </Avatar>
-              <div className="bg-muted rounded-lg py-2 px-3 flex items-center gap-2">
-                <span className="inline-block h-2 w-2 bg-agent-primary rounded-full animate-pulse"></span>
-                <span className="inline-block h-2 w-2 bg-agent-primary rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></span>
-                <span className="inline-block h-2 w-2 bg-agent-primary rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></span>
+              <div className="bg-bgMuted rounded-lg py-2 px-3 flex items-center gap-2">
+                <span className="inline-block h-2 w-2 bg-brandPurple rounded-full animate-pulse"></span>
+                <span className="inline-block h-2 w-2 bg-brandPurple rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></span>
+                <span className="inline-block h-2 w-2 bg-brandPurple rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></span>
               </div>
             </div>
           )}
