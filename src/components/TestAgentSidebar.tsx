@@ -270,16 +270,6 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
                 </RadioGroup>
               </div>
             </div>
-            
-            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
-              <Button 
-                variant="secondary" 
-                onClick={() => onOpenChange(false)} 
-                className="w-full"
-              >
-                Close
-              </Button>
-            </div>
           </TabsContent>
           
           <TabsContent value="chat" className="flex-1 flex flex-col h-full overflow-hidden">

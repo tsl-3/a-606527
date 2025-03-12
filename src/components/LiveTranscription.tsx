@@ -30,7 +30,7 @@ export const LiveTranscription: React.FC<LiveTranscriptionProps> = ({
   }, [messages]);
 
   return (
-    <div className={cn("border rounded-md p-4 overflow-y-auto bg-muted/10 flex-1", className)}>
+    <div className={cn("border rounded-md p-4 overflow-y-auto bg-muted/10 flex-1 h-full", className)}>
       {messages.length === 0 && (
         <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
           <Bot className="h-12 w-12 mb-4 text-muted-foreground/50" />
