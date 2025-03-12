@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { 
   Mic, Upload, CircleDashed, ArrowRight, Clock, BarChart, 
@@ -222,12 +223,12 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   const progressPercentage = Math.min(Math.round((totalRecordingMinutes / targetMinutes) * 100), 100);
 
   return (
-    <div className={`rounded-lg overflow-hidden mb-6 border transition-colors ${
+    <div className={`rounded-lg overflow-hidden mb-6 relative ${
       isActive 
-        ? 'border-primary shadow-md border-2' 
-        : 'border-gray-200 dark:border-gray-800'
+        ? 'before:absolute before:inset-0 before:rounded-lg before:p-[1px] before:bg-gradient-active before:content-[""] before:-z-10'
+        : 'border border-gray-200 dark:border-gray-800'
     }`}>
-      <div className="p-6 pb-0">
+      <div className="p-6 pb-0 bg-white dark:bg-gray-950 rounded-lg">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-8 h-8 text-gray-900 dark:text-white">
