@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -93,26 +92,22 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
 
   const handleSendMessage = () => {
     if (chatMessage.trim()) {
-      // Add user message to chat with proper typing
       const newMessages = [...chatMessages, { role: "user" as const, text: chatMessage }];
       setChatMessages(newMessages);
       
-      // Clear input
       setChatMessage("");
       
-      // Simulate agent response
       setIsProcessing(true);
       setTimeout(() => {
         const agentResponse = { 
           role: "system" as const, 
-          text: `I'm ${agent?.name || 'the AI assistant'}, and I'm here to help. ${chatMessage.length > 30 ? 'That\'s an interesting point you raised.' : 'How can I assist you today?'}`
+          text: `I'm ${agent?.name || 'the AI assistant'}, and I'm here to help. ${chatMessage.length > 30 ? 'That\'s an interesting point you raised.' : 'How can I assist you today?'}` 
         };
         setChatMessages([...newMessages, agentResponse]);
         setIsProcessing(false);
       }, 1000);
       
-      // In a real implementation, you would call your chat API here
-      onStartChat(); // Call the onStartChat function to notify parent component
+      onStartChat();
     }
   };
 
@@ -276,7 +271,6 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
               </div>
             </div>
             
-            {/* Voice tab still needs a close button */}
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
               <Button 
                 variant="secondary" 
@@ -313,12 +307,9 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
                 </Button>
               </div>
             </div>
-            
-            {/* Removed the close button for chat tab */}
           </TabsContent>
         </Tabs>
       </SheetContent>
     </Sheet>
   );
 };
-
