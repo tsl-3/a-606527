@@ -224,18 +224,18 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
     : Math.min(Math.round((totalRecordingMinutes / targetMinutes) * 100), 100);
 
   return (
-    <div className={`rounded-lg overflow-hidden mb-6 border transition-colors bg-background ${
+    <div className={`rounded-lg overflow-hidden mb-6 border transition-colors bg-bg ${
       isActive 
-        ? 'border-primary shadow-md border-2' 
+        ? 'border-brandPurple shadow-md border-2' 
         : 'border-border'
     }`}>
       <div className="p-6 pb-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-full bg-muted w-8 h-8 text-foreground">
+            <div className="flex items-center justify-center rounded-full bg-bgMuted w-8 h-8 text-fg">
               {stepNumber}
             </div>
-            <h3 className="text-xl font-semibold text-foreground">Agent Training</h3>
+            <h3 className="text-xl font-semibold text-fg">Agent Training</h3>
             {localStatus === 'in-progress' && (
               <Badge variant="outline" className="bg-warning/20 text-warning border-warning/30 ml-2">
                 In Progress
@@ -247,30 +247,30 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
               </Badge>
             )}
             {localStatus === 'not-started' && (
-              <Badge variant="outline" className="bg-muted text-muted-foreground border-border ml-2">
+              <Badge variant="outline" className="bg-bgMuted text-fgMuted border-border ml-2">
                 Not Started
               </Badge>
             )}
           </div>
           <div className="flex items-center gap-2">
             {localStatus === 'in-progress' && (
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-fgMuted">
                 {progressPercentage}%
               </span>
             )}
-            {localStatus === 'completed' && <span className="text-sm text-muted-foreground">100%</span>}
+            {localStatus === 'completed' && <span className="text-sm text-fgMuted">100%</span>}
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={handleToggleExpand}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-fgMuted hover:text-fg"
             >
               <ChevronUp className={`h-5 w-5 ${!isExpanded ? 'transform rotate-180' : ''}`} />
             </Button>
           </div>
         </div>
         
-        <p className="text-muted-foreground mb-4">
+        <p className="text-fgMuted mb-4">
           Train your voice agent by uploading call recordings or role-play a conversation where you act as the agent
         </p>
         
@@ -284,17 +284,17 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
         {isExpanded && (
           <>
             {localStatus === 'not-started' && (
-              <div className="bg-muted/30 border border-border rounded-lg p-8 mb-8 text-center">
-                <Mic className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h4 className="text-lg font-medium text-foreground mb-2 text-center">No voice samples yet</h4>
-                <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto text-center">
+              <div className="bg-bgMuted/30 border border-border rounded-lg p-8 mb-8 text-center">
+                <Mic className="h-12 w-12 text-fgMuted mx-auto mb-4" />
+                <h4 className="text-lg font-medium text-fg mb-2 text-center">No voice samples yet</h4>
+                <p className="text-sm text-fgMuted mb-6 max-w-md mx-auto text-center">
                   Upload call recordings or start a role-playing session to begin training your agent.
                 </p>
                 
                 <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
                   <div 
                     onClick={handleUploadClick} 
-                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-border hover:border-primary hover:bg-muted/50 transition-colors cursor-pointer"
+                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-border hover:border-brandPurple hover:bg-bgMuted/50 transition-colors cursor-pointer"
                   >
                     <input
                       type="file"
@@ -304,18 +304,18 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       multiple
                       accept="audio/*"
                     />
-                    <FileAudio className="h-12 w-12 text-muted-foreground mb-3" />
-                    <span className="text-sm font-medium text-foreground">Upload Recordings</span>
-                    <span className="text-xs text-muted-foreground mt-1">Drag files here</span>
+                    <FileAudio className="h-12 w-12 text-fgMuted mb-3" />
+                    <span className="text-sm font-medium text-fg">Upload Recordings</span>
+                    <span className="text-xs text-fgMuted mt-1">Drag files here</span>
                   </div>
                   
                   <div 
                     onClick={() => setUserPersonasSidebarOpen(true)} 
-                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer"
+                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-brandPurple bg-brandPurple/5 hover:bg-brandPurple/10 transition-colors cursor-pointer"
                   >
-                    <PhoneCall className="h-12 w-12 text-primary mb-3" />
-                    <span className="text-sm font-medium text-primary">Call to Role Play</span>
-                    <span className="text-xs text-primary/70 mt-1">Call to generate training recordings</span>
+                    <PhoneCall className="h-12 w-12 text-brandPurple mb-3" />
+                    <span className="text-sm font-medium text-brandPurple">Call to Role Play</span>
+                    <span className="text-xs text-brandPurple/70 mt-1">Call to generate training recordings</span>
                   </div>
                 </div>
               </div>
@@ -324,34 +324,34 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
             {localStatus === 'in-progress' && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-muted/30 p-6 rounded-lg border border-border flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-muted-foreground">
+                  <div className="bg-bgMuted/30 p-6 rounded-lg border border-border flex flex-col">
+                    <div className="flex items-center gap-2 mb-1 text-fgMuted">
                       <Clock className="h-4 w-4" />
                       <span className="text-xs font-medium">Recording Duration</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-foreground">{formatMinutes(totalRecordingMinutes)}/{targetMinutes}m</div>
-                      <div className="text-xs text-muted-foreground">Target minutes</div>
+                      <div className="text-3xl font-bold text-fg">{formatMinutes(totalRecordingMinutes)}/{targetMinutes}m</div>
+                      <div className="text-xs text-fgMuted">Target minutes</div>
                     </div>
                   </div>
-                  <div className="bg-muted/30 p-6 rounded-lg border border-border flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-muted-foreground">
+                  <div className="bg-bgMuted/30 p-6 rounded-lg border border-border flex flex-col">
+                    <div className="flex items-center gap-2 mb-1 text-fgMuted">
                       <BarChart className="h-4 w-4" />
                       <span className="text-xs font-medium">Voice Cloning Confidence</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-foreground">{localVoiceConfidence}%</div>
-                      <div className="text-xs text-muted-foreground">Current confidence level</div>
+                      <div className="text-3xl font-bold text-fg">{localVoiceConfidence}%</div>
+                      <div className="text-xs text-fgMuted">Current confidence level</div>
                     </div>
                   </div>
-                  <div className="bg-muted/30 p-6 rounded-lg border border-border flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-muted-foreground">
+                  <div className="bg-bgMuted/30 p-6 rounded-lg border border-border flex flex-col">
+                    <div className="flex items-center gap-2 mb-1 text-fgMuted">
                       <Mic className="h-4 w-4" />
                       <span className="text-xs font-medium">Voice Samples</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-foreground">{localVoiceSamples}</div>
-                      <div className="text-xs text-muted-foreground">Total recordings</div>
+                      <div className="text-3xl font-bold text-fg">{localVoiceSamples}</div>
+                      <div className="text-xs text-fgMuted">Total recordings</div>
                     </div>
                   </div>
                 </div>
@@ -362,10 +362,10 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       <ArrowRight className="h-4 w-4 text-warning" />
                     </div>
                     <div>
-                      <h4 className="font-medium mb-1 text-foreground">
+                      <h4 className="font-medium mb-1 text-fg">
                         Progress: {formatMinutes(totalRecordingMinutes)} of {targetMinutes} minutes recorded
                       </h4>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-fgMuted">
                         Upload or record {formatMinutes(Math.max(targetMinutes - totalRecordingMinutes, 0))} more minutes to complete this step.
                       </p>
                     </div>
@@ -373,14 +373,14 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                 </div>
 
                 {/* Get Started with Training section */}
-                <div className="bg-muted/30 p-6 rounded-lg mb-6 border border-border">
-                  <h4 className="font-medium text-foreground mb-3 text-center">Get Started with Training</h4>
-                  <p className="text-sm text-muted-foreground mb-4 text-center">Choose one of the following options to begin training your AI agent:</p>
+                <div className="bg-bgMuted/30 p-6 rounded-lg mb-6 border border-border">
+                  <h4 className="font-medium text-fg mb-3 text-center">Get Started with Training</h4>
+                  <p className="text-sm text-fgMuted mb-4 text-center">Choose one of the following options to begin training your AI agent:</p>
                   
                   <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
                     <div 
                       onClick={handleUploadClick} 
-                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-border hover:border-primary hover:bg-muted/50 transition-colors cursor-pointer"
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-border hover:border-brandPurple hover:bg-bgMuted/50 transition-colors cursor-pointer"
                     >
                       <input
                         type="file"
@@ -390,43 +390,43 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                         multiple
                         accept="audio/*"
                       />
-                      <FileAudio className="h-12 w-12 text-muted-foreground mb-3" />
-                      <span className="text-sm font-medium text-foreground">Upload Recordings</span>
-                      <span className="text-xs text-muted-foreground mt-1">Drag files here</span>
+                      <FileAudio className="h-12 w-12 text-fgMuted mb-3" />
+                      <span className="text-sm font-medium text-fg">Upload Recordings</span>
+                      <span className="text-xs text-fgMuted mt-1">Drag files here</span>
                     </div>
                     
                     <div 
                       onClick={() => setUserPersonasSidebarOpen(true)} 
-                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer"
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-brandPurple bg-brandPurple/5 hover:bg-brandPurple/10 transition-colors cursor-pointer"
                     >
-                      <PhoneCall className="h-12 w-12 text-primary mb-3" />
-                      <span className="text-sm font-medium text-primary">Call to Role Play</span>
-                      <span className="text-xs text-primary/70 mt-1">Call to generate training recordings</span>
+                      <PhoneCall className="h-12 w-12 text-brandPurple mb-3" />
+                      <span className="text-sm font-medium text-brandPurple">Call to Role Play</span>
+                      <span className="text-xs text-brandPurple/70 mt-1">Call to generate training recordings</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <h4 className="font-medium text-foreground mb-4">Training Recordings ({formatMinutes(totalRecordingMinutes)} minutes total)</h4>
+                  <h4 className="font-medium text-fg mb-4">Training Recordings ({formatMinutes(totalRecordingMinutes)} minutes total)</h4>
                   <div className="space-y-3">
                     {localTrainingRecords.map((record, index) => (
-                      <div key={record.id} className="bg-muted/30 border border-border rounded-lg p-4">
+                      <div key={record.id} className="bg-bgMuted/30 border border-border rounded-lg p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="bg-muted p-2 rounded-full">
+                            <div className="bg-bgMuted p-2 rounded-full">
                               {record.type === 'call' ? (
-                                <Mic className="h-5 w-5 text-muted-foreground" />
+                                <Mic className="h-5 w-5 text-fgMuted" />
                               ) : (
-                                <User className="h-5 w-5 text-muted-foreground" />
+                                <User className="h-5 w-5 text-fgMuted" />
                               )}
                             </div>
                             <div className="flex items-center gap-2">
-                              <h5 className="font-medium text-foreground">{record.title}</h5>
+                              <h5 className="font-medium text-fg">{record.title}</h5>
                               {index === localTrainingRecords.length - 1 && (
-                                <Badge variant="default" className="ml-2">New</Badge>
+                                <Badge variant="new" className="ml-2">New</Badge>
                               )}
                             </div>
-                            <p className="text-xs text-muted-foreground">{record.date}, {record.time} • {record.duration}</p>
+                            <p className="text-xs text-fgMuted">{record.date}, {record.time} • {record.duration}</p>
                           </div>
                           
                           <div className="flex items-center gap-2">
@@ -436,7 +436,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                   <Button 
                                     variant="outline" 
                                     size="sm" 
-                                    className="gap-2 text-foreground"
+                                    className="gap-2 text-fg"
                                     onClick={() => handlePlayRecording(record)}
                                   >
                                     <PlayCircle className="h-4 w-4" />
@@ -455,7 +455,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                   <Button 
                                     variant="outline" 
                                     size="sm"
-                                    className="gap-2 text-foreground"
+                                    className="gap-2 text-fg"
                                   >
                                     <Sparkles className="h-4 w-4" />
                                     <span className="hidden sm:inline">Use for Training</span>
@@ -491,8 +491,8 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     ))}
                     
                     {localTrainingRecords.length === 0 && (
-                      <div className="bg-muted/30 border border-border rounded-lg p-6 text-center">
-                        <p className="text-muted-foreground">No recordings yet. Add recordings using one of the methods below.</p>
+                      <div className="bg-bgMuted/30 border border-border rounded-lg p-6 text-center">
+                        <p className="text-fgMuted">No recordings yet. Add recordings using one of the methods below.</p>
                       </div>
                     )}
                   </div>
@@ -512,54 +512,54 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       <CheckCircle2 className="h-4 w-4 text-success" />
                     </div>
                     <div>
-                      <h4 className="font-medium mb-1 text-foreground">Completed: Voice training finished</h4>
-                      <p className="text-sm text-muted-foreground">The required {targetMinutes} minutes of voice recordings have been collected and processed.</p>
+                      <h4 className="font-medium mb-1 text-fg">Completed: Voice training finished</h4>
+                      <p className="text-sm text-fgMuted">The required {targetMinutes} minutes of voice recordings have been collected and processed.</p>
                     </div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-muted/30 p-6 rounded-lg border border-border flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-muted-foreground">
+                  <div className="bg-bgMuted/30 p-6 rounded-lg border border-border flex flex-col">
+                    <div className="flex items-center gap-2 mb-1 text-fgMuted">
                       <Clock className="h-4 w-4" />
                       <span className="text-xs font-medium">Recording Duration</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-foreground">{formatMinutes(Math.max(totalRecordingMinutes, targetMinutes))}/{targetMinutes}m</div>
-                      <div className="text-xs text-muted-foreground">Goal achieved</div>
+                      <div className="text-3xl font-bold text-fg">{formatMinutes(Math.max(totalRecordingMinutes, targetMinutes))}/{targetMinutes}m</div>
+                      <div className="text-xs text-fgMuted">Goal achieved</div>
                     </div>
                   </div>
-                  <div className="bg-muted/30 p-6 rounded-lg border border-border flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-muted-foreground">
+                  <div className="bg-bgMuted/30 p-6 rounded-lg border border-border flex flex-col">
+                    <div className="flex items-center gap-2 mb-1 text-fgMuted">
                       <BarChart className="h-4 w-4" />
                       <span className="text-xs font-medium">Voice Cloning Confidence</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-foreground">95%</div>
-                      <div className="text-xs text-muted-foreground">High confidence level</div>
+                      <div className="text-3xl font-bold text-fg">95%</div>
+                      <div className="text-xs text-fgMuted">High confidence level</div>
                     </div>
                   </div>
-                  <div className="bg-muted/30 p-6 rounded-lg border border-border flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-muted-foreground">
+                  <div className="bg-bgMuted/30 p-6 rounded-lg border border-border flex flex-col">
+                    <div className="flex items-center gap-2 mb-1 text-fgMuted">
                       <Mic className="h-4 w-4" />
                       <span className="text-xs font-medium">Voice Samples</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-foreground">{localTrainingRecords.length}</div>
-                      <div className="text-xs text-muted-foreground">Total recordings</div>
+                      <div className="text-3xl font-bold text-fg">{localTrainingRecords.length}</div>
+                      <div className="text-xs text-fgMuted">Total recordings</div>
                     </div>
                   </div>
                 </div>
                 
                 {/* Continue Training section */}
-                <div className="bg-muted/30 p-6 rounded-lg mb-6 border border-border">
-                  <h4 className="font-medium text-foreground mb-3 text-center">Continue Training</h4>
-                  <p className="text-sm text-muted-foreground mb-4 text-center">Add more voice samples to further improve your AI agent's voice quality and recognition capabilities.</p>
+                <div className="bg-bgMuted/30 p-6 rounded-lg mb-6 border border-border">
+                  <h4 className="font-medium text-fg mb-3 text-center">Continue Training</h4>
+                  <p className="text-sm text-fgMuted mb-4 text-center">Add more voice samples to further improve your AI agent's voice quality and recognition capabilities.</p>
                   
                   <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
                     <div 
                       onClick={handleUploadClick} 
-                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-border hover:border-primary hover:bg-muted/50 transition-colors cursor-pointer"
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-border hover:border-brandPurple hover:bg-bgMuted/50 transition-colors cursor-pointer"
                     >
                       <input
                         type="file"
@@ -569,25 +569,25 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                         multiple
                         accept="audio/*"
                       />
-                      <FileAudio className="h-12 w-12 text-muted-foreground mb-3" />
-                      <span className="text-sm font-medium text-foreground">Upload Recordings</span>
-                      <span className="text-xs text-muted-foreground mt-1">Drag files here</span>
+                      <FileAudio className="h-12 w-12 text-fgMuted mb-3" />
+                      <span className="text-sm font-medium text-fg">Upload Recordings</span>
+                      <span className="text-xs text-fgMuted mt-1">Drag files here</span>
                     </div>
                     
                     <div 
                       onClick={() => setUserPersonasSidebarOpen(true)}
-                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer"
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-brandPurple bg-brandPurple/5 hover:bg-brandPurple/10 transition-colors cursor-pointer"
                     >
-                      <PhoneCall className="h-12 w-12 text-primary mb-3" />
-                      <span className="text-sm font-medium text-primary">Call to Role Play</span>
-                      <span className="text-xs text-primary/70 mt-1">Call to generate training recordings</span>
+                      <PhoneCall className="h-12 w-12 text-brandPurple mb-3" />
+                      <span className="text-sm font-medium text-brandPurple">Call to Role Play</span>
+                      <span className="text-xs text-brandPurple/70 mt-1">Call to generate training recordings</span>
                     </div>
                   </div>
                 </div>
                 
                 {/* Training Recordings section */}
                 <div className="mb-6">
-                  <h4 className="font-medium text-foreground mb-4">Training Recordings ({formatMinutes(totalRecordingMinutes)} minutes total)</h4>
+                  <h4 className="font-medium text-fg mb-4">Training Recordings ({formatMinutes(totalRecordingMinutes)} minutes total)</h4>
                   <div className="space-y-3">
                     {[...trainingRecords, 
                       {
@@ -607,23 +607,23 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                         type: 'roleplay' as const
                       }
                     ].map((record, index, arr) => (
-                      <div key={record.id} className="bg-muted/30 border border-border rounded-lg p-4">
+                      <div key={record.id} className="bg-bgMuted/30 border border-border rounded-lg p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="bg-muted p-2 rounded-full">
+                            <div className="bg-bgMuted p-2 rounded-full">
                               {record.type === 'call' ? (
-                                <Mic className="h-5 w-5 text-muted-foreground" />
+                                <Mic className="h-5 w-5 text-fgMuted" />
                               ) : (
-                                <User className="h-5 w-5 text-muted-foreground" />
+                                <User className="h-5 w-5 text-fgMuted" />
                               )}
                             </div>
                             <div className="flex items-center gap-2">
-                              <h5 className="font-medium text-foreground">{record.title}</h5>
+                              <h5 className="font-medium text-fg">{record.title}</h5>
                               {index === arr.length - 1 && (
-                                <Badge variant="default" className="ml-2">New</Badge>
+                                <Badge variant="new" className="ml-2">New</Badge>
                               )}
                             </div>
-                            <p className="text-xs text-muted-foreground">{record.date}, {record.time} • {record.duration}</p>
+                            <p className="text-xs text-fgMuted">{record.date}, {record.time} • {record.duration}</p>
                           </div>
                           
                           <div className="flex items-center gap-2">
@@ -633,7 +633,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                   <Button 
                                     variant="outline" 
                                     size="sm" 
-                                    className="gap-2 text-foreground"
+                                    className="gap-2 text-fg"
                                     onClick={() => handlePlayRecording(record)}
                                   >
                                     <PlayCircle className="h-4 w-4" />
@@ -652,7 +652,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                   <Button 
                                     variant="outline" 
                                     size="sm"
-                                    className="gap-2 text-foreground"
+                                    className="gap-2 text-fg"
                                   >
                                     <Sparkles className="h-4 w-4" />
                                     <span className="hidden sm:inline">Use for Training</span>
@@ -715,4 +715,3 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
     </div>
   );
 };
-
