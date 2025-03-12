@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AgentType } from "@/types/agent";
-import { Mic, Phone, PhoneOutgoing, PhoneIncoming, MessageSquare, Robot, Rocket, Cog } from "lucide-react";
+import { Mic, Phone, PhoneOutgoing, PhoneIncoming, MessageSquare, Bot, Rocket, Cog } from "lucide-react";
 
 interface TestAgentSidebarProps {
   open: boolean;
@@ -37,7 +36,6 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
   const [availableMics, setAvailableMics] = useState<MediaDeviceInfo[]>([]);
   const [availableSpeakers, setAvailableSpeakers] = useState<MediaDeviceInfo[]>([]);
 
-  // Get available audio devices
   React.useEffect(() => {
     if (open) {
       const getDevices = async () => {
@@ -63,7 +61,6 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
       
       getDevices();
 
-      // Listen for device changes
       const deviceChangeHandler = () => getDevices();
       navigator.mediaDevices.addEventListener('devicechange', deviceChangeHandler);
       
