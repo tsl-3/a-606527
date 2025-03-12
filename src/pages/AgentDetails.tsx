@@ -586,16 +586,17 @@ const AgentDetails = () => {
             </div>
             
             <div className="flex items-center justify-end space-x-3">
+              <AgentToggle isActive={isActive} onToggle={handleStatusToggle} />
+              
               <Button 
-                variant="contrast" 
+                variant="outline" 
                 size="sm" 
                 onClick={openRolePlay}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <Rocket className="h-4 w-4" />
                 Test Agent
               </Button>
-              <AgentToggle isActive={isActive} onToggle={handleStatusToggle} />
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
