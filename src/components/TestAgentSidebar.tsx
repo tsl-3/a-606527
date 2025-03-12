@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -127,7 +128,7 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
             <div className="grid gap-4 mb-4">
               <Card className="p-4">
                 <div className="font-medium mb-2 flex items-center gap-2">
-                  <Robot className="h-4 w-4 text-primary" />
+                  <Bot className="h-4 w-4 text-primary" />
                   RolePlay
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">
