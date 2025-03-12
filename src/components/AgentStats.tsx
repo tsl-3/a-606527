@@ -42,11 +42,11 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
   const displayAvmScore = isNewAgent && showZeroValues ? 0 : avmScore;
   const displayInteractionCount = isNewAgent ? 0 : interactionCount;
 
-  // Color indicator for AVM score based on the value range - using lighter colors for contrast
+  // Color indicator for AVM score based on the value range
   const getScoreColor = (score: number): string => {
-    if (score >= 8) return "bg-green-200 dark:bg-green-800"; // High score (8-10): light green
-    if (score >= 6) return "bg-yellow-200 dark:bg-yellow-800"; // Medium score (6-7): light yellow
-    return "bg-red-200 dark:bg-red-800"; // Low score (1-5): light red
+    if (score >= 8) return "bg-success"; // High score (8-10): success color
+    if (score >= 6) return "bg-warning"; // Medium score (6-7): warning color
+    return "bg-destructive"; // Low score (1-5): destructive color
   };
   
   // Get tier label and color for interaction count
