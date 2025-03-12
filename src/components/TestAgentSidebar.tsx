@@ -275,6 +275,17 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
                 </RadioGroup>
               </div>
             </div>
+            
+            {/* Voice tab still needs a close button */}
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
+              <Button 
+                variant="secondary" 
+                onClick={() => onOpenChange(false)} 
+                className="w-full"
+              >
+                Close
+              </Button>
+            </div>
           </TabsContent>
           
           <TabsContent value="chat" className="space-y-4">
@@ -302,19 +313,12 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
                 </Button>
               </div>
             </div>
+            
+            {/* Removed the close button for chat tab */}
           </TabsContent>
         </Tabs>
-
-        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
-          <Button 
-            variant="secondary" 
-            onClick={() => onOpenChange(false)} 
-            className="w-full"
-          >
-            Close
-          </Button>
-        </div>
       </SheetContent>
     </Sheet>
   );
 };
+
