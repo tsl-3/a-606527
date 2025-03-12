@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -62,10 +61,10 @@ export const AgentConfigSidebar: React.FC<AgentConfigSidebarProps> = ({ agentCon
                        { name: agentConfig.customFunction || "Not Selected", icon: null };
   
   return (
-    <Card className="sticky top-4 dark:bg-[#000313]/80">
+    <Card className="sticky top-4 bg-background border-border">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2">
-          <Bot className="h-5 w-5 text-agent-primary" />
+          <Bot className="h-5 w-5 text-primary" />
           Agent Configuration
         </CardTitle>
       </CardHeader>
@@ -74,7 +73,7 @@ export const AgentConfigSidebar: React.FC<AgentConfigSidebarProps> = ({ agentCon
         {agentConfig.name ? (
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Agent Name</Label>
-            <div className="font-medium text-lg">{agentConfig.name}</div>
+            <div className="font-medium text-lg text-foreground">{agentConfig.name}</div>
           </div>
         ) : (
           <div className="bg-muted/30 p-3 rounded-md flex items-center gap-2 text-muted-foreground">
@@ -113,11 +112,11 @@ export const AgentConfigSidebar: React.FC<AgentConfigSidebarProps> = ({ agentCon
         {/* Description/Purpose */}
         <div className="space-y-1.5">
           <div className="flex items-center gap-1.5">
-            <Target className="h-4 w-4 text-agent-primary" />
+            <Target className="h-4 w-4 text-primary" />
             <Label>Purpose</Label>
           </div>
           {agentConfig.purpose ? (
-            <div className="bg-muted/30 p-2 rounded-md text-sm">
+            <div className="bg-muted/30 p-2 rounded-md text-sm text-foreground">
               {agentConfig.purpose}
             </div>
           ) : (
@@ -130,14 +129,14 @@ export const AgentConfigSidebar: React.FC<AgentConfigSidebarProps> = ({ agentCon
         {/* Prompt */}
         <div className="space-y-1.5">
           <div className="flex items-center gap-1.5">
-            <Code className="h-4 w-4 text-agent-primary" />
+            <Code className="h-4 w-4 text-primary" />
             <Label>Prompt</Label>
           </div>
           {agentConfig.prompt ? (
             <Textarea 
               value={agentConfig.prompt} 
               readOnly 
-              className="min-h-[150px] text-sm font-mono bg-muted/30"
+              className="min-h-[150px] text-sm font-mono bg-muted/30 text-foreground"
             />
           ) : (
             <div className="bg-muted/30 p-3 rounded-md h-[150px] flex items-center justify-center text-muted-foreground text-sm">
@@ -147,7 +146,7 @@ export const AgentConfigSidebar: React.FC<AgentConfigSidebarProps> = ({ agentCon
         </div>
         
         {/* Additional settings info */}
-        <div className="text-xs text-muted-foreground pt-2 border-t">
+        <div className="text-xs text-muted-foreground pt-2 border-t border-border">
           Once your agent is created, you can further customize settings and connect to channels.
         </div>
       </CardContent>
