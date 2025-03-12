@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { 
   Mic, Upload, CircleDashed, ArrowRight, Clock, BarChart, 
@@ -21,6 +20,7 @@ interface TrainingRecord {
   time: string;
   duration: string;
   type: 'call' | 'roleplay';
+  isNew?: boolean;
   transcriptions?: string[];
 }
 
@@ -60,7 +60,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   const [localVoiceSamples, setLocalVoiceSamples] = useState(voiceSamples);
   const [localVoiceConfidence, setLocalVoiceConfidence] = useState(voiceConfidence);
   const [totalRecordingMinutes, setTotalRecordingMinutes] = useState(0);
-  const targetMinutes = 10; // Set target to 10 minutes
+  const targetMinutes = 10;
 
   const handleToggleExpand = () => {
     if (onToggleExpand) {
@@ -133,7 +133,8 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
           date: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
           time: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
           duration,
-          type: 'call' as const
+          type: 'call' as const,
+          isNew: true
         };
       });
       
@@ -169,7 +170,11 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       if (onStart) onStart();
     }
     
-    const updatedRecords = [...localTrainingRecords, recordingData];
+    const updatedRecordingData = {
+      ...recordingData,
+      isNew: true
+    };
+    const updatedRecords = [...localTrainingRecords, updatedRecordingData];
     setLocalTrainingRecords(updatedRecords);
     
     const newTotalMinutes = calculateTotalMinutes(updatedRecords);
@@ -221,6 +226,89 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
   }, []);
 
   const progressPercentage = Math.min(Math.round((totalRecordingMinutes / targetMinutes) * 100), 100);
+
+  const renderTrainingRecord = (record: TrainingRecord) => (
+    <div key={record.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
+            {record.type === 'call' ? (
+              <Mic className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            ) : (
+              <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            )}
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-900 dark:text-white">{record.title}</h5>
+              {record.isNew && (
+                <Badge className="bg-purple-500 hover:bg-purple-600 text-white text-xs">New</Badge>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-500">{record.date}, {record.time} • {record.duration}</p>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-2 text-gray-700 dark:text-gray-300"
+                  onClick={() => handlePlayRecording(record)}
+                >
+                  <PlayCircle className="h-4 w-4" />
+                  <span className="hidden sm:inline">Play</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Play recording</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="gap-2 text-gray-700 dark:text-gray-300"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  <span className="hidden sm:inline">Use for Training</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Use this recording to enhance agent training</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30 border-red-200 dark:border-red-900/30"
+                  onClick={() => handleRemoveRecording(record.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span className="hidden sm:inline">Remove</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Remove recording</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className={`rounded-lg overflow-hidden mb-6 border transition-colors ${
@@ -374,83 +462,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                 <div className="mb-6">
                   <h4 className="font-medium text-gray-900 dark:text-white mb-4">Training Recordings ({formatMinutes(totalRecordingMinutes)} minutes total)</h4>
                   <div className="space-y-3">
-                    {localTrainingRecords.map((record) => (
-                      <div key={record.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
-                              {record.type === 'call' ? (
-                                <Mic className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                              ) : (
-                                <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                              )}
-                            </div>
-                            <div>
-                              <h5 className="font-medium text-gray-900 dark:text-white">{record.title}</h5>
-                              <p className="text-xs text-gray-500 dark:text-gray-500">{record.date}, {record.time} • {record.duration}</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-2">
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm" 
-                                    className="gap-2 text-gray-700 dark:text-gray-300"
-                                    onClick={() => handlePlayRecording(record)}
-                                  >
-                                    <PlayCircle className="h-4 w-4" />
-                                    <span className="hidden sm:inline">Play</span>
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Play recording</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                            
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    className="gap-2 text-gray-700 dark:text-gray-300"
-                                  >
-                                    <Sparkles className="h-4 w-4" />
-                                    <span className="hidden sm:inline">Use for Training</span>
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Use this recording to enhance agent training</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                            
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30 border-red-200 dark:border-red-900/30"
-                                    onClick={() => handleRemoveRecording(record.id)}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                    <span className="hidden sm:inline">Remove</span>
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Remove recording</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                    {localTrainingRecords.map(renderTrainingRecord)}
                     
                     {localTrainingRecords.length === 0 && (
                       <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-6 text-center">
@@ -459,43 +471,6 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     )}
                   </div>
                 </div>
-
-                <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg mb-6 border border-gray-200 dark:border-gray-800">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-3 text-center">Get Started with Training</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center">Choose one of the following options to begin training your AI agent:</p>
-                  
-                  <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                    <div 
-                      onClick={handleUploadClick} 
-                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
-                    >
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        style={{ display: 'none' }}
-                        onChange={handleFileChange}
-                        multiple
-                        accept="audio/*"
-                      />
-                      <FileAudio className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Upload Recordings</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Drag files here</span>
-                    </div>
-                    
-                    <div 
-                      onClick={() => setUserPersonasSidebarOpen(true)} 
-                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
-                    >
-                      <PhoneCall className="h-12 w-12 text-primary dark:text-primary mb-3" />
-                      <span className="text-sm font-medium text-primary dark:text-primary">Call to Role Play</span>
-                      <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Call to generate training recordings</span>
-                    </div>
-                  </div>
-                </div>
-                
-                {totalRecordingMinutes >= targetMinutes && onComplete && (
-                  <Button onClick={onComplete} className="mb-4">Complete Training</Button>
-                )}
               </>
             )}
 
