@@ -657,7 +657,8 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       
       {userPersonasSidebarOpen && (
         <UserPersonasSidebar
-          onClose={() => setUserPersonasSidebarOpen(false)}
+          open={userPersonasSidebarOpen}
+          onOpenChange={setUserPersonasSidebarOpen}
           onSelectPersona={handleSelectPersona}
           onStartDirectCall={handleStartDirectCall}
         />
@@ -665,10 +666,11 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
       
       {callInterfaceOpen && (
         <CallInterface
+          open={callInterfaceOpen}
+          onOpenChange={setCallInterfaceOpen}
           persona={selectedPersona}
           directCallInfo={directCallInfo}
-          onClose={() => setCallInterfaceOpen(false)}
-          onComplete={handleCallComplete}
+          onCallComplete={handleCallComplete}
         />
       )}
     </div>
