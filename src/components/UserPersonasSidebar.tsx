@@ -190,22 +190,22 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
       />
       
       <div className={cn(
-        "fixed top-0 bottom-0 right-0 z-50 w-full max-w-md bg-[#0F172A] border-l border-[#1E293B] shadow-xl transition-transform duration-300 ease-in-out overflow-hidden flex flex-col",
+        "fixed top-0 bottom-0 right-0 z-50 w-full max-w-md bg-white dark:bg-[#0F172A] border-l border-gray-200 dark:border-[#1E293B] shadow-xl transition-transform duration-300 ease-in-out overflow-hidden flex flex-col",
         open ? "translate-x-0" : "translate-x-full"
       )}>
-        <div className="p-4 border-b border-[#1E293B] flex items-center justify-between">
+        <div className="p-4 border-b border-gray-200 dark:border-[#1E293B] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
               size="icon" 
-              className="mr-2 rounded-full hover:bg-[#1E293B]"
+              className="mr-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#1E293B]"
               onClick={() => onOpenChange(false)}
             >
-              <ArrowLeft className="h-5 w-5 text-white" />
+              <ArrowLeft className="h-5 w-5 text-gray-700 dark:text-white" />
             </Button>
             <div>
-              <h2 className="text-xl font-bold text-white">Role-Play Options</h2>
-              <p className="text-sm text-gray-400">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Role-Play Options</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Choose a persona or call someone directly
               </p>
             </div>
@@ -213,10 +213,10 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full hover:bg-[#1E293B]"
+            className="rounded-full hover:bg-gray-100 dark:hover:bg-[#1E293B]"
             onClick={() => onOpenChange(false)}
           >
-            <X className="h-5 w-5 text-white" />
+            <X className="h-5 w-5 text-gray-700 dark:text-white" />
           </Button>
         </div>
         
@@ -224,62 +224,62 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
           {!showDirectCall ? (
             <div className="p-4 space-y-4">
               <div 
-                className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden cursor-pointer hover:bg-[#141e33] transition-colors p-4"
+                className="border border-gray-200 dark:border-[#1E293B] rounded-lg bg-gray-50 dark:bg-[#111827] overflow-hidden cursor-pointer hover:bg-gray-100 dark:hover:bg-[#141e33] transition-colors p-4"
                 onClick={() => setShowDirectCall(true)}
               >
                 <div className="flex items-center gap-4 mb-3">
-                  <div className="bg-[#1E293B] rounded-full p-2">
-                    <PhoneCall className="h-5 w-5 text-green-400" />
+                  <div className="bg-gray-200 dark:bg-[#1E293B] rounded-full p-2">
+                    <PhoneCall className="h-5 w-5 text-green-500 dark:text-green-400" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-white">Direct Call</h3>
-                    <Badge className="mt-1 px-3 py-0.5 rounded-full text-xs font-normal bg-[#1E293B] text-gray-300">
+                    <h3 className="font-medium text-gray-900 dark:text-white">Direct Call</h3>
+                    <Badge className="mt-1 px-3 py-0.5 rounded-full text-xs font-normal bg-gray-200 dark:bg-[#1E293B] text-gray-700 dark:text-gray-300">
                       Role-Play with a Colleague
                     </Badge>
                   </div>
                 </div>
                 
-                <p className="text-sm text-gray-400 mb-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                   Call a colleague or a real customer directly to practice your agent skills
                 </p>
                 
-                <div className="bg-[#1E293B] rounded p-3 text-xs text-gray-300 mb-2">
-                  <span className="text-gray-400">Instructions:</span> You will pretend to be the agent while your colleague or customer plays the user role.
+                <div className="bg-gray-200 dark:bg-[#1E293B] rounded p-3 text-xs text-gray-700 dark:text-gray-300 mb-2">
+                  <span className="text-gray-600 dark:text-gray-400">Instructions:</span> You will pretend to be the agent while your colleague or customer plays the user role.
                 </div>
               </div>
 
               <div className="relative py-2">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[#1E293B]"></div>
+                  <div className="w-full border-t border-gray-200 dark:border-[#1E293B]"></div>
                 </div>
                 <div className="relative flex justify-center">
-                  <span className="bg-[#0F172A] px-4 text-sm text-gray-400">Or choose a persona</span>
+                  <span className="bg-white dark:bg-[#0F172A] px-4 text-sm text-gray-500 dark:text-gray-400">Or choose a persona</span>
                 </div>
               </div>
               
               {personas.map((persona) => (
                 <div
                   key={persona.id}
-                  className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden cursor-pointer hover:bg-[#141e33] transition-colors relative"
+                  className="border border-gray-200 dark:border-[#1E293B] rounded-lg bg-gray-50 dark:bg-[#111827] overflow-hidden cursor-pointer hover:bg-gray-100 dark:hover:bg-[#141e33] transition-colors relative"
                   onClick={() => handleSelectPersona(persona)}
                   onMouseEnter={() => setHoveredPersonaId(persona.id)}
                   onMouseLeave={() => setHoveredPersonaId(null)}
                 >
                   <div className="p-4">
                     <div className="flex items-center gap-4 mb-3">
-                      <div className="bg-[#1E293B] rounded-full p-2">
+                      <div className="bg-gray-200 dark:bg-[#1E293B] rounded-full p-2">
                         {persona.type === "customer" ? (
-                          <User className="h-5 w-5 text-gray-300" />
+                          <User className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                         ) : (
-                          <Bot className="h-5 w-5 text-gray-300" />
+                          <Bot className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                         )}
                       </div>
                       <div>
-                        <h3 className="font-medium text-white">{persona.name}</h3>
+                        <h3 className="font-medium text-gray-900 dark:text-white">{persona.name}</h3>
                         <Badge 
                           className={cn(
                             "mt-1 px-3 py-0.5 rounded-full text-xs font-normal",
-                            persona.type === "bot" ? "bg-[#1E293B] text-gray-300" : "bg-[#1E293B] text-gray-300"
+                            persona.type === "bot" ? "bg-gray-200 dark:bg-[#1E293B] text-gray-700 dark:text-gray-300" : "bg-gray-200 dark:bg-[#1E293B] text-gray-700 dark:text-gray-300"
                           )}
                         >
                           {persona.type === "bot" ? "Training Bot" : "Customer"}
@@ -287,19 +287,19 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
                       </div>
                     </div>
                     
-                    <p className="text-sm text-gray-400 mb-3">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                       {persona.description}
                     </p>
                     
                     {persona.scenario && (
-                      <div className="bg-[#1E293B] rounded p-3 text-xs text-gray-300 mb-2">
-                        <span className="text-gray-400">Scenario:</span> {persona.scenario}
+                      <div className="bg-gray-200 dark:bg-[#1E293B] rounded p-3 text-xs text-gray-700 dark:text-gray-300 mb-2">
+                        <span className="text-gray-600 dark:text-gray-400">Scenario:</span> {persona.scenario}
                       </div>
                     )}
                   </div>
 
                   {hoveredPersonaId === persona.id && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-[#111827]/80 transition-opacity animate-fade-in">
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 dark:bg-[#111827]/80 transition-opacity animate-fade-in">
                       <Button 
                         className="bg-green-500 hover:bg-green-600 text-white shadow-lg"
                         onClick={(e) => {
@@ -320,16 +320,16 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
               <Button 
                 variant="ghost" 
                 size="sm"
-                className="mb-2 text-gray-400"
+                className="mb-2 text-gray-600 dark:text-gray-400"
                 onClick={() => setShowDirectCall(false)}
               >
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 Back to options
               </Button>
               
-              <div className="bg-[#1E293B]/50 rounded-lg p-4 mb-4">
-                <div className="flex items-start gap-2 text-gray-300">
-                  <Info className="h-5 w-5 text-blue-400 flex-shrink-0 mt-0.5" />
+              <div className="bg-blue-50 dark:bg-[#1E293B]/50 rounded-lg p-4 mb-4">
+                <div className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                  <Info className="h-5 w-5 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5" />
                   <p className="text-sm">
                     Call a colleague or customer and ask them to pretend to be a user while you play the role of the agent. This will help you practice real customer interactions.
                   </p>
@@ -338,7 +338,7 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
               
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="phoneNumber" className="text-gray-300">Phone Number</Label>
+                  <Label htmlFor="phoneNumber" className="text-gray-700 dark:text-gray-300">Phone Number</Label>
                   <Input
                     id="phoneNumber"
                     type="tel"
@@ -348,7 +348,7 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
                       setPhoneNumber(e.target.value);
                       setPhoneNumberError('');
                     }}
-                    className={`bg-[#111827] border-[#1E293B] text-white ${phoneNumberError ? 'border-red-500' : ''}`}
+                    className={`bg-white dark:bg-[#111827] border-gray-300 dark:border-[#1E293B] text-gray-900 dark:text-white ${phoneNumberError ? 'border-red-500' : ''}`}
                   />
                   {phoneNumberError && (
                     <p className="text-sm text-red-500">{phoneNumberError}</p>
@@ -357,12 +357,12 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
 
                 <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-gray-300">Microphone</Label>
+                    <Label className="text-gray-700 dark:text-gray-300">Microphone</Label>
                     <Select value={selectedMic} onValueChange={setSelectedMic}>
-                      <SelectTrigger className="bg-[#111827] border-[#1E293B] text-white">
+                      <SelectTrigger className="bg-white dark:bg-[#111827] border-gray-300 dark:border-[#1E293B] text-gray-900 dark:text-white">
                         <SelectValue placeholder="Select microphone" />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#111827] border-[#1E293B]">
+                      <SelectContent>
                         {availableMics.map((device) => (
                           <SelectItem key={device.deviceId} value={device.deviceId}>
                             {device.label || `Microphone ${device.deviceId.slice(0, 5)}`}
@@ -373,12 +373,12 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-gray-300">Speaker</Label>
+                    <Label className="text-gray-700 dark:text-gray-300">Speaker</Label>
                     <Select value={selectedSpeaker} onValueChange={setSelectedSpeaker}>
-                      <SelectTrigger className="bg-[#111827] border-[#1E293B] text-white">
+                      <SelectTrigger className="bg-white dark:bg-[#111827] border-gray-300 dark:border-[#1E293B] text-gray-900 dark:text-white">
                         <SelectValue placeholder="Select speaker" />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#111827] border-[#1E293B]">
+                      <SelectContent>
                         {availableSpeakers.map((device) => (
                           <SelectItem key={device.deviceId} value={device.deviceId}>
                             {device.label || `Speaker ${device.deviceId.slice(0, 5)}`}
