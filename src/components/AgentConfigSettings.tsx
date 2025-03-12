@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -30,10 +31,10 @@ const VOICE_PROVIDERS = {
       name: "Aria",
       traits: [{
         name: "Young",
-        color: "bg-yellow-100 text-yellow-800"
+        color: "bg-primary/10 text-primary"
       }, {
         name: "Friendly",
-        color: "bg-pink-100 text-pink-800"
+        color: "bg-secondary/20 text-fg"
       }],
       avatar: "/voices/avatars/aria.jpg",
       audioSample: "/voices/eleven-aria.mp3"
@@ -43,10 +44,10 @@ const VOICE_PROVIDERS = {
       name: "Roger",
       traits: [{
         name: "American",
-        color: "bg-red-100 text-red-800"
+        color: "bg-primary/10 text-primary"
       }, {
         name: "Casual",
-        color: "bg-green-100 text-green-800"
+        color: "bg-secondary/20 text-fg"
       }],
       avatar: "/voices/avatars/roger.jpg",
       audioSample: "/voices/eleven-roger.mp3"
@@ -56,10 +57,10 @@ const VOICE_PROVIDERS = {
       name: "Sarah",
       traits: [{
         name: "British",
-        color: "bg-blue-100 text-blue-800"
+        color: "bg-primary/10 text-primary"
       }, {
         name: "Professional",
-        color: "bg-purple-100 text-purple-800"
+        color: "bg-secondary/20 text-fg"
       }],
       avatar: "/voices/avatars/sarah.jpg",
       audioSample: "/voices/eleven-sarah.mp3"
@@ -69,10 +70,10 @@ const VOICE_PROVIDERS = {
       name: "Charlie",
       traits: [{
         name: "Australian",
-        color: "bg-green-100 text-green-800"
+        color: "bg-primary/10 text-primary"
       }, {
         name: "Energetic",
-        color: "bg-orange-100 text-orange-800"
+        color: "bg-secondary/20 text-fg"
       }],
       avatar: "/voices/avatars/charlie.jpg",
       audioSample: "/voices/eleven-charlie.mp3"
@@ -84,10 +85,10 @@ const VOICE_PROVIDERS = {
       name: "Joanna",
       traits: [{
         name: "American",
-        color: "bg-red-100 text-red-800"
+        color: "bg-primary/10 text-primary"
       }, {
         name: "Professional",
-        color: "bg-purple-100 text-purple-800"
+        color: "bg-secondary/20 text-fg"
       }],
       avatar: "/voices/avatars/joanna.jpg",
       audioSample: "/voices/polly-joanna.mp3"
@@ -97,10 +98,10 @@ const VOICE_PROVIDERS = {
       name: "Matthew",
       traits: [{
         name: "American",
-        color: "bg-red-100 text-red-800"
+        color: "bg-primary/10 text-primary"
       }, {
         name: "Deep",
-        color: "bg-blue-100 text-blue-800"
+        color: "bg-secondary/20 text-fg"
       }],
       avatar: "/voices/avatars/matthew.jpg",
       audioSample: "/voices/polly-matthew.mp3"
@@ -112,10 +113,10 @@ const VOICE_PROVIDERS = {
       name: "Wavenet A",
       traits: [{
         name: "American",
-        color: "bg-red-100 text-red-800"
+        color: "bg-primary/10 text-primary"
       }, {
         name: "Neutral",
-        color: "bg-gray-100 text-gray-800"
+        color: "bg-secondary/20 text-fg"
       }],
       avatar: "/voices/avatars/wavenet-a.jpg",
       audioSample: "/voices/google-wavenet-a.mp3"
@@ -125,10 +126,10 @@ const VOICE_PROVIDERS = {
       name: "Wavenet B",
       traits: [{
         name: "British",
-        color: "bg-blue-100 text-blue-800"
+        color: "bg-primary/10 text-primary"
       }, {
         name: "Formal",
-        color: "bg-indigo-100 text-indigo-800"
+        color: "bg-secondary/20 text-fg"
       }],
       avatar: "/voices/avatars/wavenet-b.jpg",
       audioSample: "/voices/google-wavenet-b.mp3"
@@ -363,8 +364,8 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="flex flex-col items-center space-y-4">
-              <div className="bg-muted/30 rounded-lg p-6 flex flex-col items-center space-y-4 w-full">
-                <Avatar className="h-32 w-32 border-2 border-agent-primary/30">
+              <div className="bg-bgMuted rounded-lg p-6 flex flex-col items-center space-y-4 w-full">
+                <Avatar className="h-32 w-32 border-2 border-primary/30">
                   <AvatarImage src={avatar} alt={name} />
                   <AvatarFallback>
                     <Bot className="h-16 w-16" />
@@ -373,7 +374,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                 
                 <div className="w-full space-y-3">
                   <div className="flex items-center gap-2">
-                    <Bot className="h-4 w-4 text-agent-primary" />
+                    <Bot className="h-4 w-4 text-primary" />
                     <Label htmlFor="agent-avatar">Agent Avatar URL</Label>
                   </div>
                   <Input
@@ -397,7 +398,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
             <div className="space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-agent-primary" />
+                  <User className="h-4 w-4 text-primary" />
                   <Label htmlFor="agent-name">Agent Name</Label>
                 </div>
                 <Input
@@ -407,14 +408,14 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                   placeholder="Enter agent name"
                   className="w-full"
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-fgMuted">
                   This name will be displayed to users when they interact with your agent
                 </p>
               </div>
               
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <Target className="h-4 w-4 text-agent-primary" />
+                  <Target className="h-4 w-4 text-primary" />
                   <Label htmlFor="agent-purpose">Agent Purpose</Label>
                 </div>
                 <Textarea
@@ -424,7 +425,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                   placeholder="Describe what this agent is designed to do"
                   className="min-h-[100px] w-full"
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-fgMuted">
                   A clear description of your agent's role and primary responsibilities
                 </p>
               </div>
@@ -434,7 +435,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Brain className="h-4 w-4 text-agent-primary" />
+                <Brain className="h-4 w-4 text-primary" />
                 <Label htmlFor="agent-model">AI Model</Label>
               </div>
               <Select value={model} onValueChange={setModel}>
@@ -449,14 +450,14 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-fgMuted">
                 The AI model that powers your agent's intelligence
               </p>
             </div>
             
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Volume2 className="h-4 w-4 text-agent-primary" />
+                <Volume2 className="h-4 w-4 text-primary" />
                 <Label htmlFor="agent-voice">Voice</Label>
               </div>
 
@@ -467,12 +468,12 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
               >
                 <div className="flex items-center">
                   <span className="font-medium">{currentVoiceDetails.name}</span>
-                  <span className="text-xs text-muted-foreground ml-2">- {currentVoiceDetails.provider}</span>
+                  <span className="text-xs text-fgMuted ml-2">- {currentVoiceDetails.provider}</span>
                 </div>
                 <ChevronDown className="h-4 w-4 opacity-50" />
               </Button>
               
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-fgMuted">
                 The voice your agent will use when speaking to users
               </p>
             </div>
@@ -491,7 +492,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
           <div className="space-y-6">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Building className="h-4 w-4 text-agent-primary" />
+                <Building className="h-4 w-4 text-primary" />
                 <Label>Industry</Label>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
@@ -500,7 +501,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                     key={ind.id}
                     type="button"
                     variant={industry === ind.id ? "default" : "outline"}
-                    className={`justify-start gap-2 ${industry === ind.id ? "border-agent-primary bg-agent-primary text-white" : ""}`}
+                    className={`justify-start gap-2 ${industry === ind.id ? "border-primary bg-primary text-primary-foreground" : ""}`}
                     onClick={() => setIndustry(ind.id)}
                   >
                     {ind.icon}
@@ -519,14 +520,14 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                   />
                 </div>
               )}
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-fgMuted">
                 The industry context your agent operates in
               </p>
             </div>
 
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Briefcase className="h-4 w-4 text-agent-primary" />
+                <Briefcase className="h-4 w-4 text-primary" />
                 <Label>Bot Function</Label>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -535,7 +536,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                     key={func.id}
                     type="button"
                     variant={botFunction === func.id ? "default" : "outline"}
-                    className={`justify-start gap-2 ${botFunction === func.id ? "border-agent-primary bg-agent-primary text-white" : ""}`}
+                    className={`justify-start gap-2 ${botFunction === func.id ? "border-primary bg-primary text-primary-foreground" : ""}`}
                     onClick={() => setBotFunction(func.id)}
                   >
                     {func.icon}
@@ -554,7 +555,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
                   />
                 </div>
               )}
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-fgMuted">
                 The primary function your agent serves
               </p>
             </div>
@@ -587,7 +588,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
         <CardContent>
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Code className="h-4 w-4 text-agent-primary" />
+              <Code className="h-4 w-4 text-primary" />
               <Label htmlFor="agent-prompt" className="text-base font-medium">Prompt Instructions</Label>
             </div>
             
@@ -602,15 +603,15 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="absolute top-2 right-2 h-8 w-8 opacity-70 hover:opacity-100 bg-muted/50 hover:bg-muted" 
+                className="absolute top-2 right-2 h-8 w-8 opacity-70 hover:opacity-100 bg-bgMuted/50 hover:bg-bgMuted" 
                 onClick={handleCopyPrompt}
                 title="Copy to clipboard"
               >
-                <Copy className="h-4 w-4 text-muted-foreground" />
+                <Copy className="h-4 w-4 text-fgMuted" />
                 <span className="sr-only">Copy</span>
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-xs text-fgMuted mt-2">
               These instructions tell the AI how to behave, what knowledge to use, and what tone to adopt
             </p>
           </div>
@@ -618,7 +619,7 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
       </Card>
       
       {isSaving && (
-        <div className="fixed bottom-4 right-4 bg-secondary/80 text-foreground px-4 py-2 rounded-md text-sm animate-in fade-in slide-in-from-bottom-4">
+        <div className="fixed bottom-4 right-4 bg-secondary/80 text-fg px-4 py-2 rounded-md text-sm animate-in fade-in slide-in-from-bottom-4">
           Saving changes...
         </div>
       )}
