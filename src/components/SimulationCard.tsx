@@ -121,7 +121,7 @@ export const SimulationCard = ({
   };
 
   return (
-    <div className="rounded-lg overflow-hidden mb-6 border border-border">
+    <div className="rounded-lg overflow-hidden mb-6 border border-border bg-bg">
       <div className="p-6 pb-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">

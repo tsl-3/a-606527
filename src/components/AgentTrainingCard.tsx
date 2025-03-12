@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { 
   Mic, Upload, CircleDashed, ArrowRight, Clock, BarChart, 
@@ -220,59 +219,58 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
     setTotalRecordingMinutes(minutes);
   }, []);
 
-  // Ensure the progressPercentage calculates to exactly 100 when complete
   const progressPercentage = localStatus === 'completed' 
     ? 100 
     : Math.min(Math.round((totalRecordingMinutes / targetMinutes) * 100), 100);
 
   return (
-    <div className={`rounded-lg overflow-hidden mb-6 border transition-colors ${
+    <div className={`rounded-lg overflow-hidden mb-6 border transition-colors bg-bg ${
       isActive 
-        ? 'border-purple-500 shadow-md border-2' 
-        : 'border-gray-200 dark:border-gray-800'
+        ? 'border-brandPurple shadow-md border-2' 
+        : 'border-border'
     }`}>
       <div className="p-6 pb-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-8 h-8 text-gray-900 dark:text-white">
+            <div className="flex items-center justify-center rounded-full bg-bgMuted w-8 h-8 text-fg">
               {stepNumber}
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Agent Training</h3>
+            <h3 className="text-xl font-semibold text-fg">Agent Training</h3>
             {localStatus === 'in-progress' && (
-              <Badge variant="outline" className="bg-amber-500/20 text-amber-500 dark:text-amber-400 border-amber-500/30 ml-2">
+              <Badge variant="outline" className="bg-warning/20 text-warning border-warning/30 ml-2">
                 In Progress
               </Badge>
             )}
             {localStatus === 'completed' && (
-              <Badge variant="outline" className="bg-green-500/20 text-green-500 dark:text-green-400 border-green-500/30 ml-2">
+              <Badge variant="outline" className="bg-success/20 text-success border-success/30 ml-2">
                 Completed
               </Badge>
             )}
             {localStatus === 'not-started' && (
-              <Badge variant="outline" className="bg-gray-500/20 text-gray-500 dark:text-gray-400 border-gray-500/30 ml-2">
+              <Badge variant="outline" className="bg-bgMuted text-fgMuted border-border ml-2">
                 Not Started
               </Badge>
             )}
           </div>
           <div className="flex items-center gap-2">
             {localStatus === 'in-progress' && (
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-fgMuted">
                 {progressPercentage}%
               </span>
             )}
-            {localStatus === 'completed' && <span className="text-sm text-gray-500 dark:text-gray-400">100%</span>}
+            {localStatus === 'completed' && <span className="text-sm text-fgMuted">100%</span>}
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={handleToggleExpand}
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+              className="text-fgMuted hover:text-fg"
             >
               <ChevronUp className={`h-5 w-5 ${!isExpanded ? 'transform rotate-180' : ''}`} />
             </Button>
           </div>
         </div>
         
-        <p className="text-gray-700 dark:text-gray-300 mb-4">
+        <p className="text-fgMuted mb-4">
           Train your voice agent by uploading call recordings or role-play a conversation where you act as the agent
         </p>
         
@@ -286,17 +284,17 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
         {isExpanded && (
           <>
             {localStatus === 'not-started' && (
-              <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-8 mb-8 text-center">
-                <Mic className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-                <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2 text-center">No voice samples yet</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto text-center">
+              <div className="bg-bgMuted/30 border border-border rounded-lg p-8 mb-8 text-center">
+                <Mic className="h-12 w-12 text-fgMuted mx-auto mb-4" />
+                <h4 className="text-lg font-medium text-fg mb-2 text-center">No voice samples yet</h4>
+                <p className="text-sm text-fgMuted mb-6 max-w-md mx-auto text-center">
                   Upload call recordings or start a role-playing session to begin training your agent.
                 </p>
                 
                 <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
                   <div 
                     onClick={handleUploadClick} 
-                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
+                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-border hover:border-brandPurple hover:bg-bgMuted/50 transition-colors cursor-pointer"
                   >
                     <input
                       type="file"
@@ -306,18 +304,18 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       multiple
                       accept="audio/*"
                     />
-                    <FileAudio className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Upload Recordings</span>
-                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Drag files here</span>
+                    <FileAudio className="h-12 w-12 text-fgMuted mb-3" />
+                    <span className="text-sm font-medium text-fg">Upload Recordings</span>
+                    <span className="text-xs text-fgMuted mt-1">Drag files here</span>
                   </div>
                   
                   <div 
                     onClick={() => setUserPersonasSidebarOpen(true)} 
-                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
+                    className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-brandPurple bg-brandPurple/5 hover:bg-brandPurple/10 transition-colors cursor-pointer"
                   >
-                    <PhoneCall className="h-12 w-12 text-primary dark:text-primary mb-3" />
-                    <span className="text-sm font-medium text-primary dark:text-primary">Call to Role Play</span>
-                    <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Call to generate training recordings</span>
+                    <PhoneCall className="h-12 w-12 text-brandPurple mb-3" />
+                    <span className="text-sm font-medium text-brandPurple">Call to Role Play</span>
+                    <span className="text-xs text-brandPurple/70 mt-1">Call to generate training recordings</span>
                   </div>
                 </div>
               </div>
@@ -326,48 +324,48 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
             {localStatus === 'in-progress' && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
+                  <div className="bg-bgMuted/30 p-6 rounded-lg border border-border flex flex-col">
+                    <div className="flex items-center gap-2 mb-1 text-fgMuted">
                       <Clock className="h-4 w-4" />
                       <span className="text-xs font-medium">Recording Duration</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{formatMinutes(totalRecordingMinutes)}/{targetMinutes}m</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Target minutes</div>
+                      <div className="text-3xl font-bold text-fg">{formatMinutes(totalRecordingMinutes)}/{targetMinutes}m</div>
+                      <div className="text-xs text-fgMuted">Target minutes</div>
                     </div>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
+                  <div className="bg-bgMuted/30 p-6 rounded-lg border border-border flex flex-col">
+                    <div className="flex items-center gap-2 mb-1 text-fgMuted">
                       <BarChart className="h-4 w-4" />
                       <span className="text-xs font-medium">Voice Cloning Confidence</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{localVoiceConfidence}%</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Current confidence level</div>
+                      <div className="text-3xl font-bold text-fg">{localVoiceConfidence}%</div>
+                      <div className="text-xs text-fgMuted">Current confidence level</div>
                     </div>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
+                  <div className="bg-bgMuted/30 p-6 rounded-lg border border-border flex flex-col">
+                    <div className="flex items-center gap-2 mb-1 text-fgMuted">
                       <Mic className="h-4 w-4" />
                       <span className="text-xs font-medium">Voice Samples</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{localVoiceSamples}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Total recordings</div>
+                      <div className="text-3xl font-bold text-fg">{localVoiceSamples}</div>
+                      <div className="text-xs text-fgMuted">Total recordings</div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30 rounded-lg p-4 mb-6">
+                <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 mb-6">
                   <div className="flex items-start gap-3">
-                    <div className="bg-amber-100 dark:bg-amber-900/20 p-2 rounded-full">
-                      <ArrowRight className="h-4 w-4 text-amber-500" />
+                    <div className="bg-warning/20 p-2 rounded-full">
+                      <ArrowRight className="h-4 w-4 text-warning" />
                     </div>
                     <div>
-                      <h4 className="font-medium mb-1 text-gray-900 dark:text-white">
+                      <h4 className="font-medium mb-1 text-fg">
                         Progress: {formatMinutes(totalRecordingMinutes)} of {targetMinutes} minutes recorded
                       </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-fgMuted">
                         Upload or record {formatMinutes(Math.max(targetMinutes - totalRecordingMinutes, 0))} more minutes to complete this step.
                       </p>
                     </div>
@@ -375,14 +373,14 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                 </div>
 
                 {/* Get Started with Training section */}
-                <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg mb-6 border border-gray-200 dark:border-gray-800">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-3 text-center">Get Started with Training</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center">Choose one of the following options to begin training your AI agent:</p>
+                <div className="bg-bgMuted/30 p-6 rounded-lg mb-6 border border-border">
+                  <h4 className="font-medium text-fg mb-3 text-center">Get Started with Training</h4>
+                  <p className="text-sm text-fgMuted mb-4 text-center">Choose one of the following options to begin training your AI agent:</p>
                   
                   <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
                     <div 
                       onClick={handleUploadClick} 
-                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-border hover:border-brandPurple hover:bg-bgMuted/50 transition-colors cursor-pointer"
                     >
                       <input
                         type="file"
@@ -392,43 +390,43 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                         multiple
                         accept="audio/*"
                       />
-                      <FileAudio className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Upload Recordings</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Drag files here</span>
+                      <FileAudio className="h-12 w-12 text-fgMuted mb-3" />
+                      <span className="text-sm font-medium text-fg">Upload Recordings</span>
+                      <span className="text-xs text-fgMuted mt-1">Drag files here</span>
                     </div>
                     
                     <div 
                       onClick={() => setUserPersonasSidebarOpen(true)} 
-                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-brandPurple bg-brandPurple/5 hover:bg-brandPurple/10 transition-colors cursor-pointer"
                     >
-                      <PhoneCall className="h-12 w-12 text-primary dark:text-primary mb-3" />
-                      <span className="text-sm font-medium text-primary dark:text-primary">Call to Role Play</span>
-                      <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Call to generate training recordings</span>
+                      <PhoneCall className="h-12 w-12 text-brandPurple mb-3" />
+                      <span className="text-sm font-medium text-brandPurple">Call to Role Play</span>
+                      <span className="text-xs text-brandPurple/70 mt-1">Call to generate training recordings</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Training Recordings ({formatMinutes(totalRecordingMinutes)} minutes total)</h4>
+                  <h4 className="font-medium text-fg mb-4">Training Recordings ({formatMinutes(totalRecordingMinutes)} minutes total)</h4>
                   <div className="space-y-3">
                     {localTrainingRecords.map((record, index) => (
-                      <div key={record.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+                      <div key={record.id} className="bg-bgMuted/30 border border-border rounded-lg p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
+                            <div className="bg-bgMuted p-2 rounded-full">
                               {record.type === 'call' ? (
-                                <Mic className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                                <Mic className="h-5 w-5 text-fgMuted" />
                               ) : (
-                                <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                                <User className="h-5 w-5 text-fgMuted" />
                               )}
                             </div>
                             <div className="flex items-center gap-2">
-                              <h5 className="font-medium text-gray-900 dark:text-white">{record.title}</h5>
+                              <h5 className="font-medium text-fg">{record.title}</h5>
                               {index === localTrainingRecords.length - 1 && (
                                 <Badge variant="new" className="ml-2">New</Badge>
                               )}
                             </div>
-                            <p className="text-xs text-gray-500 dark:text-gray-500">{record.date}, {record.time} • {record.duration}</p>
+                            <p className="text-xs text-fgMuted">{record.date}, {record.time} • {record.duration}</p>
                           </div>
                           
                           <div className="flex items-center gap-2">
@@ -438,7 +436,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                   <Button 
                                     variant="outline" 
                                     size="sm" 
-                                    className="gap-2 text-gray-700 dark:text-gray-300"
+                                    className="gap-2 text-fg"
                                     onClick={() => handlePlayRecording(record)}
                                   >
                                     <PlayCircle className="h-4 w-4" />
@@ -457,7 +455,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                   <Button 
                                     variant="outline" 
                                     size="sm"
-                                    className="gap-2 text-gray-700 dark:text-gray-300"
+                                    className="gap-2 text-fg"
                                   >
                                     <Sparkles className="h-4 w-4" />
                                     <span className="hidden sm:inline">Use for Training</span>
@@ -475,7 +473,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                   <Button 
                                     variant="outline" 
                                     size="sm"
-                                    className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30 border-red-200 dark:border-red-900/30"
+                                    className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
                                     onClick={() => handleRemoveRecording(record.id)}
                                   >
                                     <Trash2 className="h-4 w-4" />
@@ -493,8 +491,8 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                     ))}
                     
                     {localTrainingRecords.length === 0 && (
-                      <div className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-6 text-center">
-                        <p className="text-gray-500 dark:text-gray-400">No recordings yet. Add recordings using one of the methods below.</p>
+                      <div className="bg-bgMuted/30 border border-border rounded-lg p-6 text-center">
+                        <p className="text-fgMuted">No recordings yet. Add recordings using one of the methods below.</p>
                       </div>
                     )}
                   </div>
@@ -508,60 +506,60 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
 
             {localStatus === 'completed' && (
               <>
-                <div className="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800/30 rounded-lg p-4 mb-6">
+                <div className="bg-success/10 border border-success/30 rounded-lg p-4 mb-6">
                   <div className="flex items-start gap-3">
-                    <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-full">
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <div className="bg-success/20 p-2 rounded-full">
+                      <CheckCircle2 className="h-4 w-4 text-success" />
                     </div>
                     <div>
-                      <h4 className="font-medium mb-1 text-gray-900 dark:text-white">Completed: Voice training finished</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">The required {targetMinutes} minutes of voice recordings have been collected and processed.</p>
+                      <h4 className="font-medium mb-1 text-fg">Completed: Voice training finished</h4>
+                      <p className="text-sm text-fgMuted">The required {targetMinutes} minutes of voice recordings have been collected and processed.</p>
                     </div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
+                  <div className="bg-bgMuted/30 p-6 rounded-lg border border-border flex flex-col">
+                    <div className="flex items-center gap-2 mb-1 text-fgMuted">
                       <Clock className="h-4 w-4" />
                       <span className="text-xs font-medium">Recording Duration</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{formatMinutes(Math.max(totalRecordingMinutes, targetMinutes))}/{targetMinutes}m</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Goal achieved</div>
+                      <div className="text-3xl font-bold text-fg">{formatMinutes(Math.max(totalRecordingMinutes, targetMinutes))}/{targetMinutes}m</div>
+                      <div className="text-xs text-fgMuted">Goal achieved</div>
                     </div>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
+                  <div className="bg-bgMuted/30 p-6 rounded-lg border border-border flex flex-col">
+                    <div className="flex items-center gap-2 mb-1 text-fgMuted">
                       <BarChart className="h-4 w-4" />
                       <span className="text-xs font-medium">Voice Cloning Confidence</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">95%</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">High confidence level</div>
+                      <div className="text-3xl font-bold text-fg">95%</div>
+                      <div className="text-xs text-fgMuted">High confidence level</div>
                     </div>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg border border-gray-200 dark:border-gray-800/50 flex flex-col">
-                    <div className="flex items-center gap-2 mb-1 text-gray-500 dark:text-gray-400">
+                  <div className="bg-bgMuted/30 p-6 rounded-lg border border-border flex flex-col">
+                    <div className="flex items-center gap-2 mb-1 text-fgMuted">
                       <Mic className="h-4 w-4" />
                       <span className="text-xs font-medium">Voice Samples</span>
                     </div>
                     <div className="flex items-end justify-between mt-auto">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{localTrainingRecords.length}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">Total recordings</div>
+                      <div className="text-3xl font-bold text-fg">{localTrainingRecords.length}</div>
+                      <div className="text-xs text-fgMuted">Total recordings</div>
                     </div>
                   </div>
                 </div>
                 
-                {/* Continue Training section - moved above the Training Recordings section */}
-                <div className="bg-gray-50 dark:bg-gray-800/30 p-6 rounded-lg mb-6 border border-gray-200 dark:border-gray-800">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-3 text-center">Continue Training</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center">Add more voice samples to further improve your AI agent's voice quality and recognition capabilities.</p>
+                {/* Continue Training section */}
+                <div className="bg-bgMuted/30 p-6 rounded-lg mb-6 border border-border">
+                  <h4 className="font-medium text-fg mb-3 text-center">Continue Training</h4>
+                  <p className="text-sm text-fgMuted mb-4 text-center">Add more voice samples to further improve your AI agent's voice quality and recognition capabilities.</p>
                   
                   <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
                     <div 
                       onClick={handleUploadClick} 
-                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-dashed border-border hover:border-brandPurple hover:bg-bgMuted/50 transition-colors cursor-pointer"
                     >
                       <input
                         type="file"
@@ -571,25 +569,25 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                         multiple
                         accept="audio/*"
                       />
-                      <FileAudio className="h-12 w-12 text-gray-500 dark:text-gray-400 mb-3" />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Upload Recordings</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Drag files here</span>
+                      <FileAudio className="h-12 w-12 text-fgMuted mb-3" />
+                      <span className="text-sm font-medium text-fg">Upload Recordings</span>
+                      <span className="text-xs text-fgMuted mt-1">Drag files here</span>
                     </div>
                     
                     <div 
                       onClick={() => setUserPersonasSidebarOpen(true)}
-                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer"
+                      className="aspect-square flex flex-col items-center justify-center p-6 rounded-lg border-2 border-brandPurple bg-brandPurple/5 hover:bg-brandPurple/10 transition-colors cursor-pointer"
                     >
-                      <PhoneCall className="h-12 w-12 text-primary dark:text-primary mb-3" />
-                      <span className="text-sm font-medium text-primary dark:text-primary">Call to Role Play</span>
-                      <span className="text-xs text-primary/70 dark:text-primary/70 mt-1">Call to generate training recordings</span>
+                      <PhoneCall className="h-12 w-12 text-brandPurple mb-3" />
+                      <span className="text-sm font-medium text-brandPurple">Call to Role Play</span>
+                      <span className="text-xs text-brandPurple/70 mt-1">Call to generate training recordings</span>
                     </div>
                   </div>
                 </div>
                 
-                {/* Training Recordings section - moved below the Continue Training section */}
+                {/* Training Recordings section */}
                 <div className="mb-6">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-4">Training Recordings ({formatMinutes(totalRecordingMinutes)} minutes total)</h4>
+                  <h4 className="font-medium text-fg mb-4">Training Recordings ({formatMinutes(totalRecordingMinutes)} minutes total)</h4>
                   <div className="space-y-3">
                     {[...trainingRecords, 
                       {
@@ -609,23 +607,23 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                         type: 'roleplay' as const
                       }
                     ].map((record, index, arr) => (
-                      <div key={record.id} className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+                      <div key={record.id} className="bg-bgMuted/30 border border-border rounded-lg p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
+                            <div className="bg-bgMuted p-2 rounded-full">
                               {record.type === 'call' ? (
-                                <Mic className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                                <Mic className="h-5 w-5 text-fgMuted" />
                               ) : (
-                                <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                                <User className="h-5 w-5 text-fgMuted" />
                               )}
                             </div>
                             <div className="flex items-center gap-2">
-                              <h5 className="font-medium text-gray-900 dark:text-white">{record.title}</h5>
+                              <h5 className="font-medium text-fg">{record.title}</h5>
                               {index === arr.length - 1 && (
                                 <Badge variant="new" className="ml-2">New</Badge>
                               )}
                             </div>
-                            <p className="text-xs text-gray-500 dark:text-gray-500">{record.date}, {record.time} • {record.duration}</p>
+                            <p className="text-xs text-fgMuted">{record.date}, {record.time} • {record.duration}</p>
                           </div>
                           
                           <div className="flex items-center gap-2">
@@ -635,7 +633,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                   <Button 
                                     variant="outline" 
                                     size="sm" 
-                                    className="gap-2 text-gray-700 dark:text-gray-300"
+                                    className="gap-2 text-fg"
                                     onClick={() => handlePlayRecording(record)}
                                   >
                                     <PlayCircle className="h-4 w-4" />
@@ -654,7 +652,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                   <Button 
                                     variant="outline" 
                                     size="sm"
-                                    className="gap-2 text-gray-700 dark:text-gray-300"
+                                    className="gap-2 text-fg"
                                   >
                                     <Sparkles className="h-4 w-4" />
                                     <span className="hidden sm:inline">Use for Training</span>
@@ -672,7 +670,7 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                                   <Button 
                                     variant="outline" 
                                     size="sm"
-                                    className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/30 border-red-200 dark:border-red-900/30"
+                                    className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
                                     onClick={() => handleRemoveRecording(record.id)}
                                   >
                                     <Trash2 className="h-4 w-4" />
