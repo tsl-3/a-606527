@@ -109,13 +109,10 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
         setIsProcessing(false);
       }, 1000);
       
-      // Only call onStartChat once if it hasn't been called yet
+      // Initialize the chat only once without triggering any toast
       if (!hasStartedChat) {
         setHasStartedChat(true);
-        // Call onStartChat directly, with no toast notification
-        if (typeof onStartChat === 'function') {
-          onStartChat();
-        }
+        // Don't call onStartChat at all - we're handling the chat within this component
       }
     }
   };
