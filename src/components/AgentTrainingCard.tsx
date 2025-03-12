@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { 
   Mic, Upload, CircleDashed, ArrowRight, Clock, BarChart, 
@@ -647,5 +648,29 @@ export const AgentTrainingCard: React.FC<AgentTrainingCardProps> = ({
                       ))}
                     </div>
                   </div>
-
-                  <div className="bg-
+                </>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+      
+      {userPersonasSidebarOpen && (
+        <UserPersonasSidebar
+          onClose={() => setUserPersonasSidebarOpen(false)}
+          onSelectPersona={handleSelectPersona}
+          onStartDirectCall={handleStartDirectCall}
+        />
+      )}
+      
+      {callInterfaceOpen && (
+        <CallInterface
+          persona={selectedPersona}
+          directCallInfo={directCallInfo}
+          onClose={() => setCallInterfaceOpen(false)}
+          onComplete={handleCallComplete}
+        />
+      )}
+    </div>
+  );
+};
