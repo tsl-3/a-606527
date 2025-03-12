@@ -272,32 +272,30 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     }, 3000);
   };
 
-  const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) {
-      clearAllTimers();
-      setTimeout(() => {
-        onOpenChange(false);
-      }, 50);
-    } else {
-      onOpenChange(newOpen);
-    }
-  };
-
   if (!persona && !isDirectCall) return null;
 
   return (
     <AlertDialog 
       open={open}
-      onOpenChange={handleOpenChange}
+      onOpenChange={(newOpen) => {
+        if (!newOpen) {
+          clearAllTimers();
+          setTimeout(() => {
+            onOpenChange(false);
+          }, 50);
+        } else {
+          onOpenChange(newOpen);
+        }
+      }}
     >
-      <AlertDialogContent className="max-w-md sm:max-w-2xl bg-[#0F172A] border-[#1E293B]">
+      <AlertDialogContent className="max-w-md sm:max-w-2xl bg-white dark:bg-[#0F172A] border-gray-200 dark:border-gray-800">
         <AlertDialogDescription className="sr-only">
           {isDirectCall 
             ? `Direct call to ${directCallInfo?.phoneNumber}` 
             : `Call interface with ${persona?.name}. You can communicate and train with this persona.`}
         </AlertDialogDescription>
         
-        <AlertDialogHeader className="space-y-2 border-b border-[#1E293B] pb-4">
+        <AlertDialogHeader className="space-y-2 border-b border-gray-200 dark:border-gray-800 pb-4">
           <AlertDialogTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {isDirectCall ? (
@@ -359,8 +357,8 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
         {callStatus === "active" && (
           <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-4 my-4 h-[350px]">
             <div className="space-y-4 h-full flex flex-col">
-              <div className="rounded-lg border border-[#1E293B] p-3 bg-[#111827]/50 text-sm flex-shrink-0">
-                <h4 className="font-medium text-sm mb-1.5 text-white">
+              <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-3 bg-gray-50 dark:bg-gray-900/50 text-sm flex-shrink-0">
+                <h4 className="font-medium text-sm mb-1.5 text-gray-900 dark:text-white">
                   {isDirectCall ? "Direct Call Info" : `About ${persona?.name}`}
                 </h4>
                 {isDirectCall ? (
@@ -379,8 +377,8 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                 )}
               </div>
 
-              <div className="rounded-lg border border-[#1E293B] p-3 space-y-3 flex-grow">
-                <h4 className="font-medium text-sm text-white">Audio Devices</h4>
+              <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-3 space-y-3 flex-grow overflow-auto">
+                <h4 className="font-medium text-sm text-gray-900 dark:text-white">Audio Devices</h4>
                 <div className="space-y-2">
                   <Label htmlFor="mic-select" className="text-xs text-gray-700 dark:text-gray-300">Microphone</Label>
                   <Select 
@@ -423,8 +421,8 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
               </div>
             </div>
 
-            <div className="rounded-lg border border-[#1E293B] p-4 flex flex-col h-full">
-              <h4 className="font-medium text-sm mb-3 text-white">Live Transcription</h4>
+            <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 flex flex-col h-full overflow-hidden">
+              <h4 className="font-medium text-sm mb-3 text-gray-900 dark:text-white">Live Transcription</h4>
               <ScrollArea className="flex-1 pr-2">
                 <div className="space-y-4">
                   {transcriptions.map((text, index) => {
@@ -452,7 +450,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
           </div>
         )}
 
-        <AlertDialogFooter className="flex justify-center space-x-2 border-t border-[#1E293B] pt-4">
+        <AlertDialogFooter className="flex justify-center space-x-2 border-t border-gray-200 dark:border-gray-800 pt-4">
           <Button
             variant={isMuted ? "destructive" : "outline"}
             size="icon"

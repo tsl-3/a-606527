@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { User, Bot, X, ArrowLeft, PhoneCall, Info } from "lucide-react";
@@ -189,22 +190,22 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
       />
       
       <div className={cn(
-        "fixed top-0 bottom-0 right-0 z-50 w-full max-w-md bg-[#0F172A] border-l border-[#1E293B] shadow-xl transition-transform duration-300 ease-in-out overflow-hidden flex flex-col",
+        "fixed top-0 bottom-0 right-0 z-50 w-full max-w-md bg-white dark:bg-[#0F172A] border-l border-gray-200 dark:border-[#1E293B] shadow-xl transition-transform duration-300 ease-in-out overflow-hidden flex flex-col",
         open ? "translate-x-0" : "translate-x-full"
       )}>
-        <div className="p-4 border-b border-[#1E293B] flex items-center justify-between">
+        <div className="p-4 border-b border-gray-200 dark:border-[#1E293B] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
               size="icon" 
-              className="mr-2 rounded-full hover:bg-[#1E293B]"
+              className="mr-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#1E293B]"
               onClick={() => onOpenChange(false)}
             >
-              <ArrowLeft className="h-5 w-5 text-white" />
+              <ArrowLeft className="h-5 w-5 text-gray-700 dark:text-white" />
             </Button>
             <div>
-              <h2 className="text-xl font-bold text-white">Role-Play Options</h2>
-              <p className="text-sm text-gray-400">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Role-Play Options</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Choose a persona or call someone directly
               </p>
             </div>
@@ -212,18 +213,18 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full hover:bg-[#1E293B]"
+            className="rounded-full hover:bg-gray-100 dark:hover:bg-[#1E293B]"
             onClick={() => onOpenChange(false)}
           >
-            <X className="h-5 w-5 text-white" />
+            <X className="h-5 w-5 text-gray-700 dark:text-white" />
           </Button>
         </div>
         
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 overflow-auto">
           {!showDirectCall ? (
             <div className="p-4 space-y-4">
               <div 
-                className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden cursor-pointer hover:bg-[#141e33] transition-colors p-4"
+                className="border border-gray-200 dark:border-[#1E293B] rounded-lg bg-gray-50 dark:bg-[#111827] overflow-hidden cursor-pointer hover:bg-gray-100 dark:hover:bg-[#141e33] transition-colors p-4"
                 onClick={() => setShowDirectCall(true)}
               >
                 <div className="flex items-center gap-4 mb-3">
@@ -246,20 +247,20 @@ export const UserPersonasSidebar: React.FC<UserPersonasSidebarProps> = ({
                   <span className="text-gray-600 dark:text-gray-400">Instructions:</span> You will pretend to be the agent while your colleague or customer plays the user role.
                 </div>
               </div>
-              
+
               <div className="relative py-2">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[#1E293B]"></div>
+                  <div className="w-full border-t border-gray-200 dark:border-[#1E293B]"></div>
                 </div>
                 <div className="relative flex justify-center">
-                  <span className="bg-[#0F172A] px-4 text-sm text-gray-400">Or choose a persona</span>
+                  <span className="bg-white dark:bg-[#0F172A] px-4 text-sm text-gray-500 dark:text-gray-400">Or choose a persona</span>
                 </div>
               </div>
               
               {personas.map((persona) => (
                 <div
                   key={persona.id}
-                  className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden cursor-pointer hover:bg-[#141e33] transition-colors relative"
+                  className="border border-gray-200 dark:border-[#1E293B] rounded-lg bg-gray-50 dark:bg-[#111827] overflow-hidden cursor-pointer hover:bg-gray-100 dark:hover:bg-[#141e33] transition-colors relative"
                   onClick={() => handleSelectPersona(persona)}
                   onMouseEnter={() => setHoveredPersonaId(persona.id)}
                   onMouseLeave={() => setHoveredPersonaId(null)}
