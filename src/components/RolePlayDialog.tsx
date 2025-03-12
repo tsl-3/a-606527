@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -393,27 +394,27 @@ export const RolePlayDialog = ({
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-6">
               <div 
-                className="border border-border rounded-lg p-6 hover:border-primary/50 hover:bg-primary/5 cursor-pointer flex flex-col items-center text-center transition-all"
+                className="border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:border-primary/50 hover:bg-primary/5 cursor-pointer flex flex-col items-center text-center transition-all"
                 onClick={() => handleOptionSelect('someone')}
               >
                 <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <PhoneCall className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-lg font-medium mb-2">Role-Play Call</h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Start a voice call session with someone from your team or a real user to practice customer conversations
                 </p>
               </div>
               
               <div 
-                className="border border-border rounded-lg p-6 hover:border-primary/50 hover:bg-primary/5 cursor-pointer flex flex-col items-center text-center transition-all"
+                className="border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:border-primary/50 hover:bg-primary/5 cursor-pointer flex flex-col items-center text-center transition-all"
                 onClick={() => handleOptionSelect('personas')}
               >
                 <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <UserRound className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-lg font-medium mb-2">User Personas</h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Choose from common user personas for targeted training calls
                 </p>
               </div>
@@ -434,7 +435,7 @@ export const RolePlayDialog = ({
               {samplePersonas.map((persona) => (
                 <div 
                   key={persona.id}
-                  className="border border-border rounded-lg p-4 hover:border-primary/50 hover:bg-primary/5 cursor-pointer flex items-center gap-4 transition-all"
+                  className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 hover:border-primary/50 hover:bg-primary/5 cursor-pointer flex items-center gap-4 transition-all"
                   onClick={() => handlePersonaSelect(persona)}
                 >
                   <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center text-lg font-medium text-primary">
@@ -445,7 +446,7 @@ export const RolePlayDialog = ({
                     <p className="text-sm text-muted-foreground">{persona.role}</p>
                     <p className="mt-2">{persona.description}</p>
                   </div>
-                  <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                  <ArrowRight className="h-5 w-5 text-gray-400" />
                 </div>
               ))}
             </div>
@@ -486,7 +487,7 @@ export const RolePlayDialog = ({
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <div className="bg-muted/30 p-4 rounded-lg">
+                <div className="bg-secondary/30 dark:bg-secondary/10 p-4 rounded-lg">
                   <h4 className="font-medium mb-2 flex items-center gap-2">
                     <UserRound className="h-4 w-4 text-primary" />
                     Background
@@ -494,7 +495,7 @@ export const RolePlayDialog = ({
                   <p className="text-sm">{selectedPersona.background}</p>
                 </div>
                 
-                <div className="bg-muted/30 p-4 rounded-lg">
+                <div className="bg-secondary/30 dark:bg-secondary/10 p-4 rounded-lg">
                   <h4 className="font-medium mb-2 flex items-center gap-2">
                     <MessageCircle className="h-4 w-4 text-primary" />
                     Communication Style
@@ -502,7 +503,7 @@ export const RolePlayDialog = ({
                   <p className="text-sm">{selectedPersona.communication}</p>
                 </div>
                 
-                <div className="bg-muted/30 p-4 rounded-lg col-span-1 md:col-span-2">
+                <div className="bg-secondary/30 dark:bg-secondary/10 p-4 rounded-lg col-span-1 md:col-span-2">
                   <h4 className="font-medium mb-2 flex items-center gap-2">
                     <Brain className="h-4 w-4 text-primary" />
                     Pain Points
@@ -521,6 +522,7 @@ export const RolePlayDialog = ({
               </Button>
               <Button
                 onClick={handleStartRolePlay}
+                className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white"
               >
                 Start Role-Play Call
               </Button>
@@ -558,10 +560,10 @@ export const RolePlayDialog = ({
                         setPhoneNumber(e.target.value);
                         setPhoneNumberError('');
                       }}
-                      className={phoneNumberError ? 'border-destructive' : ''}
+                      className={phoneNumberError ? 'border-red-500' : ''}
                     />
                     {phoneNumberError && (
-                      <p className="text-sm text-destructive">{phoneNumberError}</p>
+                      <p className="text-sm text-red-500">{phoneNumberError}</p>
                     )}
                   </div>
 
@@ -603,7 +605,7 @@ export const RolePlayDialog = ({
                 <div className="w-full">
                   <Button 
                     onClick={handleStartCall} 
-                    className="w-full"
+                    className="bg-primary hover:bg-primary/90 text-white w-full"
                     size="lg"
                   >
                     <PhoneCall className="mr-2 h-5 w-5" />
@@ -640,7 +642,7 @@ export const RolePlayDialog = ({
 
         {stage === 'call' && isCallActive && (
           <>
-            <DialogHeader className="border-b border-border pb-3">
+            <DialogHeader className="border-b pb-3">
               <div className="flex items-center gap-3">
                 {selectedPersona ? (
                   <>
@@ -681,7 +683,7 @@ export const RolePlayDialog = ({
             <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden py-4">
               <div className="flex-1 flex flex-col h-[400px]">
                 <div className="flex flex-col space-y-2 mb-4">
-                  <div className="flex items-center justify-between bg-muted/30 p-3 rounded-lg">
+                  <div className="flex items-center justify-between bg-secondary/30 p-3 rounded-lg">
                     <div className="flex items-center gap-2">
                       <Timer className="h-4 w-4 text-primary" />
                       <span className="text-sm font-medium">{formatTime(callDuration)}</span>
@@ -729,7 +731,7 @@ export const RolePlayDialog = ({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 bg-muted/10 p-3 rounded-lg">
+                  <div className="grid grid-cols-2 gap-4 bg-secondary/10 p-3 rounded-lg">
                     <div className="space-y-1">
                       <Label className="text-xs">Microphone</Label>
                       <Select value={selectedMic} onValueChange={setSelectedMic}>
@@ -764,10 +766,10 @@ export const RolePlayDialog = ({
                   </div>
                 </div>
                 
-                <div className="flex-1 overflow-y-auto mb-4 bg-muted/20 rounded-lg p-4">
+                <div className="flex-1 overflow-y-auto mb-4 bg-secondary/20 rounded-lg p-4">
                   <div className="space-y-6">
                     <div className="flex items-center justify-center">
-                      <Badge className="bg-primary/10 text-primary border border-primary/30">
+                      <Badge className="bg-blue-500/10 text-blue-500 border border-blue-500/30">
                         Call started with {selectedPersona ? selectedPersona.name : phoneNumber}
                       </Badge>
                     </div>
@@ -799,4 +801,110 @@ export const RolePlayDialog = ({
                               {new Date(Date.now() - (transcription.length - 1 - index) * 5000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                           </div>
-                          <p className
+                          <p className="text-sm ml-1">{text}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {stage === 'success' && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl">Great Job!</DialogTitle>
+              <DialogDescription>
+                You are one step closer to a great and human-like AI. Here's the recording from your call.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="py-6 flex flex-col items-center">
+              <div className="w-full max-w-xl mx-auto bg-secondary/10 rounded-lg p-6 mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Call Recording</span>
+                  </div>
+                  <Badge variant="outline" className="border-green-500/30 text-green-500 bg-green-500/10">
+                    {formatTime(callDuration)}
+                  </Badge>
+                </div>
+                
+                <div className="mb-6">
+                  <div className="flex items-center gap-4 mb-3">
+                    <Button 
+                      size="sm"
+                      variant="outline"
+                      className="rounded-full w-10 h-10 p-0 flex items-center justify-center"
+                      onClick={isPlayingRecording ? handleStopPlayback : handlePlayRecording}
+                    >
+                      {isPlayingRecording ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                    </Button>
+                    
+                    <div className="flex-1">
+                      <Progress value={recordingProgress} className="h-2" />
+                    </div>
+                    
+                    <span className="text-sm text-muted-foreground">
+                      {formatTime(Math.floor(callDuration * recordingProgress / 100))} / {formatTime(callDuration)}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="bg-background rounded-md p-4 max-h-[200px] overflow-y-auto border">
+                  <h4 className="text-sm font-medium mb-3">Transcript Preview</h4>
+                  <div className="space-y-4">
+                    {transcription.slice(0, 3).map((line, index) => {
+                      const [speaker, ...textParts] = line.split(': ');
+                      const text = textParts.join(': ');
+                      
+                      return (
+                        <div key={index} className="flex flex-col space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs px-2 py-0.5 rounded-full">
+                              {speaker}
+                            </Badge>
+                          </div>
+                          <p className="text-sm ml-1">{text}</p>
+                        </div>
+                      );
+                    })}
+                    
+                    {transcription.length > 3 && (
+                      <p className="text-sm text-muted-foreground italic">
+                        + {transcription.length - 3} more messages
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 mt-4 justify-between w-full max-w-xl">
+                <Button
+                  onClick={handleRetake}
+                  variant="outline"
+                  size="lg"
+                >
+                  <Redo className="mr-2 h-5 w-5" />
+                  Retake Call
+                </Button>
+                
+                <Button
+                  onClick={handleSaveAndTrain}
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 text-white"
+                  size="lg"
+                >
+                  <Save className="mr-2 h-5 w-5" />
+                  Save & Train AI
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};

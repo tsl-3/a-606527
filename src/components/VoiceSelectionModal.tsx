@@ -221,9 +221,9 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[625px] bg-background border-border">
+      <DialogContent className="sm:max-w-[625px]">
         <DialogHeader>
-          <DialogTitle className="text-foreground">Select Voice</DialogTitle>
+          <DialogTitle>Select Voice</DialogTitle>
         </DialogHeader>
         
         <Tabs defaultValue={voiceProvider} onValueChange={onVoiceProviderChange} className="w-full">
@@ -237,7 +237,7 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
 
           {Object.keys(VOICE_PROVIDERS).map((provider) => (
             <TabsContent key={provider} value={provider} className="mt-4">
-              <ScrollArea className="h-[350px] w-full rounded-md border border-border">
+              <ScrollArea className="h-[350px] w-full rounded-md border">
                 <div className="p-4 space-y-4">
                   {Object.keys(VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]).map((voiceName) => {
                     const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
@@ -246,7 +246,7 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                     return (
                       <div 
                         key={voiceObj.id} 
-                        className={`flex items-start gap-4 p-3 rounded-lg cursor-pointer hover:bg-muted transition-colors ${selectedVoice === voiceObj.id ? 'bg-muted border border-primary/30' : ''}`}
+                        className={`flex items-start gap-4 p-3 rounded-lg cursor-pointer hover:bg-muted transition-colors ${selectedVoice === voiceObj.id ? 'bg-muted border border-agent-primary/30' : ''}`}
                         onClick={() => onVoiceSelect(voiceObj.id)}
                         onMouseEnter={() => setHoveredVoice(voiceObj.id)}
                         onMouseLeave={() => setHoveredVoice(null)}
@@ -268,7 +268,7 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                               size="play"
                               className={`absolute top-0 left-0 w-full h-full rounded-full shadow-md flex items-center justify-center ${
                                 isPlaying 
-                                  ? 'bg-primary text-background'
+                                  ? 'bg-primary text-white'
                                   : 'bg-black/60 hover:bg-primary/90'
                               }`}
                               onClick={(e) => {
@@ -277,9 +277,9 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                               }}
                             >
                               {isPlaying ? (
-                                <Pause className="h-5 w-5 text-background" />
+                                <Pause className="h-5 w-5 text-white" />
                               ) : (
-                                <Play className="h-5 w-5 text-background ml-0.5" />
+                                <Play className="h-5 w-5 text-white ml-0.5" />
                               )}
                             </Button>
                           )}
@@ -287,9 +287,9 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                         
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
-                            <h4 className="font-medium text-sm text-foreground">{voiceObj.name}</h4>
+                            <h4 className="font-medium text-sm">{voiceObj.name}</h4>
                             {selectedVoice === voiceObj.id && (
-                              <Badge variant="outline" className="bg-primary/10 text-xs">
+                              <Badge variant="outline" className="bg-agent-primary/10 text-xs">
                                 Selected
                               </Badge>
                             )}
