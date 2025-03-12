@@ -62,10 +62,10 @@ export const AgentConfigSidebar: React.FC<AgentConfigSidebarProps> = ({ agentCon
                        { name: agentConfig.customFunction || "Not Selected", icon: null };
   
   return (
-    <Card className="sticky top-4 dark:bg-[#000313]/80">
+    <Card className="sticky top-4 dark:bg-bgMuted/80">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2">
-          <Bot className="h-5 w-5 text-agent-primary" />
+          <Bot className="h-5 w-5 text-brandPurple" />
           Agent Configuration
         </CardTitle>
       </CardHeader>
@@ -73,11 +73,11 @@ export const AgentConfigSidebar: React.FC<AgentConfigSidebarProps> = ({ agentCon
         {/* Agent name display */}
         {agentConfig.name ? (
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Agent Name</Label>
-            <div className="font-medium text-lg">{agentConfig.name}</div>
+            <Label className="text-xs text-fgMuted">Agent Name</Label>
+            <div className="font-medium text-lg text-fg">{agentConfig.name}</div>
           </div>
         ) : (
-          <div className="bg-muted/30 p-3 rounded-md flex items-center gap-2 text-muted-foreground">
+          <div className="bg-bgMuted/30 p-3 rounded-md flex items-center gap-2 text-fgMuted">
             <Bot className="h-4 w-4" />
             <span>Agent name will appear here</span>
           </div>
@@ -86,26 +86,26 @@ export const AgentConfigSidebar: React.FC<AgentConfigSidebarProps> = ({ agentCon
         {/* Industry and Function */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Industry</Label>
+            <Label className="text-xs text-fgMuted">Industry</Label>
             {agentConfig.industry ? (
               <Badge variant="outline" className="flex gap-1 items-center">
                 {industryInfo.icon}
                 <span>{industryInfo.name}</span>
               </Badge>
             ) : (
-              <div className="text-muted-foreground text-sm">Not selected</div>
+              <div className="text-fgMuted text-sm">Not selected</div>
             )}
           </div>
           
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Function</Label>
+            <Label className="text-xs text-fgMuted">Function</Label>
             {agentConfig.botFunction ? (
               <Badge variant="outline" className="flex gap-1 items-center">
                 {functionInfo.icon}
                 <span>{functionInfo.name}</span>
               </Badge>
             ) : (
-              <div className="text-muted-foreground text-sm">Not selected</div>
+              <div className="text-fgMuted text-sm">Not selected</div>
             )}
           </div>
         </div>
@@ -113,15 +113,15 @@ export const AgentConfigSidebar: React.FC<AgentConfigSidebarProps> = ({ agentCon
         {/* Description/Purpose */}
         <div className="space-y-1.5">
           <div className="flex items-center gap-1.5">
-            <Target className="h-4 w-4 text-agent-primary" />
+            <Target className="h-4 w-4 text-brandPurple" />
             <Label>Purpose</Label>
           </div>
           {agentConfig.purpose ? (
-            <div className="bg-muted/30 p-2 rounded-md text-sm">
+            <div className="bg-bgMuted/30 p-2 rounded-md text-sm text-fg">
               {agentConfig.purpose}
             </div>
           ) : (
-            <div className="bg-muted/30 p-3 rounded-md flex items-center gap-2 text-muted-foreground text-sm">
+            <div className="bg-bgMuted/30 p-3 rounded-md flex items-center gap-2 text-fgMuted text-sm">
               Agent purpose will appear here
             </div>
           )}
@@ -130,24 +130,24 @@ export const AgentConfigSidebar: React.FC<AgentConfigSidebarProps> = ({ agentCon
         {/* Prompt */}
         <div className="space-y-1.5">
           <div className="flex items-center gap-1.5">
-            <Code className="h-4 w-4 text-agent-primary" />
+            <Code className="h-4 w-4 text-brandPurple" />
             <Label>Prompt</Label>
           </div>
           {agentConfig.prompt ? (
             <Textarea 
               value={agentConfig.prompt} 
               readOnly 
-              className="min-h-[150px] text-sm font-mono bg-muted/30"
+              className="min-h-[150px] text-sm font-mono bg-bgMuted/30"
             />
           ) : (
-            <div className="bg-muted/30 p-3 rounded-md h-[150px] flex items-center justify-center text-muted-foreground text-sm">
+            <div className="bg-bgMuted/30 p-3 rounded-md h-[150px] flex items-center justify-center text-fgMuted text-sm">
               Agent prompt will appear here
             </div>
           )}
         </div>
         
         {/* Additional settings info */}
-        <div className="text-xs text-muted-foreground pt-2 border-t">
+        <div className="text-xs text-fgMuted pt-2 border-t border-border">
           Once your agent is created, you can further customize settings and connect to channels.
         </div>
       </CardContent>
