@@ -28,6 +28,7 @@ import { RolePlayDialog } from "@/components/RolePlayDialog";
 import { CustomTooltip } from "@/components/CustomTooltip";
 import { UserPersonasSidebar } from "@/components/UserPersonasSidebar";
 import { CallInterface } from "@/components/CallInterface";
+import { Rocket } from "lucide-react";
 
 const SAMPLE_TEXT = "Hello, I'm an AI assistant and I'm here to help you with your questions.";
 
@@ -585,6 +586,15 @@ const AgentDetails = () => {
             </div>
             
             <div className="flex items-center justify-end space-x-3">
+              <Button 
+                variant="contrast" 
+                size="sm" 
+                onClick={openRolePlay}
+                className="flex items-center gap-2"
+              >
+                <Rocket className="h-4 w-4" />
+                Test Agent
+              </Button>
               <AgentToggle isActive={isActive} onToggle={handleStatusToggle} />
               
               <DropdownMenu>
