@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -67,7 +68,20 @@ export default {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
-				}
+				},
+				// New custom color scheme
+				bg: 'hsl(var(--bg))',
+				bgMuted: 'hsl(var(--bg-muted))',
+				fg: 'hsl(var(--fg))',
+				fgMuted: 'hsl(var(--fg-muted))',
+				brandPurple: 'hsl(var(--brand-purple))',
+				brandBlue: 'hsl(var(--brand-blue))',
+				brandPink: 'hsl(var(--brand-pink))',
+				inputBg: 'hsl(var(--input-bg))',
+				inputBorder: 'hsl(var(--input-border))',
+				focusRing: 'hsl(var(--focus-ring))',
+				success: 'hsl(var(--success))',
+				warning: 'hsl(var(--warning))',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

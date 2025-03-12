@@ -1,40 +1,33 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
+    /* Original theme variables - keeping for compatibility */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 84% 4.9%;  /* Changed from purple to slate dark */
+    --primary: 222.2 84% 4.9%;
     --primary-foreground: 210 40% 98%;
-
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;  /* Changed from purple to slate dark */
-
+    --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
-
-    /* Agent colors - using slate theme with dark primary */
+    
+    /* Agent colors */
     --agent-primary: 222.2 84% 4.9%;
     --agent-secondary: 210 40% 96.1%;
     --agent-accent: 222.2 84% 4.9%;
@@ -45,38 +38,46 @@
     --agent-error: 0 84% 60%;
     --agent-surface: 0 0% 100%;
     --agent-text: 222.2 84% 4.9%;
+    
+    /* New custom color scheme */
+    --bg: 0 0% 100%;
+    --bg-muted: 0 0% 95.3%;
+    --fg: 0 0% 10.2%;
+    --fg-muted: 0 0% 33.3%;
+    --brand-purple: 271 86% 62%;
+    --brand-blue: 222 84% 53%;
+    --brand-pink: 292 91% 61%;
+    --border: 0 0% 89.4%;
+    --input-bg: 0 0% 100%;
+    --input-border: 0 0% 80%;
+    --focus-ring: 271 86% 62%;
+    --success: 142 71% 45%;
+    --warning: 38 93% 50.4%;
+    --destructive: 0 84% 60%;
   }
 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-
-    --primary: 0 0% 100%;  /* Changed from purple to pure white */
+    --primary: 0 0% 100%;
     --primary-foreground: 222.2 47.4% 11.2%;
-
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 0 0% 100%;  /* Changed from purple to pure white */
-
-    /* Agent dark mode colors - slate theme with white primary */
+    --ring: 0 0% 100%;
+    
+    /* Agent dark mode colors */
     --agent-dark-bg: 222.2 84% 4.9%;
     --agent-primary: 0 0% 100%;
     --agent-secondary: 217.2 32.6% 17.5%;
@@ -88,6 +89,22 @@
     --agent-error: 0 74% 50%;
     --agent-surface: 222.2 84% 4.9%;
     --agent-text: 210 40% 98%;
+    
+    /* New custom dark color scheme */
+    --bg: 0 0% 5.9%;
+    --bg-muted: 0 0% 9.0%;
+    --fg: 0 0% 100%;
+    --fg-muted: 0 0% 65%;
+    --brand-purple: 271 86% 62%;
+    --brand-blue: 222 84% 53%;
+    --brand-pink: 292 91% 61%;
+    --border: 0 0% 16.5%;
+    --input-bg: 0 0% 11.8%;
+    --input-border: 0 0% 22.7%;
+    --focus-ring: 271 86% 62%;
+    --success: 142 71% 45%;
+    --warning: 47 96% 55.1%;
+    --destructive: 0 84% 60%;
   }
 }
 
@@ -203,6 +220,19 @@
   .dark textarea,
   .dark select {
     @apply bg-input border-border;
+  }
+  
+  /* Custom brand components using new color scheme */
+  .brand-button {
+    @apply bg-brandPurple text-white px-4 py-2 rounded-md hover:bg-gradient-to-r hover:from-brandBlue hover:to-brandPink transition-all duration-300;
+  }
+  
+  .brand-card {
+    @apply bg-bg text-fg border border-border p-4 rounded-lg shadow-sm;
+  }
+  
+  .brand-input {
+    @apply bg-inputBg border border-inputBorder rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-focusRing focus:border-transparent;
   }
 }
 
