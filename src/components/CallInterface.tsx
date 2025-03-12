@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter, AlertDialogDescription } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -301,11 +302,11 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
               {isDirectCall ? (
                 <Phone className="h-5 w-5 text-green-500 dark:text-green-400" />
               ) : persona?.type === "customer" ? (
-                <User className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                <User className="h-5 w-5 text-muted-foreground" />
               ) : (
                 <Bot className="h-5 w-5 text-primary" />
               )}
-              <span className="text-gray-900 dark:text-white">
+              <span className="text-foreground">
                 {isDirectCall 
                   ? `Direct Call: ${directCallInfo?.phoneNumber}`
                   : persona?.name}
@@ -334,11 +335,11 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
           
           {callStatus === "connecting" && (
             <div className="py-10 flex flex-col items-center justify-center">
-              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4 relative">
+              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4 relative">
                 {isDirectCall ? (
                   <Phone className="h-8 w-8 text-green-500 dark:text-green-400" />
                 ) : persona?.type === "customer" ? (
-                  <User className="h-8 w-8 text-gray-600 dark:text-gray-400" />
+                  <User className="h-8 w-8 text-muted-foreground" />
                 ) : (
                   <Bot className="h-8 w-8 text-primary" />
                 )}
@@ -362,14 +363,14 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                   {isDirectCall ? "Direct Call Info" : `About ${persona?.name}`}
                 </h4>
                 {isDirectCall ? (
-                  <p className="text-gray-600 dark:text-gray-400 mb-2">
+                  <p className="text-muted-foreground mb-2">
                     Live call with {directCallInfo?.phoneNumber}. The person on the other end will roleplay as a customer.
                   </p>
                 ) : (
                   <>
-                    <p className="text-gray-600 dark:text-gray-400 mb-2">{persona?.description}</p>
+                    <p className="text-muted-foreground mb-2">{persona?.description}</p>
                     {persona?.scenario && (
-                      <div className="bg-gray-100 dark:bg-gray-800 rounded p-2 text-xs text-gray-700 dark:text-gray-300">
+                      <div className="bg-muted/50 rounded p-2 text-xs text-muted-foreground">
                         <span className="font-medium">Scenario:</span> {persona?.scenario}
                       </div>
                     )}
@@ -386,7 +387,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                     onValueChange={setSelectedMic}
                     disabled={isDirectCall}
                   >
-                    <SelectTrigger id="mic-select" className="h-8 text-xs border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+                    <SelectTrigger id="mic-select" className="h-8 text-xs border-border bg-background text-foreground">
                       <SelectValue placeholder="Select microphone" />
                     </SelectTrigger>
                     <SelectContent>
@@ -406,7 +407,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                     onValueChange={setSelectedSpeaker}
                     disabled={isDirectCall}
                   >
-                    <SelectTrigger id="speaker-select" className="h-8 text-xs border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+                    <SelectTrigger id="speaker-select" className="h-8 text-xs border-border bg-background text-foreground">
                       <SelectValue placeholder="Select speaker" />
                     </SelectTrigger>
                     <SelectContent>
@@ -430,16 +431,16 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
                     const message = messageParts.join(": ");
                     
                     return (
-                      <div key={index} className="pb-3 border-b border-gray-200 dark:border-gray-800 last:border-0">
+                      <div key={index} className="pb-3 border-b border-border last:border-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <Badge variant="outline" className="text-xs py-0 px-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+                          <Badge variant="outline" className="text-xs py-0 px-2 border-border text-foreground">
                             {speaker}
                           </Badge>
-                          <span className="text-xs text-gray-500 dark:text-gray-500">
+                          <span className="text-xs text-muted-foreground">
                             {formatTimestamp(new Date(Date.now() - (transcriptions.length - 1 - index) * 3000))}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-800 dark:text-gray-300 break-words overflow-hidden">{message}</p>
+                        <p className="text-sm text-foreground break-words overflow-hidden">{message}</p>
                       </div>
                     );
                   })}
@@ -456,8 +457,8 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
             size="icon"
             onClick={handleToggleMute}
             className={cn(
-              isMuted ? "bg-red-500/90" : "border-gray-300 dark:border-gray-700",
-              "text-gray-900 dark:text-white"
+              isMuted ? "bg-red-500/90" : "border-border",
+              "text-foreground"
             )}
           >
             {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
@@ -468,8 +469,8 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
             size="icon"
             onClick={handleToggleAudio}
             className={cn(
-              isAudioMuted ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/30" : "border-gray-300 dark:border-gray-700",
-              "text-gray-900 dark:text-white"
+              isAudioMuted ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/30" : "border-border",
+              "text-foreground"
             )}
           >
             {isAudioMuted ? <Volume className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
@@ -479,7 +480,7 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
             variant="default"
             onClick={handleSendMessage}
             disabled={callStatus !== "active" || isMuted}
-            className="bg-white text-black hover:bg-gray-200 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            className="bg-background text-foreground hover:bg-muted/50"
           >
             Speak
           </Button>
@@ -496,3 +497,4 @@ export const CallInterface: React.FC<CallInterfaceProps> = ({
     </AlertDialog>
   );
 };
+

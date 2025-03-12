@@ -237,7 +237,7 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
 
           {Object.keys(VOICE_PROVIDERS).map((provider) => (
             <TabsContent key={provider} value={provider} className="mt-4">
-              <ScrollArea className="h-[350px] w-full rounded-md border">
+              <ScrollArea className="h-[350px] w-full rounded-md border border-border">
                 <div className="p-4 space-y-4">
                   {Object.keys(VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS]).map((voiceName) => {
                     const voiceObj = VOICE_PROVIDERS[provider as keyof typeof VOICE_PROVIDERS][voiceName];
@@ -246,7 +246,7 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                     return (
                       <div 
                         key={voiceObj.id} 
-                        className={`flex items-start gap-4 p-3 rounded-lg cursor-pointer hover:bg-muted transition-colors ${selectedVoice === voiceObj.id ? 'bg-muted border border-agent-primary/30' : ''}`}
+                        className={`flex items-start gap-4 p-3 rounded-lg cursor-pointer hover:bg-muted transition-colors ${selectedVoice === voiceObj.id ? 'bg-muted border border-primary/30' : ''}`}
                         onClick={() => onVoiceSelect(voiceObj.id)}
                         onMouseEnter={() => setHoveredVoice(voiceObj.id)}
                         onMouseLeave={() => setHoveredVoice(null)}
@@ -289,7 +289,7 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                           <div className="flex items-center justify-between">
                             <h4 className="font-medium text-sm">{voiceObj.name}</h4>
                             {selectedVoice === voiceObj.id && (
-                              <Badge variant="outline" className="bg-agent-primary/10 text-xs">
+                              <Badge variant="outline" className="bg-primary/10 text-xs">
                                 Selected
                               </Badge>
                             )}
