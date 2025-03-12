@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
 import { AgentType } from "@/types/agent";
-import { Mic, Phone, PhoneOutgoing, PhoneIncoming, MessageSquare, Bot, Rocket } from "lucide-react";
+import { Mic, PhoneOutgoing, PhoneIncoming, MessageSquare, Bot, Rocket, Send } from "lucide-react";
+import { LiveTranscription } from "@/components/LiveTranscription";
 
 interface TestAgentSidebarProps {
   open: boolean;
@@ -26,13 +28,16 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
   onStartDirectCall,
   onStartChat
 }) => {
-  const [activeTab, setActiveTab] = useState<string>("voice");
+  const [activeTab, setActiveTab] = useState<string>("chat");
   const [callType, setCallType] = useState<"inbound" | "outbound">("inbound");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [selectedMic, setSelectedMic] = useState<string>("");
   const [selectedSpeaker, setSelectedSpeaker] = useState<string>("");
   const [availableMics, setAvailableMics] = useState<MediaDeviceInfo[]>([]);
   const [availableSpeakers, setAvailableSpeakers] = useState<MediaDeviceInfo[]>([]);
+  const [chatMessage, setChatMessage] = useState<string>("");
+  const [chatMessages, setChatMessages] = useState<{role: "system" | "user"; text: string}[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   React.useEffect(() => {
     if (open) {
@@ -86,9 +91,36 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
     }
   };
 
-  const handleStartChat = () => {
-    onStartChat();
-    onOpenChange(false);
+  const handleSendMessage = () => {
+    if (chatMessage.trim()) {
+      // Add user message to chat
+      const newMessages = [...chatMessages, { role: "user", text: chatMessage }];
+      setChatMessages(newMessages);
+      
+      // Clear input
+      setChatMessage("");
+      
+      // Simulate agent response
+      setIsProcessing(true);
+      setTimeout(() => {
+        const agentResponse = { 
+          role: "system" as const, 
+          text: `I'm ${agent?.name || 'the AI assistant'}, and I'm here to help. ${chatMessage.length > 30 ? 'That\'s an interesting point you raised.' : 'How can I assist you today?'}`
+        };
+        setChatMessages([...newMessages, agentResponse]);
+        setIsProcessing(false);
+      }, 1000);
+      
+      // In a real implementation, you would call your chat API here
+      onStartChat(); // Call the onStartChat function to notify parent component
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
   return (
@@ -246,19 +278,30 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
           </TabsContent>
           
           <TabsContent value="chat" className="space-y-4">
-            <Card className="p-4">
-              <div className="font-medium mb-2 flex items-center gap-2">
-                <MessageSquare className="h-4 w-4 text-primary" />
-                Chat Interface
-              </div>
-              <p className="text-sm text-muted-foreground mb-4">
-                Start a text-based conversation with your agent to test responses.
-              </p>
+            <div className="flex flex-col h-[400px]">
+              <LiveTranscription 
+                messages={chatMessages}
+                isCallActive={isProcessing}
+              />
               
-              <Button onClick={handleStartChat} className="w-full">
-                Start Chat
-              </Button>
-            </Card>
+              <div className="flex items-end gap-2 mt-4">
+                <Textarea
+                  placeholder="Type your message..."
+                  className="flex-1 min-h-[60px] resize-none"
+                  value={chatMessage}
+                  onChange={(e) => setChatMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+                <Button 
+                  size="icon" 
+                  className="h-10 w-10 shrink-0"
+                  onClick={handleSendMessage}
+                  disabled={!chatMessage.trim() || isProcessing}
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
 
