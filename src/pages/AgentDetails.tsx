@@ -635,62 +635,7 @@ const AgentDetails = () => {
                 </div>}
               
               <div className="flex flex-wrap gap-3">
-                {voicePhoneNumber && (
-                  <div className="inline-flex items-center">
-                    <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2 w-auto">
-                      <Phone className="h-3.5 w-3.5 text-white flex-shrink-0" />
-                      <span className="text-xs">
-                        {voicePhoneNumber}
-                      </span>
-                      <div className="flex gap-1 ml-2">
-                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-secondary" onClick={handleCopyPhoneNumber} title="Copy phone number">
-                          <Copy className="h-3 w-3 text-muted-foreground" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestCall} title="Test agent call">
-                          <PhoneOutgoing className="h-3 w-3 text-muted-foreground" />
-                        </Button>
-                        
-                        <CustomTooltip trigger={
-                            <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-blue-700/50" title="Call me back">
-                              <PhoneIncoming className="h-3 w-3 text-muted-foreground" />
-                            </Button>
-                          } 
-                          content={
-                            <div className="space-y-3 w-64 p-2">
-                              <h4 className="font-medium text-sm">Get a call from this agent</h4>
-                              <Input type="tel" placeholder="Enter your phone number" value={customCallNumber} onChange={e => setCustomCallNumber(e.target.value)} className="h-8 text-xs" />
-                              <Button size="sm" className="w-full h-8 text-xs" onClick={handleCallMe}>
-                                Call me
-                              </Button>
-                            </div>
-                          } 
-                          side="bottom" 
-                          align="end" 
-                          className="w-64 p-0" 
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-                
-                {emailAddress && (
-                  <div className="inline-flex items-center">
-                    <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border p-2 w-auto">
-                      <Mail className="h-3.5 w-3.5 text-white flex-shrink-0" />
-                      <span className="text-xs">
-                        {emailAddress}
-                      </span>
-                      <div className="flex gap-1 ml-2">
-                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-secondary" onClick={handleCopyEmail} title="Copy email address">
-                          <Copy className="h-3 w-3 text-muted-foreground" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-green-700/50" onClick={handleTestEmail} title="Test agent email">
-                          <Send className="h-3 w-3 text-muted-foreground" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                {/* Phone and email information has been removed */}
               </div>
               
               <div className="mt-2">
