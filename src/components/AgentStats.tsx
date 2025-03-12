@@ -27,10 +27,10 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       <div className="flex gap-2 w-full">
         <Card className="flex-1 overflow-hidden shadow-sm">
           <div className="px-2 py-1 flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">Agent Status</span>
-            <Info className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-xs font-medium text-fgMuted">Agent Status</span>
+            <Info className="w-3.5 h-3.5 text-fgMuted" />
           </div>
-          <CardContent className="p-2 text-center text-sm text-muted-foreground">
+          <CardContent className="p-2 text-center text-sm text-fgMuted">
             New agent - no stats yet
           </CardContent>
         </Card>
@@ -44,22 +44,22 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
 
   // Color indicator for AVM score based on the value range
   const getScoreColor = (score: number): string => {
-    if (score >= 8) return "bg-green-500"; // High score (8-10): green
-    if (score >= 6) return "bg-yellow-500"; // Medium score (6-7): yellow
-    return "bg-orange-500"; // Low score (1-5): orange
+    if (score >= 8) return "bg-success"; // High score (8-10): success color
+    if (score >= 6) return "bg-warning"; // Medium score (6-7): warning color
+    return "bg-destructive"; // Low score (1-5): destructive color
   };
   
   // Get tier label and color for interaction count
   const getInteractionTier = (count: number): { label: string; color: string } => {
-    if (count >= 1000) return { label: "Gold", color: "text-yellow-500" };
-    if (count >= 100) return { label: "Silver", color: "text-gray-400" };
-    return { label: "Bronze", color: "text-amber-600" };
+    if (count >= 1000) return { label: "Gold", color: "text-warning" };
+    if (count >= 100) return { label: "Silver", color: "text-fgMuted" };
+    return { label: "Bronze", color: "text-brandPink" };
   };
   
   const interactionTier = getInteractionTier(displayInteractionCount);
   
   // Get the appropriate color class for the AVM score bar
-  const scoreColorClass = displayAvmScore !== undefined ? getScoreColor(displayAvmScore) : "bg-gray-400";
+  const scoreColorClass = displayAvmScore !== undefined ? getScoreColor(displayAvmScore) : "bg-bgMuted";
   
   return (
     <div className="flex flex-col gap-3 w-full">
@@ -68,11 +68,11 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
         <div className="flex gap-2 w-full">
           <Card className="flex-1 overflow-hidden shadow-sm">
             <div className="px-2 py-1 flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Interactions</span>
+              <span className="text-xs font-medium text-fgMuted">Interactions</span>
               <span className={`text-xs font-medium ${interactionTier.color}`}>{interactionTier.label}</span>
             </div>
             <CardContent className="p-2 text-center">
-              <span className="text-xl font-semibold">
+              <span className="text-xl font-semibold text-fg">
                 {displayInteractionCount >= 1000 
                   ? `${(displayInteractionCount / 1000).toFixed(1)}k` 
                   : displayInteractionCount}
@@ -86,10 +86,10 @@ export const AgentStats: React.FC<AgentStatsProps> = ({
       {displayAvmScore !== undefined && (
         <div className="w-full">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-xs font-medium text-muted-foreground">AVM</span>
-            <span className="text-xs font-medium">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
+            <span className="text-xs font-medium text-fgMuted">AVM</span>
+            <span className="text-xs font-medium text-fg">{displayAvmScore !== undefined ? displayAvmScore.toFixed(1) : "0.0"}</span>
           </div>
-          <div className="relative w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800 h-2">
+          <div className="relative w-full overflow-hidden rounded-full bg-bgMuted dark:bg-bg h-2">
             <div 
               className={`absolute h-full transition-all duration-300 ease-in-out ${scoreColorClass}`}
               style={{ width: `${displayAvmScore ? (displayAvmScore * 10) : 0}%` }}
