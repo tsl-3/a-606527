@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { AgentType } from "@/types/agent";
-import { Mic, PhoneOutgoing, PhoneIncoming, MessageSquare, Bot, Rocket, Send } from "lucide-react";
+import { Mic, PhoneOutgoing, PhoneIncoming, MessageSquare, Bot, Rocket, ArrowUp } from "lucide-react";
 import { LiveTranscription } from "@/components/LiveTranscription";
 
 interface TestAgentSidebarProps {
@@ -291,21 +290,22 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
                 className="flex-1"
               />
               
-              <div className="flex items-end gap-2 mt-4">
+              <div className="relative mt-4">
                 <Textarea
                   placeholder="Type your message..."
-                  className="flex-1 min-h-[60px] resize-none"
+                  className="min-h-[60px] resize-none pr-12"
                   value={chatMessage}
                   onChange={(e) => setChatMessage(e.target.value)}
                   onKeyDown={handleKeyDown}
                 />
                 <Button 
                   size="icon" 
-                  className="h-10 w-10 shrink-0"
+                  className="absolute bottom-2 right-2 h-8 w-8"
                   onClick={handleSendMessage}
                   disabled={!chatMessage.trim() || isProcessing}
+                  variant="ghost"
                 >
-                  <Send className="h-4 w-4" />
+                  <ArrowUp className="h-4 w-4" />
                 </Button>
               </div>
             </div>
