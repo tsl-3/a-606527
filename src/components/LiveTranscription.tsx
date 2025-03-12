@@ -12,11 +12,13 @@ interface Message {
 interface LiveTranscriptionProps {
   messages: Message[];
   isCallActive: boolean;
+  className?: string;
 }
 
 export const LiveTranscription: React.FC<LiveTranscriptionProps> = ({ 
   messages,
-  isCallActive
+  isCallActive,
+  className
 }) => {
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
@@ -28,7 +30,7 @@ export const LiveTranscription: React.FC<LiveTranscriptionProps> = ({
   }, [messages]);
 
   return (
-    <div className="border rounded-md p-4 h-[400px] overflow-y-auto bg-muted/10">
+    <div className={cn("border rounded-md p-4 overflow-y-auto bg-muted/10 flex-1", className)}>
       {messages.length === 0 && (
         <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
           <Bot className="h-12 w-12 mb-4 text-muted-foreground/50" />

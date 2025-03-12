@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -120,7 +121,7 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-md">
+      <SheetContent side="right" className="w-full sm:max-w-md flex flex-col">
         <SheetHeader className="space-y-2 mb-4">
           <SheetTitle className="flex items-center gap-2">
             <Rocket className="h-5 w-5 text-primary" />
@@ -131,7 +132,7 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
           </SheetDescription>
         </SheetHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col">
           <TabsList className="grid grid-cols-2 mb-4 w-full">
             <TabsTrigger value="voice" className="flex items-center gap-2">
               <Mic className="h-4 w-4" />
@@ -143,8 +144,8 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="voice" className="space-y-4">
-            <div className="grid gap-4 mb-4">
+          <TabsContent value="voice" className="space-y-4 flex-1 flex flex-col">
+            <div className="grid gap-4 mb-4 flex-1">
               {callType === "inbound" ? (
                 <Card className="p-4">
                   <div className="font-medium mb-2 flex items-center gap-2">
@@ -282,11 +283,12 @@ export const TestAgentSidebar: React.FC<TestAgentSidebarProps> = ({
             </div>
           </TabsContent>
           
-          <TabsContent value="chat" className="space-y-4">
-            <div className="flex flex-col h-[400px]">
+          <TabsContent value="chat" className="flex-1 flex flex-col h-full overflow-hidden">
+            <div className="flex flex-col flex-1">
               <LiveTranscription 
                 messages={chatMessages}
                 isCallActive={isProcessing}
+                className="flex-1"
               />
               
               <div className="flex items-end gap-2 mt-4">
