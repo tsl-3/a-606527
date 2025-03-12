@@ -137,14 +137,14 @@ export const AgentSetupStepper: React.FC<AgentSetupStepperProps> = ({ agent }) =
     <div className="space-y-6 animate-fade-in">
       <div className="mb-8">
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Agent Setup</h2>
+          <h2 className="text-xl font-semibold text-fg">Agent Setup</h2>
           <div className="flex items-center">
-            <span className="text-sm font-medium mr-2 text-gray-700 dark:text-gray-300">{overallProgress}% Complete</span>
+            <span className="text-sm font-medium mr-2 text-fgMuted">{overallProgress}% Complete</span>
             <Progress value={overallProgress} className="w-24 h-2" />
           </div>
         </div>
         
-        <p className="text-gray-600 dark:text-gray-300">
+        <p className="text-fgMuted">
           Complete these steps in order to fully configure your agent for optimal performance
         </p>
       </div>

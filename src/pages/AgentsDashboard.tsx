@@ -321,10 +321,10 @@ const AgentsDashboard = () => {
 
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-semibold text-foreground dark:text-white tracking-tight">
+          <h1 className="text-3xl font-semibold text-fg tracking-tight">
             {getFilterTitle()}
           </h1>
-          <p className="text-muted-foreground dark:text-gray-300 mt-1">
+          <p className="text-fgMuted mt-1">
             Create, customize, and manage your intelligent assistants all in one place
           </p>
         </div>
@@ -335,10 +335,10 @@ const AgentsDashboard = () => {
       
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-fgMuted" />
           <Input
             placeholder="Search by name or purpose..."
-            className="pl-10 w-full dark:bg-[#000313]/70"
+            className="pl-10 w-full"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -346,7 +346,7 @@ const AgentsDashboard = () => {
 
         <div className="flex flex-wrap gap-2 items-center">
           <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] bg-bg border-border">
               <SelectValue placeholder="Bot Function" />
             </SelectTrigger>
             <SelectContent>
@@ -366,7 +366,7 @@ const AgentsDashboard = () => {
           </Select>
 
           <Select value={filterChannel} onValueChange={setFilterChannel}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[140px] bg-bg border-border">
               <SelectValue placeholder="Channel" />
             </SelectTrigger>
             <SelectContent>
@@ -380,7 +380,7 @@ const AgentsDashboard = () => {
           </Select>
 
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[140px] bg-bg border-border">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -391,7 +391,7 @@ const AgentsDashboard = () => {
           </Select>
 
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[140px] bg-bg border-border">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -406,17 +406,17 @@ const AgentsDashboard = () => {
 
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-8 w-8 text-agent-primary animate-spin" />
+          <Loader2 className="h-8 w-8 text-brandPurple animate-spin" />
         </div>
       ) : filteredAgents.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 space-y-4">
-          <Bot className="h-16 w-16 text-gray-300" />
-          <h2 className="text-2xl font-semibold text-foreground dark:text-white">No Agents Found</h2>
-          <p className="text-muted-foreground dark:text-gray-300">
+          <Bot className="h-16 w-16 text-fgMuted opacity-80" />
+          <h2 className="text-2xl font-semibold text-fg">No Agents Found</h2>
+          <p className="text-fgMuted">
             {searchTerm ? "Try a different search term" : "Create your first agent to get started"}
           </p>
           {!searchTerm && (
-            <Link to="/agents/create" className="agent-button mt-2">
+            <Link to="/agents/create" className="brand-button mt-2">
               Create Your First Agent
             </Link>
           )}
