@@ -90,6 +90,7 @@ export const getAgentById = async (id: string): Promise<AgentType | null> => {
 export const createAgent = async (agent: Partial<AgentType>): Promise<AgentType> => {
   const newId = agent.id === 'new123' ? uuidv4() : agent.id || uuidv4();
   
+  // Prepare the agent data for Supabase (transform from AgentType to database schema)
   const newAgent = {
     id: newId,
     name: agent.name || 'New Agent',
@@ -109,6 +110,8 @@ export const createAgent = async (agent: Partial<AgentType>): Promise<AgentType>
     customFunction: agent.customFunction || null
   };
   
+  console.log('Creating new agent with data:', newAgent);
+  
   const { data, error } = await supabase
     .from('agents')
     .insert(newAgent)
@@ -120,6 +123,7 @@ export const createAgent = async (agent: Partial<AgentType>): Promise<AgentType>
     throw error;
   }
   
+  console.log('Agent created successfully:', data);
   return transformDbRowToAgent(data);
 };
 
@@ -155,6 +159,8 @@ export const updateAgent = async (id: string, updates: Partial<AgentType>): Prom
     }
   });
   
+  console.log(`Updating agent with id ${id} with data:`, dbUpdates);
+  
   const { data, error } = await supabase
     .from('agents')
     .update(dbUpdates)
@@ -167,6 +173,7 @@ export const updateAgent = async (id: string, updates: Partial<AgentType>): Prom
     throw error;
   }
   
+  console.log('Agent updated successfully:', data);
   return transformDbRowToAgent(data);
 };
 
