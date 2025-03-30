@@ -93,10 +93,10 @@ const AgentsDashboard = () => {
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Bot className="h-6 w-6 text-primary" />
-            Your Agents
+            ENSPYR AI 
           </h1>
           <p className="text-muted-foreground">
-            Manage your AI agents
+            Create and Manage your AI agents
           </p>
         </div>
         
