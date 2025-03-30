@@ -13,19 +13,19 @@ const transformDbRowToAgent = (row: any): AgentType => {
     isActive: row.active || false,
     status: row.active ? "active" : "inactive",
     channels: row.channels || [],
-    channelConfigs: row.channelConfigs || {},
+    channelConfigs: row.channelconfigs || {},
     avmScore: 8.0, // Default score
     interactions: 0, // Default count
     interactionCount: 0, // Support both property names
     purpose: row.purpose || '',
     prompt: row.prompt || '',
     industry: row.industry || '',
-    botFunction: row.botFunction || '',
+    botFunction: row.botfunction || '',
     model: row.model || 'GPT-4',
     voice: row.voice || '',
-    voiceProvider: row.voiceProvider || '',
-    customIndustry: row.customIndustry || '',
-    customFunction: row.customFunction || '',
+    voiceProvider: row.voiceprovider || '',
+    customIndustry: row.customindustry || '',
+    customFunction: row.customfunction || '',
     createdAt: row.created_at || new Date().toISOString()
   };
 };
@@ -98,16 +98,16 @@ export const createAgent = async (agent: Partial<AgentType>): Promise<AgentType>
     purpose: agent.purpose || '',
     prompt: agent.prompt || '',
     industry: agent.industry || '',
-    botFunction: agent.botFunction || '',
+    botfunction: agent.botFunction || '', // lowercase to match DB column
     model: agent.model || 'GPT-4',
     avatar: agent.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${newId}`,
     voice: agent.voice || '9BWtsMINqrJLrRacOk9x',
-    voiceProvider: agent.voiceProvider || 'Eleven Labs',
+    voiceprovider: agent.voiceProvider || 'Eleven Labs', // lowercase to match DB column
     active: agent.isActive || false,
     channels: agent.channels || [],
-    channelConfigs: agent.channelConfigs || {},
-    customIndustry: agent.customIndustry || null,
-    customFunction: agent.customFunction || null
+    channelconfigs: agent.channelConfigs || {}, // lowercase to match DB column
+    customindustry: agent.customIndustry || null, // lowercase to match DB column
+    customfunction: agent.customFunction || null // lowercase to match DB column
   };
   
   console.log('Creating new agent with data:', newAgent);
@@ -140,16 +140,16 @@ export const updateAgent = async (id: string, updates: Partial<AgentType>): Prom
     purpose: updates.purpose,
     prompt: updates.prompt,
     industry: updates.industry,
-    botFunction: updates.botFunction,
+    botfunction: updates.botFunction, // lowercase to match DB column
     model: updates.model,
     avatar: updates.avatar,
     voice: updates.voice,
-    voiceProvider: updates.voiceProvider,
+    voiceprovider: updates.voiceProvider, // lowercase to match DB column
     active: updates.isActive,
     channels: updates.channels,
-    channelConfigs: updates.channelConfigs,
-    customIndustry: updates.customIndustry,
-    customFunction: updates.customFunction
+    channelconfigs: updates.channelConfigs, // lowercase to match DB column
+    customindustry: updates.customIndustry, // lowercase to match DB column
+    customfunction: updates.customFunction // lowercase to match DB column
   };
   
   // Remove undefined values
