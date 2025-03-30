@@ -1,158 +1,311 @@
 
-import { AgentType, AgentTypeCategory } from '@/types/agent';
+import { AgentType } from '@/types/agent';
+import { supabase } from '@/lib/supabase';
+import { v4 as uuidv4 } from 'uuid';
 
-// Mock data for development
-const mockAgents: AgentType[] = [
+const AGENTS_MOCK = [
   {
     id: "1",
-    name: "Customer Support Bot",
-    description: "Handles customer inquiries and support tickets automatically.",
-    type: "Customer Service",
-    status: "active",
-    createdAt: "2023-10-15",
-    interactions: 1253,
-    isPersonal: true,
-    model: "GPT-4",
-    channels: ["voice", "chat", "email"],
+    name: "Sales Assistant",
+    description: "Sales and product information",
     avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=1",
-    purpose: "Help users with their customer support questions and resolve issues.",
-    prompt: "You are a customer support bot. Your job is to help users solve their problems and answer their questions about our products and services."
+    isActive: true,
+    channels: ["voice", "chat", "email"],
+    channelConfigs: {
+      voice: { enabled: true, details: "+1 (800) 555-0123" },
+      chat: { enabled: true, details: "https://example.com/chat" },
+      email: { enabled: true, details: "sales@example.com" }
+    },
+    avmScore: 8.5,
+    interactionCount: 1254,
+    industry: "technology",
+    botFunction: "sales"
   },
   {
     id: "2",
-    name: "Sales Assistant",
-    description: "Guides customers through the sales process and answers product questions.",
-    type: "Sales & Marketing" as AgentTypeCategory, // Adding type assertion to ensure exact match
-    status: "active",
-    createdAt: "2023-11-22",
-    interactions: 876,
-    isPersonal: false,
-    model: "Claude-2",
-    channels: ["voice", "chat", "whatsapp", "sms"],
+    name: "Support Agent",
+    description: "Technical support and troubleshooting",
     avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=2",
-    purpose: "Help users find the right products and make purchasing decisions.",
-    prompt: "You are a sales assistant bot. Your job is to help users find the right products for their needs and guide them through the purchasing process."
+    isActive: true,
+    channels: ["voice", "chat", "sms"],
+    channelConfigs: {
+      voice: { enabled: true, details: "+1 (800) 555-0124" },
+      chat: { enabled: true, details: "https://example.com/support" },
+      sms: { enabled: true, details: "+1 (800) 555-0125" }
+    },
+    avmScore: 9.2,
+    interactionCount: 3672,
+    industry: "technology",
+    botFunction: "support"
   },
   {
     id: "3",
-    name: "Knowledge Base Agent",
-    description: "Provides information from company documentation and knowledge base.",
-    type: "FAQ & Knowledge Base",
-    status: "inactive",
-    createdAt: "2024-01-05",
-    interactions: 432,
-    isPersonal: true,
-    model: "GPT-3.5 Turbo",
-    channels: ["voice", "chat"]
+    name: "Billing Assistant",
+    description: "Billing and payment questions",
+    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=3",
+    isActive: false,
+    channels: ["voice", "email"],
+    channelConfigs: {
+      voice: { enabled: true, details: "+1 (800) 555-0126" },
+      email: { enabled: true, details: "billing@example.com" }
+    },
+    avmScore: 7.8,
+    interactionCount: 945,
+    industry: "finance",
+    botFunction: "billing"
   },
   {
     id: "4",
-    name: "Meeting Scheduler",
-    description: "Helps schedule and manage meetings with clients and team members.",
-    type: "Appointment Booking",
-    status: "active",
-    createdAt: "2024-02-10",
-    interactions: 198,
-    isPersonal: false,
-    model: "LLama-2",
-    channels: ["voice", "email", "sms"]
+    name: "Onboarding Guide",
+    description: "New customer onboarding and setup",
+    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=4",
+    isActive: true,
+    channels: ["chat", "email", "whatsapp"],
+    channelConfigs: {
+      chat: { enabled: true, details: "https://example.com/onboarding" },
+      email: { enabled: true, details: "welcome@example.com" },
+      whatsapp: { enabled: true, details: "+1 (800) 555-0127" }
+    },
+    avmScore: 8.9,
+    interactionCount: 512,
+    industry: "education",
+    botFunction: "onboarding"
   },
   {
     id: "5",
-    name: "Document Analyzer",
-    description: "Analyzes documents and extracts key information automatically.",
-    type: "Technical Support", // Changed from "Other Function" to a valid category
-    status: "inactive",
-    createdAt: "2024-03-01",
-    interactions: 52,
-    isPersonal: true,
-    model: "GPT-4",
-    channels: ["voice"]
+    name: "Appointment Scheduler",
+    description: "Schedule and manage appointments",
+    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=5",
+    isActive: true,
+    channels: ["voice", "sms", "chat"],
+    channelConfigs: {
+      voice: { enabled: true, details: "+1 (800) 555-0128" },
+      sms: { enabled: true, details: "+1 (800) 555-0129" },
+      chat: { enabled: true, details: "https://example.com/appointments" }
+    },
+    avmScore: 9.5,
+    interactionCount: 2341,
+    industry: "healthcare",
+    botFunction: "booking"
   }
 ];
 
-// Simulating API call to fetch agents
-export const fetchAgents = async (filter: string): Promise<AgentType[]> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  // Filter the mock data based on the filter parameter
-  if (filter === 'my-agents') {
-    return mockAgents.filter(agent => agent.isPersonal);
-  } else if (filter === 'team-agents') {
-    return mockAgents.filter(agent => !agent.isPersonal);
-  }
-  
-  // Default: return all agents
-  return mockAgents;
+// Function to transform DB row to AgentType
+const transformDbRowToAgent = (row: any): AgentType => {
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description || '',
+    avatar: row.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${row.id}`,
+    isActive: row.active || false,
+    channels: row.channels || [],
+    channelConfigs: row.channelConfigs || {},
+    avmScore: 8.0, // Default score
+    interactionCount: 0, // Default count
+    purpose: row.purpose || '',
+    prompt: row.prompt || '',
+    industry: row.industry || '',
+    botFunction: row.botFunction || '',
+    model: row.model || 'GPT-4',
+    voice: row.voice || '',
+    voiceProvider: row.voiceProvider || '',
+    customIndustry: row.customIndustry || '',
+    customFunction: row.customFunction || ''
+  };
 };
 
-// Simulating API call to fetch agent by ID
-export const fetchAgentById = async (agentId: string): Promise<AgentType> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 600));
+// Migrate mock data to Supabase on first load (only in development)
+let hasMigratedMockData = false;
+const migrateMockDataToSupabase = async () => {
+  if (hasMigratedMockData || import.meta.env.PROD) return;
   
-  const agent = mockAgents.find(a => a.id === agentId);
-  
-  if (!agent) {
-    throw new Error(`Agent with id ${agentId} not found`);
+  // Check if we already have agents in the database
+  const { data } = await supabase.from('agents').select('id').limit(1);
+  if (data && data.length > 0) {
+    hasMigratedMockData = true;
+    return;
   }
   
-  return agent;
+  // Insert mock data
+  for (const agent of AGENTS_MOCK) {
+    await supabase.from('agents').insert({
+      id: agent.id,
+      name: agent.name,
+      description: agent.description,
+      avatar: agent.avatar,
+      active: agent.isActive,
+      channels: agent.channels,
+      channelConfigs: agent.channelConfigs,
+      industry: agent.industry,
+      botFunction: agent.botFunction,
+      created_at: new Date().toISOString()
+    });
+  }
+  
+  hasMigratedMockData = true;
 };
 
-// Simulating API call to create a new agent
-export const createAgent = async (agentData: Omit<AgentType, 'id' | 'createdAt' | 'interactions'>): Promise<AgentType> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+export const getAgents = async (): Promise<AgentType[]> => {
+  await migrateMockDataToSupabase();
   
-  // Create a new agent with mock data
-  const newAgent: AgentType = {
-    ...agentData,
-    id: Math.random().toString(36).substring(2, 9),
-    createdAt: new Date().toISOString().split('T')[0],
-    interactions: 0
+  const { data, error } = await supabase
+    .from('agents')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching agents:', error);
+    // Fallback to mock data if there's an error
+    return AGENTS_MOCK;
+  }
+  
+  return data.map(transformDbRowToAgent);
+};
+
+export const getAgentById = async (id: string): Promise<AgentType | null> => {
+  await migrateMockDataToSupabase();
+  
+  // Special case for new agent
+  if (id === 'new123') {
+    return {
+      id: 'new123',
+      name: '',
+      description: '',
+      avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${Math.random().toString(36).substring(2, 10)}`,
+      isActive: false,
+      channels: [],
+      channelConfigs: {},
+      avmScore: undefined,
+      interactionCount: 0,
+      purpose: '',
+      prompt: '',
+      industry: '',
+      botFunction: '',
+      model: 'GPT-4',
+      voice: '9BWtsMINqrJLrRacOk9x', // Default voice
+      voiceProvider: 'Eleven Labs', // Default provider
+    };
+  }
+  
+  const { data, error } = await supabase
+    .from('agents')
+    .select('*')
+    .eq('id', id)
+    .single();
+  
+  if (error) {
+    console.error(`Error fetching agent with id ${id}:`, error);
+    if (error.code === 'PGRST116') {
+      throw new Error(`Agent with id ${id} not found`);
+    }
+    throw error;
+  }
+  
+  return transformDbRowToAgent(data);
+};
+
+export const createAgent = async (agent: Partial<AgentType>): Promise<AgentType> => {
+  await migrateMockDataToSupabase();
+  
+  const newId = agent.id === 'new123' ? uuidv4() : agent.id || uuidv4();
+  
+  const newAgent = {
+    id: newId,
+    name: agent.name || 'New Agent',
+    description: agent.description || '',
+    purpose: agent.purpose || '',
+    prompt: agent.prompt || '',
+    industry: agent.industry || '',
+    botFunction: agent.botFunction || '',
+    model: agent.model || 'GPT-4',
+    avatar: agent.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${newId}`,
+    voice: agent.voice || '9BWtsMINqrJLrRacOk9x',
+    voiceProvider: agent.voiceProvider || 'Eleven Labs',
+    active: agent.isActive || false,
+    channels: agent.channels || [],
+    channelConfigs: agent.channelConfigs || {},
+    customIndustry: agent.customIndustry || null,
+    customFunction: agent.customFunction || null,
+    created_at: new Date().toISOString()
   };
   
-  // In a real app, you would add this to the database
-  // mockAgents.push(newAgent);
+  const { data, error } = await supabase
+    .from('agents')
+    .insert(newAgent)
+    .select()
+    .single();
   
-  return newAgent;
-};
-
-// Simulating API call to update an agent
-export const updateAgent = async (agentId: string, agentData: Partial<AgentType>): Promise<AgentType> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  const agent = mockAgents.find(a => a.id === agentId);
-  
-  if (!agent) {
-    throw new Error(`Agent with id ${agentId} not found`);
+  if (error) {
+    console.error('Error creating agent:', error);
+    throw error;
   }
   
-  // Update the agent
-  const updatedAgent = { ...agent, ...agentData };
-  
-  // In a real app, you would update this in the database
-  // const index = mockAgents.findIndex(a => a.id === agentId);
-  // mockAgents[index] = updatedAgent;
-  
-  return updatedAgent;
+  return transformDbRowToAgent(data);
 };
 
-// Simulating API call to delete an agent
-export const deleteAgent = async (agentId: string): Promise<void> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 600));
+export const updateAgent = async (id: string, updates: Partial<AgentType>): Promise<AgentType> => {
+  await migrateMockDataToSupabase();
   
-  const agent = mockAgents.find(a => a.id === agentId);
-  
-  if (!agent) {
-    throw new Error(`Agent with id ${agentId} not found`);
+  // Handle special case for new agent
+  if (id === 'new123') {
+    return createAgent(updates);
   }
   
-  // In a real app, you would remove this from the database
-  // const index = mockAgents.findIndex(a => a.id === agentId);
-  // mockAgents.splice(index, 1);
+  // Prepare updates for Supabase (transform from AgentType to database schema)
+  const dbUpdates = {
+    name: updates.name,
+    description: updates.description,
+    purpose: updates.purpose,
+    prompt: updates.prompt,
+    industry: updates.industry,
+    botFunction: updates.botFunction,
+    model: updates.model,
+    avatar: updates.avatar,
+    voice: updates.voice,
+    voiceProvider: updates.voiceProvider,
+    active: updates.isActive,
+    channels: updates.channels,
+    channelConfigs: updates.channelConfigs,
+    customIndustry: updates.customIndustry,
+    customFunction: updates.customFunction
+  };
+  
+  // Remove undefined values
+  Object.keys(dbUpdates).forEach(key => {
+    if (dbUpdates[key as keyof typeof dbUpdates] === undefined) {
+      delete dbUpdates[key as keyof typeof dbUpdates];
+    }
+  });
+  
+  const { data, error } = await supabase
+    .from('agents')
+    .update(dbUpdates)
+    .eq('id', id)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error(`Error updating agent with id ${id}:`, error);
+    throw error;
+  }
+  
+  return transformDbRowToAgent(data);
+};
+
+export const deleteAgent = async (id: string): Promise<void> => {
+  await migrateMockDataToSupabase();
+  
+  const { error } = await supabase
+    .from('agents')
+    .delete()
+    .eq('id', id);
+  
+  if (error) {
+    console.error(`Error deleting agent with id ${id}:`, error);
+    throw error;
+  }
+};
+
+export const toggleAgentActive = async (id: string, isActive: boolean): Promise<AgentType> => {
+  return updateAgent(id, { isActive });
 };

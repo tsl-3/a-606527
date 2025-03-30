@@ -1,257 +1,255 @@
 
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Bot, Mic, Phone, CheckCircle2, Loader2, PlayCircle } from "lucide-react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { 
+  Bot, Mic, FileText, ArrowLeft, Check
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/components/ui/use-toast";
-import { LiveTranscription } from "@/components/LiveTranscription";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AgentConfigSidebar } from "@/components/AgentConfigSidebar";
+import { useToast } from "@/hooks/use-toast";
+import { createAgent } from "@/services/agentService";
+import { AgentConfigSettings } from "@/components/AgentConfigSettings";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AgentCreate = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [callState, setCallState] = useState<"idle" | "connecting" | "active" | "completed">("idle");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [transcription, setTranscription] = useState<{ role: "system" | "user", text: string }[]>([]);
+  const [isCreating, setIsCreating] = useState(false);
+  const [creationMethod, setCreationMethod] = useState<string | null>(null);
   const [agentConfig, setAgentConfig] = useState({
     name: "",
     description: "",
-    agentType: "",
-    model: "gpt-4",
     purpose: "",
     prompt: "",
     industry: "",
     botFunction: "",
     customIndustry: "",
     customFunction: "",
+    model: "GPT-4",
+    agentType: ""
   });
-  
-  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^\d\s()\-+]/g, '');
-    setPhoneNumber(value);
+
+  const handleBackClick = () => {
+    navigate('/agents');
   };
-  
-  const validatePhoneNumber = () => {
-    return phoneNumber.replace(/[^\d]/g, '').length >= 10;
-  };
-  
-  const startAgentCreationCall = () => {
-    if (!validatePhoneNumber()) {
-      toast({
-        title: "Invalid Phone Number",
-        description: "Please enter a valid phone number.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setCallState("connecting");
-    
-    setTimeout(() => {
-      setCallState("active");
-      simulateConversation();
-    }, 2000);
-  };
-  
-  const simulateConversation = () => {
-    const conversation = [
-      { delay: 1000, role: "system" as const, text: "Hello! I'm your AI assistant, and I'll help you create a new agent. What would you like to name your agent?" },
-      { delay: 4000, role: "user" as const, text: "Customer Support Bot" },
-      { delay: 2000, role: "system" as const, text: "Great name! What industry will this agent be working in?" },
-      { delay: 4000, role: "user" as const, text: "E-commerce" },
-      { delay: 2000, role: "system" as const, text: "E-commerce is selected. What function will this agent serve? For example, customer service, sales, or technical support?" },
-      { delay: 4000, role: "user" as const, text: "Customer service for order issues and returns" },
-      { delay: 2000, role: "system" as const, text: "I've set the function to Customer Service. Can you describe the main purpose of this agent?" },
-      { delay: 5000, role: "user" as const, text: "Help customers track orders, process returns, and resolve common shopping issues" },
-      { delay: 2000, role: "system" as const, text: "Great! Based on our conversation, I've created a prompt for your agent. You can review and edit it in the sidebar. Is there anything else you'd like to customize?" },
-      { delay: 4000, role: "user" as const, text: "No, that looks good" },
-      { delay: 2000, role: "system" as const, text: "Perfect! Your Customer Support Bot has been created successfully. You can now review all the details in the sidebar and make any final adjustments before finishing." },
-    ];
-    
-    let cumulativeDelay = 0;
-    
-    conversation.forEach((item, index) => {
-      cumulativeDelay += item.delay;
+
+  const handleCreateAgent = async () => {
+    try {
+      setIsCreating(true);
       
-      setTimeout(() => {
-        setTranscription(prev => [...prev, item]);
-        
-        if (item.role === "user") {
-          switch (index) {
-            case 1: // Name response
-              setAgentConfig(prev => ({ ...prev, name: item.text }));
-              break;
-            case 3: // Industry response
-              setAgentConfig(prev => ({ ...prev, industry: "retail" }));
-              break;
-            case 5: // Function response
-              setAgentConfig(prev => ({ ...prev, botFunction: "customer-service" }));
-              break;
-            case 7: // Purpose response
-              setAgentConfig(prev => ({ 
-                ...prev, 
-                description: item.text,
-                purpose: item.text,
-                prompt: `You are a Customer Support Bot for an e-commerce platform. Your main purpose is to ${item.text.toLowerCase()}. Always be helpful, friendly, and efficient in addressing customer concerns.`
-              }));
-              break;
-          }
-        }
-        
-        if (index === conversation.length - 1) {
-          setTimeout(() => {
-            setCallState("completed");
-          }, 2000);
-        }
-      }, cumulativeDelay);
+      // Create new agent with basic info
+      const newAgent = await createAgent({
+        name: agentConfig.name || "New Agent",
+        description: agentConfig.description,
+        purpose: agentConfig.purpose,
+        prompt: agentConfig.prompt,
+        industry: agentConfig.industry === 'other' ? '' : agentConfig.industry,
+        botFunction: agentConfig.botFunction === 'other' ? '' : agentConfig.botFunction,
+        customIndustry: agentConfig.industry === 'other' ? agentConfig.customIndustry : '',
+        customFunction: agentConfig.botFunction === 'other' ? agentConfig.customFunction : '',
+        model: agentConfig.model,
+        isActive: false
+      });
+      
+      toast({
+        title: "Agent created successfully",
+        description: `${newAgent.name} has been added to your agents.`
+      });
+      
+      // Navigate to the agent details page
+      navigate(`/agents/${newAgent.id}`);
+    } catch (error) {
+      console.error("Error creating agent:", error);
+      toast({
+        title: "Failed to create agent",
+        description: "There was an error creating your agent. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleConfigChange = (key: string, value: string) => {
+    setAgentConfig(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const handleUpdateAgent = (updatedAgent: any) => {
+    setAgentConfig({
+      name: updatedAgent.name,
+      description: updatedAgent.description || "",
+      purpose: updatedAgent.purpose || "",
+      prompt: updatedAgent.prompt || "",
+      industry: updatedAgent.industry || "",
+      botFunction: updatedAgent.botFunction || "",
+      customIndustry: updatedAgent.customIndustry || "",
+      customFunction: updatedAgent.customFunction || "",
+      model: updatedAgent.model || "GPT-4",
+      agentType: ""
     });
   };
   
-  const handleCreateAgent = () => {
-    setIsSubmitting(true);
-    
-    setTimeout(() => {
-      toast({
-        title: "Agent Created!",
-        description: `${agentConfig.name} has been successfully created.`,
-      });
-      setIsSubmitting(false);
-      navigate("/agents");
-    }, 1500);
-  };
-  
-  return (
-    <div className="max-w-7xl mx-auto animate-fade-in">
-      <div className="mb-8">
-        <Link to="/agents" className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Agents
-        </Link>
-      </div>
-      
-      <div className="flex items-center space-x-3 mb-6">
-        <div>
-          <h1 className="text-3xl font-semibold text-foreground">Create New Agent by Voice</h1>
-          <p className="text-muted-foreground mt-1">Talk with our system to configure your new agent</p>
+  const renderCreationMethod = () => {
+    if (!creationMethod) {
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mt-12">
+          <Card 
+            className="cursor-pointer transition-all hover:shadow-md border-2 hover:border-primary"
+            onClick={() => setCreationMethod('voice')}
+          >
+            <CardHeader className="text-center pb-4">
+              <div className="mx-auto bg-primary/10 p-4 rounded-full">
+                <Mic className="h-12 w-12 text-primary" />
+              </div>
+              <CardTitle className="mt-4">Voice Creation</CardTitle>
+              <CardDescription>
+                Use voice commands to set up your agent by answering a series of prompts
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center pb-6">
+              <Button variant="outline">Start Voice Setup</Button>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer transition-all hover:shadow-md border-2 hover:border-primary"
+            onClick={() => setCreationMethod('manual')}
+          >
+            <CardHeader className="text-center pb-4">
+              <div className="mx-auto bg-primary/10 p-4 rounded-full">
+                <FileText className="h-12 w-12 text-primary" />
+              </div>
+              <CardTitle className="mt-4">Manual Creation</CardTitle>
+              <CardDescription>
+                Configure your agent manually by filling out the required fields
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center pb-6">
+              <Button variant="outline">Start Manual Setup</Button>
+            </CardContent>
+          </Card>
         </div>
-      </div>
-      
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="flex-1">
-          {callState === "idle" ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Step 1: Start Agent Creation Call</CardTitle>
-                <CardDescription>
-                  Enter your phone number to begin the guided agent creation process
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <div className="flex space-x-2">
-                    <div className="relative flex-1">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="phone"
-                        placeholder="+1 (555) 123-4567"
-                        value={phoneNumber}
-                        onChange={handlePhoneNumberChange}
-                        className="pl-10"
-                      />
-                    </div>
-                    <Button 
-                      onClick={startAgentCreationCall}
-                      disabled={!phoneNumber}
-                      className="gap-2"
-                      variant="contrast"
-                    >
-                      <Mic className="h-4 w-4" />
-                      Start Call
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    We'll call you at this number to guide you through agent creation
-                  </p>
+      );
+    }
+
+    if (creationMethod === 'voice') {
+      return (
+        <div className="max-w-4xl mx-auto mt-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Voice-Guided Setup</CardTitle>
+              <CardDescription>
+                Follow the voice prompts to set up your agent. You can say "skip" to move to the next question.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pb-6">
+              <div className="text-center py-12">
+                <div className="mx-auto bg-primary/10 p-8 rounded-full w-32 h-32 flex items-center justify-center mb-6">
+                  <Mic className="h-16 w-16 text-primary" />
                 </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <CardTitle>
-                      {callState === "connecting" && "Connecting..."}
-                      {callState === "active" && "Agent Creation Call"}
-                      {callState === "completed" && "Agent Configuration Complete"}
-                    </CardTitle>
-                    <CardDescription>
-                      {callState === "connecting" && "Please wait while we connect your call..."}
-                      {callState === "active" && "Live transcription of your conversation"}
-                      {callState === "completed" && "Your agent has been configured based on the call"}
-                    </CardDescription>
-                  </div>
-                  <div>
-                    {callState === "connecting" && (
-                      <div className="bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 px-3 py-1 rounded-full text-sm flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Connecting
-                      </div>
-                    )}
-                    {callState === "active" && (
-                      <div className="bg-green-500/20 text-green-600 dark:text-green-400 px-3 py-1 rounded-full text-sm flex items-center gap-2">
-                        <span className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></span>
-                        Active Call
-                      </div>
-                    )}
-                    {callState === "completed" && (
-                      <div className="bg-blue-500/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full text-sm flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4" />
-                        Completed
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <LiveTranscription messages={transcription} isCallActive={callState === "active"} />
-              </CardContent>
-              {callState === "completed" && (
-                <CardFooter className="flex justify-end border-t pt-6">
-                  <Button 
-                    onClick={handleCreateAgent} 
-                    disabled={isSubmitting}
-                    className="gap-2"
-                    variant="contrast"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Creating...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle2 className="h-4 w-4" />
-                        Create Agent
-                      </>
-                    )}
-                  </Button>
-                </CardFooter>
-              )}
-            </Card>
-          )}
+                <h3 className="text-xl font-medium mb-2">Voice setup coming soon</h3>
+                <p className="text-muted-foreground mb-6">
+                  This feature is under development. Please use manual setup for now.
+                </p>
+                <Button onClick={() => setCreationMethod('manual')}>
+                  Switch to Manual Setup
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        
-        <div className="w-full md:w-[400px]">
+      );
+    }
+
+    // Manual creation method
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+        <div className="col-span-1 hidden lg:block">
           <AgentConfigSidebar agentConfig={agentConfig} />
         </div>
+        
+        <div className="col-span-1 lg:col-span-2">
+          <Tabs defaultValue="basics" className="space-y-6">
+            <TabsList className="grid grid-cols-2">
+              <TabsTrigger value="basics">Basic Info</TabsTrigger>
+              <TabsTrigger value="advanced">Advanced Settings</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="basics" className="space-y-6">
+              <AgentConfigSettings 
+                agent={{
+                  id: 'new123',
+                  name: agentConfig.name,
+                  description: agentConfig.description,
+                  purpose: agentConfig.purpose,
+                  prompt: agentConfig.prompt,
+                  industry: agentConfig.industry,
+                  botFunction: agentConfig.botFunction,
+                  model: agentConfig.model,
+                  customIndustry: agentConfig.customIndustry,
+                  customFunction: agentConfig.customFunction,
+                  isActive: false,
+                  channels: [],
+                  channelConfigs: {},
+                  interactionCount: 0,
+                }}
+                onAgentUpdate={handleUpdateAgent}
+              />
+            </TabsContent>
+            
+            <TabsContent value="advanced" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Advanced Settings</CardTitle>
+                  <CardDescription>
+                    Configure advanced settings for your agent
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground py-12 text-center">
+                    Advanced settings will be available after creating the agent.
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+          
+          <div className="flex justify-between mt-8">
+            <Button 
+              variant="outline" 
+              onClick={handleBackClick}
+              className="gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Agents
+            </Button>
+            
+            <Button 
+              onClick={handleCreateAgent} 
+              disabled={isCreating}
+              className="gap-2"
+            >
+              <Check className="h-4 w-4" />
+              Create Agent
+            </Button>
+          </div>
+        </div>
       </div>
+    );
+  };
+
+  return (
+    <div className="container mx-auto py-6">
+      <div className="flex items-center gap-2 mb-6">
+        <Bot className="h-6 w-6 text-primary" />
+        <h1 className="text-2xl font-bold">Create New Agent</h1>
+      </div>
+      
+      {renderCreationMethod()}
     </div>
   );
 };
