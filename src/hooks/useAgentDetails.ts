@@ -48,7 +48,9 @@ export const useAgentDetails = (agentId: string | undefined) => {
         // Add explicit zeros for stats to make it clear they don't exist yet
         avmScore: 0,
         csat: 0,
-        performance: 0
+        performance: 0,
+        isActive: false,
+        interactionCount: 0
       };
       
       setAgent(newlyCreatedAgent);
@@ -60,7 +62,7 @@ export const useAgentDetails = (agentId: string | undefined) => {
     const loadAgentDetails = async () => {
       setIsLoading(true);
       try {
-        const data = await fetchAgentById(agentId);
+        const data = await getAgentById(agentId);
         
         // Add default stats if missing
         const channelConfigs = data.channelConfigs || {};
@@ -106,7 +108,8 @@ export const useAgentDetails = (agentId: string | undefined) => {
           customIndustry: data.customIndustry || "",
           customFunction: data.customFunction || "",
           voice: data.voice || "9BWtsMINqrJLrRacOk9x", // Default voice ID for Aria
-          voiceProvider: data.voiceProvider || "Eleven Labs" // Default voice provider
+          voiceProvider: data.voiceProvider || "Eleven Labs", // Default voice provider
+          interactionCount: data.interactionCount || data.interactions || 0
         };
         
         setAgent(enhancedData);

@@ -45,7 +45,7 @@ export interface AgentType {
   channels?: string[];
   channelConfigs?: Record<string, AgentChannelConfig>;
   isPersonal?: boolean;
-  isActive?: boolean; // Add this property
+  isActive?: boolean; // Explicitly added property
   phone?: string;
   email?: string;
   avatar?: string;

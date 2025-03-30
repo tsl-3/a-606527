@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { getAgents } from '@/services/agentService';
 import { AgentType } from '@/types/agent';
@@ -40,7 +41,7 @@ export const useAgents = (filter: string = 'all-agents') => {
     const loadAgents = async () => {
       setIsLoading(true);
       try {
-        const data = await getAgents(filter);
+        const data = await getAgents();
         
         // Add phone and email to each agent
         const enhancedData = data.map(agent => ({
