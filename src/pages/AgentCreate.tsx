@@ -1,4 +1,4 @@
-
+PYR AU
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -246,7 +246,7 @@ const AgentCreate = () => {
     <div className="container mx-auto py-6">
       <div className="flex items-center gap-2 mb-6">
         <Bot className="h-6 w-6 text-primary" />
-        <h1 className="text-2xl font-bold">Create New Agent</h1>
+        <h1 className="text-2xl font-bold">Create New ENSPYR AI Agent</h1>
       </div>
       
       {renderCreationMethod()}
