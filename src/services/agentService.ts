@@ -88,72 +88,43 @@ export const getAgentById = async (id: string): Promise<AgentType | null> => {
 };
 
 export const createAgent = async (agent: Partial<AgentType>): Promise<AgentType> => {
-  try {
-    const newId = agent.id === 'new123' ? uuidv4() : agent.id || uuidv4();
-    
-    // Prepare the agent data for Supabase (transform from AgentType to database schema)
-    const newAgent = {
-      id: newId,
-      name: agent.name || 'New Agent',
-      description: agent.description || '',
-      purpose: agent.purpose || '',
-      prompt: agent.prompt || '',
-      industry: agent.industry || '',
-      botfunction: agent.botFunction || '', // lowercase to match DB column
-      model: agent.model || 'GPT-4',
-      avatar: agent.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${newId}`,
-      voice: agent.voice || '9BWtsMINqrJLrRacOk9x',
-      voiceprovider: agent.voiceProvider || 'Eleven Labs', // lowercase to match DB column
-      active: agent.isActive || false,
-      channels: agent.channels || [],
-      channelconfigs: agent.channelConfigs || {}, // lowercase to match DB column
-      customindustry: agent.customIndustry || null, // lowercase to match DB column
-      customfunction: agent.customFunction || null // lowercase to match DB column
-    };
-    
-    console.log('Creating new agent with data:', newAgent);
-    
-    const { data, error } = await supabase
-      .from('agents')
-      .insert(newAgent)
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Error creating agent:', error);
-      
-      // Try a simplified approach if the first attempt fails
-      if (error.message && error.message.includes('violates row-level security policy')) {
-        console.log('Attempting simplified agent creation...');
-        const minimalAgent = {
-          id: newId,
-          name: agent.name || 'New Agent',
-          description: agent.description || '',
-        };
-        
-        const { data: minimalData, error: minimalError } = await supabase
-          .from('agents')
-          .insert(minimalAgent)
-          .select()
-          .single();
-          
-        if (minimalError) {
-          console.error('Error creating minimal agent:', minimalError);
-          throw minimalError;
-        }
-        
-        return transformDbRowToAgent(minimalData);
-      }
-      
-      throw error;
-    }
-    
-    console.log('Agent created successfully:', data);
-    return transformDbRowToAgent(data);
-  } catch (error) {
-    console.error('Exception during agent creation:', error);
+  const newId = agent.id === 'new123' ? uuidv4() : agent.id || uuidv4();
+  
+  // Prepare the agent data for Supabase (transform from AgentType to database schema)
+  const newAgent = {
+    id: newId,
+    name: agent.name || 'New Agent',
+    description: agent.description || '',
+    purpose: agent.purpose || '',
+    prompt: agent.prompt || '',
+    industry: agent.industry || '',
+    botfunction: agent.botFunction || '', // lowercase to match DB column
+    model: agent.model || 'GPT-4',
+    avatar: agent.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${newId}`,
+    voice: agent.voice || '9BWtsMINqrJLrRacOk9x',
+    voiceprovider: agent.voiceProvider || 'Eleven Labs', // lowercase to match DB column
+    active: agent.isActive || false,
+    channels: agent.channels || [],
+    channelconfigs: agent.channelConfigs || {}, // lowercase to match DB column
+    customindustry: agent.customIndustry || null, // lowercase to match DB column
+    customfunction: agent.customFunction || null // lowercase to match DB column
+  };
+  
+  console.log('Creating new agent with data:', newAgent);
+  
+  const { data, error } = await supabase
+    .from('agents')
+    .insert(newAgent)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error creating agent:', error);
     throw error;
   }
+  
+  console.log('Agent created successfully:', data);
+  return transformDbRowToAgent(data);
 };
 
 export const updateAgent = async (id: string, updates: Partial<AgentType>): Promise<AgentType> => {

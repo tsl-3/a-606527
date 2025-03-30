@@ -7,12 +7,7 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://srpxfzpxiqcewt
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNycHhmenB4aXFjZXd0amRwZHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMTg1NzIsImV4cCI6MjA1ODU5NDU3Mn0.m-DinVAmHyzfgoX7d_kTx8NBdjeEjNxuujmiU-axLIo';
 
 // Create and export the Supabase client
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-  }
-});
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
 // Log successful initialization
 console.log('Supabase client initialized with URL:', supabaseUrl);

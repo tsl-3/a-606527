@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -17,7 +16,6 @@ const AgentCreate = () => {
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
   const [creationMethod, setCreationMethod] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [agentConfig, setAgentConfig] = useState({
     name: "",
     description: "",
@@ -38,19 +36,10 @@ const AgentCreate = () => {
   const handleCreateAgent = async () => {
     try {
       setIsCreating(true);
-      setError(null);
-      
-      // Ensure we have at least a name
-      const agentName = agentConfig.name || "New Agent";
-      
-      console.log('Starting agent creation with config:', {
-        ...agentConfig,
-        name: agentName
-      });
       
       // Create new agent with basic info
       const newAgent = await createAgent({
-        name: agentName,
+        name: agentConfig.name || "New Agent",
         description: agentConfig.description,
         purpose: agentConfig.purpose,
         prompt: agentConfig.prompt,
@@ -62,8 +51,6 @@ const AgentCreate = () => {
         isActive: false
       });
       
-      console.log('Agent created successfully:', newAgent);
-      
       toast({
         title: "Agent created successfully",
         description: `${newAgent.name} has been added to your agents.`
@@ -71,12 +58,11 @@ const AgentCreate = () => {
       
       // Navigate to the agent details page
       navigate(`/agents/${newAgent.id}`);
-    } catch (err: any) {
-      console.error("Error creating agent:", err);
-      setError(err.message || "There was an error creating your agent");
+    } catch (error) {
+      console.error("Error creating agent:", error);
       toast({
         title: "Failed to create agent",
-        description: err.message || "There was an error creating your agent. Please try again.",
+        description: "There was an error creating your agent. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -230,14 +216,6 @@ const AgentCreate = () => {
             </TabsContent>
           </Tabs>
           
-          {error && (
-            <Card className="mt-4 border-destructive">
-              <CardContent className="pt-6">
-                <p className="text-destructive">{error}</p>
-              </CardContent>
-            </Card>
-          )}
-          
           <div className="flex justify-between mt-8">
             <Button 
               variant="outline" 
@@ -253,14 +231,8 @@ const AgentCreate = () => {
               disabled={isCreating}
               className="gap-2"
             >
-              {isCreating ? (
-                <span className="animate-pulse">Creating...</span>
-              ) : (
-                <>
-                  <Check className="h-4 w-4" />
-                  Create Agent
-                </>
-              )}
+              <Check className="h-4 w-4" />
+              Create Agent
             </Button>
           </div>
         </div>
