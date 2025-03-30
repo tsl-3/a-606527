@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -560,21 +559,6 @@ const AgentConfigSettings: React.FC<AgentConfigSettingsProps> = ({ agent, onAgen
               </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl">Channel Configuration</CardTitle>
-          <CardDescription>
-            Configure the channels through which users can interact with your agent
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <AgentChannels 
-            channels={agent.channelConfigs}
-            onUpdateChannel={handleUpdateChannel}
-          />
         </CardContent>
       </Card>
 

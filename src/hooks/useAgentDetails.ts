@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { fetchAgentById } from '@/services/agentService';
+import { getAgentById } from '@/services/agentService';
 import { AgentType } from '@/types/agent';
 import { toast } from '@/components/ui/use-toast';
 

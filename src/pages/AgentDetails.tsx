@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AgentStats } from "@/components/AgentStats";
 import { AgentChannels } from "@/components/AgentChannels";
 import { AgentToggle } from "@/components/AgentToggle";
-import { AgentConfigSettings } from "@/components/AgentConfigSettings";
+import AgentConfigSettings from "@/components/AgentConfigSettings";
 import { AgentSetupStepper } from "@/components/AgentSetupStepper";
 import { useToast } from "@/hooks/use-toast";
 import { getAgentById, toggleAgentActive, updateAgent, deleteAgent } from "@/services/agentService";

@@ -98,10 +98,12 @@ const transformDbRowToAgent = (row: any): AgentType => {
     description: row.description || '',
     avatar: row.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${row.id}`,
     isActive: row.active || false,
+    status: row.active ? "active" : "inactive",
     channels: row.channels || [],
     channelConfigs: row.channelConfigs || {},
     avmScore: 8.0, // Default score
-    interactionCount: 0, // Default count
+    interactions: 0, // Default count
+    interactionCount: 0, // Support both property names
     purpose: row.purpose || '',
     prompt: row.prompt || '',
     industry: row.industry || '',
@@ -110,7 +112,8 @@ const transformDbRowToAgent = (row: any): AgentType => {
     voice: row.voice || '',
     voiceProvider: row.voiceProvider || '',
     customIndustry: row.customIndustry || '',
-    customFunction: row.customFunction || ''
+    customFunction: row.customFunction || '',
+    createdAt: row.created_at || new Date().toISOString()
   };
 };
 
@@ -156,7 +159,22 @@ export const getAgents = async (): Promise<AgentType[]> => {
   if (error) {
     console.error('Error fetching agents:', error);
     // Fallback to mock data if there's an error
-    return AGENTS_MOCK;
+    return AGENTS_MOCK.map(agent => ({
+      id: agent.id,
+      name: agent.name,
+      description: agent.description,
+      avatar: agent.avatar,
+      isActive: agent.isActive,
+      status: agent.isActive ? "active" : "inactive",
+      channels: agent.channels,
+      channelConfigs: agent.channelConfigs,
+      avmScore: agent.avmScore,
+      interactions: agent.interactionCount,
+      interactionCount: agent.interactionCount,
+      industry: agent.industry,
+      botFunction: agent.botFunction,
+      createdAt: new Date().toISOString()
+    }));
   }
   
   return data.map(transformDbRowToAgent);
@@ -173,9 +191,11 @@ export const getAgentById = async (id: string): Promise<AgentType | null> => {
       description: '',
       avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${Math.random().toString(36).substring(2, 10)}`,
       isActive: false,
+      status: "inactive",
       channels: [],
       channelConfigs: {},
       avmScore: undefined,
+      interactions: 0,
       interactionCount: 0,
       purpose: '',
       prompt: '',
@@ -184,6 +204,7 @@ export const getAgentById = async (id: string): Promise<AgentType | null> => {
       model: 'GPT-4',
       voice: '9BWtsMINqrJLrRacOk9x', // Default voice
       voiceProvider: 'Eleven Labs', // Default provider
+      createdAt: new Date().toISOString()
     };
   }
   

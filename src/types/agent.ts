@@ -28,9 +28,9 @@ export interface AgentType {
   id: string;
   name: string;
   description: string;
-  type: AgentTypeCategory;
-  status: AgentStatus;
-  createdAt: string;
+  type?: AgentTypeCategory;
+  status?: AgentStatus;
+  createdAt?: string;
   updatedAt?: string;
   model?: string;
   voice?: string;
@@ -39,11 +39,13 @@ export interface AgentType {
   voiceTraits?: VoiceTrait[];
   avmScore?: number;
   interactions?: number;
+  interactionCount?: number; // Add this to support both property names
   csat?: number;
   performance?: number;
   channels?: string[];
   channelConfigs?: Record<string, AgentChannelConfig>;
   isPersonal?: boolean;
+  isActive?: boolean; // Add this property
   phone?: string;
   email?: string;
   avatar?: string;

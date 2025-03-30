@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { fetchAgents } from '@/services/agentService';
+import { getAgents } from '@/services/agentService';
 import { AgentType } from '@/types/agent';
 
 // Helper function to generate a random phone number
@@ -41,7 +40,7 @@ export const useAgents = (filter: string = 'all-agents') => {
     const loadAgents = async () => {
       setIsLoading(true);
       try {
-        const data = await fetchAgents(filter);
+        const data = await getAgents(filter);
         
         // Add phone and email to each agent
         const enhancedData = data.map(agent => ({

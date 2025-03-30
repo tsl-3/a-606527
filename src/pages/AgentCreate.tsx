@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AgentConfigSidebar } from "@/components/AgentConfigSidebar";
 import { useToast } from "@/hooks/use-toast";
 import { createAgent } from "@/services/agentService";
-import { AgentConfigSettings } from "@/components/AgentConfigSettings";
+import AgentConfigSettings from "@/components/AgentConfigSettings";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AgentCreate = () => {
